@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{23B08B10-8297-4A90-9B6D-43DAC7416004}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CSScriptNpp</RootNamespace>
+    <AssemblyName>CSScriptNpp</AssemblyName>
+    <StartupObject>
+    </StartupObject>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FileAlignment>512</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="Interop\DllExport\NppPlugin.DllExport.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Compile Include="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSScriptNpp\Config.cs" />
+    <Compile Include="CSScriptNpp\CSSctiptHelper.cs" />
+    <Compile Include="Interop\Intellisense.cs" />
+    <Compile Include="Interop\IniFile.cs" />
+    <Compile Include="Interop\Npp.cs" />
+    <Compile Include="OutputPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OutputPanel.Designer.cs">
+      <DependentUpon>OutputPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Plugin.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CSScriptNpp\ReflectionExtensions.cs" />
+    <Compile Include="Resources\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptNameInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScriptNameInput.Designer.cs">
+      <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    </Compile>
+    <None Include="Interop\DllExport\CheckILDasmPath.cs" />
+    <Compile Include="Interop\DllExport\DllExportAttribute.cs" />
+    <Compile Include="Interop\NppPluginNETBase.cs" />
+    <Compile Include="Interop\NppPluginNETHelper.cs" />
+    <Compile Include="Interop\UnmanagedExports.cs" />
+    <Compile Include="Interop\Utils.cs" />
+    <Compile Include="ProjectPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectPanel.Designer.cs">
+      <DependentUpon>ProjectPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSScriptNpp\ProjectItem.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CSScriptLibrary, Version=3.5.10.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>CSScriptNpp\CSScriptLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OutputPanel.resx">
+      <DependentUpon>OutputPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectPanel.resx">
+      <DependentUpon>ProjectPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptNameInput.resx">
+      <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Interop\DllExport\Mono.Cecil.dll" />
+    <None Include="Interop\DllExport\NppPlugin.DllExport.dll" />
+    <None Include="Interop\DllExport\NppPlugin.DllExport.MSBuild.dll" />
+    <None Include="Interop\DllExport\README.txt" />
+    <None Include="Interop\DllExport\CheckILDasmPath.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Interop\DllExport\NppPlugin.DllExport.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSScriptNpp\CSScriptLibrary.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\about.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\check.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\css_logo_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\css_logo_16x16_tb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DebugScript.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\reload.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\restartApp.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\run.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\synch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\vs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSScriptNpp\cscs.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clean.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\outputpanel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\debug_attach.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\debug_detach.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\remove_dbg_filter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\set_dbg_filter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\debug.png" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>"$(ProjectDir)Interop\DllExport\CheckILDasmPath.exe"</PreBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,4 @@
+The C# Intellisense is making use of the following OSS projects:
+
+* CSScriptLibrary from the CS-Script project (http://csscript.net/) and is used under the CS-Script license: http://csscript.net/Licence.html
+* DbMon.NET from http://www.codeproject.com/Articles/13345/DbMon-NET-A-simple-NET-OutputDebugString-capturer
