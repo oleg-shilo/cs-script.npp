@@ -4,29 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-/*
- * NppScripts integration
- * Right-click: Open in VS
- * debug params
- * Help
- * ShortcutHook
- * LoadHistory
- * - Intellisense integration
- * - Debug with System Debugger
- * - About
- * - Right-click: unload all scriprs (on solution node)
- * - Right-click: open containing folder
- * - Output panel double-click
- * - Indicate primary script
- * - Script item tooltip
- * - Intercept Console output
- * - Intercept Debug output
- * - Run
- * - Synch
- * - tab Icon
- * - update output combo on external show() calls
- */
-
 namespace CSScriptNpp
 {
     public partial class Plugin
