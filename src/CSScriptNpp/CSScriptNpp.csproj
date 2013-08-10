@@ -227,6 +227,9 @@
   <ItemGroup>
     <None Include="Resources\debug.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DbMon.exe" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

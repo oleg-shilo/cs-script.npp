@@ -99,7 +99,7 @@ namespace CSScriptNpp
                                 .Distinct()
                                 .ToArray();
 
-            string dir = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) +"-" +script.GetHashCode();
+            string dir = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) + "-" + script.GetHashCode();
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
@@ -126,25 +126,26 @@ namespace CSScriptNpp
             {
                 string excludeDirPreffix = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) + "-";
 
-                foreach (string projectDir in Directory.GetDirectories(VsDir))
-                {
-                    if (projectDir.StartsWith(excludeDirPreffix))
-                        continue;
-
-                    //vshost.exe is the only file to be 100% times locked if VS has the project loaded
-                    string hostFile = Directory.GetFiles(projectDir, "*.vshost.exe", SearchOption.AllDirectories).FirstOrDefault();
-
-                    try
+                if (Directory.Exists(VsDir))
+                    foreach (string projectDir in Directory.GetDirectories(VsDir))
                     {
-                        if (hostFile != null)
-                            File.Delete(hostFile);
+                        if (projectDir.StartsWith(excludeDirPreffix))
+                            continue;
 
-                        foreach (string file in Directory.GetFiles(projectDir, "*", SearchOption.AllDirectories))
-                            File.Delete(file);
-                        Directory.Delete(projectDir, true);
+                        //vshost.exe is the only file to be 100% times locked if VS has the project loaded
+                        string hostFile = Directory.GetFiles(projectDir, "*.vshost.exe", SearchOption.AllDirectories).FirstOrDefault();
+
+                        try
+                        {
+                            if (hostFile != null)
+                                File.Delete(hostFile);
+
+                            foreach (string file in Directory.GetFiles(projectDir, "*", SearchOption.AllDirectories))
+                                File.Delete(file);
+                            Directory.Delete(projectDir, true);
+                        }
+                        catch { }
                     }
-                    catch { }
-                }
             }
             catch { }
         }

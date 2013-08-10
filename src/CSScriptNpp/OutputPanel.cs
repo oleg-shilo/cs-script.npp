@@ -1,6 +1,8 @@
-﻿using System;
+﻿using CSScriptLibrary;
+using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,7 +23,7 @@ namespace CSScriptNpp
             cb.Text = "Intercept StdOut";
             cb.Checked = Config.Instance.InterceptConsole;
             cb.CheckStateChanged += (s, ex) => Config.Instance.InterceptConsole = cb.Checked;
-            toolStrip1.Items.Insert(3, new ToolStripControlHost(cb) { ToolTipText= "Check to redirect the console output to the output panel" });
+            toolStrip1.Items.Insert(3, new ToolStripControlHost(cb) { ToolTipText = "Check to redirect the console output to the output panel" });
 
             AddOutputType(BuildOutputName);
             AddOutputType(DebugOutputName);
@@ -202,6 +204,30 @@ namespace CSScriptNpp
             }
         }
 
+        static string dbMonPath;
+        static string DbMonPath
+        {
+            get
+            {
+                if (dbMonPath == null || !File.Exists(dbMonPath))
+                {
+                    dbMonPath = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\DbMon.exe");
+                    try
+                    {
+                        var dir = Path.GetDirectoryName(dbMonPath);
+                        
+                        if (!Directory.Exists(dir))
+                            Directory.CreateDirectory(dir);
+
+                        File.WriteAllBytes(dbMonPath, Resources.Resources.DbMon); //always try to override existing to ensure the latest version
+                    }
+                    catch { } //it can be already locked (running)
+                }
+                return dbMonPath;
+            }
+
+        }
+
         private void DebugViewBtn_Click(object sender, EventArgs e)
         {
             DebugViewBtn.Enabled = false;
@@ -232,13 +258,11 @@ namespace CSScriptNpp
                             catch { }
                         }
 
-                        string dbmon = @"E:\Galos\Projects\CS-Script.Npp\DbMon\bin\Debug\DbMon.exe";
-
                         var p = new Process();
                         dbgMonitor = p;
                         this.InUiThread(RefreshControls);
 
-                        p.StartInfo.FileName = dbmon;
+                        p.StartInfo.FileName = DbMonPath;
                         p.StartInfo.UseShellExecute = false;
                         p.StartInfo.RedirectStandardOutput = true;
                         p.StartInfo.CreateNoWindow = true;
@@ -402,7 +426,7 @@ namespace CSScriptNpp
                        control.Text += Environment.NewLine;
                    else
                        control.Text += string.Format(text, args) + Environment.NewLine;
-                   EnsureCapacity(); 
+                   EnsureCapacity();
                    ScrollToView();
                }, true);
             return this;
