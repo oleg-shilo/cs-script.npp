@@ -54,7 +54,7 @@ namespace CSScriptNpp
             }
         }
 
-        public Output Show(Output output)
+        Output Show(Output output)
         {
             Output retval = null;
 
@@ -87,6 +87,19 @@ namespace CSScriptNpp
             }
 
             return retval;
+        }
+
+        public Output ShowBuildOutput()
+        {
+            return Show(BuildOutput);
+        }
+        public Output ShowDebugOutput()
+        {
+            return Show(DebugOutput);
+        }
+        public Output ShowConsoleOutput()
+        {
+            return Show(ConsoleOutput);
         }
 
         public Output ShowOutput(string name)
@@ -269,11 +282,9 @@ namespace CSScriptNpp
 
                         p.Start();
 
-
                         string line = null;
                         while (null != (line = p.StandardOutput.ReadLine()))
                         {
-
                             if (Config.Instance.LocalDebug)
                             {
                                 if (localDebugPreffix != null && line.StartsWith(localDebugPreffix))
@@ -295,6 +306,7 @@ namespace CSScriptNpp
                                 output.WriteLine(line);
                             }
                         }
+
                         p.WaitForExit();
 
                         if (p.ExitCode == 3)
@@ -382,6 +394,18 @@ namespace CSScriptNpp
     public class Output
     {
         TextBox control;
+        public bool IsEmpty
+        {
+            get
+            {
+                bool retval = true;
+                control.InUiThread(() =>
+                {
+                    retval = string.IsNullOrEmpty(control.Text);
+                }, true);
+                return retval;
+            }
+        }
         public Output(TextBox control)
         {
             this.control = control;
@@ -424,8 +448,11 @@ namespace CSScriptNpp
                {
                    if (string.IsNullOrEmpty(text))
                        control.Text += Environment.NewLine;
+                   else if(args.Length == 0)
+                       control.Text += text + Environment.NewLine;
                    else
                        control.Text += string.Format(text, args) + Environment.NewLine;
+
                    EnsureCapacity();
                    ScrollToView();
                }, true);
@@ -438,7 +465,11 @@ namespace CSScriptNpp
                 {
                     if (!string.IsNullOrEmpty(text))
                     {
-                        control.Text += string.Format(text, args);
+                        if(args.Length == 0)
+                            control.Text += text + Environment.NewLine;
+                        else
+                            control.Text += string.Format(text, args);
+
                         EnsureCapacity();
                         ScrollToView();
                     }

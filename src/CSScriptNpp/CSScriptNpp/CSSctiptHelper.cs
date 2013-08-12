@@ -77,7 +77,6 @@ namespace CSScriptNpp
         static public void ExecuteDebug(string scriptFileCmd)
         {
             Process.Start("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /dbg \"" + scriptFileCmd + "\" //x\"");
-            //Process.Start(Path.Combine(Plugin.PluginDir, "cscs.exe"), "/nl /dbg \"" + scriptFileCmd + "\" //x");
         }
 
         static public void OpenAsVSProjectFor(string script)

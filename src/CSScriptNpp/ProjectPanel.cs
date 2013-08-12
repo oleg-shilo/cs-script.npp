@@ -142,27 +142,29 @@ class Script
         {
             if (currentScript == null)
                 loadBtn.PerformClick();
-                //MessageBox.Show("Please load some script file first.", "CS-Script");
 
-            //else
+            if (currentScript == null)
+            {
+                MessageBox.Show("Please load some script file first.", "CS-Script");
+            }
+            else
             {
                 OutputPanel outputPanel = Plugin.ShowOutputPanel();
 
-                Output currentOutput = outputPanel.GetVisibleOutput();
+                //Output currentOutput = outputPanel.GetVisibleOutput();
 
-                if (currentOutput != outputPanel.DebugOutput && currentOutput != outputPanel.ConsoleOutput)
-                {
-                    if (Config.Instance.InterceptConsole)
-                    {
-                        outputPanel.Show(outputPanel.ConsoleOutput);
-                    }
-                    else
-                    {
-                        outputPanel.Show(outputPanel.DebugOutput);
-                    }
-
-                    outputPanel.AttachDebuger();
-                }
+                //if (currentOutput != outputPanel.DebugOutput && currentOutput != outputPanel.ConsoleOutput)
+                //{
+                //    if (Config.Instance.InterceptConsole)
+                //    {
+                //        outputPanel.ShowConsoleOutput();
+                //    }
+                //    else
+                //    {
+                //        outputPanel.ShowDebugOutput();
+                //    }
+                //}
+                outputPanel.AttachDebuger();
 
                 try
                 {
@@ -177,14 +179,19 @@ class Script
                     {
                         try
                         {
+                            outputPanel.ShowDebugOutput();
                             if (Config.Instance.InterceptConsole)
+                            {
                                 CSSctiptHelper.Execute(currentScript, OnRunStart, OnConsoleOut);
+                            }
                             else
+                            {
                                 CSSctiptHelper.Execute(currentScript, OnRunStart);
+                            }
                         }
                         catch (Exception e)
                         {
-                            outputPanel.Show(outputPanel.BuildOutput)
+                            outputPanel.ShowBuildOutput()
                                        .WriteLine(e.Message);
                         }
                         finally
@@ -199,16 +206,17 @@ class Script
                 }
                 catch (Exception ex)
                 {
-                    outputPanel.Show(outputPanel.BuildOutput)
+                    outputPanel.ShowBuildOutput()
                                .WriteLine(ex.Message);
                 }
             }
         }
 
-
-
         public void Debug()
         {
+            if (currentScript == null)
+                loadBtn.PerformClick();
+
             if (currentScript == null)
             {
                 MessageBox.Show("Please load some script file first.", "CS-Script");
@@ -260,11 +268,17 @@ class Script
 
         void OnConsoleOut(string line)
         {
+            if (Plugin.OutputPanel.ConsoleOutput.IsEmpty)
+                Plugin.OutputPanel.ShowConsoleOutput();
+
             Plugin.OutputPanel.ConsoleOutput.WriteLine(line);
         }
 
         public void Build()
         {
+            if (currentScript == null)
+                loadBtn.PerformClick();
+
             if (currentScript == null)
             {
                 MessageBox.Show("Please load some script file first.", "CS-Script");
@@ -272,6 +286,7 @@ class Script
             else
             {
                 OutputPanel outputPanel = Plugin.ShowOutputPanel();
+
                 outputPanel.BuildOutput.Clear();
                 outputPanel.BuildOutput.WriteLine("------ Build started: Script: " + Path.GetFileNameWithoutExtension(currentScript) + " ------");
 
@@ -286,9 +301,10 @@ class Script
                 }
                 catch (Exception ex)
                 {
-                    outputPanel.BuildOutput.WriteLine(null)
-                                           .WriteLine(ex.Message)
-                                           .WriteLine("========== Build: Failed ==========");
+                    outputPanel.ShowBuildOutput()
+                               .WriteLine(null)
+                               .WriteLine(ex.Message)
+                               .WriteLine("========== Build: Failed ==========");
                 }
             }
         }
