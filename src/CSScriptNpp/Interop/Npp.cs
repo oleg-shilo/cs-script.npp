@@ -5,6 +5,20 @@ namespace CSScriptNpp
 {
     public class Npp
     {
+        /// <summary>
+        /// Determines whether the current file has the specified extension (e.g. ".cs").
+        /// <para>Note it is case insensitive.</para>
+        /// </summary>
+        /// <param name="extension">The extension.</param>
+        /// <returns></returns>
+        static public bool IsCurrentFileHasExtension(string extension)
+        {
+            var path = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(Plugin.NppData._nppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
+            string file = path.ToString();
+            return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
+        }
+
         public static IntPtr CurrentScintilla { get { return Plugin.GetCurrentScintilla(); } }
 
         public static IntPtr NppHandle { get { return Plugin.NppData._nppHandle; } }

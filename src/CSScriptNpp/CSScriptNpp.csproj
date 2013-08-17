@@ -66,7 +66,9 @@
     <Compile Include="CSScriptNpp\CSSctiptHelper.cs" />
     <Compile Include="Interop\Intellisense.cs" />
     <Compile Include="Interop\IniFile.cs" />
+    <Compile Include="Interop\LocalWindowsHook.cs" />
     <Compile Include="Interop\Npp.cs" />
+    <Compile Include="Interop\WinHook.cs" />
     <Compile Include="OutputPanel.cs">
       <SubType>Form</SubType>
     </Compile>

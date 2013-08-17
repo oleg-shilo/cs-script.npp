@@ -1,11 +1,10 @@
-﻿using System;
+﻿using CSScriptLibrary;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptLibrary;
 
 namespace CSScriptNpp
 {
@@ -138,7 +137,12 @@ class Script
             Debug();
         }
 
-        public void Run()
+        public void RunAsExternal()
+        {
+            Run(true);
+        }
+
+        public void Run(bool asExternal = false)
         {
             if (currentScript == null)
                 loadBtn.PerformClick();
@@ -149,65 +153,68 @@ class Script
             }
             else
             {
-                OutputPanel outputPanel = Plugin.ShowOutputPanel();
-
-                //Output currentOutput = outputPanel.GetVisibleOutput();
-
-                //if (currentOutput != outputPanel.DebugOutput && currentOutput != outputPanel.ConsoleOutput)
-                //{
-                //    if (Config.Instance.InterceptConsole)
-                //    {
-                //        outputPanel.ShowConsoleOutput();
-                //    }
-                //    else
-                //    {
-                //        outputPanel.ShowDebugOutput();
-                //    }
-                //}
-                outputPanel.AttachDebuger();
-
                 try
                 {
                     EditItem(currentScript);
                     Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
 
-                    outputPanel.ConsoleOutput.Clear();
-                    outputPanel.BuildOutput.Clear();
-                    outputPanel.DebugOutput.Clear();
-
-                    Task.Factory.StartNew(() =>
+                    if (asExternal)
                     {
                         try
                         {
-                            outputPanel.ShowDebugOutput();
-                            if (Config.Instance.InterceptConsole)
-                            {
-                                CSSctiptHelper.Execute(currentScript, OnRunStart, OnConsoleOut);
-                            }
-                            else
-                            {
-                                CSSctiptHelper.Execute(currentScript, OnRunStart);
-                            }
+                            CSSctiptHelper.ExecuteAsynch(currentScript);
                         }
                         catch (Exception e)
                         {
-                            outputPanel.ShowBuildOutput()
-                                       .WriteLine(e.Message);
+                            Plugin.ShowOutputPanel()
+                                  .ShowBuildOutput()
+                                  .WriteLine(e.Message);
                         }
-                        finally
+                    }
+                    else
+                    {
+                        OutputPanel outputPanel = Plugin.ShowOutputPanel();
+
+                        outputPanel.AttachDebuger();
+                        outputPanel.ConsoleOutput.Clear();
+                        outputPanel.BuildOutput.Clear();
+                        outputPanel.DebugOutput.Clear();
+
+                        Task.Factory.StartNew(() =>
                         {
-                            this.InUiThread(() =>
+                            try
                             {
-                                Plugin.RunningScript = null;
-                                RefreshControls();
-                            });
-                        }
-                    });
+                                outputPanel.ShowDebugOutput();
+                                if (Config.Instance.InterceptConsole)
+                                {
+                                    CSSctiptHelper.Execute(currentScript, OnRunStart, OnConsoleOut);
+                                }
+                                else
+                                {
+                                    CSSctiptHelper.Execute(currentScript, OnRunStart);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                outputPanel.ShowBuildOutput()
+                                           .WriteLine(e.Message);
+                            }
+                            finally
+                            {
+                                this.InUiThread(() =>
+                                {
+                                    Plugin.RunningScript = null;
+                                    RefreshControls();
+                                });
+                            }
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {
-                    outputPanel.ShowBuildOutput()
-                               .WriteLine(ex.Message);
+                    Plugin.ShowOutputPanel()
+                          .ShowBuildOutput()
+                          .WriteLine(ex.Message);
                 }
             }
         }
@@ -455,7 +462,7 @@ class Script
                         currentScript = scriptFile;
                         Intellisense.Refresh();
                     }
-                    catch (Exception e)
+                    catch
                     {
                     }
                 }
@@ -465,8 +472,6 @@ class Script
                 MessageBox.Show("Script '" + scriptFile + "' does not exist.", "CS-Script");
             }
         }
-
-
 
         void outputBtn_Click(object sender, EventArgs e)
         {
@@ -586,7 +591,5 @@ class Script
                 treeView1.SelectedNode = e.Node;
             }
         }
-
     }
 }
-

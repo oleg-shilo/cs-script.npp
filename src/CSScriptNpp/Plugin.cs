@@ -20,12 +20,32 @@ namespace CSScriptNpp
             int index = 0;
 
             SetCommand(projectPanelId = index++, "Build", Build, new ShortcutKey(true, false, true, Keys.B));
-            SetCommand(projectPanelId = index++, "Run", Run, new ShortcutKey(true, false, false, Keys.F5));
+            SetCommand(projectPanelId = index++, "Run", Run, new ShortcutKey(false, false, false, Keys.F5));
             SetCommand(index++, "---", null);
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
             SetCommand(outputPanelId = index++, "Output Panel", DoOutputPanel, Config.Instance.ShowOutputPanel);
             SetCommand(index++, "---", null);
             SetCommand(index++, "About", ShowAbout);
+
+            KeyInterceptor.Instance.Install();
+            KeyInterceptor.Instance.Add(Keys.F5);
+            KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
+        }
+
+        static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
+        {
+            if (key == Keys.F5 && Npp.IsCurrentFileHasExtension(".cs"))
+            {
+                if (KeyInterceptor.IsPressed(Keys.ControlKey))
+                {
+                    RunAsExternal();
+                }
+                else
+                {
+                    handled = true;
+                    Run();
+                }
+            }
         }
 
         static public void ShowAbout()
@@ -62,13 +82,19 @@ namespace CSScriptNpp
             Plugin.ProjectPanel.Run();
         }
 
+        static public void RunAsExternal()
+        {
+            if (Plugin.ProjectPanel == null)
+                DoProjectPanel();
+            Plugin.ProjectPanel.RunAsExternal();
+        }
         static public OutputPanel ShowOutputPanel()
         {
             if (Plugin.OutputPanel == null)
                 DoOutputPanel();
             else
                 SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
-            
+
             UpdateLocalDebugInfo();
             return Plugin.OutputPanel;
         }

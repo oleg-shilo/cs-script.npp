@@ -16,7 +16,7 @@ namespace DbMon
                 DebugMonitor.Start();
                 return 0;
             }
-            catch (AlreadyRunningException e)
+            catch (AlreadyRunningException)
             {
                 return 3;
             }

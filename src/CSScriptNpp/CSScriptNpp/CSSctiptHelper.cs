@@ -43,7 +43,17 @@ namespace CSScriptNpp
             return retval;
         }
 
-        static public void Execute(string scriptFileCmd, Action<Process> onStart, Action<string> onStdOut = null)
+        static public void ExecuteAsynch(string scriptFileCmd)
+        {
+            string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
+            string script = "\"" + scriptFileCmd + "\"";
+            string cmd = Environment.ExpandEnvironmentVariables("%comspec%");
+            //args = string.Format("/K \"\"{0}\" /nl \"{1}\"\"", Path.Combine(Plugin.PluginDir, "cscs.exe"), scriptFileCmd);
+            string args = string.Format("/K \"{0} /nl {1}\"", cscs, script);
+            Process.Start(cmd, args);
+        }
+
+        static public void Execute(string scriptFileCmd, Action<Process> onStart = null, Action<string> onStdOut = null)
         {
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
@@ -58,7 +68,8 @@ namespace CSScriptNpp
 
             p.Start();
 
-            onStart(p);
+            if (onStart != null)
+                onStart(p);
 
             var output = new StringBuilder();
 
