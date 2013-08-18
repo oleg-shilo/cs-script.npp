@@ -82,7 +82,7 @@ namespace CSScriptNpp
             p.WaitForExit();
 
             if (output.Length > 0 && output.ToString().StartsWith("Error: Specified file could not be compiled."))
-                throw new ApplicationException(output.ToString());
+                throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
         }
 
         static public void ExecuteDebug(string scriptFileCmd)
