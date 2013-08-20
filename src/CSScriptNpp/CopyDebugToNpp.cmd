@@ -1,3 +1,4 @@
+echo off
 md "%programfiles%\Notepad++\plugins\CSScriptNpp"
 
 copy "bin\Debug\CSScriptNpp.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp.dll"

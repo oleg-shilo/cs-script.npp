@@ -91,6 +91,16 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ConsoleHost {
+            get {
+                object obj = ResourceManager.GetObject("ConsoleHost", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap css_logo_16x16 {

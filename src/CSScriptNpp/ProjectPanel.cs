@@ -1,10 +1,11 @@
-﻿using CSScriptLibrary;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptLibrary;
+using System.Reflection;
 
 namespace CSScriptNpp
 {
@@ -281,37 +282,52 @@ class Script
             Plugin.OutputPanel.ConsoleOutput.WriteLine(line);
         }
 
+        void Job()
+		{
+            try
+            {
+                CSScript.Compile(currentScript, null, false);
+            }
+            catch (Exception ex)
+            {
+                Environment.SetEnvironmentVariable("CSS_COMPILE_ERROR", ex.Message);
+            }
+		}
+
         public void Build()
         {
-            if (currentScript == null)
-                loadBtn.PerformClick();
-
-            if (currentScript == null)
+            lock (this)
             {
-                MessageBox.Show("Please load some script file first.", "CS-Script");
-            }
-            else
-            {
-                OutputPanel outputPanel = Plugin.ShowOutputPanel();
+                if (currentScript == null)
+                    loadBtn.PerformClick();
 
-                outputPanel.BuildOutput.Clear();
-                outputPanel.BuildOutput.WriteLine("------ Build started: Script: " + Path.GetFileNameWithoutExtension(currentScript) + " ------");
-
-                try
+                if (currentScript == null)
                 {
-                    EditItem(currentScript);
-                    Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
-
-                    CSScript.Compile(currentScript, null, false);
-
-                    outputPanel.BuildOutput.WriteLine(null).WriteLine("========== Build: succeeded ==========");
+                    MessageBox.Show("Please load some script file first.", "CS-Script");
                 }
-                catch (Exception ex)
+                else
                 {
-                    outputPanel.ShowBuildOutput()
-                               .WriteLine(null)
-                               .WriteLine(ex.Message)
-                               .WriteLine("========== Build: Failed ==========");
+                    OutputPanel outputPanel = Plugin.ShowOutputPanel();
+
+                    outputPanel.BuildOutput.Clear();
+                    outputPanel.BuildOutput.WriteLine("------ Build started: Script: " + Path.GetFileNameWithoutExtension(currentScript) + " ------");
+
+                    try
+                    {
+                        EditItem(currentScript);
+                        Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+
+                        CSSctiptHelper.Build(currentScript);
+
+                        outputPanel.BuildOutput.WriteLine(null).WriteLine("========== Build: succeeded ==========");
+                    }
+                    catch (Exception ex)
+                    {
+                        outputPanel.ShowBuildOutput()
+                                   .WriteLine(null)
+                                   .WriteLine(ex.Message)
+                                   .WriteLine("========== Build: Failed ==========");
+                    }
                 }
             }
         }

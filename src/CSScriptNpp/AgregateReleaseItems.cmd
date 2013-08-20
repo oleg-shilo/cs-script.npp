@@ -1,3 +1,4 @@
+echo off
 md "..\..\bin\Plugins\CSScriptNpp"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp"
 

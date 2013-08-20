@@ -1,4 +1,3 @@
-using CSScriptLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using CSScriptLibrary;
+using CSScriptNpp.Properties;
 
 namespace CSScriptNpp
 {
@@ -43,14 +44,12 @@ namespace CSScriptNpp
             return retval;
         }
 
-        static public void ExecuteAsynch(string scriptFileCmd)
+        static public void ExecuteAsynch(string scriptFile)
         {
             string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
-            string script = "\"" + scriptFileCmd + "\"";
-            string cmd = Environment.ExpandEnvironmentVariables("%comspec%");
-            //args = string.Format("/K \"\"{0}\" /nl \"{1}\"\"", Path.Combine(Plugin.PluginDir, "cscs.exe"), scriptFileCmd);
-            string args = string.Format("/K \"{0} /nl {1}\"", cscs, script);
-            Process.Start(cmd, args);
+            string script = "\"" + scriptFile + "\"";
+            string args = string.Format("{0} /nl {1}", cscs, script);
+            Process.Start(ConsoleHostPath, args);
         }
 
         static public void Execute(string scriptFileCmd, Action<Process> onStart = null, Action<string> onStdOut = null)
@@ -83,6 +82,39 @@ namespace CSScriptNpp
 
             if (output.Length > 0 && output.ToString().StartsWith("Error: Specified file could not be compiled."))
                 throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
+        }
+       
+        static public void Build(string scriptFileCmd)
+        {
+            var p = new Process();
+            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+            p.StartInfo.Arguments = "/nl /ca \"" + scriptFileCmd + "\"";
+
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.CreateNoWindow = true;
+
+            p.Start();
+
+            var output = new StringBuilder();
+
+            bool error = false;
+            string line = null;
+            while (null != (line = p.StandardOutput.ReadLine()))
+            {
+                if (line.ToString().StartsWith("Error: Specified file could not be compiled."))
+                {
+                    error = true;
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(line) && !line.Contains("at csscript.CSExecutor."))
+                    output.AppendLine(line);
+            }
+            p.WaitForExit();
+
+            if (error)
+                throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", "")); //for a better appearance remove CS-Script related stuff
         }
 
         static public void ExecuteDebug(string scriptFileCmd)
@@ -185,6 +217,30 @@ namespace CSScriptNpp
                 }
                 return scriptDir;
             }
+        }
+
+        static string consoleHostPath;
+        static string ConsoleHostPath
+        {
+            get
+            {
+                if (consoleHostPath == null || !File.Exists(consoleHostPath))
+                {
+                    consoleHostPath = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\ConsoleHost.exe");
+                    try
+                    {
+                        var dir = Path.GetDirectoryName(consoleHostPath);
+
+                        if (!Directory.Exists(dir))
+                            Directory.CreateDirectory(dir);
+
+                        File.WriteAllBytes(consoleHostPath, Resources.Resources.ConsoleHost); //always try to override existing to ensure the latest version
+                    }
+                    catch { } //it can be already locked (running)
+                }
+                return consoleHostPath;
+            }
+
         }
     }
 }

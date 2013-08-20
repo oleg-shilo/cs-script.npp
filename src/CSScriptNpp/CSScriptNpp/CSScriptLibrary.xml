@@ -703,6 +703,11 @@
             scenarios the script file is a dependency file.</para>
             </summary>
         </member>
+        <member name="F:csscript.PrecompilationContext.NewIncludes">
+            <summary>
+            Collection of the new 'include' items (dependency source files). 
+            </summary>
+        </member>
         <member name="F:csscript.PrecompilationContext.NewSearchDirs">
             <summary>
             Collection of the assembly and script probing directories to be added to the process search directories.
@@ -2366,6 +2371,7 @@
             </para>
             </summary>
             <param name="assembly">The path to the assembly file.</param>
+            <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
         </member>
         <member name="M:CSScriptLibrary.Evaluator.ReferenceAssembly(System.Reflection.Assembly)">
             <summary>
@@ -2376,6 +2382,16 @@
             </para>
             </summary>
             <param name="assembly">The assembly instance.</param>
+            <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.Evaluator.ReferenceAssemblyByName(System.String)">
+            <summary>
+            References the name of the assembly by its partial name.
+            <para>Note that the referenced assembly will be loaded into the host AppDomain in order to resolve assembly partial name.</para>
+            <para>It is an equivalent of <code>Evaluator.ReferenceAssembly(Assembly.LoadWithPartialName(assemblyPartialName))</code></para>
+            </summary>
+            <param name="assemblyPartialName">Partial name of the assembly.</param>
+            <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
         </member>
         <member name="M:CSScriptLibrary.Evaluator.ReferenceAssemblyOf(System.Object)">
             <summary>
@@ -2386,6 +2402,7 @@
             </para>
             </summary>
             <param name="obj">The object, which belongs to the assembly to be referenced.</param>
+            <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
         </member>
         <member name="M:CSScriptLibrary.Evaluator.ReferenceAssemblyByNamespace(System.String)">
             <summary>
@@ -2401,6 +2418,7 @@
             </summary>
             <param name="code">The script code.</param>
             <param name="searchDirs">The assembly search/probing directories.</param>
+            <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
         </member>
         <member name="M:CSScriptLibrary.Evaluator.ReferenceAssemblyOf``1">
             <summary>
@@ -2411,6 +2429,7 @@
             </para>
             </summary>
             <typeparam name="T">Te type which is implemented in the assembly to be referenced.</typeparam>
+            <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
         </member>
         <member name="M:CSScriptLibrary.Evaluator.LoadCode(System.String)">
              <summary>
