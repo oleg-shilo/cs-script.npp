@@ -2,6 +2,9 @@
 (part of CS-Script Notepad++ tools suite 'CS-Script.Npp')
 --------------------------------------------------------------
 
+Note this plugin embedds C# Intellisense Notepad++ plugin 'CSScriptIntellisesne' (www.csscriptintellisesnse.codeplex.com).
+
+--------------------------------------------------------------
 1. System Requirements
 'CS-Script' requires .NET 4.0 or higher.
 
