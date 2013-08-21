@@ -308,7 +308,8 @@ class Script
                 else
                 {
                     OutputPanel outputPanel = Plugin.ShowOutputPanel();
-
+                    
+                    outputPanel.ShowBuildOutput();
                     outputPanel.BuildOutput.Clear();
                     outputPanel.BuildOutput.WriteLine("------ Build started: Script: " + Path.GetFileNameWithoutExtension(currentScript) + " ------");
 

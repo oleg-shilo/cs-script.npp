@@ -17,8 +17,6 @@ namespace CSScriptNpp
         public IntPtr _scintillaSecondHandle;
     }
 
-    public delegate void NppFuncItemDelegate();
-
     [StructLayout(LayoutKind.Sequential)]
     public struct ShortcutKey
     {
@@ -45,11 +43,13 @@ namespace CSScriptNpp
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string _itemName;
 
-        public NppFuncItemDelegate _pFunc;
+        public Action _pFunc;
         public int _cmdID;
         public bool _init2Check;
         public ShortcutKey _pShKey;
     }
+
+
 
     public class FuncItems : IDisposable
     {

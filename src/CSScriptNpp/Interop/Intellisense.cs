@@ -74,15 +74,25 @@ namespace CSScriptNpp
 
         static Type GetIntellisencePlugin()
         {
-            var intellisenseAsm = AppDomain.CurrentDomain
-                                           .GetAssemblies()
-                                           .Where(asm => asm.FullName.StartsWith("CSScriptIntellisense"))
-                                           .FirstOrDefault();
+            //this implementation allows old "stand-alone" CSScriptIntellisense.dll to be integrated with CSScriptNpp as well as the new embedded CSScriptIntellisense.dll
 
-            if (intellisenseAsm != null)
-                return intellisenseAsm.GetType("CSScriptIntellisense.Plugin");
+            bool useChildPlugin = true;
+            if (useChildPlugin)
+            {
+                return typeof(CSScriptIntellisense.Plugin);
+            }
             else
-                return null;
+            {
+                var intellisenseAsm = AppDomain.CurrentDomain
+                                               .GetAssemblies()
+                                               .Where(asm => asm.FullName.StartsWith("CSScriptIntellisense"))
+                                               .FirstOrDefault();
+
+                if (intellisenseAsm != null)
+                    return intellisenseAsm.GetType("CSScriptIntellisense.Plugin");
+                else
+                    return null;
+            }
         }
     }
 }

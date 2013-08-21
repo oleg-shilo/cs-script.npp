@@ -6,7 +6,7 @@ using Microsoft.Win32;
 
 namespace CSScriptNpp
 {
-    public class Utils
+    public static class Utils
     {
         public static bool IsVS2010PlusAvailable
         {
@@ -19,6 +19,24 @@ namespace CSScriptNpp
                     return (vs2010 != null || vs2012 != null || vs2013 != null);
                 }
             }
+        }
+
+        public static CSScriptNpp.FuncItem ToLocal(this CSScriptIntellisense.FuncItem item)
+        {
+            return new CSScriptNpp.FuncItem
+                {
+                    _cmdID = item._cmdID,
+                    _init2Check = item._init2Check,
+                    _itemName = item._itemName,
+                    _pFunc = item._pFunc,
+                    _pShKey = new ShortcutKey
+                                  {
+                                      _isCtrl = item._pShKey._isCtrl,
+                                      _isAlt = item._pShKey._isAlt,
+                                      _isShift = item._pShKey._isShift,
+                                      _key = item._pShKey._key
+                                  }
+                };
         }
 
         public static Icon NppBitmapToIcon(Bitmap bitmap)

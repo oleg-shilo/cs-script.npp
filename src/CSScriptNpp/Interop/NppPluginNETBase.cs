@@ -14,28 +14,28 @@ namespace CSScriptNpp
         public static NppData NppData;
         public static FuncItems FuncItems = new FuncItems();
 
-        public static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer)
+        public static void SetCommand(int index, string commandName, Action functionPointer)
         {
             SetCommand(index, commandName, functionPointer, new ShortcutKey(), false);
         }
 
-        public static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, ShortcutKey shortcut)
+        public static void SetCommand(int index, string commandName, Action functionPointer, ShortcutKey shortcut)
         {
             SetCommand(index, commandName, functionPointer, shortcut, false);
         }
 
-        public static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, bool checkOnInit)
+        public static void SetCommand(int index, string commandName, Action functionPointer, bool checkOnInit)
         {
             SetCommand(index, commandName, functionPointer, new ShortcutKey(), checkOnInit);
         }
 
-        public static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, ShortcutKey shortcut, bool checkOnInit)
+        public static void SetCommand(int index, string commandName, Action functionPointer, ShortcutKey shortcut, bool checkOnInit)
         {
             FuncItem funcItem = new FuncItem();
             funcItem._cmdID = index;
             funcItem._itemName = commandName;
             if (functionPointer != null)
-                funcItem._pFunc = new NppFuncItemDelegate(functionPointer);
+                funcItem._pFunc = new Action(functionPointer);
             if (shortcut._key != 0)
                 funcItem._pShKey = shortcut;
             funcItem._init2Check = checkOnInit;
@@ -91,7 +91,7 @@ namespace CSScriptNpp
             // the dlgDlg should be the index of funcItem where the current function pointer is,
             //in this case is 15. so the initial value of funcItem[15]._cmdID - not the updated internal one !
             _nppTbData.dlgID = scriptId;
-            // define the default docking behaviour
+            // define the default docking behavior
             _nppTbData.uMask = tbMsg;
             _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
             _nppTbData.hIconTab = (uint)tbIcon.Handle;

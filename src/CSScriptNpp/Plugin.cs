@@ -1,7 +1,4 @@
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace CSScriptNpp
@@ -14,9 +11,6 @@ namespace CSScriptNpp
 
         static internal void CommandMenuInit()
         {
-            //System.Diagnostics.Debug.Assert(false);
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-
             int index = 0;
 
             SetCommand(projectPanelId = index++, "Build", Build, new ShortcutKey(true, false, true, Keys.B));
@@ -25,11 +19,22 @@ namespace CSScriptNpp
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
             SetCommand(outputPanelId = index++, "Output Panel", DoOutputPanel, Config.Instance.ShowOutputPanel);
             SetCommand(index++, "---", null);
+            LoadIntellisenseCommands(ref index);
             SetCommand(index++, "About", ShowAbout);
 
             KeyInterceptor.Instance.Install();
             KeyInterceptor.Instance.Add(Keys.F5);
             KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
+        }
+
+        //must be in a separate method to allow proper assembly probing
+        static void LoadIntellisenseCommands(ref int cmdIndex)
+        {
+            CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
+                 (index, name, handler, isCtrl, isAlt, isShift, key) =>
+                 {
+                     Plugin.SetCommand(index, name, handler, new ShortcutKey(isCtrl, isAlt, isShift, key));
+                 });
         }
 
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
@@ -70,24 +75,34 @@ namespace CSScriptNpp
 
         static public void Build()
         {
-            if (Plugin.ProjectPanel == null)
-                DoProjectPanel();
-            Plugin.ProjectPanel.Build();
+            if (runningScript == null)
+            {
+                if (Plugin.ProjectPanel == null)
+                    DoProjectPanel();
+                Plugin.ProjectPanel.Build();
+            }
         }
 
         static public void Run()
         {
-            if (Plugin.ProjectPanel == null)
-                DoProjectPanel();
-            Plugin.ProjectPanel.Run();
+            if (runningScript == null)
+            {
+                if (Plugin.ProjectPanel == null)
+                    DoProjectPanel();
+                Plugin.ProjectPanel.Run();
+            }
         }
 
         static public void RunAsExternal()
         {
-            if (Plugin.ProjectPanel == null)
-                DoProjectPanel();
-            Plugin.ProjectPanel.RunAsExternal();
+            if (runningScript == null)
+            {
+                if (Plugin.ProjectPanel == null)
+                    DoProjectPanel();
+                Plugin.ProjectPanel.RunAsExternal();
+            }
         }
+
         static public OutputPanel ShowOutputPanel()
         {
             if (Plugin.OutputPanel == null)
@@ -100,6 +115,7 @@ namespace CSScriptNpp
         }
 
         static Process runningScript;
+
         public static Process RunningScript
         {
             get
@@ -121,7 +137,7 @@ namespace CSScriptNpp
                 Plugin.OutputPanel.localDebugPreffix = runningScript.Id.ToString() + ": ";
         }
 
-        static internal void InitView()
+        static internal void OnNppReady()
         {
             if (Config.Instance.ShowProjectPanel)
                 DoProjectPanel();
@@ -138,26 +154,13 @@ namespace CSScriptNpp
             OutputPanel.Clean();
         }
 
-        static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            try
-            {
-                if (args.Name.StartsWith("CSScriptLibrary,"))
-                    return Assembly.LoadFrom(Path.Combine(rootDir, @"CSScriptNpp\CSScriptLibrary.dll"));
-                else if (args.Name == Assembly.GetExecutingAssembly().FullName)
-                    return Assembly.GetExecutingAssembly();
-            }
-            catch { }
-            return null;
-        }
-
         public static void OnNotification(SCNotification data)
         {
         }
 
-        public static void RefreshToolbarImages()
+        public static void OnToolbarUpdate()
         {
+            Plugin.FuncItems.RefreshItems();
             SetToolbarImage(Resources.Resources.css_logo_16x16_tb, projectPanelId);
         }
     }

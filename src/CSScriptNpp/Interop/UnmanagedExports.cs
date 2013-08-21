@@ -15,8 +15,26 @@ namespace CSScriptNpp
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void setInfo(NppData notepadPlusData)
         {
+            //System.Diagnostics.Debug.Assert(false);
+            Bootstrapper.Init();
+
             Plugin.NppData = notepadPlusData;
-            Plugin.CommandMenuInit();
+
+            InitPlugin();
+        }
+
+        static void InitPlugin()
+        {
+            CSScriptIntellisense.Plugin.NppData._nppHandle = Plugin.NppData._nppHandle;
+            CSScriptIntellisense.Plugin.NppData._scintillaMainHandle = Plugin.NppData._scintillaMainHandle;
+            CSScriptIntellisense.Plugin.NppData._scintillaSecondHandle = Plugin.NppData._scintillaSecondHandle;
+
+            CSScriptNpp.Plugin.CommandMenuInit(); //this will also call CSScriptIntellisense.Plugin.CommandMenuInit
+
+            foreach (var item in CSScriptIntellisense.Plugin.FuncItems.Items)
+                Plugin.FuncItems.Add(item.ToLocal());
+
+            CSScriptIntellisense.Plugin.FuncItems.Items.Clear();
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
@@ -46,22 +64,28 @@ namespace CSScriptNpp
         static void beNotified(IntPtr notifyCode)
         {
             SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
-            if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
+            if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
             {
-                Plugin.FuncItems.RefreshItems();
-                Plugin.RefreshToolbarImages();
+                CSScriptIntellisense.Plugin.OnNppReady();
+                CSScriptNpp.Plugin.OnNppReady();
+            }
+            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
+            {
+                CSScriptNpp.Plugin.OnToolbarUpdate();
             }
             else if (nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
             {
+                CSScriptIntellisense.Plugin.OnCharTyped();
             }
-            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
+            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
             {
-                Plugin.InitView();
+                CSScriptIntellisense.Plugin.OnCurrentFileChanegd();
             }
             else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
             {
                 Marshal.FreeHGlobal(_ptrPluginName);
-                Plugin.CleanUp();
+
+                CSScriptNpp.Plugin.CleanUp();
             }
 
             Plugin.OnNotification(nc);
