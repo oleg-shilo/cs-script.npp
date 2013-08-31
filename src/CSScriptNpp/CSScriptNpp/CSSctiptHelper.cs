@@ -48,7 +48,7 @@ namespace CSScriptNpp
         {
             string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
             string script = "\"" + scriptFile + "\"";
-            string args = string.Format("{0} /nl {1}", cscs, script);
+            string args = string.Format("{0} /nl /l {1}", cscs, script);
             Process.Start(ConsoleHostPath, args);
         }
 
@@ -56,7 +56,7 @@ namespace CSScriptNpp
         {
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /dbg \"" + scriptFileCmd + "\"";
+            p.StartInfo.Arguments = "/nl /l /dbg \"" + scriptFileCmd + "\"";
 
             if (onStdOut != null)
             {
@@ -119,7 +119,7 @@ namespace CSScriptNpp
 
         static public void ExecuteDebug(string scriptFileCmd)
         {
-            Process.Start("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /dbg \"" + scriptFileCmd + "\" //x\"");
+            Process.Start("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg \"" + scriptFileCmd + "\" //x\"");
         }
 
         static public void OpenAsVSProjectFor(string script)
