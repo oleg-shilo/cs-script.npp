@@ -57,6 +57,7 @@ namespace CSScriptNpp
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
             p.StartInfo.Arguments = "/nl /l /dbg \"" + scriptFileCmd + "\"";
+            //p.StartInfo.WorkingDirectory = Path.GetDirectoryName(scriptFileCmd);
 
             if (onStdOut != null)
             {
@@ -83,16 +84,16 @@ namespace CSScriptNpp
             if (output.Length > 0 && output.ToString().StartsWith("Error: Specified file could not be compiled."))
                 throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
         }
-       
+
         static public void Build(string scriptFileCmd)
         {
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
             p.StartInfo.Arguments = "/nl /ca \"" + scriptFileCmd + "\"";
 
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.CreateNoWindow = true;
 
             p.Start();
 

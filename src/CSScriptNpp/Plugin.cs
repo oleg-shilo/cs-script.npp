@@ -11,6 +11,8 @@ namespace CSScriptNpp
 
         static internal void CommandMenuInit()
         {
+            Debug.Assert(false);
+
             int index = 0;
 
             SetCommand(projectPanelId = index++, "Build", Build, new ShortcutKey(true, false, true, Keys.B));

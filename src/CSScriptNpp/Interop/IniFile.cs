@@ -27,7 +27,11 @@ namespace CSScriptNpp
 
         public void SetValue<T>(string section, string key, T value)
         {
-            WritePrivateProfileString(section, key, value.ToString(), file);
+            try
+            {
+                WritePrivateProfileString(section, key, value.ToString(), file);
+            }
+            catch { }
         }
 
         public T GetValue<T>(string section, string key, T defaultValue, int size = 255)
