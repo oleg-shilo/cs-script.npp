@@ -22,6 +22,7 @@ namespace CSScriptNpp
             Open();
         }
 
+        public bool ClasslessScriptByDefault = false;
         public bool InterceptConsole = false;
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
@@ -36,6 +37,7 @@ namespace CSScriptNpp
             SetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
             SetValue("settings", "InterceptConsole", InterceptConsole);
             SetValue("settings", "LocalDebug", LocalDebug);
+            SetValue("settings", "ClasslessScriptByDefault", ClasslessScriptByDefault);
             SetValue("settings", "IntegratewithIntellisense", IntegratewithIntellisense);
         }
 
@@ -46,6 +48,7 @@ namespace CSScriptNpp
             OutputPanelCapacity = GetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
             InterceptConsole = GetValue("settings", "InterceptConsole", InterceptConsole);
             LocalDebug = GetValue("settings", "LocalDebug", LocalDebug);
+            ClasslessScriptByDefault = GetValue("settings", "ClasslessScriptByDefault", ClasslessScriptByDefault);
             IntegratewithIntellisense = GetValue("settings", "IntegratewithIntellisense", IntegratewithIntellisense);
         }
     }

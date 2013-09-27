@@ -719,6 +719,28 @@
             Collection of the process assembly and script probing directories.
             </summary>
         </member>
+        <member name="T:csscript.AutoclassGenerator">
+            <summary>
+            AutoclassGenerator to be used by external applications for generating the auto-class from the classless scripts
+            </summary>
+        </member>
+        <member name="M:csscript.AutoclassGenerator.Process(System.String,System.Int32@,System.Int32@)">
+            <summary>
+            Processes the specified code.
+            </summary>
+            <param name="code">The code.</param>
+            <param name="injectionPos">The injection position.</param>
+            <param name="injectionLength">Length of the injection.</param>
+            <returns></returns>
+        </member>
+        <member name="M:csscript.AutoclassGenerator.Process(System.String,System.Int32@)">
+            <summary>
+            Processes the specified code.
+            </summary>
+            <param name="code">The code.</param>
+            <param name="position">The position.</param>
+            <returns></returns>
+        </member>
         <member name="T:csscript.Settings">
             <summary>
             Settings is an class that holds CS-Script application settings.

@@ -45,25 +45,29 @@ namespace CSScriptNpp
 
                 string scriptName = NormalizeScriptName(input.ScriptName ?? "New Script");
 
-                var lastScriptFile = Directory.GetFiles(scriptDir, scriptName + "*.cs")
-                                              .OrderBy(x => x)
-                                              .LastOrDefault();
-                int index = -1;
-                if (lastScriptFile != null)
-                {
-                    int.TryParse(Path.GetFileNameWithoutExtension(lastScriptFile).Substring(scriptName.Length), out index);
-                }
+                int index = Directory.GetFiles(scriptDir, scriptName + "*.cs").Length;
 
                 string newScript = Path.Combine(scriptDir, scriptName + ".cs");
                 if (index != -1)
                 {
-                    index++;
-                    newScript = Path.Combine(scriptDir, string.Format("{0}{1}.cs", scriptName, index));
+                    int count = 0;
+                    do
+                    {
+                        index++;
+                        count++;
+                        newScript = Path.Combine(scriptDir, string.Format("{0}{1}.cs", scriptName, index));
+                        if (count > 10)
+                        {
+                            MessageBox.Show("Too many script files with the similar name already exists.\nPlease specify a different file name or clean up some existing scripts.", "CS-Script");
+                        }
+                    }
+                    while (File.Exists(newScript));
                 }
 
+                string scriptCode = (Config.Instance.ClasslessScriptByDefault ? defaultClasslessScriptCode : defaultScriptCode);
                 if (!File.Exists(newScript))
                 {
-                    File.WriteAllText(newScript, defaultScriptCode);
+                    File.WriteAllText(newScript, scriptCode);
                     Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, newScript);
                     Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
 
@@ -73,7 +77,7 @@ namespace CSScriptNpp
                 {
                     Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_NEW);
                     Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, defaultScriptCode.Length, defaultScriptCode);
+                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, scriptCode.Length, scriptCode);
 
                     //for some reason setting the lexer does not work
                     int SCLEX_CPP = 3;
@@ -119,6 +123,14 @@ class Script
 	{
         Console.WriteLine(""Hello World!"");
 	}
+}";
+        const string defaultClasslessScriptCode =
+@"//css_args /ac
+using System;
+
+void main(string[] args)
+{
+    Console.WriteLine(""Hello World!"");
 }";
 
         void synchBtn_Click(object sender, EventArgs e)
@@ -283,7 +295,7 @@ class Script
         }
 
         void Job()
-		{
+        {
             try
             {
                 CSScript.Compile(currentScript, null, false);
@@ -292,7 +304,7 @@ class Script
             {
                 Environment.SetEnvironmentVariable("CSS_COMPILE_ERROR", ex.Message);
             }
-		}
+        }
 
         public void Build()
         {
@@ -308,7 +320,7 @@ class Script
                 else
                 {
                     OutputPanel outputPanel = Plugin.ShowOutputPanel();
-                    
+
                     outputPanel.ShowBuildOutput();
                     outputPanel.BuildOutput.Clear();
                     outputPanel.BuildOutput.WriteLine("------ Build started: Script: " + Path.GetFileNameWithoutExtension(currentScript) + " ------");

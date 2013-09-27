@@ -11,7 +11,7 @@ namespace CSScriptNpp
 
         static internal void CommandMenuInit()
         {
-            Debug.Assert(false);
+            //Debug.Assert(false);
 
             int index = 0;
 
