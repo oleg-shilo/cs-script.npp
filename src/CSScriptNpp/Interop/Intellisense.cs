@@ -22,15 +22,16 @@ namespace CSScriptNpp
                 ensureCurrentFileParsed.Invoke(null, new object[0]);
         }
 
-        static void EnsureIntellisenseIntegration()
+        public static void EnsureIntellisenseIntegration()
         {
-            if (Config.Instance.IntegratewithIntellisense)
+            //Debug.Assert(false);
+            if (Config.Instance.IntegrateWithIntellisense)
             {
                 if (!integrated)
                 {
                     integrated = true;
 
-                    Type plugin = GetIntellisencePlugin();
+                    Type plugin = GetIntellisensePlugin();
                     
                     if (plugin != null)
                     {
@@ -45,6 +46,10 @@ namespace CSScriptNpp
                         };
                         routine.SetValue(null, getCurrentScript);
 
+                        routine = plugin.GetField("DisplayInOutputPanel");
+                        Action<string> displayInOutputPanel = OutputPanel.DisplayInGenericOutputPanel;
+                        routine.SetValue(null, displayInOutputPanel);
+
                         ensureCurrentFileParsed = plugin.GetMethod("EnsureCurrentFileParsed");
                     }
                 }
@@ -57,7 +62,7 @@ namespace CSScriptNpp
 
                     ensureCurrentFileParsed = null;
 
-                    Type plugin = GetIntellisencePlugin();
+                    Type plugin = GetIntellisensePlugin();
                     
                     if (plugin != null)
                     {
@@ -67,12 +72,14 @@ namespace CSScriptNpp
                             Func<string> getCurrentScript = Npp.GetCurrentFile; //this is a default CSScriptIntellisense implementation
                             routine.SetValue(null, getCurrentScript);
                         }
+
+                        //Just ignoring DisplayInOutputPanel as the default implementation is not known (lost)
                     }
                 }
             }
         }
 
-        static Type GetIntellisencePlugin()
+        static Type GetIntellisensePlugin()
         {
             //this implementation allows old "stand-alone" CSScriptIntellisense.dll to be integrated with CSScriptNpp as well as the new embedded CSScriptIntellisense.dll
 

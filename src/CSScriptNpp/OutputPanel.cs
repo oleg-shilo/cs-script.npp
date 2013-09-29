@@ -3,7 +3,6 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,9 +13,25 @@ namespace CSScriptNpp
         public const string BuildOutputName = "Build";
         public const string ConsoleOutputName = "Console";
         public const string DebugOutputName = "Debug";
+        public const string GeneralOutputName = "General";
+
+        static public void DisplayInGenericOutputPanel(string text)
+        {
+            if (instance != null)
+            {
+                var output = instance.GetOutputType(GeneralOutputName);
+                instance.Show(output);
+                output.Clear();
+                output.Write(text);
+            }
+        }
+
+        static OutputPanel instance;
 
         public OutputPanel()
         {
+            instance = this;
+
             InitializeComponent();
 
             var cb = new CheckBox();
@@ -28,6 +43,7 @@ namespace CSScriptNpp
             AddOutputType(BuildOutputName);
             AddOutputType(DebugOutputName);
             AddOutputType(ConsoleOutputName);
+            AddOutputType(GeneralOutputName);
         }
 
         public Output GetOutputType(string name)
@@ -93,10 +109,12 @@ namespace CSScriptNpp
         {
             return Show(BuildOutput);
         }
+
         public Output ShowDebugOutput()
         {
             return Show(DebugOutput);
         }
+
         public Output ShowConsoleOutput()
         {
             return Show(ConsoleOutput);
@@ -218,6 +236,7 @@ namespace CSScriptNpp
         }
 
         static string dbMonPath;
+
         static string DbMonPath
         {
             get
@@ -228,7 +247,7 @@ namespace CSScriptNpp
                     try
                     {
                         var dir = Path.GetDirectoryName(dbMonPath);
-                        
+
                         if (!Directory.Exists(dir))
                             Directory.CreateDirectory(dir);
 
@@ -238,7 +257,6 @@ namespace CSScriptNpp
                 }
                 return dbMonPath;
             }
-
         }
 
         private void DebugViewBtn_Click(object sender, EventArgs e)
@@ -326,6 +344,7 @@ namespace CSScriptNpp
         }
 
         bool initialised = false;
+
         private void OutputPanel_VisibleChanged(object sender, EventArgs e)
         {
             if (!initialised && this.Visible)
@@ -385,6 +404,7 @@ namespace CSScriptNpp
     {
         public string Name;
         public Output Output;
+
         public override string ToString()
         {
             return Name;
@@ -394,6 +414,7 @@ namespace CSScriptNpp
     public class Output
     {
         TextBox control;
+
         public bool IsEmpty
         {
             get
@@ -406,6 +427,7 @@ namespace CSScriptNpp
                 return retval;
             }
         }
+
         public Output(TextBox control)
         {
             this.control = control;
@@ -448,7 +470,7 @@ namespace CSScriptNpp
                {
                    if (string.IsNullOrEmpty(text))
                        control.Text += Environment.NewLine;
-                   else if(args.Length == 0)
+                   else if (args.Length == 0)
                        control.Text += text + Environment.NewLine;
                    else
                        control.Text += string.Format(text, args) + Environment.NewLine;
@@ -465,7 +487,7 @@ namespace CSScriptNpp
                 {
                     if (!string.IsNullOrEmpty(text))
                     {
-                        if(args.Length == 0)
+                        if (args.Length == 0)
                             control.Text += text + Environment.NewLine;
                         else
                             control.Text += string.Format(text, args);

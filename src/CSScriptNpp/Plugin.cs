@@ -146,6 +146,8 @@ namespace CSScriptNpp
 
             if (Config.Instance.ShowOutputPanel)
                 DoOutputPanel();
+
+            Intellisense.EnsureIntellisenseIntegration();
         }
 
         static internal void CleanUp()

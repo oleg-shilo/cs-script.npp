@@ -27,7 +27,7 @@ namespace CSScriptNpp
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
         public int OutputPanelCapacity = 10000; //num of characters
-        public bool IntegratewithIntellisense = true;
+        public bool IntegrateWithIntellisense = true;
         public bool LocalDebug = true;
 
         public void Save()
@@ -38,7 +38,7 @@ namespace CSScriptNpp
             SetValue("settings", "InterceptConsole", InterceptConsole);
             SetValue("settings", "LocalDebug", LocalDebug);
             SetValue("settings", "ClasslessScriptByDefault", ClasslessScriptByDefault);
-            SetValue("settings", "IntegratewithIntellisense", IntegratewithIntellisense);
+            SetValue("settings", "IntegrateWithIntellisense", IntegrateWithIntellisense);
         }
 
         public void Open()
@@ -49,7 +49,7 @@ namespace CSScriptNpp
             InterceptConsole = GetValue("settings", "InterceptConsole", InterceptConsole);
             LocalDebug = GetValue("settings", "LocalDebug", LocalDebug);
             ClasslessScriptByDefault = GetValue("settings", "ClasslessScriptByDefault", ClasslessScriptByDefault);
-            IntegratewithIntellisense = GetValue("settings", "IntegratewithIntellisense", IntegratewithIntellisense);
+            IntegrateWithIntellisense = GetValue("settings", "IntegrateWithIntellisense", IntegrateWithIntellisense);
         }
     }
 }
