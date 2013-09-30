@@ -181,7 +181,8 @@ void main(string[] args)
                         {
                             Plugin.ShowOutputPanel()
                                   .ShowBuildOutput()
-                                  .WriteLine(e.Message);
+                                  .WriteLine(e.Message)
+                                  .SetCaretAtStart();
                         }
                     }
                     else
@@ -210,7 +211,8 @@ void main(string[] args)
                             catch (Exception e)
                             {
                                 outputPanel.ShowBuildOutput()
-                                           .WriteLine(e.Message);
+                                           .WriteLine(e.Message)
+                                           .SetCaretAtStart();
                             }
                             finally
                             {
@@ -227,7 +229,8 @@ void main(string[] args)
                 {
                     Plugin.ShowOutputPanel()
                           .ShowBuildOutput()
-                          .WriteLine(ex.Message);
+                          .WriteLine(ex.Message)
+                          .SetCaretAtStart();
                 }
             }
         }
@@ -332,14 +335,17 @@ void main(string[] args)
 
                         CSSctiptHelper.Build(currentScript);
 
-                        outputPanel.BuildOutput.WriteLine(null).WriteLine("========== Build: succeeded ==========");
+                        outputPanel.BuildOutput.WriteLine(null)
+                                               .WriteLine("========== Build: succeeded ==========")
+                                               .SetCaretAtStart();
                     }
                     catch (Exception ex)
                     {
                         outputPanel.ShowBuildOutput()
                                    .WriteLine(null)
                                    .WriteLine(ex.Message)
-                                   .WriteLine("========== Build: Failed ==========");
+                                   .WriteLine("========== Build: Failed ==========")
+                                   .SetCaretAtStart();
                     }
                 }
             }

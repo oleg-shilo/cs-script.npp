@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using Microsoft.Win32;
+using System.Text.RegularExpressions;
 
 namespace CSScriptNpp
 {
@@ -19,6 +20,28 @@ namespace CSScriptNpp
                     return (vs2010 != null || vs2012 != null || vs2013 != null);
                 }
             }
+        }
+
+        public static bool ParseAsFileReference(this string text, out string file, out int line, out int column)
+        {
+            line = -1;
+            column = -1;
+            file = "";
+            //@"c:\Users\osh\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\New Script2.g.cs(11,1): error";
+            var match = Regex.Match(text, @"\(\d+,\d+\):\s+");
+            if (match.Success)
+            {
+                //"(11,1):"
+                string[] parts = match.Value.Substring(1, match.Value.Length - 4).Split(',');
+                if (!int.TryParse(parts[0], out line))
+                    return false;
+                else if (!int.TryParse(parts[1], out column))
+                    return false;
+                else
+                    file = text.Substring(0, match.Index).Trim();
+                return true;
+            }
+            return false;
         }
 
         public static CSScriptNpp.FuncItem ToLocal(this CSScriptIntellisense.FuncItem item)

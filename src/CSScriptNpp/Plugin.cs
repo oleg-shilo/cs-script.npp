@@ -3,6 +3,12 @@ using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
+    /*todo:
+        - show settings ProjectPanel button
+        - show scripts directory ProjectPanel button
+        - auto-generated class must be readonly
+     */
+
     public partial class Plugin
     {
         public const string PluginName = "CS-Script";
@@ -11,8 +17,6 @@ namespace CSScriptNpp
 
         static internal void CommandMenuInit()
         {
-            //Debug.Assert(false);
-
             int index = 0;
 
             SetCommand(projectPanelId = index++, "Build", Build, new ShortcutKey(true, false, true, Keys.B));
@@ -26,6 +30,10 @@ namespace CSScriptNpp
 
             KeyInterceptor.Instance.Install();
             KeyInterceptor.Instance.Add(Keys.F5);
+            KeyInterceptor.Instance.Add(Keys.F4);
+            if (Config.Instance.BuildOnF7)
+                KeyInterceptor.Instance.Add(Keys.F7);
+
             KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
         }
 
@@ -52,6 +60,16 @@ namespace CSScriptNpp
                     handled = true;
                     Run();
                 }
+            }
+            else if (Config.Instance.BuildOnF7 && key == Keys.F7)
+            {
+                handled = true;
+                Build();
+            }
+            else if (key == Keys.F4)
+            {
+                handled = true;
+                OutputPanel.TryNavigateToFileReference(!KeyInterceptor.IsPressed(Keys.ControlKey));
             }
         }
 

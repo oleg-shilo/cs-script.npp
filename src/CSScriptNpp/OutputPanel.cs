@@ -26,6 +26,38 @@ namespace CSScriptNpp
             }
         }
 
+        public void TryNavigateToFileReference(bool toNext)
+        {
+            int line;
+            int column;
+            string file;
+
+            Output output = GetVisibleOutput();
+
+            int currentPos = -1;
+            int prevPos = -1;
+
+            Func<string> selectNextLineInOutput = null;
+
+            if (toNext)
+                selectNextLineInOutput = () => output.MoveToNextLine(out currentPos);
+            else
+                selectNextLineInOutput = () => output.MoveToPrevLine(out currentPos);
+
+            string lineText = selectNextLineInOutput();
+            do
+            {
+                prevPos = currentPos;
+                if (lineText != null && lineText.ParseAsFileReference(out file, out line, out column))
+                {
+                    this.NavigateToFileContent(file, line, column);
+                    return;
+                }
+                lineText = selectNextLineInOutput();
+            }
+            while (lineText != null && prevPos != currentPos);
+        }
+
         static OutputPanel instance;
 
         public OutputPanel()
@@ -92,19 +124,6 @@ namespace CSScriptNpp
             return retval;
         }
 
-        public Output GetCurrentShow()
-        {
-            Output retval = null;
-
-            foreach (OutputInfo item in outputType.Items)
-            {
-                if (item.Output.Visible)
-                    retval = item.Output;
-            }
-
-            return retval;
-        }
-
         public Output ShowBuildOutput()
         {
             return Show(BuildOutput);
@@ -156,6 +175,7 @@ namespace CSScriptNpp
         {
             var textBox = new TextBox();
             textBox.Multiline = true;
+            textBox.HideSelection = false;
             textBox.Location = new Point(0, toolStrip1.Height);
             textBox.Size = new Size(this.ClientRectangle.Width, this.ClientRectangle.Height - toolStrip1.Height);
             textBox.ScrollBars = ScrollBars.Vertical;
@@ -368,6 +388,21 @@ namespace CSScriptNpp
             NavigateToFileContent((TextBox)sender);
         }
 
+        void NavigateToFileContent(string file, int line, int column)
+        {
+            try
+            {
+                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, file);
+                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, line - 1, 0); //SCI lines are 0-based
+
+                //at this point the caret is at the most left position (col=0)
+                int currentPos = (int)Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOPOS, currentPos + column - 1, 0); //SCI columns are 0-based
+            }
+            catch { }
+        }
+
         void NavigateToFileContent(TextBox textBox)
         {
             try
@@ -377,24 +412,16 @@ namespace CSScriptNpp
                 int endLinePosition = textBox.Text.IndexOf("\n", startLinePosition + 1);
                 textBox.SelectionStart = startLinePosition + 1;
                 textBox.SelectionLength = endLinePosition - startLinePosition;
-                int pos = textBox.SelectedText.IndexOf(":", 3);
 
-                string fileSpec = textBox.SelectedText.Substring(0, pos);
-                pos = fileSpec.LastIndexOf("(");
-                string file = fileSpec.Substring(0, pos);
-                string caretSpec = fileSpec.Substring(pos + 1, fileSpec.Length - (pos + 1) - 1);
+                string lineText = textBox.SelectedText;
+                int line;
+                int column;
+                string file;
 
-                string[] parts = caretSpec.Split(',');
-                string line = parts[0];
-                string column = parts[1];
-
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, file);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, int.Parse(line) - 1, 0); //SCI lines are 0-based
-
-                //at this point the caret is at the most left position (col=0)
-                int currentPos = (int)Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETCURRENTPOS, 0, 0);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOPOS, currentPos + int.Parse(column) - 1, 0); //SCI columns are 0-based
+                if (lineText != null && lineText.ParseAsFileReference(out file, out line, out column))
+                {
+                    this.NavigateToFileContent(file, line, column);
+                }
             }
             catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
         }
@@ -428,9 +455,87 @@ namespace CSScriptNpp
             }
         }
 
+        public Output SetCaretAtStart()
+        {
+            control.SelectionStart = 0;
+            control.SelectionLength = 0;
+            return this;
+        }
+
+        public void SelectLineAtPosition(int pos)
+        {
+            int lineStart = control.Text.LastIndexOf(Environment.NewLine, pos);
+            int lineEnd = control.Text.IndexOf(Environment.NewLine, pos);
+
+            if (lineStart == -1)
+                lineStart = 0;
+            else
+                lineStart += Environment.NewLine.Length;
+
+            if (lineEnd == -1)
+                lineEnd = control.Text.Length;
+
+            control.SelectionStart = lineStart;
+            control.SelectionLength = lineEnd - lineStart;
+        }
+
+        public string MoveToNextLine(out int pos)
+        {
+            pos = -1;
+
+            if (string.IsNullOrEmpty(control.Text))
+                return null;
+
+            control.SelectionStart += control.SelectionLength; //clear current selection
+            control.SelectionLength = 0;
+
+            pos = control.Text.IndexOf(Environment.NewLine, control.SelectionStart);
+            if (pos == -1)
+            {
+                //the caret might be at the last line 
+                //so select the first line
+                SelectLineAtPosition(0);
+                pos = control.SelectionStart;
+                return control.SelectedText;
+            }
+
+            //move caret to the next line
+            pos = pos + Environment.NewLine.Length;
+            SelectLineAtPosition(pos);
+            pos = control.SelectionStart;
+            return control.SelectedText;
+        }
+
+        public string MoveToPrevLine(out int pos)
+        {
+            pos = -1;
+
+            if (string.IsNullOrEmpty(control.Text))
+                return null;
+
+            control.SelectionLength = 0; //clear current selection
+
+            pos = control.Text.LastIndexOf(Environment.NewLine, control.SelectionStart);
+            if (pos == -1)
+            {
+                //the caret might be at the first line 
+                //so select the last line
+                SelectLineAtPosition(control.Text.Length);
+                pos = control.SelectionStart;
+                return control.SelectedText;
+            }
+
+            //move caret to the prev line
+            pos = pos - Environment.NewLine.Length;
+            SelectLineAtPosition(pos);
+            pos = control.SelectionStart;
+            return control.SelectedText;
+        }
+
         public Output(TextBox control)
         {
             this.control = control;
+            this.control.HideSelection = false;
         }
 
         internal bool Visible
