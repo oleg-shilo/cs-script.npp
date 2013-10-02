@@ -14,7 +14,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyDescription("Notepad++ plugin for CS-Script integration. \r\n"+
                                "It implements a real C# intellisense solution based on CS-Script and ICSharpCode.NRefactory/Mono.Cecil. \r\n"+
-                               "It also allows loading, executing and modifying C# scripts in a way very similar to the Visual Studio C# projects support.")]
+                               "It also allows loading, executing and modifying C# scripts in a way very similar to the Visual Studio C# projects support.\r\n"+
+                               "This includes referencing assemblies and other scripts, code formatting, adding missing namespaces and intercepting Debug and Console output.")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

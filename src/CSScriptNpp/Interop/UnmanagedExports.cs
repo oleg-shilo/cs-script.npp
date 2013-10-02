@@ -75,7 +75,7 @@ namespace CSScriptNpp
             }
             else if (nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
             {
-                CSScriptIntellisense.Plugin.OnCharTyped();
+                CSScriptIntellisense.Plugin.OnCharTyped((char)nc.ch);
             }
             else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
             {
