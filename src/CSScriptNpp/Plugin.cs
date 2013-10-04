@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -35,7 +36,16 @@ namespace CSScriptNpp
                 KeyInterceptor.Instance.Add(Keys.F7);
 
             KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
+
+            //setup dependency injection, which may be overwritten by other plugins (e.g. NppScripts)
+            Plugin.RunScript = () => Plugin.ProjectPanel.Run();
+            Plugin.RunScriptAsExternal = () => Plugin.ProjectPanel.RunAsExternal();
+            Plugin.DebugScript = () => Plugin.ProjectPanel.Debug();
         }
+
+        static public Action RunScript;
+        static public Action RunScriptAsExternal;
+        static public Action DebugScript;
 
         //must be in a separate method to allow proper assembly probing
         static void LoadIntellisenseCommands(ref int cmdIndex)
@@ -109,7 +119,7 @@ namespace CSScriptNpp
             {
                 if (Plugin.ProjectPanel == null)
                     DoProjectPanel();
-                Plugin.ProjectPanel.Run();
+                Plugin.RunScript();
             }
         }
 
@@ -119,7 +129,7 @@ namespace CSScriptNpp
             {
                 if (Plugin.ProjectPanel == null)
                     DoProjectPanel();
-                Plugin.ProjectPanel.RunAsExternal();
+                Plugin.RunScriptAsExternal();
             }
         }
 

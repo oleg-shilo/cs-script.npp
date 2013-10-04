@@ -19,6 +19,30 @@ namespace CSScriptNpp
 
     public class CSSctiptHelper
     {
+        static string nppScriptsDir;
+        static string NppScriptsDir
+        {
+            get
+            {
+                if (nppScriptsDir == null)
+                    nppScriptsDir = AppDomain.CurrentDomain.GetAssemblies()
+                                                           .Where(x => x.FullName.StartsWith("NppScripts,"))
+                                                           .Select(x => Path.GetDirectoryName(x.Location))
+                                                           .FirstOrDefault();
+                return nppScriptsDir;
+            }
+        }
+
+        static string GenerateProbingDirArg()
+        {
+            string probingDirArg = "";
+
+            if (NppScriptsDir != null)
+                probingDirArg = "\"/dir:" + NppScriptsDir + "\"";
+
+            return probingDirArg;
+        }
+
         static public Project GenerateProjectFor(string script)
         {
             var retval = new Project { PrimaryScript = script };
@@ -44,19 +68,13 @@ namespace CSScriptNpp
             return retval;
         }
 
-        static public void ExecuteAsynch(string scriptFile)
-        {
-            string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
-            string script = "\"" + scriptFile + "\"";
-            string args = string.Format("{0} /nl /l {1}", cscs, script);
-            Process.Start(ConsoleHostPath, args);
-        }
 
         static public void Execute(string scriptFileCmd, Action<Process> onStart = null, Action<string> onStdOut = null)
         {
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /l /dbg \"" + scriptFileCmd + "\"";
+            p.StartInfo.Arguments = "/nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
+
             //p.StartInfo.WorkingDirectory = Path.GetDirectoryName(scriptFileCmd);
 
             if (onStdOut != null)
@@ -89,7 +107,7 @@ namespace CSScriptNpp
         {
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /ca \"" + scriptFileCmd + "\"";
+            p.StartInfo.Arguments = "/nl /ca " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
 
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
@@ -118,9 +136,17 @@ namespace CSScriptNpp
                 throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", "")); //for a better appearance remove CS-Script related stuff
         }
 
+        static public void ExecuteAsynch(string scriptFile)
+        {
+            string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
+            string script = "\"" + scriptFile + "\"";
+            string args = string.Format("{0} /nl /l {1} {2}", cscs, GenerateProbingDirArg(), script);
+            Process.Start(ConsoleHostPath, args);
+        }
+
         static public void ExecuteDebug(string scriptFileCmd)
         {
-            Process.Start("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg \"" + scriptFileCmd + "\" //x\"");
+            Process.Start("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\" //x\"");
         }
 
         static public void OpenAsVSProjectFor(string script)
@@ -129,6 +155,9 @@ namespace CSScriptNpp
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
+
+            if (NppScriptsDir != null)
+                searchDirs.Add(NppScriptsDir);
 
             IList<string> sourceFiles = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
             sourceFiles.Add(script);

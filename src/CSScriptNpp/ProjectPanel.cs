@@ -22,7 +22,7 @@ namespace CSScriptNpp
 
         void runBtn_Click(object sender, EventArgs e)
         {
-            Run();
+            Plugin.RunScript();  //important not to call Run directly but run the injected Plugin.RunScript
         }
 
         void EditItem(string scriptFile)
@@ -147,7 +147,7 @@ void main(string[] args)
 
         void debugBtn_Click(object sender, EventArgs e)
         {
-            Debug();
+            Plugin.DebugScript();  //important not to call Debug directly but run the injected Plugin.DebugScript
         }
 
         public void RunAsExternal()
@@ -155,7 +155,12 @@ void main(string[] args)
             Run(true);
         }
 
-        public void Run(bool asExternal = false)
+        public void Run()
+        {
+            Run(false);
+        }
+
+        void Run(bool asExternal)
         {
             if (currentScript == null)
                 loadBtn.PerformClick();
@@ -571,22 +576,22 @@ void main(string[] args)
         void openCommandPromptToolStripMenuItem_Click(object sender, EventArgs e)
         {
             WithSelectedNodeProjectItem(item =>
-                {
-                    string file;
-                    if (treeView1.SelectedNode == treeView1.Nodes[0]) //root node
-                        file = currentScript;
-                    else if (item != null)
-                        file = item.File;
-                    else
-                        return;
+            {
+                string file;
+                if (treeView1.SelectedNode == treeView1.Nodes[0]) //root node
+                    file = currentScript;
+                else if (item != null)
+                    file = item.File;
+                else
+                    return;
 
-                    string path = Path.GetDirectoryName(file);
+                string path = Path.GetDirectoryName(file);
 
-                    if (Directory.Exists(path))
-                        Process.Start("cmd.exe", "/K \"cd " + path + "\"");
-                    else
-                        MessageBox.Show("Directory '" + path + "' does not exist.", "CS-Script");
-                });
+                if (Directory.Exists(path))
+                    Process.Start("cmd.exe", "/K \"cd " + path + "\"");
+                else
+                    MessageBox.Show("Directory '" + path + "' does not exist.", "CS-Script");
+            });
         }
 
         void openContainingFolderToolStripMenuItem_Click(object sender, EventArgs e)
