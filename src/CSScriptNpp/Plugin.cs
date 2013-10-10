@@ -5,9 +5,9 @@ using System.Windows.Forms;
 namespace CSScriptNpp
 {
     /*todo:
-        - show settings ProjectPanel button
-        - show scripts directory ProjectPanel button
-        - auto-generated class must be readonly
+     *  - show settings ProjectPanel button
+     *  - show scripts directory ProjectPanel button
+     *  - auto-generated class must be readonly
      */
 
     public partial class Plugin

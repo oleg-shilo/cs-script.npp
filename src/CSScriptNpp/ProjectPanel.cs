@@ -449,7 +449,7 @@ void main(string[] args)
             treeView1.Nodes.Clear();
         }
 
-        void LoadScript(string scriptFile)
+        public void LoadScript(string scriptFile)
         {
             if (!string.IsNullOrWhiteSpace(scriptFile) && File.Exists(scriptFile))
             {
