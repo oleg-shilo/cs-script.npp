@@ -45,8 +45,8 @@
             this.synchBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.outputBtn = new System.Windows.Forms.ToolStripButton();
-            this.aboutBtn = new System.Windows.Forms.ToolStripButton();
             this.openInVsBtn = new System.Windows.Forms.ToolStripButton();
+            this.aboutBtn = new System.Windows.Forms.ToolStripButton();
             this.helpBtn = new System.Windows.Forms.ToolStripButton();
             this.solutionContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.unloadScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -131,7 +131,7 @@
             this.validateBtn.Name = "validateBtn";
             this.validateBtn.Size = new System.Drawing.Size(23, 22);
             this.validateBtn.Text = "validate";
-            this.validateBtn.ToolTipText = "Validate current script";
+            this.validateBtn.ToolTipText = "Build (validate) current script\r\nShortcut: Ctrl+Shift+B";
             this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
             // 
             // stopBtn
@@ -154,7 +154,7 @@
             this.runBtn.Name = "runBtn";
             this.runBtn.Size = new System.Drawing.Size(23, 22);
             this.runBtn.Text = "run";
-            this.runBtn.ToolTipText = "Run current script";
+            this.runBtn.ToolTipText = "Run current script\r\nShortcut: F5";
             this.runBtn.Click += new System.EventHandler(this.runBtn_Click);
             // 
             // debugBtn
@@ -192,7 +192,7 @@
             this.loadBtn.Name = "loadBtn";
             this.loadBtn.Size = new System.Drawing.Size(23, 22);
             this.loadBtn.Text = "load";
-            this.loadBtn.ToolTipText = "Load script from current document";
+            this.loadBtn.ToolTipText = "Load script from current document\r\nShortcut: Ctrl+F7";
             this.loadBtn.Click += new System.EventHandler(this.loadBtn_Click);
             // 
             // synchBtn
@@ -221,17 +221,6 @@
             this.outputBtn.Text = "Toggle output panel visibility";
             this.outputBtn.Click += new System.EventHandler(this.outputBtn_Click);
             // 
-            // aboutBtn
-            // 
-            this.aboutBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.aboutBtn.Image = global::CSScriptNpp.Resources.Resources.about;
-            this.aboutBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.aboutBtn.Name = "aboutBtn";
-            this.aboutBtn.Size = new System.Drawing.Size(23, 22);
-            this.aboutBtn.Text = "aboutBtn";
-            this.aboutBtn.ToolTipText = "Abut CS-Script plugin";
-            this.aboutBtn.Click += new System.EventHandler(this.aboutBtn_Click);
-            // 
             // openInVsBtn
             // 
             this.openInVsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -242,6 +231,17 @@
             this.openInVsBtn.Text = "openInVsBtn";
             this.openInVsBtn.ToolTipText = "Open current script in Visual Studio";
             this.openInVsBtn.Click += new System.EventHandler(this.openInVsBtn_Click);
+            // 
+            // aboutBtn
+            // 
+            this.aboutBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.aboutBtn.Image = global::CSScriptNpp.Resources.Resources.about;
+            this.aboutBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.aboutBtn.Name = "aboutBtn";
+            this.aboutBtn.Size = new System.Drawing.Size(23, 22);
+            this.aboutBtn.Text = "aboutBtn";
+            this.aboutBtn.ToolTipText = "Abut CS-Script plugin";
+            this.aboutBtn.Click += new System.EventHandler(this.aboutBtn_Click);
             // 
             // helpBtn
             // 

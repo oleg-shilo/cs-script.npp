@@ -1,10 +1,11 @@
-﻿using CSScriptLibrary;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptLibrary;
 
 namespace CSScriptNpp
 {
@@ -171,6 +172,14 @@ namespace CSScriptNpp
             return null;
         }
 
+        public Output OpenOrCreateOutput(string name)
+        {
+            var output = GetOutputType(name);
+            if (output == null)
+                AddOutputType(name);
+            return ShowOutput(name);
+        }
+
         void AddOutputType(string name)
         {
             var textBox = new TextBox();
@@ -179,6 +188,8 @@ namespace CSScriptNpp
             textBox.Location = new Point(0, toolStrip1.Height);
             textBox.Size = new Size(this.ClientRectangle.Width, this.ClientRectangle.Height - toolStrip1.Height);
             textBox.ScrollBars = ScrollBars.Vertical;
+            textBox.ReadOnly = true;
+            textBox.BackColor = Color.White;
             textBox.Font = new Font("Courier New", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textBox.MouseDoubleClick += textBox_MouseDoubleClick;
 

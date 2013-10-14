@@ -8,6 +8,8 @@ namespace CSScriptNpp
      *  - show settings ProjectPanel button
      *  - show scripts directory ProjectPanel button
      *  - auto-generated class must be readonly
+     *  - shortcut for loading the script
+     *  - show shortcuts list for 'This' and 'Intellisense' plugin
      */
 
     public partial class Plugin
@@ -20,7 +22,7 @@ namespace CSScriptNpp
         {
             int index = 0;
 
-            SetCommand(projectPanelId = index++, "Build", Build, new ShortcutKey(true, false, true, Keys.B));
+            SetCommand(projectPanelId = index++, "Build (validate)", Build, new ShortcutKey(true, false, true, Keys.B));
             SetCommand(projectPanelId = index++, "Run", Run, new ShortcutKey(false, false, false, Keys.F5));
             SetCommand(index++, "---", null);
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
@@ -32,8 +34,7 @@ namespace CSScriptNpp
             KeyInterceptor.Instance.Install();
             KeyInterceptor.Instance.Add(Keys.F5);
             KeyInterceptor.Instance.Add(Keys.F4);
-            if (Config.Instance.BuildOnF7)
-                KeyInterceptor.Instance.Add(Keys.F7);
+            KeyInterceptor.Instance.Add(Keys.F7);
 
             KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
 
@@ -71,10 +72,19 @@ namespace CSScriptNpp
                     Run();
                 }
             }
-            else if (Config.Instance.BuildOnF7 && key == Keys.F7)
+            else if (key == Keys.F7)
             {
-                handled = true;
-                Build();
+                if (KeyInterceptor.IsPressed(Keys.ControlKey) && !KeyInterceptor.IsPressed(Keys.ShiftKey)) // Ctrl+F7
+                {
+                    handled = true;
+                    DoProjectPanel();
+                    ProjectPanel.LoadCurrentDoc();
+                }
+                else if (Config.Instance.BuildOnF7 && !KeyInterceptor.IsPressed(Keys.ShiftKey)) // F7
+                {
+                    handled = true;
+                    Build();
+                }
             }
             else if (key == Keys.F4)
             {

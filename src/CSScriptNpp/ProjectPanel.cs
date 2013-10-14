@@ -17,6 +17,9 @@ namespace CSScriptNpp
         {
             InitializeComponent();
 
+            if (Config.Instance.BuildOnF7)
+                validateBtn.ToolTipText += " or F7";
+
             RefreshControls();
         }
 
@@ -423,6 +426,11 @@ void main(string[] args)
         }
 
         void loadBtn_Click(object sender, EventArgs e)
+        {
+            LoadCurrentDoc();
+        }
+
+        public void LoadCurrentDoc()
         {
             string path;
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out path);
