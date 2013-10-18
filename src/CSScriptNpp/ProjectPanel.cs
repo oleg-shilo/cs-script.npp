@@ -228,6 +228,7 @@ void main(string[] args)
                                 {
                                     Plugin.RunningScript = null;
                                     RefreshControls();
+                                    Npp.GrabFocus();
                                 });
                             }
                         });

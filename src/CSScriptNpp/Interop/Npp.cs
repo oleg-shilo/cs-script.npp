@@ -30,6 +30,13 @@ namespace CSScriptNpp
             return buffer.ToString();
         }
 
+
+        static public int GrabFocus()
+        {
+            int currentPos = (int)Win32.SendMessage(CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+            return currentPos;
+        }
+
         static public string GetCurrentFile()
         {
             var path = new StringBuilder(Win32.MAX_PATH);

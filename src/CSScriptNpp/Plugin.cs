@@ -9,6 +9,8 @@ namespace CSScriptNpp
      *  - show scripts directory ProjectPanel button
      *  - auto-generated class must be readonly
      *  - shortcut for loading the script
+     *  - create script deployment
+     *  - new config for "format on fly" and close config dialog on editing file directly
      *  - show shortcuts list for 'This' and 'Intellisense' plugin
      */
 
