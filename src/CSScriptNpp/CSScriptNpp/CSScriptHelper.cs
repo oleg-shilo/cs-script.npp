@@ -1,3 +1,4 @@
+using CSScriptLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -5,8 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using CSScriptLibrary;
-using CSScriptNpp.Properties;
 
 namespace CSScriptNpp
 {
@@ -17,9 +16,10 @@ namespace CSScriptNpp
         public string PrimaryScript;
     }
 
-    public class CSSctiptHelper
+    public class CSScriptHelper
     {
         static string nppScriptsDir;
+
         static string NppScriptsDir
         {
             get
@@ -68,7 +68,6 @@ namespace CSScriptNpp
             return retval;
         }
 
-
         static public void Execute(string scriptFileCmd, Action<Process> onStart = null, Action<string> onStdOut = null)
         {
             var p = new Process();
@@ -101,6 +100,70 @@ namespace CSScriptNpp
 
             if (output.Length > 0 && output.ToString().StartsWith("Error: Specified file could not be compiled."))
                 throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
+        }
+
+        static public string Isolate(string scriptFile, bool asScript)
+        {
+            string dir = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile));
+            if (Directory.Exists(dir))
+                Directory.Delete(dir, true);
+
+            if (asScript)
+            {
+                Project proj = GenerateProjectFor(scriptFile);
+
+                string engine = Path.Combine(Plugin.PluginDir, "cscs.exe");
+
+                string batchFile = Path.Combine(dir, "run.cmd");
+
+                var files = proj.Assemblies.Where(a => !a.Contains("GAC_MSIL"))
+                                .Concat(proj.SourceFiles);
+
+                Directory.CreateDirectory(dir);
+
+                Action<string, string> copy = (file, directory) => File.Copy(file, Path.Combine(directory, Path.GetFileName(file)), true);
+
+                foreach (string file in files)
+                    copy(file, dir);
+
+                copy(engine, dir);
+                File.WriteAllText(batchFile, "cscs.exe \"" + Path.GetFileName(scriptFile) + "\"\r\npause");
+
+                return dir;
+            }
+            else
+            {
+                string srcExe = Path.ChangeExtension(scriptFile, ".exe");
+                string destExe = Path.Combine(dir, Path.GetFileName(srcExe));
+
+                string script = "\"" + scriptFile + "\"";
+
+                string cscs = Path.Combine(Plugin.PluginDir, "cscs.exe");
+                string args = string.Format("/e  {0} {1}", GenerateProbingDirArg(), script);
+                
+                var p = new Process();
+                p.StartInfo.FileName = cscs;
+                p.StartInfo.Arguments = args;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+                p.Start();
+                p.WaitForExit();
+
+                if (File.Exists(srcExe))
+                {
+                    Directory.CreateDirectory(dir);
+
+                    File.Copy(srcExe, destExe, true);
+                    return dir;
+                }
+                else
+                {
+                    cscs = "\"" + cscs + "\"";
+                    args = string.Format("{0} /e  {1} {2}", cscs, GenerateProbingDirArg(), script);
+                    Process.Start(ConsoleHostPath, args);
+                    return null;
+                }
+            }
         }
 
         static public void Build(string scriptFileCmd)
@@ -250,6 +313,7 @@ namespace CSScriptNpp
         }
 
         static string consoleHostPath;
+
         static string ConsoleHostPath
         {
             get
@@ -270,7 +334,6 @@ namespace CSScriptNpp
                 }
                 return consoleHostPath;
             }
-
         }
     }
 }

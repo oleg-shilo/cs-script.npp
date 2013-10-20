@@ -192,7 +192,7 @@ void main(string[] args)
                     {
                         try
                         {
-                            CSSctiptHelper.ExecuteAsynch(currentScript);
+                            CSScriptHelper.ExecuteAsynch(currentScript);
                         }
                         catch (Exception e)
                         {
@@ -218,11 +218,11 @@ void main(string[] args)
                                 outputPanel.ShowDebugOutput();
                                 if (Config.Instance.InterceptConsole)
                                 {
-                                    CSSctiptHelper.Execute(currentScript, OnRunStart, OnConsoleOut);
+                                    CSScriptHelper.Execute(currentScript, OnRunStart, OnConsoleOut);
                                 }
                                 else
                                 {
-                                    CSSctiptHelper.Execute(currentScript, OnRunStart);
+                                    CSScriptHelper.Execute(currentScript, OnRunStart);
                                 }
                             }
                             catch (Exception e)
@@ -269,7 +269,7 @@ void main(string[] args)
                 {
                     try
                     {
-                        CSSctiptHelper.ExecuteDebug(currentScript);
+                        CSScriptHelper.ExecuteDebug(currentScript);
                     }
                     catch (Exception e)
                     {
@@ -291,7 +291,7 @@ void main(string[] args)
                 Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
                 try
                 {
-                    CSSctiptHelper.OpenAsVSProjectFor(currentScript);
+                    CSScriptHelper.OpenAsVSProjectFor(currentScript);
                 }
                 catch (Exception e)
                 {
@@ -351,7 +351,7 @@ void main(string[] args)
                         EditItem(currentScript);
                         Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
 
-                        CSSctiptHelper.Build(currentScript);
+                        CSScriptHelper.Build(currentScript);
 
                         outputPanel.BuildOutput.WriteLine(null)
                                                .WriteLine("========== Build: succeeded ==========")
@@ -453,7 +453,7 @@ void main(string[] args)
 
             RefreshControls();
 
-            Task.Factory.StartNew(CSSctiptHelper.ClearVSDir);
+            Task.Factory.StartNew(CSScriptHelper.ClearVSDir);
         }
 
         const int scriptImage = 1;
@@ -479,7 +479,7 @@ void main(string[] args)
                 {
                     try
                     {
-                        Project project = CSSctiptHelper.GenerateProjectFor(scriptFile);
+                        Project project = CSScriptHelper.GenerateProjectFor(scriptFile);
 
                         treeView1.BeginUpdate();
                         treeView1.Nodes.Clear();
@@ -654,10 +654,10 @@ void main(string[] args)
         {
             try
             {
-                if (currentScript != null)
-                    Process.Start("explorer.exe", "/select," + currentScript);
-                else
-                    Process.Start("explorer.exe", ScriptsDirectory);
+                if (!Directory.Exists(ScriptsDirectory))
+                    Directory.CreateDirectory(ScriptsDirectory);
+
+                Process.Start("explorer.exe", ScriptsDirectory);
             }
             catch { }
         }
@@ -670,7 +670,26 @@ void main(string[] args)
 
         private void deployBtn_Click(object sender, EventArgs e)
         {
+            try
+            {
+                if (currentScript != null)
+                    using (var dialog = new DeploymentInput())
+                        if (DialogResult.OK == dialog.ShowDialog())
+                        {
+                            EditItem(currentScript);
+                            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
 
+                            string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript);
+                            if(path != null)
+                                Process.Start("explorer.exe", path);
+                            //else
+                                //MessageBox.Show("Distribution package cannot be prepared.\r\nVerify that the script is valid.", "CS-Script");
+                        }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "CS-Script");
+            }
         }
 
         private void shortcutsBtn_Click(object sender, EventArgs e)

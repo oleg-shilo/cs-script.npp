@@ -56,21 +56,27 @@
   </Target>
   -->
   <ItemGroup>
-    <Compile Include="AboutBox.cs">
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Dialogs\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AboutBox.designer.cs">
+    <Compile Include="Dialogs\AboutBox.designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Bootstrapper.cs" />
-    <Compile Include="ScriptNameInput.cs">
+    <Compile Include="Dialogs\DeploymentInput.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ScriptNameInput.Designer.cs">
-      <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    <Compile Include="Dialogs\DeploymentInput.Designer.cs">
+      <DependentUpon>DeploymentInput.cs</DependentUpon>
     </Compile>
     <Compile Include="CSScriptNpp\Config.cs" />
-    <Compile Include="CSScriptNpp\CSSctiptHelper.cs" />
+    <Compile Include="CSScriptNpp\CSScriptHelper.cs" />
+    <Compile Include="Dialogs\ScriptNameInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ScriptNameInput.designer.cs">
+      <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    </Compile>
     <Compile Include="Interop\Intellisense.cs" />
     <Compile Include="Interop\IniFile.cs" />
     <Compile Include="Interop\LocalWindowsHook.cs" />
@@ -94,10 +100,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="PluginShortcuts.cs">
+    <Compile Include="Dialogs\PluginShortcuts.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PluginShortcuts.Designer.cs">
+    <Compile Include="Dialogs\PluginShortcuts.Designer.cs">
       <DependentUpon>PluginShortcuts.cs</DependentUpon>
     </Compile>
     <None Include="Interop\DllExport\CheckILDasmPath.cs" />
@@ -131,13 +137,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AboutBox.resx">
+    <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginShortcuts.resx">
+    <EmbeddedResource Include="Dialogs\DeploymentInput.resx">
+      <DependentUpon>DeploymentInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\PluginShortcuts.resx">
       <DependentUpon>PluginShortcuts.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScriptNameInput.resx">
+    <EmbeddedResource Include="Dialogs\ScriptNameInput.resx">
       <DependentUpon>ScriptNameInput.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OutputPanel.resx">
