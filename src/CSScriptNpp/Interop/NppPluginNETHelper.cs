@@ -35,6 +35,27 @@ namespace CSScriptNpp
         public byte _isAlt;
         public byte _isShift;
         public byte _key;
+
+        public bool IsCtrl { get { return _isCtrl != 0; } }
+        public bool IsShift { get { return _isShift != 0; } }
+        public bool IsAlt { get { return _isAlt != 0; } }
+
+        public bool IsSet
+        {
+            get { return _key != 0; }
+        }
+        public override string ToString()
+        {
+            var retval = new StringBuilder();
+            if (_isCtrl != 0)
+                retval.Append("Ctrl+");
+            if (_isShift != 0)
+                retval.Append("Shift+");
+            if (_isAlt != 0)
+                retval.Append("Alt+");
+            retval.Append(((Keys)_key).ToString());
+            return retval.ToString();
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

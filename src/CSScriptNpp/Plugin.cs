@@ -1,17 +1,18 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
     /*todo:
-     *  - show settings ProjectPanel button
-     *  - show scripts directory ProjectPanel button
-     *  - auto-generated class must be readonly
-     *  - shortcut for loading the script
+     *  + show settings ProjectPanel button
+     *  + show scripts directory ProjectPanel button
+     *  + auto-generated class must be readonly
+     *  + shortcut for loading the script
      *  - create script deployment
-     *  - new config for "format on fly" and close config dialog on editing file directly
-     *  - show shortcuts list for 'This' and 'Intellisense' plugin
+     *  + new config for "format on fly" and close config dialog on editing file directly
+     *  + show shortcuts list for 'This' and 'Intellisense' plugin
      */
 
     public partial class Plugin
@@ -19,6 +20,8 @@ namespace CSScriptNpp
         public const string PluginName = "CS-Script";
         public static int projectPanelId = -1;
         public static int outputPanelId = -1;
+
+        public static Dictionary<ShortcutKey, Tuple<string, Action>> internalShortcuts = new Dictionary<ShortcutKey, Tuple<string, Action>>();
 
         static internal void CommandMenuInit()
         {
@@ -32,6 +35,8 @@ namespace CSScriptNpp
             SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
             SetCommand(index++, "About", ShowAbout);
+
+            BindInteranalShortcuts();
 
             KeyInterceptor.Instance.Install();
             KeyInterceptor.Instance.Add(Keys.F5);
@@ -60,39 +65,90 @@ namespace CSScriptNpp
                  });
         }
 
+        static void BindInteranalShortcuts()
+        {
+            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F7), new Tuple<string, Action>(
+                                  "Build", () =>
+                                   {
+                                       Build();
+                                   }));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F7), new Tuple<string, Action>(
+                                  "Load Current Document", () =>
+                                  {
+                                      DoProjectPanel();
+                                      ShowProjectPanel();
+                                      ProjectPanel.LoadCurrentDoc();
+                                  }));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F5), new Tuple<string, Action>(
+                                  "Run", () =>
+                                  {
+                                      if (Npp.IsCurrentFileHasExtension(".cs"))
+                                          Run();
+                                  }));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F5), new Tuple<string, Action>(
+                                  "Run As External Process", () =>
+                                  {
+                                      if (Npp.IsCurrentFileHasExtension(".cs"))
+                                          RunAsExternal();
+                                  }));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F4), new Tuple<string, Action>(
+                                  "Next File Location in Output", () =>
+                                  {
+                                      OutputPanel.TryNavigateToFileReference(toNext: true);
+                                  }));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F4), new Tuple<string, Action>(
+                                 "Previous File Location in Output", () =>
+                                  {
+                                      OutputPanel.TryNavigateToFileReference(toNext: false);
+                                  }));
+        }
+
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
-            if (key == Keys.F5 && Npp.IsCurrentFileHasExtension(".cs"))
-            {
-                if (KeyInterceptor.IsPressed(Keys.ControlKey))
+            foreach (var shortcut in internalShortcuts.Keys)
+                if ((byte)key == shortcut._key)
                 {
-                    RunAsExternal();
+                    Modifiers modifiers = KeyInterceptor.GetModifiers();
+
+                    if (modifiers.IsCtrl == shortcut.IsCtrl && modifiers.IsShift == shortcut.IsShift && modifiers.IsAlt == shortcut.IsAlt)
+                    {
+                        handled = true;
+                        var handler = internalShortcuts[shortcut];
+                        handler.Item2();
+                    }
                 }
-                else
-                {
-                    handled = true;
-                    Run();
-                }
-            }
-            else if (key == Keys.F7)
-            {
-                if (KeyInterceptor.IsPressed(Keys.ControlKey) && !KeyInterceptor.IsPressed(Keys.ShiftKey)) // Ctrl+F7
-                {
-                    handled = true;
-                    DoProjectPanel();
-                    ProjectPanel.LoadCurrentDoc();
-                }
-                else if (Config.Instance.BuildOnF7 && !KeyInterceptor.IsPressed(Keys.ShiftKey)) // F7
-                {
-                    handled = true;
-                    Build();
-                }
-            }
-            else if (key == Keys.F4)
-            {
-                handled = true;
-                OutputPanel.TryNavigateToFileReference(!KeyInterceptor.IsPressed(Keys.ControlKey));
-            }
+            //if (key == Keys.F5 && Npp.IsCurrentFileHasExtension(".cs"))
+            //{
+            //    if (KeyInterceptor.IsPressed(Keys.ControlKey))
+            //    {
+            //        RunAsExternal(); //Ctrl+F5
+            //    }
+            //    else
+            //    {
+            //        handled = true; //F5
+            //        Run();
+            //    }
+            //}
+            //else if (key == Keys.F7)
+            //{
+
+            //    if (KeyInterceptor.IsPressed(Keys.ControlKey) && !KeyInterceptor.IsPressed(Keys.ShiftKey)) // Ctrl+F7
+            //    {
+            //        handled = true;
+            //        DoProjectPanel();
+            //        ProjectPanel.LoadCurrentDoc();
+            //    }
+            //    else if (Config.Instance.BuildOnF7 && !KeyInterceptor.IsPressed(Keys.ShiftKey)) // F7
+            //    {
+            //        handled = true;
+            //        Build();
+            //    }
+            //}
+            //else if (key == Keys.F4)
+            //{
+            //    handled = true;
+            //    OutputPanel.TryNavigateToFileReference(!KeyInterceptor.IsPressed(Keys.ControlKey));
+            //}
         }
 
         static public void ShowAbout()
@@ -108,6 +164,11 @@ namespace CSScriptNpp
         {
             ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
             ProjectPanel.Focus();
+        }
+       
+        static public void ShowProjectPanel()
+        {
+            SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, true);
         }
 
         static public void DoOutputPanel()

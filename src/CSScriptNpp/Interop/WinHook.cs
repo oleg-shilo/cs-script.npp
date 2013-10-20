@@ -66,7 +66,14 @@ namespace CSScriptNpp
         }
     }
 
-    public class KeyInterceptor : WinHook<KeyInterceptor>
+    public struct Modifiers
+    {
+        public bool IsCtrl;
+        public bool IsShift;
+        public bool IsAlt;
+    }
+
+    public partial class KeyInterceptor : WinHook<KeyInterceptor>
     {
         [DllImport("USER32.dll")]
         static extern short GetKeyState(int nVirtKey);
@@ -75,6 +82,16 @@ namespace CSScriptNpp
         {
             const int KEY_PRESSED = 0x8000;
             return Convert.ToBoolean(GetKeyState((int)key) & KEY_PRESSED);
+        }
+
+        public static Modifiers GetModifiers()
+        {
+            return new Modifiers
+            {
+                IsCtrl = KeyInterceptor.IsPressed(Keys.ControlKey),
+                IsShift = KeyInterceptor.IsPressed(Keys.ShiftKey),
+                IsAlt = KeyInterceptor.IsPressed(Keys.Menu)
+            };
         }
 
         public delegate void KeyDownHandler(Keys key, int repeatCount, ref bool handled);
@@ -120,6 +137,31 @@ namespace CSScriptNpp
                 }
             }
             return false;
+        }
+    }
+
+    public partial class KeyInterceptor //CS-Script plugin specific functionality
+    {
+        public static bool IsShortcutPressed(ShortcutKey key)
+        {
+            Keys expectedKey = (Keys)key._key;
+            bool expectedAlt = (key._isAlt != 0);
+            bool expectedCtrl = (key._isCtrl != 0);
+            bool expectedShift = (key._isShift != 0);
+
+            if (!KeyInterceptor.IsPressed(expectedKey))
+                return false;
+
+            if (KeyInterceptor.IsPressed(Keys.ControlKey) == expectedCtrl)
+                return false;
+
+            if (KeyInterceptor.IsPressed(Keys.ShiftKey) == expectedShift)
+                return false;
+
+            if (KeyInterceptor.IsPressed(Keys.Menu) == expectedAlt)
+                return false;
+
+            return true;
         }
     }
 }

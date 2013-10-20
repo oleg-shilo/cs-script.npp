@@ -33,6 +33,8 @@ namespace CSScriptNpp
 
         public void Save()
         {
+            File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
+
             SetValue("settings", "ShowProjectPanel", ShowProjectPanel);
             SetValue("settings", "ShowOutputPanel", ShowOutputPanel);
             SetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);

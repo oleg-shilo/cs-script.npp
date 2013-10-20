@@ -34,23 +34,32 @@ namespace CSScriptNpp
             Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
         }
 
+        string scriptsDirectory;
+        string ScriptsDirectory
+        {
+            get
+            {
+                if (scriptsDirectory == null)
+                    scriptsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "C# Scripts");
+                return scriptsDirectory;
+            }
+        }
+
         void newBtn_Click(object sender, EventArgs e)
         {
-            using (var input = new ScriptNameInput())
+            using (var input = new ScripNameInput())
             {
                 if (input.ShowDialog() != DialogResult.OK)
                     return;
 
-                string scriptDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "C# Scripts");
-
-                if (!Directory.Exists(scriptDir))
-                    Directory.CreateDirectory(scriptDir);
+                if (!Directory.Exists(ScriptsDirectory))
+                    Directory.CreateDirectory(ScriptsDirectory);
 
                 string scriptName = NormalizeScriptName(input.ScriptName ?? "New Script");
 
-                int index = Directory.GetFiles(scriptDir, scriptName + "*.cs").Length;
+                int index = Directory.GetFiles(ScriptsDirectory, scriptName + "*.cs").Length;
 
-                string newScript = Path.Combine(scriptDir, scriptName + ".cs");
+                string newScript = Path.Combine(ScriptsDirectory, scriptName + ".cs");
                 if (index != -1)
                 {
                     int count = 0;
@@ -58,7 +67,7 @@ namespace CSScriptNpp
                     {
                         index++;
                         count++;
-                        newScript = Path.Combine(scriptDir, string.Format("{0}{1}.cs", scriptName, index));
+                        newScript = Path.Combine(ScriptsDirectory, string.Format("{0}{1}.cs", scriptName, index));
                         if (count > 10)
                         {
                             MessageBox.Show("Too many script files with the similar name already exists.\nPlease specify a different file name or clean up some existing scripts.", "CS-Script");
@@ -639,6 +648,35 @@ void main(string[] args)
             {
                 treeView1.SelectedNode = e.Node;
             }
+        }
+
+        private void openScriptsFolderBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (currentScript != null)
+                    Process.Start("explorer.exe", "/select," + currentScript);
+                else
+                    Process.Start("explorer.exe", ScriptsDirectory);
+            }
+            catch { }
+        }
+
+        private void configBtn_Click(object sender, EventArgs e)
+        {
+            if (Intellisense.ShowConfig != null)
+                Intellisense.ShowConfig();
+        }
+
+        private void deployBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void shortcutsBtn_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new PluginShortcuts())
+                dialog.ShowDialog();
         }
     }
 }

@@ -51,6 +51,9 @@ namespace CSScriptNpp
                         routine.SetValue(null, displayInOutputPanel);
 
                         ensureCurrentFileParsed = plugin.GetMethod("EnsureCurrentFileParsed");
+                        
+                        var showConfigMethod = plugin.GetMethod("ShowConfig");
+                        ShowConfig = () => showConfigMethod.Invoke(null, new object[0]);
                     }
                 }
             }
@@ -78,6 +81,8 @@ namespace CSScriptNpp
                 }
             }
         }
+
+        public static Action ShowConfig = null;
 
         static Type GetIntellisensePlugin()
         {

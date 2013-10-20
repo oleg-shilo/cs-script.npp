@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
-    public partial class ScriptNameInput : Form
+    public partial class ScripNameInput : Form
     {
-        public ScriptNameInput()
+        public ScripNameInput()
         {
             InitializeComponent();
             classlessCheckbox.Checked = Config.Instance.ClasslessScriptByDefault;

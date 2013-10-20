@@ -40,19 +40,23 @@
             this.runBtn = new System.Windows.Forms.ToolStripButton();
             this.debugBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.reloadBtn = new System.Windows.Forms.ToolStripButton();
             this.loadBtn = new System.Windows.Forms.ToolStripButton();
+            this.reloadBtn = new System.Windows.Forms.ToolStripButton();
             this.synchBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.outputBtn = new System.Windows.Forms.ToolStripButton();
             this.openInVsBtn = new System.Windows.Forms.ToolStripButton();
             this.aboutBtn = new System.Windows.Forms.ToolStripButton();
             this.helpBtn = new System.Windows.Forms.ToolStripButton();
+            this.openScriptsFolderBtn = new System.Windows.Forms.ToolStripButton();
+            this.configBtn = new System.Windows.Forms.ToolStripButton();
             this.solutionContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.unloadScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCommandPromptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openContainingFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deployBtn = new System.Windows.Forms.ToolStripButton();
+            this.shortcutsBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.solutionContextMenu.SuspendLayout();
             this.itemContextMenu.SuspendLayout();
@@ -71,7 +75,7 @@
             this.treeView1.SelectedImageIndex = 0;
             this.treeView1.ShowNodeToolTips = true;
             this.treeView1.ShowRootLines = false;
-            this.treeView1.Size = new System.Drawing.Size(396, 213);
+            this.treeView1.Size = new System.Drawing.Size(487, 239);
             this.treeView1.TabIndex = 3;
             this.treeView1.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCollapse);
             this.treeView1.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterExpand);
@@ -98,17 +102,21 @@
             this.runBtn,
             this.debugBtn,
             this.toolStripSeparator2,
-            this.reloadBtn,
             this.loadBtn,
+            this.reloadBtn,
             this.synchBtn,
             this.toolStripSeparator1,
             this.outputBtn,
             this.openInVsBtn,
             this.aboutBtn,
-            this.helpBtn});
+            this.helpBtn,
+            this.openScriptsFolderBtn,
+            this.configBtn,
+            this.deployBtn,
+            this.shortcutsBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(396, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(487, 25);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -173,17 +181,6 @@
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // reloadBtn
-            // 
-            this.reloadBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.reloadBtn.Image = global::CSScriptNpp.Resources.Resources.reload;
-            this.reloadBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.reloadBtn.Name = "reloadBtn";
-            this.reloadBtn.Size = new System.Drawing.Size(23, 22);
-            this.reloadBtn.Text = "reload";
-            this.reloadBtn.ToolTipText = "Reload current script";
-            this.reloadBtn.Click += new System.EventHandler(this.reloadBtn_Click);
-            // 
             // loadBtn
             // 
             this.loadBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -194,6 +191,17 @@
             this.loadBtn.Text = "load";
             this.loadBtn.ToolTipText = "Load script from current document\r\nShortcut: Ctrl+F7";
             this.loadBtn.Click += new System.EventHandler(this.loadBtn_Click);
+            // 
+            // reloadBtn
+            // 
+            this.reloadBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.reloadBtn.Image = global::CSScriptNpp.Resources.Resources.reload;
+            this.reloadBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.reloadBtn.Name = "reloadBtn";
+            this.reloadBtn.Size = new System.Drawing.Size(23, 22);
+            this.reloadBtn.Text = "reload";
+            this.reloadBtn.ToolTipText = "Reload current script";
+            this.reloadBtn.Click += new System.EventHandler(this.reloadBtn_Click);
             // 
             // synchBtn
             // 
@@ -255,6 +263,28 @@
             this.helpBtn.Visible = false;
             this.helpBtn.Click += new System.EventHandler(this.hlpBtn_Click);
             // 
+            // openScriptsFolderBtn
+            // 
+            this.openScriptsFolderBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.openScriptsFolderBtn.Image = ((System.Drawing.Image)(resources.GetObject("openScriptsFolderBtn.Image")));
+            this.openScriptsFolderBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openScriptsFolderBtn.Name = "openScriptsFolderBtn";
+            this.openScriptsFolderBtn.Size = new System.Drawing.Size(23, 22);
+            this.openScriptsFolderBtn.Text = "scriptsFolder";
+            this.openScriptsFolderBtn.ToolTipText = "Open Scripts Default Folder";
+            this.openScriptsFolderBtn.Click += new System.EventHandler(this.openScriptsFolderBtn_Click);
+            // 
+            // configBtn
+            // 
+            this.configBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.configBtn.Image = ((System.Drawing.Image)(resources.GetObject("configBtn.Image")));
+            this.configBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.configBtn.Name = "configBtn";
+            this.configBtn.Size = new System.Drawing.Size(23, 22);
+            this.configBtn.Text = "configBtn";
+            this.configBtn.ToolTipText = "Show Config Dialog";
+            this.configBtn.Click += new System.EventHandler(this.configBtn_Click);
+            // 
             // solutionContextMenu
             // 
             this.solutionContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -291,11 +321,33 @@
             this.openContainingFolderToolStripMenuItem.Text = "Open Containing &Folder";
             this.openContainingFolderToolStripMenuItem.Click += new System.EventHandler(this.openContainingFolderToolStripMenuItem_Click);
             // 
+            // deployBtn
+            // 
+            this.deployBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.deployBtn.Image = ((System.Drawing.Image)(resources.GetObject("deployBtn.Image")));
+            this.deployBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.deployBtn.Name = "deployBtn";
+            this.deployBtn.Size = new System.Drawing.Size(23, 22);
+            this.deployBtn.Text = "deployBtn";
+            this.deployBtn.ToolTipText = "Prepare script for distribution";
+            this.deployBtn.Click += new System.EventHandler(this.deployBtn_Click);
+            // 
+            // shortcutsBtn
+            // 
+            this.shortcutsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.shortcutsBtn.Image = ((System.Drawing.Image)(resources.GetObject("shortcutsBtn.Image")));
+            this.shortcutsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.shortcutsBtn.Name = "shortcutsBtn";
+            this.shortcutsBtn.Size = new System.Drawing.Size(23, 22);
+            this.shortcutsBtn.Text = "shortcutsBtn";
+            this.shortcutsBtn.ToolTipText = "Show Plugin Shortcuts";
+            this.shortcutsBtn.Click += new System.EventHandler(this.shortcutsBtn_Click);
+            // 
             // ProjectPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(396, 242);
+            this.ClientSize = new System.Drawing.Size(487, 268);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.treeView1);
             this.KeyPreview = true;
@@ -336,5 +388,9 @@
         private System.Windows.Forms.ContextMenuStrip itemContextMenu;
         private System.Windows.Forms.ToolStripMenuItem openContainingFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton debugBtn;
+        private System.Windows.Forms.ToolStripButton openScriptsFolderBtn;
+        private System.Windows.Forms.ToolStripButton configBtn;
+        private System.Windows.Forms.ToolStripButton deployBtn;
+        private System.Windows.Forms.ToolStripButton shortcutsBtn;
     }
 }

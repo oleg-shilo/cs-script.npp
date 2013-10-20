@@ -1,6 +1,6 @@
 ﻿namespace CSScriptNpp
 {
-    partial class ScriptNameInput
+    partial class ScripNameInput
     {
         /// <summary>
         /// Required designer variable.

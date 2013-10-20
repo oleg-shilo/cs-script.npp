@@ -63,6 +63,12 @@
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="ScriptNameInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScriptNameInput.Designer.cs">
+      <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    </Compile>
     <Compile Include="CSScriptNpp\Config.cs" />
     <Compile Include="CSScriptNpp\CSSctiptHelper.cs" />
     <Compile Include="Interop\Intellisense.cs" />
@@ -88,11 +94,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ScriptNameInput.cs">
+    <Compile Include="PluginShortcuts.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ScriptNameInput.Designer.cs">
-      <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    <Compile Include="PluginShortcuts.Designer.cs">
+      <DependentUpon>PluginShortcuts.cs</DependentUpon>
     </Compile>
     <None Include="Interop\DllExport\CheckILDasmPath.cs" />
     <Compile Include="Interop\DllExport\DllExportAttribute.cs" />
@@ -128,6 +134,12 @@
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PluginShortcuts.resx">
+      <DependentUpon>PluginShortcuts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptNameInput.resx">
+      <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OutputPanel.resx">
       <DependentUpon>OutputPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -143,9 +155,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ScriptNameInput.resx">
-      <DependentUpon>ScriptNameInput.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +262,7 @@
     <Content Include="CSScriptNpp\Mono.Cecil.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\folder_open.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
