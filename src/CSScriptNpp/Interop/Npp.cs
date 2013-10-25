@@ -30,6 +30,31 @@ namespace CSScriptNpp
             return buffer.ToString();
         }
 
+        public static int GetCaretLineNumber()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
+        }
+
+        static public int GetLineStart(int line)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0);
+        }
+
+        static public int GetFirstVisibleLine()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
+        }
+
+        static public void SetFirstVisibleLine(int line)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_SETFIRSTVISIBLELINE, line, 0);
+        }
 
         static public int GrabFocus()
         {

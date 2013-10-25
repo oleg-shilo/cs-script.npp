@@ -136,6 +136,23 @@ namespace CSScriptNpp
             SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, true);
         }
 
+        static public void ToggleScondaryPanels()
+        {
+            if (Plugin.OutputPanel == null || !Plugin.OutputPanel.Visible)
+            {
+                Plugin.DoOutputPanel();
+            }
+            else if (Plugin.CodeMapPanel == null || !Plugin.CodeMapPanel.Visible)
+            {
+                Plugin.DoCodeMapPanel();
+            }
+            else
+            {
+                Plugin.DoOutputPanel();
+                Plugin.DoCodeMapPanel();
+            }
+        }
+
         static public void DoOutputPanel()
         {
             Plugin.OutputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
@@ -217,7 +234,7 @@ namespace CSScriptNpp
 
             if (Config.Instance.ShowOutputPanel)
                 DoOutputPanel();
-            
+
             if (Config.Instance.ShowCodeMapPanel)
                 DoCodeMapPanel();
 
@@ -228,6 +245,7 @@ namespace CSScriptNpp
         {
             Config.Instance.ShowProjectPanel = (dockedManagedPanels.ContainsKey(projectPanelId) && dockedManagedPanels[projectPanelId].Visible);
             Config.Instance.ShowOutputPanel = (dockedManagedPanels.ContainsKey(outputPanelId) && dockedManagedPanels[outputPanelId].Visible);
+            Config.Instance.ShowCodeMapPanel = (dockedManagedPanels.ContainsKey(codeMapPanelId) && dockedManagedPanels[codeMapPanelId].Visible);
             Config.Instance.Save();
             OutputPanel.Clean();
         }

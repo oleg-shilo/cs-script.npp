@@ -533,7 +533,7 @@ void main(string[] args)
 
         void outputBtn_Click(object sender, EventArgs e)
         {
-            Plugin.DoOutputPanel();
+            Plugin.ToggleScondaryPanels();
         }
 
         void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
