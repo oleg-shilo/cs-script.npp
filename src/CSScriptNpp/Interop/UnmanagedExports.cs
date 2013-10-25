@@ -80,6 +80,7 @@ namespace CSScriptNpp
             else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
             {
                 CSScriptIntellisense.Plugin.OnCurrentFileChanegd();
+                CSScriptNpp.Plugin.OnCurrentFileChanged();
             }
             else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
             {

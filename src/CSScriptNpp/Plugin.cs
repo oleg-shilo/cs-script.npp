@@ -14,6 +14,7 @@ namespace CSScriptNpp
         public const string PluginName = "CS-Script";
         public static int projectPanelId = -1;
         public static int outputPanelId = -1;
+        public static int codeMapPanelId = -1;
 
         public static Dictionary<ShortcutKey, Tuple<string, Action>> internalShortcuts = new Dictionary<ShortcutKey, Tuple<string, Action>>();
 
@@ -26,6 +27,7 @@ namespace CSScriptNpp
             SetCommand(index++, "---", null);
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
             SetCommand(outputPanelId = index++, "Output Panel", DoOutputPanel, Config.Instance.ShowOutputPanel);
+            SetCommand(codeMapPanelId = index++, "CodeMap Panel", DoCodeMapPanel, Config.Instance.ShowCodeMapPanel);
             SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
             SetCommand(index++, "About", ShowAbout);
@@ -111,38 +113,6 @@ namespace CSScriptNpp
                         handler.Item2();
                     }
                 }
-            //if (key == Keys.F5 && Npp.IsCurrentFileHasExtension(".cs"))
-            //{
-            //    if (KeyInterceptor.IsPressed(Keys.ControlKey))
-            //    {
-            //        RunAsExternal(); //Ctrl+F5
-            //    }
-            //    else
-            //    {
-            //        handled = true; //F5
-            //        Run();
-            //    }
-            //}
-            //else if (key == Keys.F7)
-            //{
-
-            //    if (KeyInterceptor.IsPressed(Keys.ControlKey) && !KeyInterceptor.IsPressed(Keys.ShiftKey)) // Ctrl+F7
-            //    {
-            //        handled = true;
-            //        DoProjectPanel();
-            //        ProjectPanel.LoadCurrentDoc();
-            //    }
-            //    else if (Config.Instance.BuildOnF7 && !KeyInterceptor.IsPressed(Keys.ShiftKey)) // F7
-            //    {
-            //        handled = true;
-            //        Build();
-            //    }
-            //}
-            //else if (key == Keys.F4)
-            //{
-            //    handled = true;
-            //    OutputPanel.TryNavigateToFileReference(!KeyInterceptor.IsPressed(Keys.ControlKey));
-            //}
         }
 
         static public void ShowAbout()
@@ -153,13 +123,14 @@ namespace CSScriptNpp
 
         static public OutputPanel OutputPanel;
         static public ProjectPanel ProjectPanel;
+        static public CodeMapPanel CodeMapPanel;
 
         static public void DoProjectPanel()
         {
             ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
             ProjectPanel.Focus();
         }
-       
+
         static public void ShowProjectPanel()
         {
             SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, true);
@@ -168,6 +139,11 @@ namespace CSScriptNpp
         static public void DoOutputPanel()
         {
             Plugin.OutputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+        }
+
+        static public void DoCodeMapPanel()
+        {
+            Plugin.CodeMapPanel = ShowDockablePanel<CodeMapPanel>("C# Code Map", codeMapPanelId, NppTbMsg.CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
         }
 
         static public void Build()
@@ -241,6 +217,9 @@ namespace CSScriptNpp
 
             if (Config.Instance.ShowOutputPanel)
                 DoOutputPanel();
+            
+            if (Config.Instance.ShowCodeMapPanel)
+                DoCodeMapPanel();
 
             Intellisense.EnsureIntellisenseIntegration();
         }
@@ -255,6 +234,12 @@ namespace CSScriptNpp
 
         public static void OnNotification(SCNotification data)
         {
+        }
+
+        static public void OnCurrentFileChanged()
+        {
+            if (CodeMapPanel != null)
+                CodeMapPanel.RefreshContent();
         }
 
         public static void OnToolbarUpdate()

@@ -57,6 +57,12 @@
   -->
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CodeMapPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CodeMapPanel.Designer.cs">
+      <DependentUpon>CodeMapPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,6 +143,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CodeMapPanel.resx">
+      <DependentUpon>CodeMapPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>

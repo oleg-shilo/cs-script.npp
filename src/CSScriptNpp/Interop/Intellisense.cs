@@ -9,6 +9,15 @@ using CSScriptLibrary;
 
 namespace CSScriptNpp
 {
+    public class EmbeddedIntellisense
+    {
+        public static object GetMapOf(string code)
+        {
+            return UltraSharp.Cecil.Reflector.GetMapOf(code);
+        }
+    }
+
+    //for legacy reasons this class implements loosely coupled Reflection based extension model. Eventually it will need to be migrated to the referencing base model (as EmbeddedIntellisense)  
     public class Intellisense
     {
         static bool integrated = false;

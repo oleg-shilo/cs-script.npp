@@ -28,6 +28,7 @@ namespace CSScriptNpp
         public bool BuildOnF7 = true;
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
+        public bool ShowCodeMapPanel = false;
         public int OutputPanelCapacity = 10000; //num of characters
         public bool IntegrateWithIntellisense = true;
         public bool LocalDebug = true;
@@ -38,6 +39,7 @@ namespace CSScriptNpp
 
             SetValue("settings", "ShowProjectPanel", ShowProjectPanel);
             SetValue("settings", "ShowOutputPanel", ShowOutputPanel);
+            SetValue("settings", "ShowCodeMapPanel", ShowCodeMapPanel);
             SetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
             SetValue("settings", "InterceptConsole", InterceptConsole);
             SetValue("settings", "LocalDebug", LocalDebug);
@@ -51,6 +53,7 @@ namespace CSScriptNpp
         {
             ShowProjectPanel = GetValue("settings", "ShowProjectPanel", ShowProjectPanel);
             ShowOutputPanel = GetValue("settings", "ShowOutputPanel", ShowOutputPanel);
+            ShowCodeMapPanel = GetValue("settings", "ShowCodeMapPanel", ShowCodeMapPanel);
             OutputPanelCapacity = GetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
             InterceptConsole = GetValue("settings", "InterceptConsole", InterceptConsole);
             LocalDebug = GetValue("settings", "LocalDebug", LocalDebug);
