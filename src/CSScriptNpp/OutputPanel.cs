@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CSScriptLibrary;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptLibrary;
 
 namespace CSScriptNpp
 {
@@ -51,6 +51,7 @@ namespace CSScriptNpp
                 prevPos = currentPos;
                 if (lineText != null && lineText.ParseAsFileReference(out file, out line, out column))
                 {
+                    NormaliseFileReference(ref file, ref line);
                     this.NavigateToFileContent(file, line, column);
                     return;
                 }
@@ -189,6 +190,8 @@ namespace CSScriptNpp
             textBox.Size = new Size(this.ClientRectangle.Width, this.ClientRectangle.Height - toolStrip1.Height);
             textBox.ScrollBars = ScrollBars.Vertical;
             textBox.ReadOnly = true;
+            toolTip1.SetToolTip(textBox, "F4 - Navigate to the next file location\nCtrl+F4 - Navigate to the previous file location\nCtrl+DblClick - Navigate to the raw file location (e.g. auto-generated files)");
+            //textBox.Too = true;
             textBox.BackColor = Color.White;
             textBox.Font = new Font("Courier New", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textBox.MouseDoubleClick += textBox_MouseDoubleClick;
@@ -394,11 +397,6 @@ namespace CSScriptNpp
             RefreshControls();
         }
 
-        void textBox_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            NavigateToFileContent((TextBox)sender);
-        }
-
         void NavigateToFileContent(string file, int line, int column)
         {
             try
@@ -412,6 +410,48 @@ namespace CSScriptNpp
                 Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOPOS, currentPos + column - 1, 0); //SCI columns are 0-based
             }
             catch { }
+        }
+
+        void NormaliseFileReference(ref string file, ref int line)
+        {
+            if (!Config.Instance.NavigateToRawCodeOnDblClickInOutput)
+            {
+                try
+                {
+                    if (file.EndsWith(".g.cs") && file.Contains(@"CSSCRIPT\Cache"))
+                    {
+                        //it is an auto-generated file so try to find the original source file (logical file)
+                        string dir = Path.GetDirectoryName(file);
+                        string infoFile = Path.Combine(dir, "css_info.txt");
+                        if (File.Exists(infoFile))
+                        {
+                            string[] lines = File.ReadAllLines(infoFile);
+                            if (lines.Length > 1 && Directory.Exists(lines[1]))
+                            {
+                                string logicalFile = Path.Combine(lines[1], Path.GetFileName(file).Replace(".g.cs", ".cs"));
+                                if (File.Exists(logicalFile))
+                                {
+                                    string code = File.ReadAllText(file);
+                                    int pos = code.IndexOf("///CS-Script auto-class generation");
+                                    if (pos != -1)
+                                    {
+                                        int injectedLineNumber = code.Substring(0, pos).Split('\n').Count() - 1;
+                                        if (injectedLineNumber <= line)
+                                            line -= 1; //a single line is always injected
+                                    }
+                                    file = logicalFile;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        void textBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            NavigateToFileContent((TextBox)sender);
         }
 
         void NavigateToFileContent(TextBox textBox)
@@ -431,6 +471,8 @@ namespace CSScriptNpp
 
                 if (lineText != null && lineText.ParseAsFileReference(out file, out line, out column))
                 {
+                    if (!KeyInterceptor.IsPressed(Keys.ControlKey))
+                        NormaliseFileReference(ref file, ref line);
                     this.NavigateToFileContent(file, line, column);
                 }
             }
@@ -503,7 +545,7 @@ namespace CSScriptNpp
             pos = control.Text.IndexOf(Environment.NewLine, control.SelectionStart);
             if (pos == -1)
             {
-                //the caret might be at the last line 
+                //the caret might be at the last line
                 //so select the first line
                 SelectLineAtPosition(0);
                 pos = control.SelectionStart;
@@ -529,7 +571,7 @@ namespace CSScriptNpp
             pos = control.Text.LastIndexOf(Environment.NewLine, control.SelectionStart);
             if (pos == -1)
             {
-                //the caret might be at the first line 
+                //the caret might be at the first line
                 //so select the last line
                 SelectLineAtPosition(control.Text.Length);
                 pos = control.SelectionStart;

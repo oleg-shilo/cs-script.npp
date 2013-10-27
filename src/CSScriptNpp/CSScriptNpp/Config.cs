@@ -25,6 +25,7 @@ namespace CSScriptNpp
         public bool ClasslessScriptByDefault = false;
         public bool DistributeScriptAsScriptByDefault = true;
         public bool InterceptConsole = false;
+        public bool NavigateToRawCodeOnDblClickInOutput = false;
         public bool BuildOnF7 = true;
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
@@ -41,6 +42,7 @@ namespace CSScriptNpp
             SetValue("settings", "ShowOutputPanel", ShowOutputPanel);
             SetValue("settings", "ShowCodeMapPanel", ShowCodeMapPanel);
             SetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
+            SetValue("settings", "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             SetValue("settings", "InterceptConsole", InterceptConsole);
             SetValue("settings", "LocalDebug", LocalDebug);
             SetValue("settings", "BuildOnF7", BuildOnF7);
@@ -55,6 +57,7 @@ namespace CSScriptNpp
             ShowOutputPanel = GetValue("settings", "ShowOutputPanel", ShowOutputPanel);
             ShowCodeMapPanel = GetValue("settings", "ShowCodeMapPanel", ShowCodeMapPanel);
             OutputPanelCapacity = GetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
+            NavigateToRawCodeOnDblClickInOutput = GetValue("settings", "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             InterceptConsole = GetValue("settings", "InterceptConsole", InterceptConsole);
             LocalDebug = GetValue("settings", "LocalDebug", LocalDebug);
             BuildOnF7 = GetValue("settings", "BuildOnF7", BuildOnF7);
