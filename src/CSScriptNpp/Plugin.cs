@@ -6,7 +6,7 @@ using System.Windows.Forms;
 namespace CSScriptNpp
 {
     /*todo:
-     *  - create script deployment
+     *  - allow distributing various versions of CS-Script
      */
 
     public partial class Plugin

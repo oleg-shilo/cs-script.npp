@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 
@@ -140,7 +141,7 @@ namespace CSScriptNpp
 
                 string cscs = Path.Combine(Plugin.PluginDir, "cscs.exe");
                 string args = string.Format("/e  {0} {1}", GenerateProbingDirArg(), script);
-                
+
                 var p = new Process();
                 p.StartInfo.FileName = cscs;
                 p.StartInfo.Arguments = args;
@@ -333,6 +334,87 @@ namespace CSScriptNpp
                     catch { } //it can be already locked (running)
                 }
                 return consoleHostPath;
+            }
+        }
+
+        static public string GetLatestAvailableVersion()
+        {
+            try
+            {
+                return DownloadText("http://csscript.net/npp/latest_version.txt");
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        static public string GetLatestAvailableMsi(string version)
+        {
+            try
+            {
+                string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+                string destFile = Path.Combine(downloadDir, "CSScriptNpp.msi");
+
+                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp*.msi").Count();
+                if (numOfAlreadyDownloaded > 0)
+                    destFile = Path.Combine(downloadDir, "CSScriptNpp (" + (numOfAlreadyDownloaded + 1) + ").msi");
+
+                DownloadBinary("http://csscript.net/npp/CSScriptNpp."+version+".msi", destFile);
+                
+                return destFile; 
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        static void DownloadBinary(string url, string destinationPath, string proxyUser = null, string proxyPw = null)
+        {
+            var sb = new StringBuilder();
+            byte[] buf = new byte[1024 * 4];
+
+            if (proxyUser != null)
+                WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
+
+            var request = WebRequest.Create(url);
+            var response = (HttpWebResponse)request.GetResponse();
+
+            using (var destStream = new FileStream(destinationPath, FileMode.CreateNew))
+            using (var resStream = response.GetResponseStream())
+            {
+                int count = 0;
+                while (0 < (count = resStream.Read(buf, 0, buf.Length)))
+                {
+                    destStream.Write(buf, 0, count);
+                }
+            }
+        }
+        
+        static string DownloadText(string url, string proxyUser = null, string proxyPw = null)
+        {
+            var sb = new StringBuilder();
+            byte[] buf = new byte[1024 * 4];
+
+            if (proxyUser != null)
+                WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
+
+            var request = WebRequest.Create(url);
+            var response = (HttpWebResponse)request.GetResponse();
+
+            using (var resStream = response.GetResponseStream())
+            {
+                string tempString = null;
+                int count = 0;
+
+                while (0 < (count = resStream.Read(buf, 0, buf.Length)))
+                {
+                    tempString = Encoding.ASCII.GetString(buf, 0, count);
+                    sb.Append(tempString);
+                }
+                return sb.ToString();
             }
         }
     }

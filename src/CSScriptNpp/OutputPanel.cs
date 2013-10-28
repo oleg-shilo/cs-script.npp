@@ -191,7 +191,6 @@ namespace CSScriptNpp
             textBox.ScrollBars = ScrollBars.Vertical;
             textBox.ReadOnly = true;
             toolTip1.SetToolTip(textBox, "F4 - Navigate to the next file location\nCtrl+F4 - Navigate to the previous file location\nCtrl+DblClick - Navigate to the raw file location (e.g. auto-generated files)");
-            //textBox.Too = true;
             textBox.BackColor = Color.White;
             textBox.Font = new Font("Courier New", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textBox.MouseDoubleClick += textBox_MouseDoubleClick;
