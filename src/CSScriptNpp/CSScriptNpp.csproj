@@ -280,6 +280,7 @@
     <Content Include="CSScriptNpp\Mono.Cecil.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\history.png" />
     <None Include="Resources\folder_open.png" />
   </ItemGroup>
   <PropertyGroup>

@@ -35,6 +35,8 @@
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.newBtn = new System.Windows.Forms.ToolStripButton();
+            this.histotyBtn = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.validateBtn = new System.Windows.Forms.ToolStripButton();
             this.stopBtn = new System.Windows.Forms.ToolStripButton();
             this.runBtn = new System.Windows.Forms.ToolStripButton();
@@ -50,13 +52,13 @@
             this.helpBtn = new System.Windows.Forms.ToolStripButton();
             this.openScriptsFolderBtn = new System.Windows.Forms.ToolStripButton();
             this.configBtn = new System.Windows.Forms.ToolStripButton();
+            this.deployBtn = new System.Windows.Forms.ToolStripButton();
+            this.shortcutsBtn = new System.Windows.Forms.ToolStripButton();
             this.solutionContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.unloadScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCommandPromptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openContainingFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deployBtn = new System.Windows.Forms.ToolStripButton();
-            this.shortcutsBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.solutionContextMenu.SuspendLayout();
             this.itemContextMenu.SuspendLayout();
@@ -97,6 +99,7 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newBtn,
+            this.histotyBtn,
             this.validateBtn,
             this.stopBtn,
             this.runBtn,
@@ -130,6 +133,22 @@
             this.newBtn.Text = "new";
             this.newBtn.ToolTipText = "Create new script";
             this.newBtn.Click += new System.EventHandler(this.newBtn_Click);
+            // 
+            // histotyBtn
+            // 
+            this.histotyBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.histotyBtn.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripSeparator3});
+            this.histotyBtn.Image = global::CSScriptNpp.Resources.Resources.history;
+            this.histotyBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.histotyBtn.Name = "histotyBtn";
+            this.histotyBtn.Size = new System.Drawing.Size(29, 22);
+            this.histotyBtn.ToolTipText = "Recent Scripts";
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
             // 
             // validateBtn
             // 
@@ -285,6 +304,28 @@
             this.configBtn.ToolTipText = "Show Config Dialog";
             this.configBtn.Click += new System.EventHandler(this.configBtn_Click);
             // 
+            // deployBtn
+            // 
+            this.deployBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.deployBtn.Image = ((System.Drawing.Image)(resources.GetObject("deployBtn.Image")));
+            this.deployBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.deployBtn.Name = "deployBtn";
+            this.deployBtn.Size = new System.Drawing.Size(23, 22);
+            this.deployBtn.Text = "deployBtn";
+            this.deployBtn.ToolTipText = "Prepare script for distribution";
+            this.deployBtn.Click += new System.EventHandler(this.deployBtn_Click);
+            // 
+            // shortcutsBtn
+            // 
+            this.shortcutsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.shortcutsBtn.Image = ((System.Drawing.Image)(resources.GetObject("shortcutsBtn.Image")));
+            this.shortcutsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.shortcutsBtn.Name = "shortcutsBtn";
+            this.shortcutsBtn.Size = new System.Drawing.Size(23, 22);
+            this.shortcutsBtn.Text = "shortcutsBtn";
+            this.shortcutsBtn.ToolTipText = "Show Plugin Shortcuts";
+            this.shortcutsBtn.Click += new System.EventHandler(this.shortcutsBtn_Click);
+            // 
             // solutionContextMenu
             // 
             this.solutionContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -320,28 +361,6 @@
             this.openContainingFolderToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.openContainingFolderToolStripMenuItem.Text = "Open Containing &Folder";
             this.openContainingFolderToolStripMenuItem.Click += new System.EventHandler(this.openContainingFolderToolStripMenuItem_Click);
-            // 
-            // deployBtn
-            // 
-            this.deployBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.deployBtn.Image = ((System.Drawing.Image)(resources.GetObject("deployBtn.Image")));
-            this.deployBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.deployBtn.Name = "deployBtn";
-            this.deployBtn.Size = new System.Drawing.Size(23, 22);
-            this.deployBtn.Text = "deployBtn";
-            this.deployBtn.ToolTipText = "Prepare script for distribution";
-            this.deployBtn.Click += new System.EventHandler(this.deployBtn_Click);
-            // 
-            // shortcutsBtn
-            // 
-            this.shortcutsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.shortcutsBtn.Image = ((System.Drawing.Image)(resources.GetObject("shortcutsBtn.Image")));
-            this.shortcutsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.shortcutsBtn.Name = "shortcutsBtn";
-            this.shortcutsBtn.Size = new System.Drawing.Size(23, 22);
-            this.shortcutsBtn.Text = "shortcutsBtn";
-            this.shortcutsBtn.ToolTipText = "Show Plugin Shortcuts";
-            this.shortcutsBtn.Click += new System.EventHandler(this.shortcutsBtn_Click);
             // 
             // ProjectPanel
             // 
@@ -392,5 +411,7 @@
         private System.Windows.Forms.ToolStripButton configBtn;
         private System.Windows.Forms.ToolStripButton deployBtn;
         private System.Windows.Forms.ToolStripButton shortcutsBtn;
+        private System.Windows.Forms.ToolStripDropDownButton histotyBtn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

@@ -21,6 +21,41 @@ namespace CSScriptNpp
                 validateBtn.ToolTipText += " or F7";
 
             RefreshControls();
+            ReloadScriptHistory();
+        }
+
+
+        void ReloadScriptHistory()
+        {
+            this.histotyBtn.DropDownItems.Clear();
+            string[] files = Config.Instance.SciptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+            if (files.Count() == 0)
+            {
+                this.histotyBtn.DropDownItems.Add(new ToolStripMenuItem("empty") { Enabled = false });
+            }
+            else
+            {
+                foreach (string file in files)
+                {
+                    var item = new ToolStripMenuItem(file);
+                    item.Click += (s, e) => LoadScript(file);
+                    this.histotyBtn.DropDownItems.Add(item);
+                }
+
+                {
+                    this.histotyBtn.DropDownItems.Add(new ToolStripSeparator());
+                    var item = new ToolStripMenuItem("Clear Recent Scripts List");
+                    item.Click += (s, e) =>
+                        {
+
+                            this.histotyBtn.DropDownItems.Clear();
+                            Config.Instance.SciptHistory = "";
+                            Config.Instance.Save();
+                            ReloadScriptHistory();
+                        };
+                    this.histotyBtn.DropDownItems.Add(item);
+                }
+            }
         }
 
         void runBtn_Click(object sender, EventArgs e)
@@ -519,6 +554,12 @@ void main(string[] args)
 
                         currentScript = scriptFile;
                         Intellisense.Refresh();
+
+                        var history = Config.Instance.SciptHistory.Split('|').ToList();
+                        history.Insert(0, scriptFile);
+                        Config.Instance.SciptHistory = string.Join("|", history.Take(Config.Instance.SciptHistoryMaxCount).ToArray());
+                        Config.Instance.Save();
+                        ReloadScriptHistory();
                     }
                     catch
                     {
@@ -680,10 +721,10 @@ void main(string[] args)
                             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
 
                             string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript);
-                            if(path != null)
+                            if (path != null)
                                 Process.Start("explorer.exe", path);
                             //else
-                                //MessageBox.Show("Distribution package cannot be prepared.\r\nVerify that the script is valid.", "CS-Script");
+                            //MessageBox.Show("Distribution package cannot be prepared.\r\nVerify that the script is valid.", "CS-Script");
                         }
             }
             catch (Exception ex)

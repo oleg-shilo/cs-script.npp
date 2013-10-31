@@ -27,6 +27,8 @@ namespace CSScriptNpp
         public bool InterceptConsole = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
         public bool BuildOnF7 = true;
+        public string SciptHistory = "";
+        public int SciptHistoryMaxCount = 10;
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
         public bool ShowCodeMapPanel = false;
@@ -44,6 +46,8 @@ namespace CSScriptNpp
             SetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
             SetValue("settings", "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             SetValue("settings", "InterceptConsole", InterceptConsole);
+            SetValue("settings", "SciptHistory", SciptHistory);
+            SetValue("settings", "SciptHistoryMaxCount", SciptHistoryMaxCount);
             SetValue("settings", "LocalDebug", LocalDebug);
             SetValue("settings", "BuildOnF7", BuildOnF7);
             SetValue("settings", "ClasslessScriptByDefault", ClasslessScriptByDefault);
@@ -56,6 +60,8 @@ namespace CSScriptNpp
             ShowProjectPanel = GetValue("settings", "ShowProjectPanel", ShowProjectPanel);
             ShowOutputPanel = GetValue("settings", "ShowOutputPanel", ShowOutputPanel);
             ShowCodeMapPanel = GetValue("settings", "ShowCodeMapPanel", ShowCodeMapPanel);
+            SciptHistory = GetValue("settings", "SciptHistory", SciptHistory);
+            SciptHistoryMaxCount = GetValue("settings", "SciptHistoryMaxCount", SciptHistoryMaxCount);
             OutputPanelCapacity = GetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
             NavigateToRawCodeOnDblClickInOutput = GetValue("settings", "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             InterceptConsole = GetValue("settings", "InterceptConsole", InterceptConsole);
