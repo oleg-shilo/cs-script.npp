@@ -27,6 +27,7 @@ namespace CSScriptNpp
         public bool InterceptConsole = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
         public bool BuildOnF7 = true;
+        public string ReleaseNotesViewedFor = "";
         public string SciptHistory = "";
         public int SciptHistoryMaxCount = 10;
         public bool ShowProjectPanel = false;
@@ -46,6 +47,7 @@ namespace CSScriptNpp
             SetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
             SetValue("settings", "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             SetValue("settings", "InterceptConsole", InterceptConsole);
+            SetValue("settings", "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
             SetValue("settings", "SciptHistory", SciptHistory);
             SetValue("settings", "SciptHistoryMaxCount", SciptHistoryMaxCount);
             SetValue("settings", "LocalDebug", LocalDebug);
@@ -66,6 +68,7 @@ namespace CSScriptNpp
             NavigateToRawCodeOnDblClickInOutput = GetValue("settings", "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             InterceptConsole = GetValue("settings", "InterceptConsole", InterceptConsole);
             LocalDebug = GetValue("settings", "LocalDebug", LocalDebug);
+            ReleaseNotesViewedFor = GetValue("settings", "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
             BuildOnF7 = GetValue("settings", "BuildOnF7", BuildOnF7);
             ClasslessScriptByDefault = GetValue("settings", "ClasslessScriptByDefault", ClasslessScriptByDefault);
             DistributeScriptAsScriptByDefault = GetValue("settings", "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CSScriptLibrary;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptLibrary;
-using System.Reflection;
 
 namespace CSScriptNpp
 {
@@ -22,8 +22,21 @@ namespace CSScriptNpp
 
             RefreshControls();
             ReloadScriptHistory();
+            LoadReleaseNotes();
         }
 
+        void LoadReleaseNotes()
+        {
+            whatsNewPanel.Visible = false;
+            string pluginVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            if (Config.Instance.ReleaseNotesViewedFor != pluginVersion)
+            {
+                whatsNewTxt.Text = CSScriptNpp.Resources.Resources.WhatsNew;
+                whatsNewPanel.Visible = true;
+                Config.Instance.ReleaseNotesViewedFor = pluginVersion;
+                Config.Instance.Save();
+            }
+        }
 
         void ReloadScriptHistory()
         {
@@ -47,7 +60,6 @@ namespace CSScriptNpp
                     var item = new ToolStripMenuItem("Clear Recent Scripts List");
                     item.Click += (s, e) =>
                         {
-
                             this.histotyBtn.DropDownItems.Clear();
                             Config.Instance.SciptHistory = "";
                             Config.Instance.Save();
@@ -70,6 +82,7 @@ namespace CSScriptNpp
         }
 
         string scriptsDirectory;
+
         string ScriptsDirectory
         {
             get
@@ -172,6 +185,7 @@ class Script
         Debug.WriteLine(""Hello World!"");
 	}
 }";
+
         const string defaultClasslessScriptCode =
 @"//css_args /ac
 using System;
@@ -740,6 +754,11 @@ void main(string[] args)
         {
             using (var dialog = new PluginShortcuts())
                 dialog.ShowDialog();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            whatsNewPanel.Visible = false;
         }
     }
 }

@@ -91,6 +91,16 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap close {
+            get {
+                object obj = ResourceManager.GetObject("close", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] ConsoleHost {
@@ -304,6 +314,20 @@ namespace CSScriptNpp.Resources {
         internal static string VS2010ProjectTemplate {
             get {
                 return ResourceManager.GetString("VS2010ProjectTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to * Added &quot;Debug.WriteLine&quot; for the default &quot;new script&quot;
+        ///* Implemented Recent Scripts list
+        ///* Fixed auto-formatting scrolling artifact
+        ///* Checking for updates from AboutBox
+        ///* Implemented navigation to &quot;logical&quot; vs. auto-generated file from output panel
+        ///* CodeMap initial implementation.
+        /// </summary>
+        internal static string WhatsNew {
+            get {
+                return ResourceManager.GetString("WhatsNew", resourceCulture);
             }
         }
     }

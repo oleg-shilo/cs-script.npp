@@ -7,6 +7,8 @@ namespace CSScriptNpp
 {
     /*todo:
      *  - allow distributing various versions of CS-Script
+     *  - order of shortcut list
+     *  - what's new note
      */
 
     public partial class Plugin
@@ -64,7 +66,7 @@ namespace CSScriptNpp
         static void BindInteranalShortcuts()
         {
             internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F7), new Tuple<string, Action>(
-                                  "Build", () =>
+                                  "Build (validate)", () =>
                                    {
                                        Build();
                                    }));

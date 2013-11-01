@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectPanel));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -59,16 +60,34 @@
             this.openCommandPromptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openContainingFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.whatsNewTxt = new System.Windows.Forms.TextBox();
+            this.whatsNewPanel = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.solutionContextMenu.SuspendLayout();
             this.itemContextMenu.SuspendLayout();
+            this.whatsNewPanel.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(430, -1);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(32, 21);
+            this.pictureBox1.TabIndex = 11;
+            this.pictureBox1.TabStop = false;
+            this.toolTip1.SetToolTip(this.pictureBox1, "Close \"What\'s new\" panel");
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // treeView1
             // 
             this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeView1.BackColor = System.Drawing.Color.White;
             this.treeView1.HideSelection = false;
             this.treeView1.ImageIndex = 0;
             this.treeView1.ImageList = this.imageList1;
@@ -148,7 +167,7 @@
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(57, 6);
             // 
             // validateBtn
             // 
@@ -362,21 +381,67 @@
             this.openContainingFolderToolStripMenuItem.Text = "Open Containing &Folder";
             this.openContainingFolderToolStripMenuItem.Click += new System.EventHandler(this.openContainingFolderToolStripMenuItem_Click);
             // 
+            // whatsNewTxt
+            // 
+            this.whatsNewTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.whatsNewTxt.BackColor = System.Drawing.Color.White;
+            this.whatsNewTxt.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.whatsNewTxt.ForeColor = System.Drawing.Color.DarkBlue;
+            this.whatsNewTxt.Location = new System.Drawing.Point(8, 25);
+            this.whatsNewTxt.Multiline = true;
+            this.whatsNewTxt.Name = "whatsNewTxt";
+            this.whatsNewTxt.ReadOnly = true;
+            this.whatsNewTxt.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.whatsNewTxt.Size = new System.Drawing.Size(452, 187);
+            this.whatsNewTxt.TabIndex = 5;
+            // 
+            // whatsNewPanel
+            // 
+            this.whatsNewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.whatsNewPanel.BackColor = System.Drawing.Color.White;
+            this.whatsNewPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.whatsNewPanel.Controls.Add(this.pictureBox1);
+            this.whatsNewPanel.Controls.Add(this.label1);
+            this.whatsNewPanel.Controls.Add(this.whatsNewTxt);
+            this.whatsNewPanel.Location = new System.Drawing.Point(12, 40);
+            this.whatsNewPanel.Name = "whatsNewPanel";
+            this.whatsNewPanel.Size = new System.Drawing.Size(463, 216);
+            this.whatsNewPanel.TabIndex = 10;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.Location = new System.Drawing.Point(0, 2);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(99, 17);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "What\'s new?";
+            // 
             // ProjectPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(487, 268);
+            this.Controls.Add(this.whatsNewPanel);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.treeView1);
             this.KeyPreview = true;
             this.Name = "ProjectPanel";
             this.Text = "ManageScripts";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ProjectPanel_KeyDown);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.solutionContextMenu.ResumeLayout(false);
             this.itemContextMenu.ResumeLayout(false);
+            this.whatsNewPanel.ResumeLayout(false);
+            this.whatsNewPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -413,5 +478,9 @@
         private System.Windows.Forms.ToolStripButton shortcutsBtn;
         private System.Windows.Forms.ToolStripDropDownButton histotyBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.TextBox whatsNewTxt;
+        private System.Windows.Forms.Panel whatsNewPanel;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
