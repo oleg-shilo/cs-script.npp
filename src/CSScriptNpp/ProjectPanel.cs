@@ -169,15 +169,18 @@ class Script
 	static public void Main(string[] args)
 	{
         Console.WriteLine(""Hello World!"");
+        Debug.WriteLine(""Hello World!"");
 	}
 }";
         const string defaultClasslessScriptCode =
 @"//css_args /ac
 using System;
+using System.Diagnostics;
 
 void main(string[] args)
 {
     Console.WriteLine(""Hello World!"");
+    Debug.WriteLine(""Hello World!"");
 }";
 
         void synchBtn_Click(object sender, EventArgs e)

@@ -7,8 +7,6 @@ namespace CSScriptNpp
 {
     /*todo:
      *  - allow distributing various versions of CS-Script
-     *  + script history
-     *  - do not intercept console when running externally
      */
 
     public partial class Plugin
