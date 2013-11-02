@@ -164,6 +164,7 @@ namespace CSScriptNpp
                     Directory.CreateDirectory(dir);
 
                     File.Copy(srcExe, destExe, true);
+                    File.Delete(srcExe);
                     return dir;
                 }
                 else

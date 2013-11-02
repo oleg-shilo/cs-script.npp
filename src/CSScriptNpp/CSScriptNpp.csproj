@@ -268,8 +268,6 @@
     <None Include="Resources\ConsoleHost.exe" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="cscs.v1.1.exe" />
-    <Content Include="cscs.v3.5.exe" />
     <None Include="CSScriptNpp\cscs.v3.5.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

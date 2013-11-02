@@ -41,7 +41,7 @@ namespace CSScriptNpp
         void ReloadScriptHistory()
         {
             this.histotyBtn.DropDownItems.Clear();
-            string[] files = Config.Instance.SciptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] files = Config.Instance.SciptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
             if (files.Count() == 0)
             {
                 this.histotyBtn.DropDownItems.Add(new ToolStripMenuItem("empty") { Enabled = false });
@@ -51,7 +51,26 @@ namespace CSScriptNpp
                 foreach (string file in files)
                 {
                     var item = new ToolStripMenuItem(file);
-                    item.Click += (s, e) => LoadScript(file);
+                    item.Click += (s, e) =>
+                        {
+                            string script = file;
+                            if (File.Exists(script))
+                            {
+                                LoadScript(script);
+                            }
+                            else if (DialogResult.Yes == MessageBox.Show("File '" + script + "' cannot be found.\nDo you want to remove it from the Recent Scripts List?", "CS-Script", MessageBoxButtons.YesNo))
+                            {
+                                this.histotyBtn.DropDownItems.Remove(item);
+
+                                var scripts = Config.Instance.SciptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
+                                                                          .Distinct()
+                                                                          .Where(x => x != script)
+                                                                          .ToArray();
+
+                                Config.Instance.SciptHistory = string.Join("|", scripts);
+                                Config.Instance.Save();
+                            }
+                        };
                     this.histotyBtn.DropDownItems.Add(item);
                 }
 
@@ -573,6 +592,7 @@ void main(string[] args)
                         Intellisense.Refresh();
 
                         var history = Config.Instance.SciptHistory.Split('|').ToList();
+                        history.Remove(scriptFile);
                         history.Insert(0, scriptFile);
                         Config.Instance.SciptHistory = string.Join("|", history.Take(Config.Instance.SciptHistoryMaxCount).ToArray());
                         Config.Instance.Save();
