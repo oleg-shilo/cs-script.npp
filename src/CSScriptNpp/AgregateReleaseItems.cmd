@@ -5,6 +5,7 @@ md "%programfiles%\Notepad++\plugins\CSScriptNpp"
 copy "bin\Release\CSScriptNpp.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp.dll"
 copy "bin\Release\CSScriptNpp\*.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp"
 copy "bin\Release\CSScriptNpp\cscs.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\cscs.exe"
+copy "bin\Release\CSScriptNpp\cscs.v3.5.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\cscs.v3.5.exe"
 
 copy "bin\release\CSScriptNpp.dll" "..\..\bin\Plugins\CSScriptNpp.dll"
 copy "bin\release\CSScriptNpp\*.dll" "..\..\bin\Plugins\CSScriptNpp"

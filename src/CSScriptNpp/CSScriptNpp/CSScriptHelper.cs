@@ -103,17 +103,25 @@ namespace CSScriptNpp
                 throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
         }
 
-        static public string Isolate(string scriptFile, bool asScript)
+        static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion)
         {
             string dir = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile));
             if (Directory.Exists(dir))
                 Directory.Delete(dir, true);
 
+            string engineFileName;
+            if (targerRuntimeVersion == "v4.0.30319")
+                engineFileName = "cscs.exe";
+            else if (targerRuntimeVersion == "v2.0.50727")
+                engineFileName = "cscs.v3.5.exe";
+            else
+                throw new Exception("The requested Target Runtime version (" + targerRuntimeVersion + ") is not supported.");
+
             if (asScript)
             {
                 Project proj = GenerateProjectFor(scriptFile);
 
-                string engine = Path.Combine(Plugin.PluginDir, "cscs.exe");
+                string engine = Path.Combine(Plugin.PluginDir, engineFileName);
 
                 string batchFile = Path.Combine(dir, "run.cmd");
 
@@ -127,7 +135,8 @@ namespace CSScriptNpp
                 foreach (string file in files)
                     copy(file, dir);
 
-                copy(engine, dir);
+                File.Copy(engine, Path.Combine(dir, "cscs.exe"), true);
+
                 File.WriteAllText(batchFile, "cscs.exe \"" + Path.GetFileName(scriptFile) + "\"\r\npause");
 
                 return dir;
@@ -139,7 +148,7 @@ namespace CSScriptNpp
 
                 string script = "\"" + scriptFile + "\"";
 
-                string cscs = Path.Combine(Plugin.PluginDir, "cscs.exe");
+                string cscs = Path.Combine(Plugin.PluginDir, engineFileName);
                 string args = string.Format("/e  {0} {1}", GenerateProbingDirArg(), script);
 
                 var p = new Process();
@@ -159,6 +168,7 @@ namespace CSScriptNpp
                 }
                 else
                 {
+                    //just show why building has failed
                     cscs = "\"" + cscs + "\"";
                     args = string.Format("{0} /e  {1} {2}", cscs, GenerateProbingDirArg(), script);
                     Process.Start(ConsoleHostPath, args);
@@ -361,9 +371,9 @@ namespace CSScriptNpp
                 if (numOfAlreadyDownloaded > 0)
                     destFile = Path.Combine(downloadDir, "CSScriptNpp (" + (numOfAlreadyDownloaded + 1) + ").msi");
 
-                DownloadBinary("http://csscript.net/npp/CSScriptNpp."+version+".msi", destFile);
-                
-                return destFile; 
+                DownloadBinary("http://csscript.net/npp/CSScriptNpp." + version + ".msi", destFile);
+
+                return destFile;
             }
             catch
             {
@@ -392,7 +402,7 @@ namespace CSScriptNpp
                 }
             }
         }
-        
+
         static string DownloadText(string url, string proxyUser = null, string proxyPw = null)
         {
             var sb = new StringBuilder();

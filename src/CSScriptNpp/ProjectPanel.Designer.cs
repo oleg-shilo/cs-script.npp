@@ -138,7 +138,7 @@
             this.shortcutsBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(487, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(487, 31);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -148,7 +148,7 @@
             this.newBtn.Image = global::CSScriptNpp.Resources.Resources.add;
             this.newBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newBtn.Name = "newBtn";
-            this.newBtn.Size = new System.Drawing.Size(23, 22);
+            this.newBtn.Size = new System.Drawing.Size(23, 28);
             this.newBtn.Text = "new";
             this.newBtn.ToolTipText = "Create new script";
             this.newBtn.Click += new System.EventHandler(this.newBtn_Click);
@@ -159,15 +159,16 @@
             this.histotyBtn.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator3});
             this.histotyBtn.Image = global::CSScriptNpp.Resources.Resources.history;
+            this.histotyBtn.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.histotyBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.histotyBtn.Name = "histotyBtn";
-            this.histotyBtn.Size = new System.Drawing.Size(29, 22);
+            this.histotyBtn.Size = new System.Drawing.Size(37, 28);
             this.histotyBtn.ToolTipText = "Recent Scripts";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(57, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
             // 
             // validateBtn
             // 
@@ -175,7 +176,7 @@
             this.validateBtn.Image = global::CSScriptNpp.Resources.Resources.check;
             this.validateBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.validateBtn.Name = "validateBtn";
-            this.validateBtn.Size = new System.Drawing.Size(23, 22);
+            this.validateBtn.Size = new System.Drawing.Size(23, 28);
             this.validateBtn.Text = "validate";
             this.validateBtn.ToolTipText = "Build (validate) current script\r\nShortcut: Ctrl+Shift+B";
             this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
@@ -186,7 +187,7 @@
             this.stopBtn.Image = global::CSScriptNpp.Resources.Resources.stop;
             this.stopBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stopBtn.Name = "stopBtn";
-            this.stopBtn.Size = new System.Drawing.Size(23, 22);
+            this.stopBtn.Size = new System.Drawing.Size(23, 28);
             this.stopBtn.Text = "stop";
             this.stopBtn.ToolTipText = "Stop running script";
             this.stopBtn.Visible = false;
@@ -198,7 +199,7 @@
             this.runBtn.Image = global::CSScriptNpp.Resources.Resources.run;
             this.runBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.runBtn.Name = "runBtn";
-            this.runBtn.Size = new System.Drawing.Size(23, 22);
+            this.runBtn.Size = new System.Drawing.Size(23, 28);
             this.runBtn.Text = "run";
             this.runBtn.ToolTipText = "Run current script\r\nShortcut: F5";
             this.runBtn.Click += new System.EventHandler(this.runBtn_Click);
@@ -209,7 +210,7 @@
             this.debugBtn.Image = global::CSScriptNpp.Resources.Resources.debug;
             this.debugBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.debugBtn.Name = "debugBtn";
-            this.debugBtn.Size = new System.Drawing.Size(23, 22);
+            this.debugBtn.Size = new System.Drawing.Size(23, 28);
             this.debugBtn.Text = "Debug";
             this.debugBtn.ToolTipText = "Debug script with the syestem default debugger";
             this.debugBtn.Click += new System.EventHandler(this.debugBtn_Click);
@@ -217,7 +218,7 @@
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
             // 
             // loadBtn
             // 
@@ -225,7 +226,7 @@
             this.loadBtn.Image = global::CSScriptNpp.Resources.Resources.load;
             this.loadBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.loadBtn.Name = "loadBtn";
-            this.loadBtn.Size = new System.Drawing.Size(23, 22);
+            this.loadBtn.Size = new System.Drawing.Size(23, 28);
             this.loadBtn.Text = "load";
             this.loadBtn.ToolTipText = "Load script from current document\r\nShortcut: Ctrl+F7";
             this.loadBtn.Click += new System.EventHandler(this.loadBtn_Click);
@@ -236,7 +237,7 @@
             this.reloadBtn.Image = global::CSScriptNpp.Resources.Resources.reload;
             this.reloadBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.reloadBtn.Name = "reloadBtn";
-            this.reloadBtn.Size = new System.Drawing.Size(23, 22);
+            this.reloadBtn.Size = new System.Drawing.Size(23, 28);
             this.reloadBtn.Text = "reload";
             this.reloadBtn.ToolTipText = "Reload current script";
             this.reloadBtn.Click += new System.EventHandler(this.reloadBtn_Click);
@@ -247,7 +248,7 @@
             this.synchBtn.Image = global::CSScriptNpp.Resources.Resources.synch;
             this.synchBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.synchBtn.Name = "synchBtn";
-            this.synchBtn.Size = new System.Drawing.Size(23, 22);
+            this.synchBtn.Size = new System.Drawing.Size(23, 28);
             this.synchBtn.Text = "synch";
             this.synchBtn.ToolTipText = "Synch with current document";
             this.synchBtn.Click += new System.EventHandler(this.synchBtn_Click);
@@ -255,7 +256,7 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
             // outputBtn
             // 
@@ -263,7 +264,7 @@
             this.outputBtn.Image = global::CSScriptNpp.Resources.Resources.outputpanel;
             this.outputBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.outputBtn.Name = "outputBtn";
-            this.outputBtn.Size = new System.Drawing.Size(23, 22);
+            this.outputBtn.Size = new System.Drawing.Size(23, 28);
             this.outputBtn.Text = "Toggle output panel visibility";
             this.outputBtn.Click += new System.EventHandler(this.outputBtn_Click);
             // 
@@ -273,7 +274,7 @@
             this.openInVsBtn.Image = global::CSScriptNpp.Resources.Resources.vs;
             this.openInVsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openInVsBtn.Name = "openInVsBtn";
-            this.openInVsBtn.Size = new System.Drawing.Size(23, 22);
+            this.openInVsBtn.Size = new System.Drawing.Size(23, 28);
             this.openInVsBtn.Text = "openInVsBtn";
             this.openInVsBtn.ToolTipText = "Open current script in Visual Studio";
             this.openInVsBtn.Click += new System.EventHandler(this.openInVsBtn_Click);
@@ -284,7 +285,7 @@
             this.aboutBtn.Image = global::CSScriptNpp.Resources.Resources.about;
             this.aboutBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.aboutBtn.Name = "aboutBtn";
-            this.aboutBtn.Size = new System.Drawing.Size(23, 22);
+            this.aboutBtn.Size = new System.Drawing.Size(23, 28);
             this.aboutBtn.Text = "aboutBtn";
             this.aboutBtn.ToolTipText = "Abut CS-Script plugin";
             this.aboutBtn.Click += new System.EventHandler(this.aboutBtn_Click);
@@ -295,7 +296,7 @@
             this.helpBtn.Image = global::CSScriptNpp.Resources.Resources.Help;
             this.helpBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.helpBtn.Name = "helpBtn";
-            this.helpBtn.Size = new System.Drawing.Size(23, 22);
+            this.helpBtn.Size = new System.Drawing.Size(23, 28);
             this.helpBtn.Text = "help";
             this.helpBtn.ToolTipText = "Show Help";
             this.helpBtn.Visible = false;
@@ -307,7 +308,7 @@
             this.openScriptsFolderBtn.Image = ((System.Drawing.Image)(resources.GetObject("openScriptsFolderBtn.Image")));
             this.openScriptsFolderBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openScriptsFolderBtn.Name = "openScriptsFolderBtn";
-            this.openScriptsFolderBtn.Size = new System.Drawing.Size(23, 22);
+            this.openScriptsFolderBtn.Size = new System.Drawing.Size(23, 28);
             this.openScriptsFolderBtn.Text = "scriptsFolder";
             this.openScriptsFolderBtn.ToolTipText = "Open Scripts Default Folder";
             this.openScriptsFolderBtn.Click += new System.EventHandler(this.openScriptsFolderBtn_Click);
@@ -318,7 +319,7 @@
             this.configBtn.Image = ((System.Drawing.Image)(resources.GetObject("configBtn.Image")));
             this.configBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.configBtn.Name = "configBtn";
-            this.configBtn.Size = new System.Drawing.Size(23, 22);
+            this.configBtn.Size = new System.Drawing.Size(23, 28);
             this.configBtn.Text = "configBtn";
             this.configBtn.ToolTipText = "Show Config Dialog";
             this.configBtn.Click += new System.EventHandler(this.configBtn_Click);
@@ -329,7 +330,7 @@
             this.deployBtn.Image = ((System.Drawing.Image)(resources.GetObject("deployBtn.Image")));
             this.deployBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deployBtn.Name = "deployBtn";
-            this.deployBtn.Size = new System.Drawing.Size(23, 22);
+            this.deployBtn.Size = new System.Drawing.Size(23, 28);
             this.deployBtn.Text = "deployBtn";
             this.deployBtn.ToolTipText = "Prepare script for distribution";
             this.deployBtn.Click += new System.EventHandler(this.deployBtn_Click);
@@ -340,7 +341,7 @@
             this.shortcutsBtn.Image = ((System.Drawing.Image)(resources.GetObject("shortcutsBtn.Image")));
             this.shortcutsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.shortcutsBtn.Name = "shortcutsBtn";
-            this.shortcutsBtn.Size = new System.Drawing.Size(23, 22);
+            this.shortcutsBtn.Size = new System.Drawing.Size(23, 28);
             this.shortcutsBtn.Text = "shortcutsBtn";
             this.shortcutsBtn.ToolTipText = "Show Plugin Shortcuts";
             this.shortcutsBtn.Click += new System.EventHandler(this.shortcutsBtn_Click);

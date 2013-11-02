@@ -730,18 +730,29 @@ void main(string[] args)
         {
             try
             {
-                if (currentScript != null)
+                if (currentScript == null)
+                    LoadCurrentDoc();
+
+                if (currentScript != null) //may not necessarily be loaded successfully
+
                     using (var dialog = new DeploymentInput())
                         if (DialogResult.OK == dialog.ShowDialog())
                         {
                             EditItem(currentScript);
                             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
 
-                            string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript);
+                            string selectedTargetVersion = dialog.SelectedVersion.Version;
+                            string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion);
+                            
                             if (path != null)
+                            {
+                                string pluginClrVersion = "v"+Environment.Version.ToString();
+
+                                if (dialog.AsScript && !pluginClrVersion.StartsWith(selectedTargetVersion)) //selectedTargetVersion may not include the build number
+                                    MessageBox.Show("Distribution package targets CLR version, which is different from the default version.\r\nPlease verify that the script is compatible with the selected CLR version.", "CS-Script");
+                                
                                 Process.Start("explorer.exe", path);
-                            //else
-                            //MessageBox.Show("Distribution package cannot be prepared.\r\nVerify that the script is valid.", "CS-Script");
+                            }
                         }
             }
             catch (Exception ex)
