@@ -1,0 +1,15 @@
+* Implemented Recent Scripts list
+
+* Added checking for plugin updates from AboutBox
+
+* Implemented CodeMap panel
+
+* Implemented selection of the CLR version when preparing distribution package
+
+* Added project panel button for showing plugin shortcuts list
+
+* Added 'What's New?' panel 
+
+* Fixed auto-formatting scrolling artifact
+
+* Implemented navigation to "logical" file (vs. auto-generated) file from output panel
