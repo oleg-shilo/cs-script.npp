@@ -128,10 +128,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CSScriptIntellisense, Version=1.0.1.1, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>CSScriptNpp\CSScriptIntellisense.dll</HintPath>
-    </Reference>
     <Reference Include="CSScriptLibrary, Version=3.5.10.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>CSScriptNpp\CSScriptLibrary.dll</HintPath>
@@ -184,11 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Interop\DllExport\NppPlugin.DllExport.targets" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CSScriptNpp\CSScriptLibrary.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\about.png" />
@@ -271,22 +262,16 @@
     <None Include="CSScriptNpp\cscs.v3.5.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="CSScriptNpp\CSScriptIntellisense.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CSScriptNpp\ICSharpCode.NRefactory.CSharp.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CSScriptNpp\ICSharpCode.NRefactory.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CSScriptNpp\Mono.Cecil.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Resources\WhatsNew.txt" />
     <None Include="Resources\close.png" />
     <None Include="Resources\history.png" />
     <None Include="Resources\folder_open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CSScriptIntellisense\CSScriptIntellisense.csproj">
+      <Project>{eb8fc3a3-93e8-457b-b281-fafa5119611a}</Project>
+      <Name>CSScriptIntellisense</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
