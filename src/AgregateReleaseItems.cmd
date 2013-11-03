@@ -1,5 +1,5 @@
 echo off
-md "..\..\bin\Plugins\CSScriptNpp"
+md "..\bin\Plugins\CSScriptNpp"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp"
 
 rem CSScriptIntellisense.dll cannot be copied from build events as it would copy the assembly before DllExport is performed
@@ -12,11 +12,12 @@ copy "CSScriptNpp\bin\Release\CSScriptNpp.dll" "%programfiles%\Notepad++\plugins
 copy "CSScriptNpp\bin\Release\CSScriptNpp\*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp"
 
 
-copy "bin\release\CSScriptNpp.dll" "..\..\bin\Plugins\CSScriptNpp.dll"
-copy "bin\release\CSScriptNpp\*.dll" "..\..\bin\Plugins\CSScriptNpp"
-copy "bin\release\CSScriptNpp\*.exe" "..\..\bin\Plugins\CSScriptNpp"
+copy "CSScriptIntellisense\bin\Release\CSScriptIntellisense.dll"  "..\bin\Plugins\CSScriptNpp"
+copy "CSScriptIntellisense\CSharpIntellisense\*.dll" "..\bin\Plugins\CSScriptNpp"
+copy "CSScriptNpp\bin\release\CSScriptNpp.dll" "..\bin\Plugins\CSScriptNpp.dll"
+copy "CSScriptNpp\bin\release\CSScriptNpp\*.exe" "..\bin\Plugins\CSScriptNpp"
 
-copy "..\..\readme.txt" "..\..\bin\readme.txt"
-copy "..\..\license.txt" "..\..\bin\license.txt"
+copy "..\readme.txt" "..\bin\readme.txt"
+copy "..\license.txt" "..\bin\license.txt"
 
 pause
