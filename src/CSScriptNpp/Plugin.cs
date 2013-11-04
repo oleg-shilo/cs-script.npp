@@ -6,10 +6,6 @@ using System.Windows.Forms;
 namespace CSScriptNpp
 {
     /*TODO:
-     *  + allow distributing various versions of CS-Script
-     *  + order of shortcut list
-     *  + what's new note
-     *  - merge config file
      */
 
     public partial class Plugin

@@ -36,12 +36,14 @@
             this.ignoreDocExceptions = new System.Windows.Forms.CheckBox();
             this.formatAsYouType = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.ContentPanel = new System.Windows.Forms.Panel();
+            this.ContentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // useArrow
             // 
             this.useArrow.AutoSize = true;
-            this.useArrow.Location = new System.Drawing.Point(13, 13);
+            this.useArrow.Location = new System.Drawing.Point(0, 9);
             this.useArrow.Name = "useArrow";
             this.useArrow.Size = new System.Drawing.Size(205, 17);
             this.useArrow.TabIndex = 0;
@@ -51,7 +53,7 @@
             // intercept
             // 
             this.intercept.AutoSize = true;
-            this.intercept.Location = new System.Drawing.Point(168, 25);
+            this.intercept.Location = new System.Drawing.Point(155, 21);
             this.intercept.Name = "intercept";
             this.intercept.Size = new System.Drawing.Size(155, 17);
             this.intercept.TabIndex = 0;
@@ -62,7 +64,7 @@
             // useMethodBrackets
             // 
             this.useMethodBrackets.AutoSize = true;
-            this.useMethodBrackets.Location = new System.Drawing.Point(13, 36);
+            this.useMethodBrackets.Location = new System.Drawing.Point(0, 32);
             this.useMethodBrackets.Name = "useMethodBrackets";
             this.useMethodBrackets.Size = new System.Drawing.Size(191, 17);
             this.useMethodBrackets.TabIndex = 2;
@@ -72,7 +74,7 @@
             // ignoreDocExceptions
             // 
             this.ignoreDocExceptions.AutoSize = true;
-            this.ignoreDocExceptions.Location = new System.Drawing.Point(158, 48);
+            this.ignoreDocExceptions.Location = new System.Drawing.Point(145, 44);
             this.ignoreDocExceptions.Name = "ignoreDocExceptions";
             this.ignoreDocExceptions.Size = new System.Drawing.Size(278, 17);
             this.ignoreDocExceptions.TabIndex = 2;
@@ -83,7 +85,7 @@
             // formatAsYouType
             // 
             this.formatAsYouType.AutoSize = true;
-            this.formatAsYouType.Location = new System.Drawing.Point(13, 59);
+            this.formatAsYouType.Location = new System.Drawing.Point(0, 55);
             this.formatAsYouType.Name = "formatAsYouType";
             this.formatAsYouType.Size = new System.Drawing.Size(142, 17);
             this.formatAsYouType.TabIndex = 2;
@@ -101,17 +103,25 @@
             this.linkLabel1.Text = "Edit settings file  instead";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
+            // ContentPanel
+            // 
+            this.ContentPanel.Controls.Add(this.useMethodBrackets);
+            this.ContentPanel.Controls.Add(this.useArrow);
+            this.ContentPanel.Controls.Add(this.ignoreDocExceptions);
+            this.ContentPanel.Controls.Add(this.intercept);
+            this.ContentPanel.Controls.Add(this.formatAsYouType);
+            this.ContentPanel.Location = new System.Drawing.Point(13, 3);
+            this.ContentPanel.Name = "ContentPanel";
+            this.ContentPanel.Size = new System.Drawing.Size(290, 72);
+            this.ContentPanel.TabIndex = 5;
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(315, 123);
+            this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.ignoreDocExceptions);
-            this.Controls.Add(this.formatAsYouType);
-            this.Controls.Add(this.useMethodBrackets);
-            this.Controls.Add(this.intercept);
-            this.Controls.Add(this.useArrow);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.KeyPreview = true;
             this.Name = "ConfigForm";
@@ -119,6 +129,8 @@
             this.Text = "C# Intellisense Settings";
             this.Load += new System.EventHandler(this.ConfigForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ConfigForm_KeyDown);
+            this.ContentPanel.ResumeLayout(false);
+            this.ContentPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -133,5 +145,6 @@
         private System.Windows.Forms.CheckBox ignoreDocExceptions;
         private System.Windows.Forms.CheckBox formatAsYouType;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        public System.Windows.Forms.Panel ContentPanel;
     }
 }

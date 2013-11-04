@@ -42,6 +42,11 @@ namespace CSScriptNpp
         
         public string Section = "Generic";
 
+        public string GetFileName()
+        {
+            return base.file;
+        }
+
         public void Save()
         {
             File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
