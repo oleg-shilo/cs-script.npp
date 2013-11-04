@@ -20,6 +20,9 @@ namespace CSScriptNpp
         {
             base.file = Path.Combine(Plugin.ConfigDir, "settings.ini");
             Open();
+
+            CSScriptIntellisense.Config.Instance.SetFileName(base.file);
+            CSScriptIntellisense.Config.Instance.Section = "Intellisense";
         }
 
         public bool ClasslessScriptByDefault = false;
@@ -35,47 +38,49 @@ namespace CSScriptNpp
         public bool ShowOutputPanel = false;
         public bool ShowCodeMapPanel = false;
         public int OutputPanelCapacity = 10000; //num of characters
-        public bool IntegrateWithIntellisense = true;
         public bool LocalDebug = true;
+        
+        public string Section = "Generic";
 
         public void Save()
         {
             File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
-            SetValue("settings", "ShowProjectPanel", ShowProjectPanel);
-            SetValue("settings", "ShowOutputPanel", ShowOutputPanel);
-            SetValue("settings", "ShowCodeMapPanel", ShowCodeMapPanel);
-            SetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
-            SetValue("settings", "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
-            SetValue("settings", "InterceptConsole", InterceptConsole);
-            SetValue("settings", "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
-            SetValue("settings", "SciptHistory", SciptHistory);
-            SetValue("settings", "SciptHistoryMaxCount", SciptHistoryMaxCount);
-            SetValue("settings", "LocalDebug", LocalDebug);
-            SetValue("settings", "BuildOnF7", BuildOnF7);
-            SetValue("settings", "TargetVersion", TargetVersion);
-            SetValue("settings", "ClasslessScriptByDefault", ClasslessScriptByDefault);
-            SetValue("settings", "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
-            SetValue("settings", "IntegrateWithIntellisense", IntegrateWithIntellisense);
+            SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
+            SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
+            SetValue(Section, "ShowCodeMapPanel", ShowCodeMapPanel);
+            SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
+            SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
+            SetValue(Section, "InterceptConsole", InterceptConsole);
+            SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
+            SetValue(Section, "SciptHistory", SciptHistory);
+            SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+            SetValue(Section, "LocalDebug", LocalDebug);
+            SetValue(Section, "BuildOnF7", BuildOnF7);
+            SetValue(Section, "TargetVersion", TargetVersion);
+            SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
+            SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
+            
+            CSScriptIntellisense.Config.Instance.Save();
         }
 
         public void Open()
         {
-            ShowProjectPanel = GetValue("settings", "ShowProjectPanel", ShowProjectPanel);
-            ShowOutputPanel = GetValue("settings", "ShowOutputPanel", ShowOutputPanel);
-            ShowCodeMapPanel = GetValue("settings", "ShowCodeMapPanel", ShowCodeMapPanel);
-            SciptHistory = GetValue("settings", "SciptHistory", SciptHistory);
-            SciptHistoryMaxCount = GetValue("settings", "SciptHistoryMaxCount", SciptHistoryMaxCount);
-            OutputPanelCapacity = GetValue("settings", "OutputPanelCapacity", OutputPanelCapacity);
-            NavigateToRawCodeOnDblClickInOutput = GetValue("settings", "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
-            InterceptConsole = GetValue("settings", "InterceptConsole", InterceptConsole);
-            LocalDebug = GetValue("settings", "LocalDebug", LocalDebug);
-            TargetVersion = GetValue("settings", "TargetVersion", TargetVersion);
-            ReleaseNotesViewedFor = GetValue("settings", "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
-            BuildOnF7 = GetValue("settings", "BuildOnF7", BuildOnF7);
-            ClasslessScriptByDefault = GetValue("settings", "ClasslessScriptByDefault", ClasslessScriptByDefault);
-            DistributeScriptAsScriptByDefault = GetValue("settings", "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
-            IntegrateWithIntellisense = GetValue("settings", "IntegrateWithIntellisense", IntegrateWithIntellisense);
+            ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
+            ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
+            ShowCodeMapPanel = GetValue(Section, "ShowCodeMapPanel", ShowCodeMapPanel);
+            SciptHistory = GetValue(Section, "SciptHistory", SciptHistory);
+            SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+            OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
+            NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
+            InterceptConsole = GetValue(Section, "InterceptConsole", InterceptConsole);
+            LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
+            TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
+            ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
+            BuildOnF7 = GetValue(Section, "BuildOnF7", BuildOnF7);
+            ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
+            DistributeScriptAsScriptByDefault = GetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
+            CSScriptIntellisense.Config.Instance.Open();
         }
     }
 }

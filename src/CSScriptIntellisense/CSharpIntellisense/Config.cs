@@ -43,6 +43,13 @@ namespace CSScriptIntellisense
             Open();
         }
 
+        public void SetFileName(string path)
+        {
+            UsingExternalFile = true;
+            base.file = path;
+            Open();
+        }
+
         public string GetFileName()
         {
             return base.file;
@@ -50,27 +57,29 @@ namespace CSScriptIntellisense
 
         public bool UseArrowToAccept = true;
         public bool InterceptCtrlSpace = true;
-        public bool NewPluginConfictReported = false;
         public bool ShowQuickInfoInStatusBar = false;
         public bool UseMethodBrackets = false;
         public bool FormatAsYouType = true;
+        public bool UsingExternalFile = false;
         public bool SmartIndenting = true;
         public bool IgnoreDocExceptions = false;
+
+        public string Section = "settings";
 
         public void Save()
         {
             lock (this)
             {
-                File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
+                if(!UsingExternalFile)
+                    File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
-                SetValue("settings", "NewPluginConfictReported", NewPluginConfictReported);
-                SetValue("settings", "UseArrowToAccept", UseArrowToAccept);
-                SetValue("settings", "InterceptCtrlSpace", InterceptCtrlSpace);
-                SetValue("settings", "UseMethodBrackets", UseMethodBrackets);
-                SetValue("settings", "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
-                SetValue("settings", "IgnoreDocExceptions", IgnoreDocExceptions);
-                SetValue("settings", "SmartIndenting", SmartIndenting);
-                SetValue("settings", "FormatAsYouType", FormatAsYouType);
+                SetValue(Section, "UseArrowToAccept", UseArrowToAccept);
+                SetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
+                SetValue(Section, "UseMethodBrackets", UseMethodBrackets);
+                SetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
+                SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
+                SetValue(Section, "SmartIndenting", SmartIndenting);
+                SetValue(Section, "FormatAsYouType", FormatAsYouType);
             }
         }
 
@@ -78,14 +87,13 @@ namespace CSScriptIntellisense
         {
             lock (this)
             {
-                NewPluginConfictReported = GetValue("settings", "NewPluginConfictReported", NewPluginConfictReported);
-                UseArrowToAccept = GetValue("settings", "UseArrowToAccept", UseArrowToAccept);
-                InterceptCtrlSpace = GetValue("settings", "InterceptCtrlSpace", InterceptCtrlSpace);
-                UseMethodBrackets = GetValue("settings", "UseMethodBrackets", UseMethodBrackets);
-                SmartIndenting = GetValue("settings", "SmartIndenting", SmartIndenting);
-                FormatAsYouType = GetValue("settings", "FormatAsYouType", FormatAsYouType);
-                ShowQuickInfoInStatusBar = GetValue("settings", "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
-                IgnoreDocExceptions = GetValue("settings", "IgnoreDocExceptions", IgnoreDocExceptions);
+                UseArrowToAccept = GetValue(Section, "UseArrowToAccept", UseArrowToAccept);
+                InterceptCtrlSpace = GetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
+                UseMethodBrackets = GetValue(Section, "UseMethodBrackets", UseMethodBrackets);
+                SmartIndenting = GetValue(Section, "SmartIndenting", SmartIndenting);
+                FormatAsYouType = GetValue(Section, "FormatAsYouType", FormatAsYouType);
+                ShowQuickInfoInStatusBar = GetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
+                IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
             }
         }
     }

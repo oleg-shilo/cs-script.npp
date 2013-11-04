@@ -32,7 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DocumentationFile>bin\Debug\CSScriptNpp.Test.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <RegisterForComInterop>false</RegisterForComInterop>

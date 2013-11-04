@@ -589,7 +589,7 @@ void main(string[] args)
                         treeView1.EndUpdate();
 
                         currentScript = scriptFile;
-                        Intellisense.Refresh();
+                        CSScriptIntellisense.Plugin.EnsureCurrentFileParsed();
 
                         var history = Config.Instance.SciptHistory.Split('|').ToList();
                         history.Remove(scriptFile);
@@ -742,8 +742,7 @@ void main(string[] args)
 
         private void configBtn_Click(object sender, EventArgs e)
         {
-            if (Intellisense.ShowConfig != null)
-                Intellisense.ShowConfig();
+            CSScriptIntellisense.Plugin.ShowConfig();
         }
 
         private void deployBtn_Click(object sender, EventArgs e)
@@ -763,14 +762,14 @@ void main(string[] args)
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
                             string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion);
-                            
+
                             if (path != null)
                             {
-                                string pluginClrVersion = "v"+Environment.Version.ToString();
+                                string pluginClrVersion = "v" + Environment.Version.ToString();
 
                                 if (dialog.AsScript && !pluginClrVersion.StartsWith(selectedTargetVersion)) //selectedTargetVersion may not include the build number
                                     MessageBox.Show("Distribution package targets CLR version, which is different from the default version.\r\nPlease verify that the script is compatible with the selected CLR version.", "CS-Script");
-                                
+
                                 Process.Start("explorer.exe", path);
                             }
                         }

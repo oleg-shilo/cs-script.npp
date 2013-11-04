@@ -11,33 +11,23 @@ namespace CSScriptIntellisense
 {
     class Bootstrapper
     {
+        //'standalone' is the deployment model that includes CSSCriptIntellisense.dll plugin only
         public static bool Init(bool standalone)
         {
-            Task.Factory.StartNew(ClearReflectionCache);
+            ReflectorExtensions.IgnoreDocumentationExceptions = Config.Instance.IgnoreDocExceptions;
 
-            if (IsInConflictWithCSScriptNpp())
+            if (standalone) //CSScriptIntellisense Plugin
             {
-                if (!Config.Instance.NewPluginConfictReported)
-                    MessageBox.Show("Multiple instances of the 'C# Intellisense' plugin detected.\n" +
-                                    "You can remove the standalone 'C# Intellisense' plugin as it will loaded anyway\n" +
-                                    "as part of the 'CS-Script' plugin.", "Notepad++");
-
-                Config.Instance.NewPluginConfictReported = true;
-                Config.Instance.Save();
-                return false;
-            }
-            else
-            {
-                Config.Instance.NewPluginConfictReported = true;
-                Config.Instance.Save();
-
-                ReflectorExtensions.IgnoreDocumentationExceptions = Config.Instance.IgnoreDocExceptions;
-
-                if (standalone)
+                bool inConflict = IsInConflictWithCSScriptNpp();
+                if (!inConflict)
+                {
+                    Task.Factory.StartNew(ClearReflectionCache);
                     AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-                
-                return true;
+                }
+                return inConflict;
             }
+
+            return true;
         }
 
         static void ClearReflectionCache()
@@ -47,7 +37,7 @@ namespace CSScriptIntellisense
                 var anotherNppInstance = Process.GetProcessesByName("Notepad++").Where(p => p.Id != Process.GetCurrentProcess().Id).FirstOrDefault();
                 if (anotherNppInstance == null && Directory.Exists(Reflector.DefaultTempDir))
                 {
-                    foreach(string file in Directory.GetFiles(Reflector.DefaultTempDir))
+                    foreach (string file in Directory.GetFiles(Reflector.DefaultTempDir))
                         try
                         {
                             File.Delete(file);
@@ -59,6 +49,10 @@ namespace CSScriptIntellisense
 
         static public bool IsInConflictWithCSScriptNpp()
         {
+            //CSScriptIntellisense Plugin - C:\Program Files (x86)\Notepad++\plugins\CSScriptIntellisense.dll 
+            //CSScriptNpp Plugin - C:\Program Files (x86)\Notepad++\plugins\CSScriptNpp\CSScriptIntellisense.dll 
+
+            //conflict criteria: this asm is part of CSScriptIntellisense plugin and CSScriptNpp plugin is installed
             string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             return File.Exists(Path.Combine(rootDir, @"CSScriptNpp\CSScriptIntellisense.dll"));
         }
