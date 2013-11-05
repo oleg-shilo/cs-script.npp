@@ -2,7 +2,7 @@
 
 * Added checking for plugin updates from AboutBox
 
-* Implemented CodeMap panel
+* Multiple formatting improvements/fixes 
 
 * Implemented selection of the CLR version when preparing distribution package
 
