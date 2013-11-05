@@ -83,6 +83,7 @@ namespace CSScriptIntellisense
             const int literalString = 4;
 
             int openDoWhile = 0;
+            int currentCharring = none; //character declaration
             int currentStringing = none;
             int currentCommenting = none;
             int blockLevel = -1;
@@ -153,6 +154,21 @@ namespace CSScriptIntellisense
                                 else
                                 {
                                     currentStringing = none;
+                                }
+                            }
+                            break;
+                        }
+                    case '\'': //character
+                        {
+                            if (currentCommenting == none && currentStringing == none)
+                            {
+                                if (currentCharring == none)
+                                {
+                                    currentCharring = 1;
+                                }
+                                else
+                                {
+                                    currentCharring = none;
                                 }
                             }
                             break;
@@ -304,7 +320,7 @@ namespace CSScriptIntellisense
                             break;
                         }
                     default:
-                        if (currentCommenting == none && currentStringing == none)
+                        if (currentCommenting == none && currentStringing == none && currentCharring == none)
                         {
                             if (current == ' ' && !formatted.EndsWithWhiteSpacesLine())
                             {

@@ -56,7 +56,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Intellisense.Tests\FormattingTests.cs" />
+    <Compile Include="Generic.Tests\CodeMapTests.cs" />
+    <Compile Include="Generic.Tests\FormattingTests.cs" />
     <Compile Include="Intellisense.Tests\GenericTest.cs" />
     <Compile Include="Intellisense.Tests\MethodInfoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,9 +73,7 @@
       <Name>CSScriptIntellisense</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Generic.Tests\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
