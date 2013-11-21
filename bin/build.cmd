@@ -1,4 +1,4 @@
-echo off 
+notecho off 
 
 cscs /l setup
 

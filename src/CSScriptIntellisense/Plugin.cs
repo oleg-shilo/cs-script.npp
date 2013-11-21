@@ -1,15 +1,13 @@
-using CSScriptIntellisense.Interop;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense.Interop;
+using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.TypeSystem;
 using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
@@ -94,7 +92,7 @@ namespace CSScriptIntellisense
         {
             if (Config.Instance.InterceptCtrlSpace)
             {
-                if (Npp.IsCurrentFileHasExtension(".cs"))
+                if (Npp.IsCurrentScriptFile())
                 {
                     if (key == Keys.Space && KeyInterceptor.IsPressed(Keys.ControlKey))
                     {
@@ -152,7 +150,7 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentFileHasExtension(".cs"))
+                if (Npp.IsCurrentScriptFile())
                 {
                     string[] references = FindAllReferencesAtCaret();
                     if (references.Count() > 0)
@@ -173,7 +171,7 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentFileHasExtension(".cs"))
+                if (Npp.IsCurrentScriptFile())
                 {
                     SourceCodeFormatter.FormatDocument();
                 }
@@ -184,7 +182,7 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentFileHasExtension(".cs"))
+                if (Npp.IsCurrentScriptFile())
                 {
                     DomRegion region = ResolveMemberAtCaret();
 
@@ -223,7 +221,7 @@ namespace CSScriptIntellisense
 
                 string file = Npp.GetCurrentFile();
 
-                if (Npp.IsCurrentFileHasExtension(".cs"))
+                if (Npp.IsCurrentScriptFile())
                 {
                     int pos;
 
@@ -264,7 +262,7 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentFileHasExtension(".cs"))
+                if (Npp.IsCurrentScriptFile())
                 {
                     IEnumerable<TypeInfo> items = ResolveNamespacesAtCaret().ToArray();
 
@@ -320,7 +318,7 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentFileHasExtension(".cs"))
+                if (Npp.IsCurrentScriptFile())
                 {
                     var items = GetSuggestionItemsAtCaret();
 
@@ -414,7 +412,7 @@ namespace CSScriptIntellisense
 
         static public void OnCharTyped(char c)
         {
-            if (Npp.IsCurrentFileHasExtension(".cs"))
+            if (Npp.IsCurrentScriptFile())
             {
                 if (c == '.')
                     ShowSuggestionList();
@@ -438,7 +436,7 @@ namespace CSScriptIntellisense
             {
                 Plugin.EnsureCurrentFileParsedAsynch();
 
-                if (Npp.IsCurrentFileHasExtension(".cs"))
+                if (Npp.IsCurrentScriptFile())
                     memberInfoPopup.Enabled = true;
                 else
                     memberInfoPopup.Enabled = false;
@@ -468,7 +466,7 @@ namespace CSScriptIntellisense
                     {
                         string file = ResolveCurrentFile();
 
-                        if (string.IsNullOrWhiteSpace(file) || !file.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                        if (string.IsNullOrWhiteSpace(file) || !file.IsScriptFile())
                             return;
 
                         int newCssHash = -1;

@@ -24,6 +24,16 @@ namespace CSScriptNpp
 
         public static bool ParseAsFileReference(this string text, out string file, out int line, out int column)
         {
+            if (ParseAsErrorFileReference(text, out file, out line, out column))
+                return true;
+            else if (ParseAsExceptionFileReference(text, out file, out line, out column))
+                return true;
+            else
+                return false;
+        }
+
+        public static bool ParseAsErrorFileReference(this string text, out string file, out int line, out int column)
+        {
             line = -1;
             column = -1;
             file = "";
@@ -40,6 +50,35 @@ namespace CSScriptNpp
                 else
                     file = text.Substring(0, match.Index).Trim();
                 return true;
+            }
+            return false;
+        }
+
+        public static bool ParseAsExceptionFileReference(this string text, out string file, out int line, out int column)
+        {
+            line = -1;
+            column = 1;
+            file = "";
+            //@"   at ScriptClass.main(String[] args) in c:\Users\osh\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\dev.g.csx:line 12";
+            var match = Regex.Match(text, @".*:line\s\d+\s?");
+            if (match.Success)
+            {
+                //"...mp\CSSCRIPT\Cache\-1529274573\dev.g.csx:line 12"
+                int pos = match.Value.LastIndexOf(":line");
+                if (pos != -1)
+                {
+                    string lineRef = match.Value.Substring(pos + 5, match.Value.Length - (pos + 5));
+                    if (!int.TryParse(lineRef, out line))
+                        return false;
+
+                    var fileRef = match.Value.Substring(0, pos);
+                    pos = fileRef.LastIndexOf(":");
+                    if (pos > 0)
+                    {
+                        file = fileRef.Substring(pos - 1);
+                        return true;
+                    }
+                }
             }
             return false;
         }

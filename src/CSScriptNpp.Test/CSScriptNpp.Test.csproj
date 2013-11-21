@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Generic.Tests\CodeMapTests.cs" />
     <Compile Include="Generic.Tests\FormattingTests.cs" />
+    <Compile Include="Generic.Tests\GenericTests.cs" />
     <Compile Include="Intellisense.Tests\GenericTest.cs" />
     <Compile Include="Intellisense.Tests\MethodInfoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,6 +72,10 @@
     <ProjectReference Include="..\CSScriptIntellisense\CSScriptIntellisense.csproj">
       <Project>{eb8fc3a3-93e8-457b-b281-fafa5119611a}</Project>
       <Name>CSScriptIntellisense</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CSScriptNpp\CSScriptNpp.csproj">
+      <Project>{23b08b10-8297-4a90-9b6d-43dac7416004}</Project>
+      <Name>CSScriptNpp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -8,6 +8,11 @@ namespace CSScriptIntellisense
 {
     public static class StringExtesnions
     {
+        public static bool IsScriptFile(this string file)
+        {
+            return file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".csx", StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public static bool IsToken(this string text, string pattern, int position)
         {
             if (position < text.Length)

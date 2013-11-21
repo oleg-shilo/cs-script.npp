@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using CSScriptIntellisense;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -51,7 +49,7 @@ namespace CSScriptNpp
         {
             string file = Npp.GetCurrentFile();
             {
-                if (file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase))
+                if (file.IsScriptFile())
                 {
                     mapTxt.Visible = true;
                     if (file != currentFile)
@@ -81,7 +79,7 @@ namespace CSScriptNpp
         {
             try
             {
-                if (currentFile.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase))
+                if (currentFile.IsScriptFile())
                 {
                     string code = File.ReadAllText(currentFile);
 

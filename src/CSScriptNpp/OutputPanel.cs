@@ -417,7 +417,7 @@ namespace CSScriptNpp
             {
                 try
                 {
-                    if (file.EndsWith(".g.cs") && file.Contains(@"CSSCRIPT\Cache"))
+                    if (file.EndsWith(".g.csx") || file.EndsWith(".g.cs") && file.Contains(@"CSSCRIPT\Cache"))
                     {
                         //it is an auto-generated file so try to find the original source file (logical file)
                         string dir = Path.GetDirectoryName(file);
@@ -427,7 +427,7 @@ namespace CSScriptNpp
                             string[] lines = File.ReadAllLines(infoFile);
                             if (lines.Length > 1 && Directory.Exists(lines[1]))
                             {
-                                string logicalFile = Path.Combine(lines[1], Path.GetFileName(file).Replace(".g.cs", ".cs"));
+                                string logicalFile = Path.Combine(lines[1], Path.GetFileName(file).Replace(".g.csx", ".csx").Replace(".g.cs", ".cs"));
                                 if (File.Exists(logicalFile))
                                 {
                                     string code = File.ReadAllText(file);

@@ -77,13 +77,13 @@ namespace CSScriptNpp
             internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F5), new Tuple<string, Action>(
                                   "Run", () =>
                                   {
-                                      if (Npp.IsCurrentFileHasExtension(".cs"))
+                                      if (Npp.IsCurrentScriptFile())
                                           Run();
                                   }));
             internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F5), new Tuple<string, Action>(
                                   "Run As External Process", () =>
                                   {
-                                      if (Npp.IsCurrentFileHasExtension(".cs"))
+                                      if (Npp.IsCurrentScriptFile())
                                           RunAsExternal();
                                   }));
             internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F4), new Tuple<string, Action>(

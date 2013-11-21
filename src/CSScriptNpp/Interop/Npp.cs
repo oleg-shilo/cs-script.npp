@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using CSScriptIntellisense;
 
 namespace CSScriptNpp
 {
@@ -17,6 +18,14 @@ namespace CSScriptNpp
             Win32.SendMessage(Plugin.NppData._nppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
             string file = path.ToString();
             return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
+        }
+
+        static public bool IsCurrentScriptFile()
+        {
+            var path = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(Plugin.NppData._nppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
+            string file = path.ToString();
+            return !string.IsNullOrWhiteSpace(file) && file.IsScriptFile();
         }
 
         public static IntPtr CurrentScintilla { get { return Plugin.GetCurrentScintilla(); } }

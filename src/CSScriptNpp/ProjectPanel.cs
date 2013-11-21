@@ -1,11 +1,12 @@
-﻿using CSScriptLibrary;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense;
+using CSScriptLibrary;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -543,7 +544,7 @@ void main(string[] args)
         {
             if (!string.IsNullOrWhiteSpace(scriptFile) && File.Exists(scriptFile))
             {
-                if (!scriptFile.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                if (!scriptFile.IsScriptFile())
                 {
                     MessageBox.Show("The file type '" + Path.GetExtension(scriptFile) + "' is not supported.", "CS-Script");
                 }

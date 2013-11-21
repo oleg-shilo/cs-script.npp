@@ -175,7 +175,7 @@ namespace CSScriptNpp
                 }
                 else if (nppVersion > latestVersion)
                 {
-                    MessageBox.Show("Wow.. your version is even newer than the latest one - v" + version + ".", "CS-Script");
+                    MessageBox.Show("Wow... your version is even newer than the latest one - v" + version + ".", "CS-Script");
                 }
                 else if (nppVersion < latestVersion)
                 {

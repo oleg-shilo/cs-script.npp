@@ -1,3 +1,5 @@
+v1.0.9.0
+
 * Implemented Recent Scripts list
 
 * Added checking for plugin updates from AboutBox
@@ -13,3 +15,9 @@
 * Fixed auto-formatting scrolling artifact
 
 * Implemented navigation to "logical" file (vs. auto-generated) file from output panel
+
+v1.0.9.1
+
+* Added support for .csx file extensions
+
+* Implemented navigation to file reference from the exception message in output panel
