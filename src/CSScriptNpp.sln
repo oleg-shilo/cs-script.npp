@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSScriptNpp", "CSScriptNpp\CSScriptNpp.csproj", "{23B08B10-8297-4A90-9B6D-43DAC7416004}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A2272B4F-44F6-4FB2-86A0-3EC99C0947F7} = {A2272B4F-44F6-4FB2-86A0-3EC99C0947F7}

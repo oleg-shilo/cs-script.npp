@@ -14,12 +14,12 @@ namespace CSScriptIntellisense
     public class Config : IniFile
     {
         static Config instance;
-        
+
         public static Config Instance
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                     instance = new Config();
                 return instance;
             }
@@ -34,11 +34,11 @@ namespace CSScriptIntellisense
         public Config()
         {
             var configDir = Path.Combine(Npp.GetConfigDir(), "CSharpIntellisense");
-            
-            if(!Directory.Exists(configDir))
+
+            if (!Directory.Exists(configDir))
                 Directory.CreateDirectory(configDir);
             string path = Path.Combine(configDir, "settings.ini");
-            
+
             base.file = path;
             Open();
         }
@@ -56,6 +56,7 @@ namespace CSScriptIntellisense
         }
 
         public bool UseArrowToAccept = true;
+       
         public bool InterceptCtrlSpace = true;
         public bool ShowQuickInfoInStatusBar = false;
         public bool UseMethodBrackets = false;
@@ -70,7 +71,7 @@ namespace CSScriptIntellisense
         {
             lock (this)
             {
-                if(!UsingExternalFile)
+                if (!UsingExternalFile)
                     File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
                 SetValue(Section, "UseArrowToAccept", UseArrowToAccept);

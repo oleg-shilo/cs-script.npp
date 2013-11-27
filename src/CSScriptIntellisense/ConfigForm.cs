@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace CSScriptIntellisense
 {
@@ -73,7 +71,7 @@ namespace CSScriptIntellisense
             Close();
         }
 
-        private void ConfigForm_KeyDown(object sender, KeyEventArgs e)
+        void ConfigForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
                 Close();

@@ -127,11 +127,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.designTimeTextBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.designTimeTextBox.Location = new System.Drawing.Point(0, 25);
+            this.designTimeTextBox.Location = new System.Drawing.Point(364, 25);
             this.designTimeTextBox.Multiline = true;
             this.designTimeTextBox.Name = "designTimeTextBox";
             this.designTimeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.designTimeTextBox.Size = new System.Drawing.Size(575, 243);
+            this.designTimeTextBox.Size = new System.Drawing.Size(211, 243);
             this.designTimeTextBox.TabIndex = 3;
             this.designTimeTextBox.Visible = false;
             // 

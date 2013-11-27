@@ -210,23 +210,30 @@ namespace CSScriptIntellisense
             string leftText = Npp.TextBeforeCursor(512);
             string rightText = Npp.TextAfterCursor(512);
 
-            char[] delimiters = wordDelimiters ?? SourceCodeFormatter.AllWordDelimiters;
+            var delimiters = "\t\n\r .,:;'\"[]{}()".ToCharArray();
 
-            int startPos = leftText.LastIndexOfAny(delimiters);
-            int endPos = rightText.IndexOfAny(delimiters);
+            string wordLeftPart = "";
+            int startPos = currentPos;
 
-            string wordLeftPart = (startPos != -1) ? leftText.Substring(startPos + 1) : "";
-            string wordRightPart = (endPos != -1) ? rightText.Substring(0, endPos) : "";
+            if (leftText != null)
+            {
+                startPos = leftText.LastIndexOfAny(delimiters);
+                int relativeStartPos = leftText.Length - startPos;
+                startPos = (startPos != -1) ? (currentPos - relativeStartPos) + 1 : 0;
+                wordLeftPart = (startPos != -1) ? leftText.Substring(startPos) : "";
+            }
 
-            string retval = wordLeftPart + wordRightPart;
-
-            int relativeStartPos = leftText.Length - startPos;
-
-            startPos = (startPos != -1) ? (currentPos - relativeStartPos) + 1 : 0;
-            endPos = startPos + retval.Length;
+            string wordRightPart = "";
+            int endPos = currentPos;
+            if (rightText != null)
+            {
+                endPos = rightText.IndexOfAny(delimiters);
+                wordRightPart = (endPos != -1) ? rightText.Substring(0, endPos) : "";
+                endPos = (endPos != -1) ? currentPos + endPos : fullLength;
+            }
 
             point = new Point(startPos, endPos);
-            return retval;
+            return wordLeftPart + wordRightPart;
         }
 
         static public IntPtr CurrentScintilla

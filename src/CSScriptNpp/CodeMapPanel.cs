@@ -116,5 +116,12 @@ namespace CSScriptNpp
             }
             catch { }
         }
+
+        private void refreshLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Cursor = Cursors.WaitCursor;
+            GenerateContent();
+            Cursor = Cursors.Default;
+        }
     }
 }

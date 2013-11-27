@@ -1,12 +1,13 @@
-using CSScriptLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using CSScriptLibrary;
 
 namespace CSScriptNpp
 {
@@ -82,6 +83,7 @@ namespace CSScriptNpp
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
             }
 
             p.Start();

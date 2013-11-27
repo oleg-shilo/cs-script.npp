@@ -41,7 +41,7 @@ namespace CSScriptIntellisense
         {
             listBox1.Items.Clear();
 
-            Debug.WriteLine("hint: "+partialName);
+            Debug.WriteLine("hint: " + partialName);
 
             //IEnumerable<ICompletionData> items = ProcessSuggestionHint("Get", rawItems);
             IEnumerable<ICompletionData> items = ProcessSuggestionHint(partialName, rawItems);
@@ -191,7 +191,9 @@ namespace CSScriptIntellisense
             if (e.KeyCode == Keys.Escape)
                 Close();
 
-            if (e.KeyCode == Keys.Enter || (e.KeyCode == Keys.Right && Config.Instance.UseArrowToAccept))
+            if (e.KeyCode == Keys.Enter ||
+               (e.KeyCode == Keys.Right && Config.Instance.UseArrowToAccept) ||
+               (e.KeyCode == Keys.Tab && Config.Instance.UseTabToAccept))
             {
                 Close();
                 OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
@@ -222,10 +224,6 @@ namespace CSScriptIntellisense
 
             FilterFor(initialPartialName);
         }
-
-        private void AutocompleteForm_KeyPress(object sender, KeyPressEventArgs e)
-        {
-        }
     }
 
     static class Extensions
@@ -254,7 +252,7 @@ namespace CSScriptIntellisense
         {
             int pos, next;
             StringBuilder sb = new StringBuilder();
-        
+
             // Lucidity check
             if (width < 1)
                 return text;
