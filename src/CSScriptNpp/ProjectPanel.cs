@@ -29,6 +29,7 @@ namespace CSScriptNpp
 
         void LoadReleaseNotes()
         {
+            //System.Diagnostics.Debug.Assert(false);
             whatsNewPanel.Visible = false;
             string pluginVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             if (Config.Instance.ReleaseNotesViewedFor != pluginVersion)

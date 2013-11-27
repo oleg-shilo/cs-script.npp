@@ -21,3 +21,11 @@ v1.0.9.1
 * Added support for .csx file extensions
 
 * Implemented navigation to file reference from the exception message in output panel
+
+v1.0.9.2
+
+* Fixed localization problem for the process output of ConsoleIntercept and DdMon 
+
+* Added refresh button to the CodeMap panel
+
+* Added UseTabToAccept auto-completion suggestion

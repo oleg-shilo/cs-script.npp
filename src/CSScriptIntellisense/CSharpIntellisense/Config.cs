@@ -56,7 +56,8 @@ namespace CSScriptIntellisense
         }
 
         public bool UseArrowToAccept = true;
-       
+        public bool UseTabToAccept = true;
+
         public bool InterceptCtrlSpace = true;
         public bool ShowQuickInfoInStatusBar = false;
         public bool UseMethodBrackets = false;
@@ -75,6 +76,7 @@ namespace CSScriptIntellisense
                     File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
                 SetValue(Section, "UseArrowToAccept", UseArrowToAccept);
+                SetValue(Section, "UseTabToAccept", UseTabToAccept);
                 SetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
                 SetValue(Section, "UseMethodBrackets", UseMethodBrackets);
                 SetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
@@ -88,6 +90,7 @@ namespace CSScriptIntellisense
         {
             lock (this)
             {
+                UseTabToAccept = GetValue(Section, "UseTabToAccept", UseTabToAccept);
                 UseArrowToAccept = GetValue(Section, "UseArrowToAccept", UseArrowToAccept);
                 InterceptCtrlSpace = GetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
                 UseMethodBrackets = GetValue(Section, "UseMethodBrackets", UseMethodBrackets);
