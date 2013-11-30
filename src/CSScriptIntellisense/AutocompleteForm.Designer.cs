@@ -56,7 +56,7 @@
             this.Text = "AutocompleteForm";
             this.Deactivate += new System.EventHandler(this.AutocompleteForm_Deactivate);
             this.Load += new System.EventHandler(this.AutocompleteForm_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AutocompleteForm_KeyDown);
+            this.FormClosing += AutocompleteForm_FormClosing;
             this.ResumeLayout(false);
 
         }

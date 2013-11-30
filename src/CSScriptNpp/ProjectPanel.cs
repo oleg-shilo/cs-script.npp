@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CSScriptIntellisense;
+using CSScriptLibrary;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptIntellisense;
-using CSScriptLibrary;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -193,6 +193,19 @@ namespace CSScriptNpp
                     }
         }
 
+        bool CurrentDocumentBelongsToProject()
+        {
+            string file;
+            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
+
+            if (treeView1.Nodes.Count > 0)
+                foreach (TreeNode item in treeView1.Nodes[0].Nodes)
+                    if (item.Tag is ProjectItem && string.Compare((item.Tag as ProjectItem).File, file, true) == 0)
+                        return true;
+
+            return false;
+        }
+
         const string defaultScriptCode =
 @"using System;
 using System.Diagnostics;
@@ -259,8 +272,10 @@ void main(string[] args)
             {
                 try
                 {
-                    EditItem(currentScript);
-                    Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+                    if (!CurrentDocumentBelongsToProject())
+                        EditItem(currentScript);
+
+                    Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
 
                     if (asExternal)
                     {
@@ -422,8 +437,10 @@ void main(string[] args)
 
                     try
                     {
-                        EditItem(currentScript);
-                        Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+                        if (!CurrentDocumentBelongsToProject())
+                            EditItem(currentScript);
+
+                        Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
 
                         CSScriptHelper.Build(currentScript);
 
@@ -767,7 +784,8 @@ void main(string[] args)
                         if (DialogResult.OK == dialog.ShowDialog())
                         {
                             EditItem(currentScript);
-                            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+
+                            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
                             string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion);

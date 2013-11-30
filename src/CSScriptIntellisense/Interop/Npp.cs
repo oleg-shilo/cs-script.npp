@@ -218,9 +218,9 @@ namespace CSScriptIntellisense
             if (leftText != null)
             {
                 startPos = leftText.LastIndexOfAny(delimiters);
+                wordLeftPart = (startPos != -1) ? leftText.Substring(startPos + 1) : "";
                 int relativeStartPos = leftText.Length - startPos;
                 startPos = (startPos != -1) ? (currentPos - relativeStartPos) + 1 : 0;
-                wordLeftPart = (startPos != -1) ? leftText.Substring(startPos) : "";
             }
 
             string wordRightPart = "";

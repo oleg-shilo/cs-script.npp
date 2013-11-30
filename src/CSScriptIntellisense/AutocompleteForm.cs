@@ -1,13 +1,13 @@
-﻿using System;
+﻿using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.TypeSystem;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
 using Res = CSScriptIntellisense.Images;
-using System.Diagnostics;
 
 namespace CSScriptIntellisense
 {
@@ -18,8 +18,31 @@ namespace CSScriptIntellisense
         public AutocompleteForm()
         {
             InitializeComponent();
-
             OnAutocompletionAccepted = x => { };
+        }
+
+        bool keyEventsHooked = false;
+
+        //needs pay extra attention to ensure unhooking as it can potentially intercept host app keys
+        void ListenToKeyStroks(bool init)
+        {
+            if (init)
+            {
+                if (!keyEventsHooked)
+                    this.KeyDown += this.AutocompleteForm_KeyDown;
+                keyEventsHooked = true;
+            }
+            else
+            {
+                if (keyEventsHooked)
+                    this.KeyDown -= this.AutocompleteForm_KeyDown;
+                keyEventsHooked = false;
+            }
+        }
+
+        void AutocompleteForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ListenToKeyStroks(false);
         }
 
         string initialPartialName = null;
@@ -117,6 +140,7 @@ namespace CSScriptIntellisense
                 case EntityType.Constructor:
                 case EntityType.Destructor:
                     return Res.Images.constructor;
+
                 case EntityType.Method:
                     {
                         if (isExtensionMethod)
@@ -126,10 +150,13 @@ namespace CSScriptIntellisense
                     }
                 case EntityType.Event:
                     return Res.Images._event;
+
                 case EntityType.Field:
                     return Res.Images.field;
+
                 case EntityType.Property:
                     return Res.Images.property;
+
                 default:
                     break;
             }
@@ -138,17 +165,23 @@ namespace CSScriptIntellisense
             {
                 case DeclarationType.None:
                     break;
+
                 case DeclarationType.Namespace:
                     return Res.Images._namespace;
+
                 case DeclarationType.Type:
                     return Res.Images.constructor;
+
                 case DeclarationType.Variable:
                 case DeclarationType.Parameter:
                     return Res.Images.field;
+
                 case DeclarationType.Event:
                     return Res.Images._event;
+
                 case DeclarationType.Unresolved:
                     return Res.Images.unresolved;
+
                 default:
                     break;
             }
@@ -195,6 +228,7 @@ namespace CSScriptIntellisense
                (e.KeyCode == Keys.Right && Config.Instance.UseArrowToAccept) ||
                (e.KeyCode == Keys.Tab && Config.Instance.UseTabToAccept))
             {
+                ListenToKeyStroks(false);
                 Close();
                 OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
             }
@@ -202,11 +236,13 @@ namespace CSScriptIntellisense
 
         private void AutocompleteForm_Deactivate(object sender, EventArgs e)
         {
+            ListenToKeyStroks(false);
             Close();
         }
 
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
+            ListenToKeyStroks(false);
             Close();
             OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
         }
@@ -223,6 +259,7 @@ namespace CSScriptIntellisense
             listBox1.HorizontalScrollbar = true;
 
             FilterFor(initialPartialName);
+            ListenToKeyStroks(true);
         }
     }
 
@@ -285,6 +322,7 @@ namespace CSScriptIntellisense
             }
             return sb.ToString();
         }
+
         /// <summary>
         /// Locates position to break the given line so as to avoid
         /// breaking words.

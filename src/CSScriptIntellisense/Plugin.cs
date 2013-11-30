@@ -1,3 +1,6 @@
+using CSScriptIntellisense.Interop;
+using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -5,17 +8,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptIntellisense.Interop;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
 using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
     /*
      TODO:
-     * - On F12 for local code scrolling is getting wrong
      */
+
     static public partial class Plugin
     {
         public static string PluginName
@@ -457,6 +457,24 @@ namespace CSScriptIntellisense
         static public Func<string> ResolveCurrentFile = Npp.GetCurrentFile; //the implementation can be injected by the host or other plugins. To be used in the future.
         static public Action<string> DisplayInOutputPanel = Npp.DisplayInNewDocument; //the implementation can be injected by the host or other plugins. To be used in the future.
 
+        static Dictionary<string, DateTime> currentSourcesStates = new Dictionary<string, DateTime>();
+
+        static bool CurrentSourcesChanged()
+        {
+            //checking the hash for all source files can be very expensive so checking timestamps only
+            foreach (string file in currentSourcesStates.Keys)
+                if (!File.Exists(file) || currentSourcesStates[file] != File.GetLastWriteTimeUtc(file))
+                    return true;
+            return false;
+        }
+
+        static void NoteCurrentSourcesStates(string[] sourceFiles)
+        {
+            currentSourcesStates.Clear();
+            foreach (string file in sourceFiles)
+                currentSourcesStates.Add(file, File.GetLastWriteTimeUtc(file));
+        }
+
         static public void EnsureCurrentFileParsed()
         {
             if (Plugin.Enabled)
@@ -476,6 +494,7 @@ namespace CSScriptIntellisense
                         // - the current file changed and saved with the new set of CS-Script instructions (for multi-file mode only)
                         if (currentFile == null ||
                            (currentFile != file && !parsedFiles.Contains(file)) ||
+                           (!SingleFileMode && CurrentSourcesChanged()) ||
                            (!SingleFileMode && currentFileTimestamp != File.GetLastWriteTime(file) && currentFileCssHash != (newCssHash = NppEditor.GetCssHash(file))))
                         {
                             currentFile = file;
@@ -486,6 +505,8 @@ namespace CSScriptIntellisense
 
                             string[] sourceFiles = project.Item1;
                             string[] assemblyFiles = project.Item2;
+
+                            NoteCurrentSourcesStates(sourceFiles);
 
                             var sourcesInfos = new List<Tuple<string, string>>();
 
