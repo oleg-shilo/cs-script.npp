@@ -15,7 +15,6 @@ using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using Mono.Cecil;
-//using UltraSharp;
 using UltraSharp.Cecil;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -321,10 +320,19 @@ namespace CSScriptIntellisense
 
             Type patternType = target.GetType();
 
+            string targetReflectionName = target.ToString();
+            if (target is MemberResolveResult) //the caret is on the member implementation
+            {
+                targetReflectionName = targetReflectionName.Replace("MemberResolveResult", "CSharpInvocationResolveResult");
+                patternType = typeof(CSharpInvocationResolveResult);
+            }
+
+            //we are looking for the member invocation code.
+            //For example: "[CSharpInvocationResolveResult [Method Test.Who():System.Void]]"
             foreach (Match m in Regex.Matches(editorText, pattern))
             {
                 var match = ResolveFromPosition(editorText, m.Index, fileName);
-                if (match != null && match.GetType() == patternType && match.ToString() == target.ToString())
+                if (match != null && match.GetType() == patternType && match.ToString() == targetReflectionName)
                 {
                     if (document == null)
                         document = new ReadOnlyDocument(editorText);
@@ -422,7 +430,7 @@ namespace CSScriptIntellisense
                     if (asm.UnresolvedAssembly is CSharpProjectContent) //source code
                     {
                         //note NRefactory for unknown reason has body start point at the start of the definition but the declaration
-                        return type.BodyRegion; 
+                        return type.BodyRegion;
                     }
                     else if (asm.UnresolvedAssembly is IUnresolvedAssembly) //referenced assembly
                     {
