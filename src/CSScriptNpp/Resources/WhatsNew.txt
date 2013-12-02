@@ -29,3 +29,11 @@ v1.0.9.2
 * Added refresh button to the CodeMap panel
 
 * Added UseTabToAccept auto-completion suggestion
+
+v1.0.10.0
+
+* Prevented switching to the primary script on F5/F7 if the secondary one is opened 
+
+* All open files are saved on F5/F7
+
+* Improved 'Find references'
