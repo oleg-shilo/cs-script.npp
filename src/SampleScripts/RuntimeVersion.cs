@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System;
 
-void main(string[] args)
+void main()
 {
     MessageBox.Show(Environment.Version.ToString());
 }

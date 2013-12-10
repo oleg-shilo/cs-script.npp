@@ -104,6 +104,8 @@ namespace CSScriptIntellisense
 
         public static IEnumerable<ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true, bool prepareForDisplay = true) // not the best way to put in the whole string every time
         {
+
+
             try
             {
                 if (Project == null || string.IsNullOrEmpty(editorText))
