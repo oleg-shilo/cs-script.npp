@@ -61,7 +61,7 @@ namespace CSScriptNpp
                 return configDir;
             }
         }
-        
+
         public static string PluginDir
         {
             get
@@ -93,7 +93,7 @@ namespace CSScriptNpp
             _nppTbData.dlgID = scriptId;
             // define the default docking behavior
             _nppTbData.uMask = tbMsg;
-            _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
+            //_nppTbData.uMask = NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
             _nppTbData.hIconTab = (uint)tbIcon.Handle;
             _nppTbData.pszModuleName = PluginName;
             IntPtr _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
@@ -120,8 +120,6 @@ namespace CSScriptNpp
         {
             SetDockedPanelVisible(panel, scriptId, !panel.Visible);
         }
-
-
 
         public static void SetDockedPanelVisible(Form panel, int scriptId, bool visible)
         {

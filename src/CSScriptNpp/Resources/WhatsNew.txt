@@ -37,3 +37,9 @@ v1.0.10.0
 * All open files are saved on F5/F7
 
 * Improved 'Find references'
+
+v1.0.11.0
+
+* Fixed typo in AboutBox tooltip
+
+* Fixed default docking problem

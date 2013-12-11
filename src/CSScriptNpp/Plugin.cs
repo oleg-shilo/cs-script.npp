@@ -124,6 +124,16 @@ namespace CSScriptNpp
         static public ProjectPanel ProjectPanel;
         static public CodeMapPanel CodeMapPanel;
 
+        static public void DoOutputPanel()
+        {
+            Plugin.OutputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+        }
+
+        static public void DoCodeMapPanel()
+        {
+            Plugin.CodeMapPanel = ShowDockablePanel<CodeMapPanel>("C# Code Map", codeMapPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+        }
+
         static public void DoProjectPanel()
         {
             ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
@@ -152,15 +162,7 @@ namespace CSScriptNpp
             }
         }
 
-        static public void DoOutputPanel()
-        {
-            Plugin.OutputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-        }
 
-        static public void DoCodeMapPanel()
-        {
-            Plugin.CodeMapPanel = ShowDockablePanel<CodeMapPanel>("C# Code Map", codeMapPanelId, NppTbMsg.CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-        }
 
         static public void Build()
         {

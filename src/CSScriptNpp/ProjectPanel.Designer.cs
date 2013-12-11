@@ -284,7 +284,7 @@
             this.aboutBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.aboutBtn.Image = global::CSScriptNpp.Resources.Resources.about;
             this.aboutBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.aboutBtn.Name = "aboutBtn";
+            this.aboutBtn.Name = "aboutBtn";    
             this.aboutBtn.Size = new System.Drawing.Size(23, 28);
             this.aboutBtn.Text = "aboutBtn";
             this.aboutBtn.ToolTipText = "About CS-Script plugin";

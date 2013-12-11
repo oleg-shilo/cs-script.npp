@@ -30,6 +30,7 @@ namespace CSScriptNpp
         public bool InterceptConsole = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
         public bool BuildOnF7 = true;
+        public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
         public string ReleaseNotesViewedFor = "";
         public string SciptHistory = "";
@@ -39,7 +40,7 @@ namespace CSScriptNpp
         public bool ShowCodeMapPanel = false;
         public int OutputPanelCapacity = 10000; //num of characters
         public bool LocalDebug = true;
-        
+
         public string Section = "Generic";
 
         public string GetFileName()
@@ -62,10 +63,11 @@ namespace CSScriptNpp
             SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
             SetValue(Section, "LocalDebug", LocalDebug);
             SetValue(Section, "BuildOnF7", BuildOnF7);
+            SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
             SetValue(Section, "TargetVersion", TargetVersion);
             SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
             SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
-            
+
             CSScriptIntellisense.Config.Instance.Save();
         }
 
@@ -83,6 +85,7 @@ namespace CSScriptNpp
             TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
             ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
             BuildOnF7 = GetValue(Section, "BuildOnF7", BuildOnF7);
+            FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
             ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
             DistributeScriptAsScriptByDefault = GetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
             CSScriptIntellisense.Config.Instance.Open();
