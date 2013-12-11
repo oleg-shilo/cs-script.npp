@@ -43,3 +43,7 @@ v1.0.11.0
 * Fixed typo in AboutBox tooltip
 
 * Fixed default docking problem
+
+v1.0.12.0
+
+* Implemented checking for updates at startup

@@ -22,14 +22,9 @@ namespace CSScriptNpp
             InitializeComponent();
 
             var panel = new CSScriptIntellisense.ConfigForm(CSScriptIntellisense.Config.Instance).ContentPanel;
-            //panel.Parent = this;
-            //panel.ParentForm = this;
-            //panel.TopLevel = true;
-            //this.AddOwnedForm(panel);
             this.Controls.Add(panel);
-            
-            //System.ArgumentException: Top-level control cannot be added to a control.
-            //this.Controls.Add(panel);
+
+            checkUpdates.Checked = data.CheckUpdatesOnStartup;
         }
 
         private void ConfigForm_KeyDown(object sender, KeyEventArgs e)
@@ -57,6 +52,11 @@ namespace CSScriptNpp
             });
 
             Close();
+        }
+
+        private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            data.CheckUpdatesOnStartup = checkUpdates.Checked;
         }
     }
 }

@@ -143,10 +143,9 @@ namespace CSScriptNpp
             }
         }
 
+
         void CheckForUpdates()
         {
-            //https://csscriptnpp.codeplex.com/rele\ases/view/113943
-            const string pluginHomeUrl = "http://csscript.net/npp/csscript.html";
             string version = CSScriptHelper.GetLatestAvailableVersion();
 
             Invoke((Action)delegate
@@ -160,7 +159,7 @@ namespace CSScriptNpp
                 MessageBox.Show("Cannot check for updates. The latest release Web page will be opened instead.", "CS-Script");
                 try
                 {
-                    Process.Start(pluginHomeUrl);
+                    Process.Start(Plugin.HomeUrl);
                 }
                 catch { }
             }
@@ -213,7 +212,7 @@ namespace CSScriptNpp
                             MessageBox.Show("Cannot download the binaries. The latest release Web page will be opened instead.", "CS-Script");
                             try
                             {
-                                Process.Start(pluginHomeUrl);
+                                Process.Start(Plugin.HomeUrl);
                             }
                             catch { }
                         }
@@ -244,7 +243,7 @@ namespace CSScriptNpp
                 blinkingCount++;
                 if (blinkingCount > 3)
                     blinkingCount = 0;
-                
+
                 updateCheckBtn.Text = "Downloading" + new string('.', blinkingCount);
             }
         }

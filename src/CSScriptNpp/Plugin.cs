@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
@@ -56,7 +60,10 @@ namespace CSScriptNpp
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
                  (index, name, handler, isCtrl, isAlt, isShift, key) =>
                  {
-                     Plugin.SetCommand(index, name, handler, new ShortcutKey(isCtrl, isAlt, isShift, key));
+                     if (name == "Settings")
+                         Plugin.SetCommand(index, name, ShowConfig, new ShortcutKey(isCtrl, isAlt, isShift, key));
+                     else
+                         Plugin.SetCommand(index, name, handler, new ShortcutKey(isCtrl, isAlt, isShift, key));
                  });
         }
 
@@ -112,6 +119,16 @@ namespace CSScriptNpp
                         handler.Item2();
                     }
                 }
+        }
+
+        static public void ShowConfig()
+        {
+            using (var form = new ConfigForm(Config.Instance))
+            {
+                form.ShowDialog();
+                Config.Instance.Save();
+                ReflectorExtensions.IgnoreDocumentationExceptions = CSScriptIntellisense.Config.Instance.IgnoreDocExceptions;
+            }
         }
 
         static public void ShowAbout()
@@ -240,6 +257,8 @@ namespace CSScriptNpp
                 DoCodeMapPanel();
 
             Intellisense.EnsureIntellisenseIntegration();
+
+            StartCheckForUpdates();
         }
 
         static internal void CleanUp()
@@ -249,6 +268,67 @@ namespace CSScriptNpp
             Config.Instance.ShowCodeMapPanel = (dockedManagedPanels.ContainsKey(codeMapPanelId) && dockedManagedPanels[codeMapPanelId].Visible);
             Config.Instance.Save();
             OutputPanel.Clean();
+        }
+
+        internal static string HomeUrl = "http://csscript.net/npp/csscript.html";
+
+        static void StartCheckForUpdates()
+        {
+            lock (typeof(Plugin))
+            {
+                if (Config.Instance.CheckUpdatesOnStartup)
+                {
+                    string date = DateTime.Now.ToString("yyyy-MM-dd");
+                    if (Config.Instance.LastUpdatesCheckDate != date)
+                    {
+                        Config.Instance.LastUpdatesCheckDate = date;
+                        Config.Instance.Save();
+
+                        Task.Factory.StartNew(CheckForUpdates);
+                    }
+                }
+            }
+        }
+
+        static void CheckForUpdates()
+        {
+            Thread.Sleep(2000); //let Notepad++ to complete all initialization
+
+            string version = CSScriptHelper.GetLatestAvailableVersion();
+
+            if (version != null)
+            {
+                var latestVersion = new Version(version);
+                var nppVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
+                if (nppVersion < latestVersion)
+                {
+                    if (DialogResult.Yes == MessageBox.Show("The newer version v" + version + " is available.\nDo you want to download and install it?\n\nWARNING: If you choose 'Yes' Notepad++ will be closed and all unsaved data may be lost.", "CS-Script", MessageBoxButtons.YesNo))
+                    {
+                        string msiFile = CSScriptHelper.GetLatestAvailableMsi(version);
+                        if (msiFile != null)
+                        {
+                            try
+                            {
+                                Process.Start("msiexec.exe", "/i \"" + msiFile + "\" /qb");
+                            }
+                            catch
+                            {
+                                MessageBox.Show("Cannot execute setup file: " + msiFile, "CS-Script");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Cannot download the binaries. The latest release Web page will be opened instead.", "CS-Script");
+                            try
+                            {
+                                Process.Start(HomeUrl);
+                            }
+                            catch { }
+                        }
+                    }
+                }
+            }
         }
 
         public static void OnNotification(SCNotification data)

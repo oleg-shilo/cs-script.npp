@@ -30,9 +30,11 @@ namespace CSScriptNpp
         public bool InterceptConsole = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
         public bool BuildOnF7 = true;
+        public bool CheckUpdatesOnStartup = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
         public string ReleaseNotesViewedFor = "";
+        public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
         public string SciptHistory = "";
         public int SciptHistoryMaxCount = 10;
         public bool ShowProjectPanel = false;
@@ -63,6 +65,8 @@ namespace CSScriptNpp
             SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
             SetValue(Section, "LocalDebug", LocalDebug);
             SetValue(Section, "BuildOnF7", BuildOnF7);
+            SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
+            SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
             SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
             SetValue(Section, "TargetVersion", TargetVersion);
             SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
@@ -85,6 +89,8 @@ namespace CSScriptNpp
             TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
             ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
             BuildOnF7 = GetValue(Section, "BuildOnF7", BuildOnF7);
+            LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
+            CheckUpdatesOnStartup = GetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
             FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
             ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
             DistributeScriptAsScriptByDefault = GetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);

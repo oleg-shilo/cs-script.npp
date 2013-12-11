@@ -62,6 +62,7 @@ namespace CSScriptIntellisense
         public bool ShowQuickInfoInStatusBar = false;
         public bool UseMethodBrackets = false;
         public bool FormatAsYouType = true;
+      
         public bool UsingExternalFile = false;
         public bool SmartIndenting = true;
         public bool IgnoreDocExceptions = false;

@@ -762,13 +762,7 @@ void main(string[] args)
 
         private void configBtn_Click(object sender, EventArgs e)
         {
-            //CSScriptIntellisense.Plugin.ShowConfig();
-            using (var form = new ConfigForm(Config.Instance))
-            {
-                form.ShowDialog();
-                Config.Instance.Save();
-                ReflectorExtensions.IgnoreDocumentationExceptions = CSScriptIntellisense.Config.Instance.IgnoreDocExceptions;
-            }
+           Plugin.ShowConfig();
         }
 
         private void deployBtn_Click(object sender, EventArgs e)
