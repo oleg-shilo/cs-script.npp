@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CSScriptIntellisense;
+using System;
 using System.Linq;
 using System.Windows.Forms;
-using CSScriptIntellisense;
 
 namespace Testpad
 {
@@ -10,12 +10,13 @@ namespace Testpad
         public Form1()
         {
             InitializeComponent();
+            SimpleCodeCompletion.ResetProject();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Cursor = Cursors.WaitCursor;
-            
+
             listBox1.Items.Clear();
 
             textBox1.SelectionLength = 0;
@@ -23,13 +24,11 @@ namespace Testpad
             string code = textBox1.Text;
             string documentName = "script.cs";
 
-            SimpleCodeCompletion.ResetProject();
             var data = SimpleCodeCompletion.GetCompletionData(code, caretPos, documentName);
 
             listBox1.Items.AddRange(data.Select(x => x.DisplayText).ToArray());
 
             Cursor = Cursors.Default;
         }
-
     }
 }
