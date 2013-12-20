@@ -10,7 +10,7 @@ namespace CSScriptIntellisense.Test
         [Fact]
         public void ParseAsExceptionFileReference()
         {
-            string text = @"   at ScriptClass.main(String[] args) in c:\Users\osh\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\dev.g.csx:line 12";
+            string text = @"   at ScriptClass.main(String[] args) in c:\Users\test\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\dev.g.csx:line 12";
             string file;
             int line;
             int column;
@@ -18,9 +18,9 @@ namespace CSScriptIntellisense.Test
             bool success = text.ParseAsExceptionFileReference(out file, out line, out column);
 
             Assert.True(success);
-            Assert.Equal(@"c:\Users\osh\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\dev.g.csx", file);
+            Assert.Equal(@"c:\Users\test\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\dev.g.csx", file);
             Assert.Equal(12, line);
-            Assert.Equal(0, column);
+            Assert.Equal(1, column);
         }
     }
 }

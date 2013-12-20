@@ -66,9 +66,9 @@ namespace NSTest
             SimpleCodeCompletion.ResetProject();
 
             // Messa|geBox.Show("Just a test!");
-            var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs").ToArray();
+            var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
 
-            Assert.True(data.Where(x => x.DisplayText == "MessageBox").Count() > 0);
+            Assert.True(data.Where(x => x.DisplayText == "MessageBox").Any());
         }
         
         [Fact]
