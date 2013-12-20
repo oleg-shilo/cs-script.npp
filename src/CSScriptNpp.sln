@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSScriptNpp", "CSScriptNpp\CSScriptNpp.csproj", "{23B08B10-8297-4A90-9B6D-43DAC7416004}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A2272B4F-44F6-4FB2-86A0-3EC99C0947F7} = {A2272B4F-44F6-4FB2-86A0-3EC99C0947F7}
@@ -26,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSScriptNpp.Test", "CSScrip
 	ProjectSection(ProjectDependencies) = postProject
 		{23B08B10-8297-4A90-9B6D-43DAC7416004} = {23B08B10-8297-4A90-9B6D-43DAC7416004}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testpad", "Testpad\Testpad.csproj", "{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +57,10 @@ Global
 		{18BD025F-2BE5-44AF-8E6C-7783C9901002}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18BD025F-2BE5-44AF-8E6C-7783C9901002}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18BD025F-2BE5-44AF-8E6C-7783C9901002}.Release|Any CPU.Build.0 = Release|Any CPU
+		{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
