@@ -104,14 +104,15 @@ namespace CSScriptIntellisense
 
         public static IEnumerable<ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true, bool prepareForDisplay = true) // not the best way to put in the whole string every time
         {
-
-
             try
             {
                 if (Project == null || string.IsNullOrEmpty(editorText))
                     return new ICompletionData[0];
 
                 var doc = new ReadOnlyDocument(editorText);
+
+                if(editorText.Length <= offset)
+                    offset = editorText.Length-1;
 
                 if (editorText[offset] != '.') //we may be at the partially complete word
                     for (int i = offset - 1; i >= 0; i--)
