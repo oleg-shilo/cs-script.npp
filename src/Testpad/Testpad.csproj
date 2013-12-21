@@ -91,10 +91,6 @@
       <Project>{EB8FC3A3-93E8-457B-B281-FAFA5119611A}</Project>
       <Name>CSScriptIntellisense</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CSScriptNpp\CSScriptNpp.csproj">
-      <Project>{23b08b10-8297-4a90-9b6d-43dac7416004}</Project>
-      <Name>CSScriptNpp</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

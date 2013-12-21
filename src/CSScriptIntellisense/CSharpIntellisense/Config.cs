@@ -35,8 +35,8 @@ namespace CSScriptIntellisense
         {
             var configDir = Path.Combine(Npp.GetConfigDir(), "CSharpIntellisense");
 
-            if (!Directory.Exists(configDir))
-                Directory.CreateDirectory(configDir);
+            //if (!Directory.Exists(configDir))
+            //    Directory.CreateDirectory(configDir);
             string path = Path.Combine(configDir, "settings.ini");
 
             base.file = path;
@@ -73,6 +73,11 @@ namespace CSScriptIntellisense
         {
             lock (this)
             {
+                var configDir = Path.GetDirectoryName(this.file);
+
+                if (!Directory.Exists(configDir))
+                    Directory.CreateDirectory(configDir);
+
                 if (!UsingExternalFile)
                     File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
