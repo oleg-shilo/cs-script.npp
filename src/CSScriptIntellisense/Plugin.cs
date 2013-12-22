@@ -14,6 +14,7 @@ namespace CSScriptIntellisense
 {
     /*
      TODO:
+     * - Code Map needs improvements (e.g. does not processes properties)
      */
 
     static public partial class Plugin
