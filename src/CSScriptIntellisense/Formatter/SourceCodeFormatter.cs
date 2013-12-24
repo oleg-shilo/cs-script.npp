@@ -30,7 +30,7 @@ namespace CSScriptIntellisense
             int topScrollOffset = currentLineNum - Npp.GetFirstVisibleLine();
 
             string code = Npp.GetTextBetween(0, prevLineEnd);
-            int currentPos = Npp.GetCaretPosition(); 
+            int currentPos = Npp.GetCaretPosition();
             string newCode = FormatCode(code, ref currentPos);
             Npp.SetTextBetween(newCode, 0, prevLineEnd);
 
@@ -39,7 +39,7 @@ namespace CSScriptIntellisense
             Npp.SetFirstVisibleLine(Npp.GetLineNumber(currentPos) - topScrollOffset);
         }
 
-        public static string FormatCodeWithNRefactiry(string code, ref int pos)
+        public static string FormatCodeWithNRefactory(string code, ref int pos)
         {
             //https://github.com/icsharpcode/NRefactory/blob/master/ICSharpCode.NRefactory.CSharp/Formatter/FormattingOptionsFactory.cs
 
@@ -69,7 +69,7 @@ namespace CSScriptIntellisense
         public static string FormatCode(string code, ref int pos)
         {
             return FormatCodeManual(code, ref pos);
-            //return FormatCodeWithNRefactiry(code, ref pos);
+            //return FormatCodeWithNRefactory(code, ref pos);
         }
 
         public static string FormatCodeManual(string code, ref int pos)
@@ -153,7 +153,18 @@ namespace CSScriptIntellisense
                                 }
                                 else
                                 {
-                                    currentStringing = none;
+                                    if (currentStringing == lineString)
+                                    {
+                                        if (!formatted.EndsWith("\\")) //only if it is a true end of the string declaration
+                                            currentStringing = none;
+                                    }
+                                    else if (currentStringing == literalString)
+                                    {
+                                        if (!formatted.EndsWith("\"")) //only if it is a true end of the string declaration
+                                            currentStringing = none;
+                                    }
+                                    else
+                                        currentStringing = none;
                                 }
                             }
                             break;

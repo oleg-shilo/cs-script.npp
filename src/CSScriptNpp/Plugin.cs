@@ -10,6 +10,7 @@ using UltraSharp.Cecil;
 namespace CSScriptNpp
 {
     /*TODO:
+     * - CodeMap should reflect all members not only methods
      */
 
     public partial class Plugin
