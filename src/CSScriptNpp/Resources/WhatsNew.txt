@@ -30,7 +30,7 @@ v1.0.9.2
 
 * Added UseTabToAccept auto-completion suggestion
 
-v1.0.10.0-v1.0.13.0
+v1.0.10.0-v1.0.14.0
 
 * Prevented switching to the primary script on F5/F7 if the secondary one is opened 
 
@@ -45,3 +45,6 @@ v1.0.10.0-v1.0.13.0
 * Implemented checking for updates at startup
 
 * Improved formatting algorithm
+
+* Implemented avoiding collisions with other plugin's shortcuts.
+

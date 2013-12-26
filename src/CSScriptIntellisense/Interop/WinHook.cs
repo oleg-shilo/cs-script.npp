@@ -88,6 +88,13 @@ namespace CSScriptIntellisense
         }
     }
 
+    public struct Modifiers
+    {
+        public bool IsCtrl;
+        public bool IsShift;
+        public bool IsAlt;
+    }
+
     public class KeyInterceptor : WinHook<KeyInterceptor>
     {
         [DllImport("USER32.dll")]
@@ -97,6 +104,16 @@ namespace CSScriptIntellisense
         {
             const int KEY_PRESSED = 0x8000;
             return Convert.ToBoolean(GetKeyState((int)key) & KEY_PRESSED);
+        }
+
+        public static Modifiers GetModifiers()
+        {
+            return new Modifiers
+            {
+                IsCtrl = KeyInterceptor.IsPressed(Keys.ControlKey),
+                IsShift = KeyInterceptor.IsPressed(Keys.ShiftKey),
+                IsAlt = KeyInterceptor.IsPressed(Keys.Menu)
+            };
         }
 
         public delegate void KeyDownHandler(Keys key, int repeatCount, ref bool handled);

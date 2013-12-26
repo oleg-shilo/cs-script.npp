@@ -95,23 +95,22 @@ namespace CSScriptIntellisense
             {
                 if (Npp.IsCurrentScriptFile())
                 {
-                    if (key == Keys.Space && KeyInterceptor.IsPressed(Keys.ControlKey))
+                    Modifiers modifiers = KeyInterceptor.GetModifiers();
+
+                    if (key == Keys.Space && modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
                     {
                         handled = true;
                         Dispatcher.Shedule(10, () => Invoke(ShowSuggestionList));
                     }
-                    else if (key == Keys.F12)
+                    else if (key == Keys.F12 && !modifiers.IsCtrl && modifiers.IsShift && !modifiers.IsAlt)
                     {
-                        if (KeyInterceptor.IsPressed(Keys.ShiftKey))
-                        {
-                            Dispatcher.Shedule(10, () => Invoke(FindAllReferences));
-                            handled = true;
-                        }
-                        else
-                        {
-                            Dispatcher.Shedule(10, () => Invoke(GoToDefinition));
-                            handled = true;
-                        }
+                        Dispatcher.Shedule(10, () => Invoke(FindAllReferences));
+                        handled = true;
+                    }
+                    else if (key == Keys.F12 && !modifiers.IsCtrl && !modifiers.IsShift && !modifiers.IsAlt)
+                    {
+                        Dispatcher.Shedule(10, () => Invoke(GoToDefinition));
+                        handled = true;
                     }
                 }
             }
