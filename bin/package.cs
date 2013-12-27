@@ -12,15 +12,18 @@ void main(string[] args)
     var zipFile = Directory.GetFiles(".", "CSScriptNpp.zip").FirstOrDefault();
     if(zipFile != null)
     {
-        string distro = "";
-        File.Move(zipFile, distro = Path.Combine(Path.GetDirectoryName(zipFile), Path.GetFileNameWithoutExtension(zipFile)+"."+version+".zip"));
+        string distro = Path.Combine(Path.GetDirectoryName(zipFile), Path.GetFileNameWithoutExtension(zipFile)+"."+version+".zip");
+        if (File.Exists(distro)) File.Delete(distro);
+        File.Move(zipFile, distro);
         File.Copy(distro, @"E:\cs-script\cs-scriptWEB\npp\" + Path.GetFileName(distro));
     }
 
     var sevenZFile = Directory.GetFiles(".", "CSScriptNpp.7z").FirstOrDefault();
     if(sevenZFile != null)
     {
-        File.Move(sevenZFile, Path.Combine(Path.GetDirectoryName(sevenZFile), Path.GetFileNameWithoutExtension(sevenZFile)+"."+version+".7z"));
+        string distro = Path.Combine(Path.GetDirectoryName(sevenZFile), Path.GetFileNameWithoutExtension(sevenZFile)+"."+version+".7z");
+        if (File.Exists(distro)) File.Delete(distro);
+        File.Move(sevenZFile, distro);
     }
 
     File.WriteAllText(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", version);

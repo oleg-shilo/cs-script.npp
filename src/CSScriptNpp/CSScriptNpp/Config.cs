@@ -80,7 +80,7 @@ namespace CSScriptNpp
             ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
             ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
             ShowCodeMapPanel = GetValue(Section, "ShowCodeMapPanel", ShowCodeMapPanel);
-            SciptHistory = GetValue(Section, "SciptHistory", SciptHistory);
+            SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
             SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
             OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
             NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);

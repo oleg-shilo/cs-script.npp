@@ -34,7 +34,7 @@ namespace CSScriptNpp
             catch { }
         }
 
-        public T GetValue<T>(string section, string key, T defaultValue, int size = 255)
+        public T GetValue<T>(string section, string key, T defaultValue, int size = 255*10) //MAX_PATH*10
         {
             try
             {

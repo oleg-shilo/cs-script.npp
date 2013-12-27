@@ -11,6 +11,7 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - CodeMap should reflect all members with the indication of the type name
+     * + Recent scripts does not allow saving more then 256 chars value
      */
 
     public partial class Plugin
