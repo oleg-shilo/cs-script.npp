@@ -63,33 +63,37 @@ namespace CSScriptNpp
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
-            SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
-            if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
+            try
             {
-                CSScriptIntellisense.Plugin.OnNppReady();
-                CSScriptNpp.Plugin.OnNppReady();
-            }
-            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
-            {
-                CSScriptNpp.Plugin.OnToolbarUpdate();
-            }
-            else if (nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
-            {
-                CSScriptIntellisense.Plugin.OnCharTyped((char)nc.ch);
-            }
-            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
-            {
-                CSScriptIntellisense.Plugin.OnCurrentFileChanegd();
-                CSScriptNpp.Plugin.OnCurrentFileChanged();
-            }
-            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
-            {
-                Marshal.FreeHGlobal(_ptrPluginName);
+                SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
+                if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
+                {
+                    CSScriptIntellisense.Plugin.OnNppReady();
+                    CSScriptNpp.Plugin.OnNppReady();
+                }
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
+                {
+                    CSScriptNpp.Plugin.OnToolbarUpdate();
+                }
+                else if (nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
+                {
+                    CSScriptIntellisense.Plugin.OnCharTyped((char)nc.ch);
+                }
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
+                {
+                    CSScriptIntellisense.Plugin.OnCurrentFileChanegd();
+                    CSScriptNpp.Plugin.OnCurrentFileChanged();
+                }
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
+                {
+                    Marshal.FreeHGlobal(_ptrPluginName);
 
-                CSScriptNpp.Plugin.CleanUp();
-            }
+                    CSScriptNpp.Plugin.CleanUp();
+                }
 
-            Plugin.OnNotification(nc);
+                Plugin.OnNotification(nc);
+            }
+            catch { }//this is indeed the last line of defense as all CS-S calls have the error handling inside 
         }
     }
 }

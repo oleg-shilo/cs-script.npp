@@ -1,11 +1,10 @@
+using CSScriptIntellisense.Interop;
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptIntellisense.Interop;
 
 namespace CSScriptIntellisense
 {
@@ -34,6 +33,7 @@ namespace CSScriptIntellisense
 
         bool simple = false;
         int? lastMethodStartPos;
+
         public void TriggerPopup(bool simple, int methodStartPos, string[] data)
         {
             try
@@ -77,14 +77,22 @@ namespace CSScriptIntellisense
 
                                     while (popupForm != null)
                                     {
-                                        Npp.GrabFocus();
-                                        var newRect = Npp.GetClientRect();
-                                        if (rect != newRect)
+                                        try
+                                        {
+                                            Npp.GrabFocus();
+                                            var newRect = Npp.GetClientRect();
+                                            if (rect != newRect) //if NPP moved, resized close the popup
+                                            {
+                                                base.Close();
+                                                return;
+                                            }
+                                            Thread.Sleep(500);
+                                        }
+                                        catch
                                         {
                                             base.Close();
                                             return;
                                         }
-                                        Thread.Sleep(500);
                                     }
                                 });
                         }

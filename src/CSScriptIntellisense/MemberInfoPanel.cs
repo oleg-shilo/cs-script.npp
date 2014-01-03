@@ -160,6 +160,7 @@ namespace CSScriptIntellisense
 
         void QuickInfoPanel_Deactivate(object sender, EventArgs e)
         {
+            //if "!Simple" then focus stays on Scintilla
             if (Simple)
                 Close();
         }
@@ -269,7 +270,7 @@ namespace CSScriptIntellisense
             }
 
             //e.Graphics.DrawString(RemoveTypeCategory(items[index].Text), this.Font, Brushes.Black, xOffset, yOffset);
-            
+
             string[] parts = infoText.GetLines(2);
 
             e.Graphics.DrawString(parts.First(), this.Font, Brushes.Black, xOffset, yOffset);
@@ -297,7 +298,8 @@ namespace CSScriptIntellisense
 
         private void MemberInfoPanel_VisibleChanged(object sender, EventArgs e)
         {
-
+            if (!Visible)
+                TryClose();
         }
 
         private void MemberInfoPanel_Activated(object sender, EventArgs e)
@@ -308,9 +310,22 @@ namespace CSScriptIntellisense
 
         private void OnIdelTimer_Tick(object sender, EventArgs e)
         {
-            var mousePosition = this.PointToClient(Cursor.Position);
-            if (!this.ClientRectangle.Contains(mousePosition)) //prevent closing if the mouse is over the form
+            TryClose();
+        }
+
+        void TryClose()
+        {
+            try
+            {
                 Close();
+            }
+            catch { } //form can be already disposed
+        }
+
+        private void MemberInfoPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!Simple)
+                ResetIdleTimer(); //prevent closing if the mouse is over the form in !Simple mode
         }
     }
 

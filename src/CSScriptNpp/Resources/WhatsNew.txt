@@ -30,7 +30,7 @@ v1.0.9.2
 
 * Added UseTabToAccept auto-completion suggestion
 
-v1.0.10.0-v1.0.14.0
+v1.0.10.0-v1.0.15.0
 
 * Prevented switching to the primary script on F5/F7 if the secondary one is opened 
 
@@ -47,4 +47,6 @@ v1.0.10.0-v1.0.14.0
 * Improved formatting algorithm
 
 * Implemented avoiding collisions with other plugin's shortcuts.
+
+* Improved focus management integration between plugin and Scintilla.
 

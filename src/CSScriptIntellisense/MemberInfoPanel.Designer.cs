@@ -56,6 +56,7 @@
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.QuickInfoPanel_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MemberInfoPanel_KeyDown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MemberInfoPanel_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MemberInfoPanel_MouseMove);
             this.ResumeLayout(false);
 
         }
