@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSScriptLibrary;
 using System.Globalization;
+using System.Reflection;
 
 namespace CSScriptNpp
 {
@@ -279,6 +280,7 @@ namespace CSScriptNpp
         {
             get
             {
+                //if (dbMonPath == null || !File.Exists(dbMonPath) || !Utils.IsSameTimestamp(Assembly.GetExecutingAssembly().Location, dbMonPath))
                 if (dbMonPath == null || !File.Exists(dbMonPath))
                 {
                     dbMonPath = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\DbMon.exe");
@@ -290,6 +292,7 @@ namespace CSScriptNpp
                             Directory.CreateDirectory(dir);
 
                         File.WriteAllBytes(dbMonPath, Resources.Resources.DbMon); //always try to override existing to ensure the latest version
+                        //Utils.SetSameTimestamp(Assembly.GetExecutingAssembly().Location, dbMonPath);
                     }
                     catch { } //it can be already locked (running)
                 }
@@ -335,8 +338,8 @@ namespace CSScriptNpp
                         p.StartInfo.UseShellExecute = false;
                         p.StartInfo.RedirectStandardOutput = true;
                         p.StartInfo.CreateNoWindow = true;
-                        p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
-
+                        p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                        //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
 
                         p.Start();
 

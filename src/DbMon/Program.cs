@@ -9,6 +9,8 @@ namespace DbMon
     {
         static int Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             //RefreshListeners();
             try
             {

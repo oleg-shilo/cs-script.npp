@@ -83,7 +83,8 @@ namespace CSScriptNpp
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
+                //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
+                p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             }
 
             p.Start();
@@ -332,6 +333,7 @@ namespace CSScriptNpp
         {
             get
             {
+                //if (consoleHostPath == null || !File.Exists(consoleHostPath) || !Utils.IsSameTimestamp(Assembly.GetExecutingAssembly().Location, consoleHostPath))
                 if (consoleHostPath == null || !File.Exists(consoleHostPath))
                 {
                     consoleHostPath = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\ConsoleHost.exe");
@@ -343,6 +345,7 @@ namespace CSScriptNpp
                             Directory.CreateDirectory(dir);
 
                         File.WriteAllBytes(consoleHostPath, Resources.Resources.ConsoleHost); //always try to override existing to ensure the latest version
+                        //Utils.SetSameTimestamp(Assembly.GetExecutingAssembly().Location, consoleHostPath);
                     }
                     catch { } //it can be already locked (running)
                 }

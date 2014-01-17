@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using Microsoft.Win32;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace CSScriptNpp
 {
@@ -20,6 +21,16 @@ namespace CSScriptNpp
                     return (vs2010 != null || vs2012 != null || vs2013 != null);
                 }
             }
+        }
+
+        public static bool IsSameTimestamp(string file1, string file2)
+        {
+            return File.GetLastWriteTimeUtc(file1) == File.GetLastWriteTimeUtc(file2);
+        }
+
+        public static void SetSameTimestamp(string fileSrc, string fileDest)
+        {
+            File.SetLastWriteTimeUtc(fileDest, File.GetLastWriteTimeUtc(fileSrc));
         }
 
         public static bool ParseAsFileReference(this string text, out string file, out int line, out int column)

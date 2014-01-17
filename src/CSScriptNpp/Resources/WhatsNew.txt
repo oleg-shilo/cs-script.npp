@@ -50,3 +50,5 @@ v1.0.10.0-v1.0.15.0
 
 * Improved focus management integration between plugin and Scintilla.
 
+* Encoding for all "Console Interceptions" is set to UTF8.
+

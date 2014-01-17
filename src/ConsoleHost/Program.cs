@@ -9,6 +9,8 @@ class ConsoleHost
     {
         try
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             var newArgs = args.Skip(1).ToArray();
             AppDomain.CurrentDomain.ExecuteAssembly(args[0], newArgs);
         }
