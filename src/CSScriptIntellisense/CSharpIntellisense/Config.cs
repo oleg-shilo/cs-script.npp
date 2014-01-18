@@ -61,8 +61,21 @@ namespace CSScriptIntellisense
         public bool InterceptCtrlSpace = true;
         public bool ShowQuickInfoInStatusBar = false;
         public bool UseMethodBrackets = false;
+
+        bool disableMethodInfo;
+
+        public bool DisableMethodInfo
+        {
+            get { return disableMethodInfo; }
+            set
+            {
+                disableMethodInfo = value;
+            }
+        }
+
+
         public bool FormatAsYouType = true;
-      
+
         public bool UsingExternalFile = false;
         public bool SmartIndenting = true;
         public bool IgnoreDocExceptions = false;
@@ -88,6 +101,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
                 SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 SetValue(Section, "SmartIndenting", SmartIndenting);
+                SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 SetValue(Section, "FormatAsYouType", FormatAsYouType);
             }
         }
@@ -104,6 +118,7 @@ namespace CSScriptIntellisense
                 FormatAsYouType = GetValue(Section, "FormatAsYouType", FormatAsYouType);
                 ShowQuickInfoInStatusBar = GetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
+                DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
             }
         }
     }

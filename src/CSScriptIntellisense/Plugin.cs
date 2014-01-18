@@ -14,7 +14,7 @@ namespace CSScriptIntellisense
 {
     /*
      TODO:
-     * - Code Map needs improvements (e.g. does not processes properties)
+     * - Code Map needs improvements (e.g. does not processes properties in System.String)
      */
 
     static public partial class Plugin
@@ -69,7 +69,8 @@ namespace CSScriptIntellisense
                 setCommand(cmdIndex++, "Show auto-complete list", ShowSuggestionList, true, false, false, Keys.Space);
                 setCommand(cmdIndex++, "Add missing 'using'", AddMissingUsings, true, false, false, Keys.OemPeriod);
                 setCommand(cmdIndex++, "Re-analyze current document", Reparse, false, false, false, Keys.None);
-                setCommand(cmdIndex++, "Show Method Info", ShowMethodInfo, false, false, false, Keys.F6);
+                if (!Config.Instance.DisableMethodInfo)
+                    setCommand(cmdIndex++, "Show Method Info", ShowMethodInfo, false, false, false, Keys.F6);
                 setCommand(cmdIndex++, "Format Document", FormatDocument, true, false, false, Keys.F8);
                 setCommand(cmdIndex++, "Go To Definition", GoToDefinition, false, false, false, Keys.F12);
                 setCommand(cmdIndex++, "Find All References", FindAllReferences, false, false, true, Keys.F12);
@@ -80,6 +81,7 @@ namespace CSScriptIntellisense
                     setCommand(cmdIndex++, "About", ShowAboutBox, false, false, false, Keys.None);
 
                 memberInfoPopup = new MemberInfoPopupManager(ShowQuickInfo);
+
                 //NPP already intercepts these shortcuts so we need to hook keyboard messages
                 KeyInterceptor.Instance.Add(Keys.Space);
                 KeyInterceptor.Instance.Add(Keys.F12);
@@ -209,51 +211,52 @@ namespace CSScriptIntellisense
 
         static void ShowInfo(bool simple)
         {
-            HandleErrors(() =>
-            {
-                if (memberInfoPopup.IsShowing)
+            if (!Config.Instance.DisableMethodInfo)
+                HandleErrors(() =>
                 {
-                    if (simple)
-                        return;
-                    else
-                        memberInfoPopup.Close();
-                }
-
-                string file = Npp.GetCurrentFile();
-
-                if (Npp.IsCurrentScriptFile())
-                {
-                    int pos;
-
-                    if (simple)
-                        pos = Npp.GetPositionFromMouseLocation();
-                    else
-                        pos = Npp.GetCaretPosition();
-
-                    if (pos != -1)
+                    if (memberInfoPopup.IsShowing)
                     {
-                        int rawPos = pos; //note non-decorated position
+                        if (simple)
+                            return;
+                        else
+                            memberInfoPopup.Close();
+                    }
 
-                        string text = Npp.GetTextBetween(0, Npp.DocEnd);
+                    string file = Npp.GetCurrentFile();
 
-                        CSScriptHelper.DecorateIfRequired(ref text, ref pos);
+                    if (Npp.IsCurrentScriptFile())
+                    {
+                        int pos;
 
-                        EnsureCurrentFileParsed();
+                        if (simple)
+                            pos = Npp.GetPositionFromMouseLocation();
+                        else
+                            pos = Npp.GetCaretPosition();
 
-                        int methodStartPos;
-
-                        string[] data = SimpleCodeCompletion.GetMemberInfo(text, pos, file, simple, out methodStartPos);
-
-                        if (data.Length > 0)
+                        if (pos != -1)
                         {
-                            if (simple && Config.Instance.ShowQuickInfoInStatusBar)
-                                Npp.SetStatusbarLabel(data.FirstOrDefault() ?? defaultStatusbarLabel);
-                            else
-                                memberInfoPopup.TriggerPopup(simple, rawPos + (methodStartPos - pos), data);
+                            int rawPos = pos; //note non-decorated position
+
+                            string text = Npp.GetTextBetween(0, Npp.DocEnd);
+
+                            CSScriptHelper.DecorateIfRequired(ref text, ref pos);
+
+                            EnsureCurrentFileParsed();
+
+                            int methodStartPos;
+
+                            string[] data = SimpleCodeCompletion.GetMemberInfo(text, pos, file, simple, out methodStartPos);
+
+                            if (data.Length > 0)
+                            {
+                                if (simple && Config.Instance.ShowQuickInfoInStatusBar)
+                                    Npp.SetStatusbarLabel(data.FirstOrDefault() ?? defaultStatusbarLabel);
+                                else
+                                    memberInfoPopup.TriggerPopup(simple, rawPos + (methodStartPos - pos), data);
+                            }
                         }
                     }
-                }
-            });
+                });
         }
 
         static CustomContextMenu namespaceMenu;
@@ -436,10 +439,13 @@ namespace CSScriptIntellisense
             {
                 Plugin.EnsureCurrentFileParsedAsynch();
 
-                if (Npp.IsCurrentScriptFile())
-                    memberInfoPopup.Enabled = true;
-                else
-                    memberInfoPopup.Enabled = false;
+                if (!Config.Instance.DisableMethodInfo)
+                {
+                    if (Npp.IsCurrentScriptFile())
+                        memberInfoPopup.Enabled = true;
+                    else
+                        memberInfoPopup.Enabled = false;
+                }
             }
         }
 

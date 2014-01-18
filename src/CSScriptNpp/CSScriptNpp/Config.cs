@@ -19,10 +19,11 @@ namespace CSScriptNpp
         public Config()
         {
             base.file = Path.Combine(Plugin.ConfigDir, "settings.ini");
-            Open();
 
             CSScriptIntellisense.Config.Instance.SetFileName(base.file);
             CSScriptIntellisense.Config.Instance.Section = "Intellisense";
+            
+            Open();
         }
 
         public bool ClasslessScriptByDefault = false;
