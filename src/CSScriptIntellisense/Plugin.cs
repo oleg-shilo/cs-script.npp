@@ -3,6 +3,7 @@ using ICSharpCode.NRefactory.Completion;
 using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -217,9 +218,13 @@ namespace CSScriptIntellisense
                     if (memberInfoPopup.IsShowing)
                     {
                         if (simple)
+                        {
                             return;
+                        }
                         else
+                        {
                             memberInfoPopup.Close();
+                        }
                     }
 
                     string file = Npp.GetCurrentFile();

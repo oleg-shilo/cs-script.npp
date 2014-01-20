@@ -112,11 +112,14 @@ namespace CSScriptIntellisense
         void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
             if (key == Keys.Down || key == Keys.Up || key == Keys.Enter)
-                handled = true;
+            {
+                if (popupForm != null)
+                    handled = true;
+            }
+
             try
             {
                 popupForm.kbdHook_KeyDown(key, repeatCount);
-
                 CheckIfNeedsClosing();
             }
             catch { }
@@ -134,7 +137,6 @@ namespace CSScriptIntellisense
                 int currentPos = Npp.GetCaretPosition();
                 if (currentPos <= methodStartPos) //user removed method start
                 {
-                    Debug.WriteLine("Closing:     currentPos {0} <= methodStartPos {1}", currentPos, methodStartPos);
                     base.Close();
                 }
                 else if (text != null && text[text.Length - 1] == ')')
@@ -142,7 +144,6 @@ namespace CSScriptIntellisense
                     string typedArgs = text;
                     if (NRefactoryExtensions.AreBracketsClosed(typedArgs))
                     {
-                        Debug.WriteLine("Closing:     AreBracketsClosed");
                         base.Close();
                     }
                 }
@@ -165,7 +166,9 @@ namespace CSScriptIntellisense
             PopupRequest = popupRequest;
         }
 
-        //public void hook_MouseMove(object sender, MouseHookEventArgs e)
+        bool reqiestIsPending = false;
+        object popupRequestSynch = new object();
+
         public void hook_MouseMove()
         {
             if (Enabled)
@@ -175,12 +178,25 @@ namespace CSScriptIntellisense
                     if (popupForm == null)
                     {
                         lastScheduledPoint = Cursor.Position;
-                        Dispatcher.Shedule(700, PopupRequest);
+                        reqiestIsPending = true;
+                        Dispatcher.Shedule(700, () =>
+                            {
+                                lock (popupRequestSynch)
+                                {
+                                    if (reqiestIsPending)
+                                    {
+                                        reqiestIsPending = false;
+                                        PopupRequest();
+                                    }
+                                }
+                            });
                     }
                     else
                     {
                         if (popupForm.Visible && popupForm.AutoClose)
+                        {
                             Close();
+                        }
                     }
                 }
             }
@@ -192,28 +208,41 @@ namespace CSScriptIntellisense
 
         public void Close()
         {
-            if (popupForm != null && popupForm.Visible)
+            try
             {
-                popupForm.Close();
-                popupForm = null;
+                if (popupForm != null && popupForm.Visible)
+                {
+                    popupForm.Close();
+                    popupForm = null;
+                }
             }
+            catch { }
         }
 
         public void Popup(Action<T> init, Action<T> end)
         {
             if (IsShowing)
-                popupForm.Close();
+            {
+                Close();
+            }
 
             popupForm = new T();
-            popupForm.FormClosed += (sender, e) =>
+            popupForm.FormClosed +=
+                (sender, e) =>
                 {
                     end(popupForm);
-                    popupForm = null;
+                    if (popupForm != null)
+                    {
+                        popupForm.Dispose();
+                        popupForm = null;
+                    }
                 };
 
             init(popupForm);
 
-            popupForm.Show(owner: Plugin.GetCurrentScintilla());
+            //popupForm.Show(owner: Npp.NppHandle);//better but still crashes NPP; 
+            //popupForm.Show(owner: Plugin.GetCurrentScintilla()); //does not work well on Win7-x64; after 3-4 popups just hangs the whole NPP  
+            popupForm.ShowDialog();
         }
 
         public bool IsShowing
@@ -229,11 +258,16 @@ namespace CSScriptIntellisense
     {
         public static void Show(this Form form, IntPtr owner)
         {
-            var nativeWindow = new NativeWindow();
-
-            nativeWindow.AssignHandle(owner);
-
-            form.Show(nativeWindow);
+            try
+            {
+                //has very bad side-effect on Win7-x64 (hangs the NPP)
+                var nativeWindow = new NativeWindow();
+                nativeWindow.AssignHandle(owner);
+                form.Show(nativeWindow);
+            }
+            catch
+            {
+            }
         }
     }
 }

@@ -49,9 +49,8 @@
             this.Name = "MemberInfoPanel";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "AutocompleteForm";
-            this.Activated += new System.EventHandler(this.MemberInfoPanel_Activated);
             this.Deactivate += new System.EventHandler(this.QuickInfoPanel_Deactivate);
+            this.Load += new System.EventHandler(this.MemberInfoPanel_Load);
             this.VisibleChanged += new System.EventHandler(this.MemberInfoPanel_VisibleChanged);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.QuickInfoPanel_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MemberInfoPanel_KeyDown);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -116,6 +117,7 @@ namespace CSScriptIntellisense
         public MemberInfoPanel()
         {
             InitializeComponent();
+            ResetIdleTimer();
         }
 
         public List<ItemInfo> items = new List<ItemInfo>();
@@ -143,12 +145,12 @@ namespace CSScriptIntellisense
 
             if (Simple)
             {
-                Close();
+                TryClose();
             }
             else
             {
                 if (key == Keys.Escape || key == Keys.Enter)
-                    Close();
+                    TryClose();
 
                 if (key == Keys.Up)
                     Decrement();
@@ -162,7 +164,9 @@ namespace CSScriptIntellisense
         {
             //if "!Simple" then focus stays on Scintilla
             if (Simple)
-                Close();
+            {
+                TryClose();
+            }
         }
 
         void Increment()
@@ -294,18 +298,18 @@ namespace CSScriptIntellisense
                 else if (upButtonArea.Contains(e.Location))
                     Decrement();
             }
+
+            if (!this.ClientRectangle.Contains(e.Location))
+                TryClose();
         }
 
         private void MemberInfoPanel_VisibleChanged(object sender, EventArgs e)
         {
             if (!Visible)
+            {
+                Capture = false;
                 TryClose();
-        }
-
-        private void MemberInfoPanel_Activated(object sender, EventArgs e)
-        {
-            var p = this.Parent;
-            timer1.Enabled = true;
+            }
         }
 
         private void OnIdelTimer_Tick(object sender, EventArgs e)
@@ -326,6 +330,11 @@ namespace CSScriptIntellisense
         {
             if (!Simple)
                 ResetIdleTimer(); //prevent closing if the mouse is over the form in !Simple mode
+        }
+
+        private void MemberInfoPanel_Load(object sender, EventArgs e)
+        {
+            Capture = true;
         }
     }
 

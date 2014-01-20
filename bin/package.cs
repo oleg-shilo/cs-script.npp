@@ -15,7 +15,7 @@ void main(string[] args)
         string distro = Path.Combine(Path.GetDirectoryName(zipFile), Path.GetFileNameWithoutExtension(zipFile)+"."+version+".zip");
         if (File.Exists(distro)) File.Delete(distro);
         File.Move(zipFile, distro);
-        File.Copy(distro, @"E:\cs-script\cs-scriptWEB\npp\" + Path.GetFileName(distro));
+        File.Copy(distro, @"E:\cs-script\cs-scriptWEB\npp\" + Path.GetFileName(distro), true);
     }
 
     var sevenZFile = Directory.GetFiles(".", "CSScriptNpp.7z").FirstOrDefault();
