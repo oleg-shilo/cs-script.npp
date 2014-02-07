@@ -200,6 +200,12 @@ namespace CSScriptIntellisense
             Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, text);
         }
 
+        static public string GetWordAtCursor(char[] wordDelimiters = null)
+        {
+            Point point;
+            return GetWordAtCursor(out point, wordDelimiters);
+        }
+
         static public string GetWordAtCursor(out Point point, char[] wordDelimiters = null)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -273,6 +279,13 @@ namespace CSScriptIntellisense
             int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0); ;
+        }
+
+        public static void SetSelection(int start, int end)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, start, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, end, 0); ;
         }
 
         static public int GrabFocus()

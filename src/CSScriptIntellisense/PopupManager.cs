@@ -1,10 +1,10 @@
-using CSScriptIntellisense.Interop;
 using System;
-using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense.Interop;
 
 namespace CSScriptIntellisense
 {
@@ -243,7 +243,12 @@ namespace CSScriptIntellisense
             //popupForm.Show(owner: Npp.NppHandle);//better but still crashes NPP; 
             //popupForm.Show(owner: Plugin.GetCurrentScintilla()); //does not work well on Win7-x64; after 3-4 popups just hangs the whole NPP  
             popupForm.ShowDialog();
+            //SetForegroundWindow(Npp.NppHandle); //may need it in the future if there focus management problems
+
         }
+
+        //[DllImport("user32.dll")]
+        //static extern bool SetForegroundWindow(IntPtr hWnd);
 
         public bool IsShowing
         {
@@ -270,4 +275,5 @@ namespace CSScriptIntellisense
             }
         }
     }
+
 }

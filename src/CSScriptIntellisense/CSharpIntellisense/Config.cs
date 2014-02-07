@@ -58,6 +58,7 @@ namespace CSScriptIntellisense
         public bool UseArrowToAccept = true;
         public bool UseTabToAccept = true;
 
+        public bool SnapshotsEnabled = false;
         public bool InterceptCtrlSpace = true;
         public bool ShowQuickInfoInStatusBar = false;
         public bool UseMethodBrackets = false;
@@ -67,10 +68,7 @@ namespace CSScriptIntellisense
         public bool DisableMethodInfo
         {
             get { return disableMethodInfo; }
-            set
-            {
-                disableMethodInfo = value;
-            }
+            set { disableMethodInfo = value; }
         }
 
 
@@ -98,6 +96,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "UseTabToAccept", UseTabToAccept);
                 SetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
                 SetValue(Section, "UseMethodBrackets", UseMethodBrackets);
+                SetValue(Section, "SnapshotsEnabled", SnapshotsEnabled);
                 SetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
                 SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 SetValue(Section, "SmartIndenting", SmartIndenting);
@@ -115,6 +114,7 @@ namespace CSScriptIntellisense
                 InterceptCtrlSpace = GetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
                 UseMethodBrackets = GetValue(Section, "UseMethodBrackets", UseMethodBrackets);
                 SmartIndenting = GetValue(Section, "SmartIndenting", SmartIndenting);
+                SnapshotsEnabled = GetValue(Section, "SnapshotsEnabled", SnapshotsEnabled);
                 FormatAsYouType = GetValue(Section, "FormatAsYouType", FormatAsYouType);
                 ShowQuickInfoInStatusBar = GetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);

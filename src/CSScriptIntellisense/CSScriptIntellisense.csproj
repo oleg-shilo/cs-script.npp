@@ -59,6 +59,11 @@
   -->
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CodeSnippets\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="CSharpIntellisense\NRefactoryExtensions.cs" />
     <Compile Include="Formatter\NppCodeFormatter.cs" />
     <Compile Include="Formatter\SourceCodeFormatter.cs" />
@@ -93,6 +98,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="CSharpIntellisense\Reflector.Cecil.cs" />
+    <Compile Include="CodeSnippets\Snippets.cs" />
+    <None Include="CodeSnippets\snippets.config" />
     <None Include="Interop\DllExport\CheckILDasmPath.cs" />
     <Compile Include="AboutBox.cs">
       <SubType>Form</SubType>
@@ -158,6 +165,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AutocompleteForm.resx">
       <DependentUpon>AutocompleteForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CodeSnippets\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>

@@ -11,7 +11,6 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - CodeMap should reflect all members with the indication of the type name
-     * + Recent scripts does not allow saving more then 256 chars value
      */
 
     public partial class Plugin
@@ -41,6 +40,7 @@ namespace CSScriptNpp
 
             KeyInterceptor.Instance.Install();
             KeyInterceptor.Instance.Add(Keys.F5);
+            KeyInterceptor.Instance.Add(Keys.Tab);
             KeyInterceptor.Instance.Add(Keys.F4);
             KeyInterceptor.Instance.Add(Keys.F7);
 

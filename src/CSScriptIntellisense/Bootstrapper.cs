@@ -9,6 +9,8 @@ using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
+
+ 
     class Bootstrapper
     {
         //'standalone' is the deployment model that includes CSSCriptIntellisense.dll plugin only
