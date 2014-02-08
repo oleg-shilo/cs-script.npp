@@ -79,7 +79,7 @@ namespace CSScriptIntellisense
                 setCommand(cmdIndex++, "Settings", ShowConfig, false, false, false, Keys.None);
                 setCommand(cmdIndex++, "Code Snippets", Snippets.EditSnippetsConfig, false, false, false, Keys.None);
                 setCommand(cmdIndex++, "---", null, false, false, false, Keys.None);
-                //setCommand(cmdIndex++, "Test", Test, true, false, true, Keys.L);
+                setCommand(cmdIndex++, "Test", Test, true, false, true, Keys.L);
                 if (standaloneSetup)
                     setCommand(cmdIndex++, "About", ShowAboutBox, false, false, false, Keys.None);
 
@@ -99,7 +99,7 @@ namespace CSScriptIntellisense
 
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
-            if (false && Config.Instance.SnapshotsEnabled)
+            if (Config.Instance.SnapshotsEnabled)
             {
                 if (key == Keys.Tab && Npp.IsCurrentScriptFile())
                 {
@@ -178,94 +178,121 @@ namespace CSScriptIntellisense
 #endif
         }
 
-        //static bool toStyle = false;
-        //static void Test()
-        //{
-        //    toStyle = !toStyle;
-        //    if (toStyle)
-        //    {
-        //        Style();
-        //    }
-        //    else
-        //    {
-        //        Unstyle();
-        //    }
-        //}
+        static bool toStyle = false;
+        static void Test()
+        {
+            toStyle = !toStyle;
+            if (toStyle)
+            {
+                Style();
+            }
+            else
+            {
+                Unstyle();
+            }
+        }
 
-        //static void Style()
-        //{
-        //    IntPtr sci = Plugin.GetCurrentScintilla();
+        static void Style()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
 
-        //    Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 8, (int)SciMsg.INDIC_PLAIN);
-        //    Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 9, (int)SciMsg.INDIC_SQUIGGLE);
-        //    Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 10, (int)SciMsg.INDIC_TT);
-        //    Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 11, (int)SciMsg.INDIC_DIAGONAL);
-        //    Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 12, (int)SciMsg.INDIC_STRIKE);
-        //    Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 13, (int)SciMsg.INDIC_BOX);
-        //    Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 14, (int)SciMsg.INDIC_ROUNDBOX);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 8, (int)SciMsg.INDIC_PLAIN);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 9, (int)SciMsg.INDIC_SQUIGGLE);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 10, (int)SciMsg.INDIC_TT);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 11, (int)SciMsg.INDIC_DIAGONAL);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 12, (int)SciMsg.INDIC_STRIKE);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 13, (int)SciMsg.INDIC_BOX);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 14, (int)SciMsg.INDIC_ROUNDBOX);
 
-        //    for (int i = 8; i <= 14; i++)
-        //    {
-        //        Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, i, 0);
-        //        Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, i, 0x00ff00);
-        //        int iStart = (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, i - 8, 0);
-        //        Win32.SendMessage(sci, SciMsg.SCI_INDICATORFILLRANGE, iStart, 7);
-        //    }
-        //}
+            for (int i = 8; i <= 14; i++)
+            {
+                Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, i, 0);
+                Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, i, 0x00ff00);
+                int iStart = (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, i - 8, 0);
+                Win32.SendMessage(sci, SciMsg.SCI_INDICATORFILLRANGE, iStart, 7);
+            }
+        }
 
-        //static void Unstyle()
-        //{
-        //    IntPtr sci = Plugin.GetCurrentScintilla();
+        static void Unstyle()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
 
-        //    for (int i = 8; i <= 14; i++)
-        //    {
-        //        for (int i = 0; i < length; i++)
-        //        {
+            for (int i = 8; i <= 14; i++)
+            {
+                //for (int i = 0; i < length; i++)
+                //{
 
-        //        }
+                //}
 
-        //        Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, i, 0);
+                Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, i, 0);
 
-        //        //finding the indicator ranges
-        //        //For example indicator 4..6 in the doc 0..10 will have three logical regions:
-        //        //0..4, 4..6, 6..10
-        //        //Probing will produce following when outcome:
-        //        //probe for 0 : 0..4
-        //        //probe for 4 : 4..6
-        //        //probe for 6 : 4..10
-        //        for (int j = 0; j < 500; j++)
-        //        {
-        //            int iS = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, i, j);
-        //            int iE = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, i, j);
-        //            Debug.WriteLine("indicator {0}; Test position {1}; iStart: {2}; iEnd: {3};", i, j, iS, iE);
-        //        }
+                //finding the indicator ranges
+                //For example indicator 4..6 in the doc 0..10 will have three logical regions:
+                //0..4, 4..6, 6..10
+                //Probing will produce following when outcome:
+                //probe for 0 : 0..4
+                //probe for 4 : 4..6
+                //probe for 6 : 4..10
+                for (int j = 0; j < 500; j++)
+                {
+                    int iS = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, i, j);
+                    int iE = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, i, j);
+                    Debug.WriteLine("indicator {0}; Test position {1}; iStart: {2}; iEnd: {3};", i, j, iS, iE);
+                }
 
-        //        //finding indicator presence within a range (by probing the range position)
-        //        //For example indicator 4..6 in the doc 0..10 will have three logical regions:
-        //        //0..4, 5..6, 6..10
-        //        //probe for 3 ->  0
-        //        //probe for 4 - > 1
-        //        //probe for 7 -> 0
-        //        for (int j = 0; j < 500; j++)
-        //        {
-        //            int value = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, i, j);
-        //            //Debug.WriteLine("indicator {0}; Test position {1}; iStart: {2}; iEnd: {3};", i, j, iS, iE);
-        //        }
+                //finding indicator presence within a range (by probing the range position)
+                //For example indicator 4..6 in the doc 0..10 will have three logical regions:
+                //0..4, 5..6, 6..10
+                //probe for 3 -> 0
+                //probe for 4 -> 1
+                //probe for 7 -> 0
+                for (int j = 0; j < 500; j++)
+                {
+                    int value = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, i, j);
+                    //Debug.WriteLine("indicator {0}; Test position {1}; iStart: {2}; iEnd: {3};", i, j, iS, iE);
+                }
 
-        //        int lStart = (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, i - 8, 0);
-        //        int iStart = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, lStart, lStart + 50);
-        //        int iEnd = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, lStart, lStart + 50);
-        //        Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, iStart, iEnd - iStart);
+                int lStart = (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, i - 8, 0);
+                int iStart = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, lStart, lStart + 50);
+                int iEnd = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, lStart, lStart + 50);
+                Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, iStart, iEnd - iStart);
 
-        //        //int iStart = (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, i - 8, 0);
-        //        //Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, iStart, 7);
-        //    }
-        //}
+                //int iStart = (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, i - 8, 0);
+                //Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, iStart, 7);
+            }
+        }
 
+        static IEnumerable<Point> FindIndicatorRanges(int indicator)
+        {
+            var ranges = new List<Point>();
 
+            IntPtr sci = Plugin.GetCurrentScintilla();
+
+            int testPosition = 0;
+
+            while (true)
+            {
+                //finding the indicator ranges
+                //For example indicator 4..6 in the doc 0..10 will have three logical regions:
+                //0..4, 4..6, 6..10
+                //Probing will produce following when outcome:
+                //probe for 0 : 0..4
+                //probe for 4 : 4..6
+                //probe for 6 : 4..10
+
+                int rangeStart = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, indicator, testPosition);
+                int rangeEnd = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, indicator, testPosition);
+                int value = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, indicator, testPosition);
+                if (value == 1) //indicator is present
+                Debug.WriteLine("indicator {0}; Test position {1}; iStart: {2}; iEnd: {3};", i, j, iS, iE);
+            }
+
+            return null;
+        }
 
         static void InsertCodeSnippet(string token, Point tokenPoints)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
             string replacement = Snippets.GetTemplate(token);
             if (replacement != null)
             {

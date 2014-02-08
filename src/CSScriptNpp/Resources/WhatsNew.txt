@@ -1,3 +1,5 @@
-v1.0.17.1
+v1.0.18.0
 
-* Removed dependency on .NET 4.5.1.
+* Implemented Code Snippets.
+Example: type 'for' and press Tab
+You can manage snippets from the Plugins->CS-Script->Code Snippets menu 
