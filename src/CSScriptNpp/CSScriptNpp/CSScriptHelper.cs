@@ -371,11 +371,11 @@ namespace CSScriptNpp
             {
                 string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-                string destFile = Path.Combine(downloadDir, "CSScriptNpp.msi");
+                string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + ".msi");
 
-                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp*.msi").Count();
+                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp." + version + "*.msi").Count();
                 if (numOfAlreadyDownloaded > 0)
-                    destFile = Path.Combine(downloadDir, "CSScriptNpp (" + (numOfAlreadyDownloaded + 1) + ").msi");
+                    destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + " (" + (numOfAlreadyDownloaded + 1) + ").msi");
 
                 DownloadBinary("http://csscript.net/npp/CSScriptNpp." + version + ".msi", destFile);
 
