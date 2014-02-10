@@ -194,10 +194,9 @@ namespace CSScriptIntellisense
             //}
         }
 
-       
+
         static void InsertCodeSnippet(string token, Point tokenPoints)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
             string replacement = Snippets.GetTemplate(token);
             if (replacement != null)
             {
@@ -205,14 +204,35 @@ namespace CSScriptIntellisense
                 int lineStartPos = Npp.GetLineStart(line);
 
                 int horizontalOffset = tokenPoints.X - lineStartPos;
-                int selectionStart; //relative selection in the replacement text
-                int selectionLength;
+                //int selectionStart; 
+                //int selectionLength;
 
-                replacement = Snippets.PrepareForIncertion(replacement, out selectionStart, out selectionLength, horizontalOffset);
+                //relative selection in the replacement text
+                var snippetParametersRegions = new List<Point>();
+                replacement = Snippets.PrepareForIncertion(replacement, horizontalOffset, snippetParametersRegions);
 
                 Npp.ReplaceWordAtCaret(replacement);
-                int nppSelectionStart = tokenPoints.X + selectionStart;
-                Npp.SetSelection(nppSelectionStart, nppSelectionStart + selectionLength);
+
+                int indicatorId = 8;
+                Npp.SetIndicatorStyle(indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+
+                foreach (var point in snippetParametersRegions)
+                {
+                    Npp.PlaceIndicator(indicatorId, point.X + tokenPoints.X, point.Y + tokenPoints.X);
+                }
+
+                //var detectedRanges = ActiveDev.FindIndicatorRanges(indicatorId);
+
+                //indicatorId = 9;
+                //Npp.SetIndicatorStyle(indicatorId, SciMsg.INDIC_BOX, Color.Red);
+
+                //foreach (var point in detectedRanges)
+                //{
+                //    Npp.PlaceIndicator(indicatorId, point.X, point.Y);
+                //}
+
+                //int nppSelectionStart = tokenPoints.X + selectionStart;
+                //Npp.SetSelection(nppSelectionStart, nppSelectionStart + selectionLength);
             }
         }
 
@@ -353,7 +373,7 @@ namespace CSScriptIntellisense
                         namespaceMenu.Top = point.Y + 18;
 
                         var usings = items.Where(x => !x.IsNested)
-                                            .Select(x => "using " + x.Namespace + ";");
+                                          .Select(x => "using " + x.Namespace + ";");
 
                         var inline = items.Select(x => x.FullName);
 

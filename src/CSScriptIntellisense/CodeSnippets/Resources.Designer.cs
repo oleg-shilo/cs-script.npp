@@ -61,33 +61,17 @@ namespace CSScriptIntellisense.CodeSnippets {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to prop=&gt;
-        ///    public {$type} Name { get; set; }
-        ///
-        ///for=&gt;
-        ///    for (int i = 0; i &lt; {$length}; i++)
-        ///    {
-        ///        
-        ///    }    
-        ///
-        ///foreach=&gt;
-        ///    foreach (var {$item} in collection)
-        ///    {
-        ///        
-        ///    }    
-        ///
-        ///class=&gt;
-        ///    public class {$Name}
-        ///    {
-        ///        
-        ///    }    
-        ///
-        ///while=&gt;
-        ///    while ({$true})
-        ///    {
-        ///        
-        ///    }    
-        ///.
+        ///   Looks up a localized string similar to #--------------------------------
+        ///# After snippet generation all snippet parameters will be stripped from
+        ///# the &apos;$&apos; characters and will be able to &apos;jump&apos; between parameters with the 
+        ///# &apos;Tab&apos; button.
+        ///# Syntax:
+        ///#  #         - comment line indicator
+        ///#  &lt;name&gt;=&gt;  - snippet name lien; start of the snippet section 
+        ///#  $&lt;value&gt;$ - snippet parameter 
+        ///#  $|$       - special snippet parameter indicating the 
+        ///#              caret position after the snippet insertion is completed. 
+        ///#-------------------------- [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string snippets {
             get {

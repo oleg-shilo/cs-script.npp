@@ -8,6 +8,12 @@ using System.Windows.Forms;
 
 namespace CSScriptIntellisense
 {
+    class SnippetInfo
+    {
+        public List<List<Point>> ParametersGroups = new List<List<Point>>();
+        public List<Point> Parameters = new List<Point>();
+    }
+
     public class Snippets
     {
         static public Dictionary<string, string> Map = new Dictionary<string, string>();
@@ -50,7 +56,7 @@ namespace CSScriptIntellisense
                 if (!Directory.Exists(configDir))
                     Directory.CreateDirectory(configDir);
 
-                return Path.Combine(configDir, "snippet.config");
+                return Path.Combine(configDir, "snippet.data");
             }
         }
 
@@ -113,28 +119,41 @@ namespace CSScriptIntellisense
             }
         }
 
-        public static string PrepareForIncertion(string text, out int selectionStart, out int selectionLength, int charsOffset)
+        public static string PrepareForIncertion(string text, int charsOffset, List<Point> paramsRegions)
         {
+            paramsRegions.Clear();
+
+            string retval = text;
+
             string offset = new string(' ', charsOffset);
             text = text.Replace(Environment.NewLine, Environment.NewLine + offset);
 
-            selectionStart = -1;
-            selectionLength = 0;
-
+            int endPos = -1;
             int startPos = text.IndexOf("$");
-            if (startPos != -1)
-            {
 
-                int endPos = text.IndexOf("$", startPos + 1);
+            while (startPos != -1)
+            {
+                endPos = text.IndexOf("$", startPos + 1);
+
                 if (endPos != -1)
                 {
                     //'$item$' -> 'item'
-                    string placement = text.Substring(startPos, endPos - startPos + 1);
-                    string placementValue = placement.Substring(1, placement.Length - 3);
-                    selectionStart = startPos;
-                    selectionLength = placementValue.Length;
-                    return text.Replace(placement, placementValue);
+                    int newEndPos = endPos - 2;
+
+                    paramsRegions.Add(new Point(startPos, newEndPos + 1));
+
+                    string leftText = text.Substring(0, startPos);
+                    string rightText = text.Substring(endPos + 1);
+                    string placementValue = text.Substring(startPos + 1, endPos - startPos - 1);
+
+                    text = leftText + placementValue + rightText;
+
+                    endPos = newEndPos;
                 }
+                else
+                    break;
+
+                startPos = text.IndexOf("$", endPos + 1);
             }
 
             return text;
@@ -213,7 +232,7 @@ namespace CSScriptIntellisense
             }
         }
 
-        static IEnumerable<Point> FindIndicatorRanges(int indicator)
+        static public IEnumerable<Point> FindIndicatorRanges(int indicator)
         {
             var ranges = new List<Point>();
 
@@ -234,11 +253,16 @@ namespace CSScriptIntellisense
                 int rangeStart = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, indicator, testPosition);
                 int rangeEnd = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, indicator, testPosition);
                 int value = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, indicator, testPosition);
-               // if (value == 1) //indicator is present
-                 //   Debug.WriteLine("indicator {0}; Test position {1}; iStart: {2}; iEnd: {3};", i, j, iS, iE);
+                if (value == 1) //indicator is present
+                    ranges.Add(new Point(rangeStart, rangeEnd));
+
+                if (testPosition == rangeEnd)
+                    break;
+
+                testPosition = rangeEnd;
             }
 
-            return null;
+            return ranges;
         }
 
     }

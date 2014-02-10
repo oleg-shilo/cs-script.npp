@@ -43,7 +43,9 @@ namespace CSScriptNpp
         {
             get
             {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                return
+                    Assembly.GetExecutingAssembly().GetName().Version.ToString() +
+                    "  (script engine cscs.exe: " + CSScriptHelper.ScriptEngineVersion() + ")";
             }
         }
 

@@ -29,7 +29,7 @@ namespace CSScriptIntellisense
 
         public void Add(string text, Bitmap image, Action<string> handler)
         {
-            items.Add(new ItemInfo { Text = text, Image = image, Handler = handler, NewGroup = nextItemIsSeparator??false });
+            items.Add(new ItemInfo { Text = text, Image = image, Handler = handler, NewGroup = nextItemIsSeparator ?? false });
             nextItemIsSeparator = false;
         }
 
@@ -86,8 +86,7 @@ namespace CSScriptIntellisense
             }
 
             if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
-                //e.Graphics.FillRectangle(Brushes.WhiteSmoke, itemBounds);
-                e.Graphics.FillRectangle( new SolidBrush(Color.FromArgb(248, 249, 250)), itemBounds);
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(253, 244, 191)), itemBounds);
             else
                 e.Graphics.FillRectangle(SystemBrushes.Menu, itemBounds);
 

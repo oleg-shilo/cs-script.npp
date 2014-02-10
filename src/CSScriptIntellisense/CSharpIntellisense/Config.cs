@@ -96,7 +96,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "UseTabToAccept", UseTabToAccept);
                 SetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
                 SetValue(Section, "UseMethodBrackets", UseMethodBrackets);
-                SetValue(Section, "SnapshotsEnabled", SnapshotsEnabled);
+                //SetValue(Section, "SnapshotsEnabled", SnapshotsEnabled);
                 SetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
                 SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 SetValue(Section, "SmartIndenting", SmartIndenting);
@@ -114,7 +114,7 @@ namespace CSScriptIntellisense
                 InterceptCtrlSpace = GetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
                 UseMethodBrackets = GetValue(Section, "UseMethodBrackets", UseMethodBrackets);
                 SmartIndenting = GetValue(Section, "SmartIndenting", SmartIndenting);
-                SnapshotsEnabled = GetValue(Section, "SnapshotsEnabled", SnapshotsEnabled);
+                //SnapshotsEnabled = GetValue(Section, "SnapshotsEnabled", SnapshotsEnabled);
                 FormatAsYouType = GetValue(Section, "FormatAsYouType", FormatAsYouType);
                 ShowQuickInfoInStatusBar = GetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);

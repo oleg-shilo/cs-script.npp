@@ -99,7 +99,7 @@
     </Compile>
     <Compile Include="CSharpIntellisense\Reflector.Cecil.cs" />
     <Compile Include="CodeSnippets\Snippets.cs" />
-    <None Include="CodeSnippets\snippets.config" />
+    <None Include="CodeSnippets\snippets.data" />
     <None Include="Interop\DllExport\CheckILDasmPath.cs" />
     <Compile Include="AboutBox.cs">
       <SubType>Form</SubType>
@@ -169,6 +169,7 @@
     <EmbeddedResource Include="CodeSnippets\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>

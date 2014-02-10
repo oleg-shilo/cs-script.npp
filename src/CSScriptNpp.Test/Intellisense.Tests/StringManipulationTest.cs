@@ -1,17 +1,19 @@
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using UltraSharp.Cecil;
 using Xunit;
 
 namespace CSScriptIntellisense.Test
 {
+
 
     public class StringManipulationTest
     {
         [Fact]
         public void LeftAlign()
         {
-            string[] lines = new [] {"Line1",
+            string[] lines = new[] {"Line1",
                                      "       Line2",
                                      "Line3", 
                                      "Line4",
@@ -34,7 +36,7 @@ namespace CSScriptIntellisense.Test
 
             Assert.Equal(5, lines.Count());
         }
-        
+
         [Fact]
         public void NormaliseClrName()
         {

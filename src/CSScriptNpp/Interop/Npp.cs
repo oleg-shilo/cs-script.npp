@@ -71,6 +71,12 @@ namespace CSScriptNpp
             return currentPos;
         }
 
+        static public void OpenFile(string file)
+        {
+            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, file);
+            Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+        }
+
         static public string GetCurrentFile()
         {
             var path = new StringBuilder(Win32.MAX_PATH);

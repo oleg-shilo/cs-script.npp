@@ -48,6 +48,20 @@ namespace CSScriptIntellisense
             return !string.IsNullOrWhiteSpace(file) && file.IsScriptFile();
         }
 
+        static public void SetIndicatorStyle(int indicator, SciMsg style, Color color)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int)style);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, indicator, ColorTranslator.ToWin32(color));
+        }
+
+        static public void PlaceIndicator(int indicator, int startPos, int endPos)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, indicator, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICATORFILLRANGE, startPos, endPos - startPos);
+        }
+
         static public string GetConfigDir()
         {
             var buffer = new StringBuilder(260);

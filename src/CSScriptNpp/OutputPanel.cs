@@ -335,9 +335,9 @@ namespace CSScriptNpp
                         this.InUiThread(RefreshControls);
 
                         p.StartInfo.FileName = DbMonPath;
+                        p.StartInfo.CreateNoWindow = true;
                         p.StartInfo.UseShellExecute = false;
                         p.StartInfo.RedirectStandardOutput = true;
-                        p.StartInfo.CreateNoWindow = true;
                         p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                         //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
 

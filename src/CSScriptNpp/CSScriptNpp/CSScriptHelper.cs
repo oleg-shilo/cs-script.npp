@@ -70,6 +70,11 @@ namespace CSScriptNpp
             return retval;
         }
 
+        static public string ScriptEngineVersion()
+        {
+            return FileVersionInfo.GetVersionInfo(Path.Combine(Plugin.PluginDir, "cscs.exe")).FileVersion.ToString();
+        }
+
         static public void Execute(string scriptFileCmd, Action<Process> onStart = null, Action<string> onStdOut = null)
         {
             var p = new Process();
@@ -81,10 +86,10 @@ namespace CSScriptNpp
             if (onStdOut != null)
             {
                 p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.CreateNoWindow = true;
-                //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
+                p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
             }
 
             p.Start();
@@ -188,8 +193,9 @@ namespace CSScriptNpp
             p.StartInfo.Arguments = "/nl /ca " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
 
             p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
 
             p.Start();
 

@@ -570,6 +570,8 @@ void main(string[] args)
                 {
                     try
                     {
+                        Npp.OpenFile(scriptFile);
+
                         Project project = CSScriptHelper.GenerateProjectFor(scriptFile);
 
                         treeView1.BeginUpdate();
@@ -614,12 +616,14 @@ void main(string[] args)
                         var history = Config.Instance.SciptHistory.Split('|').ToList();
                         history.Remove(scriptFile);
                         history.Insert(0, scriptFile);
+
                         Config.Instance.SciptHistory = string.Join("|", history.Take(Config.Instance.SciptHistoryMaxCount).ToArray());
                         Config.Instance.Save();
                         ReloadScriptHistory();
                     }
                     catch
                     {
+                        //it is not a major use-case so doesn't matter why we failed
                     }
                 }
             }

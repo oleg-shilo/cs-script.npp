@@ -26,6 +26,9 @@ namespace CSScriptIntellisense
                     return;
                 }
             }
+
+            //did not find any 'usings' so insert on top
+            Npp.SetTextBetween(text + Environment.NewLine, 0, 0);
         }
 
         public static void ProcessDeleteKeyDown()
