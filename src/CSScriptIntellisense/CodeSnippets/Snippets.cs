@@ -3,20 +3,127 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 namespace CSScriptIntellisense
 {
-    class SnippetInfo
+    public class SnippetContext
     {
+        public static int indicatorId = 8;
         public List<List<Point>> ParametersGroups = new List<List<Point>>();
         public List<Point> Parameters = new List<Point>();
+        public Point? CurrentParameter;
+        public string CurrentParameterValue = "";
+        public string ReplacementString = "";
     }
 
     public class Snippets
     {
         static public Dictionary<string, string> Map = new Dictionary<string, string>();
+
+        static public void ReplaceTextAtIndicator(string text, Point indicatorRange)
+        {
+            Npp.SetTextBetween(text, indicatorRange);
+
+            //restore the indicator
+            Npp.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+            Npp.PlaceIndicator(SnippetContext.indicatorId, indicatorRange.X, indicatorRange.X + text.Length);
+        }
+
+        static public void FinalizeCurrent()
+        {
+            var indicators = Npp.FindIndicatorRanges(SnippetContext.indicatorId);
+
+            foreach (var range in indicators)
+                Npp.ClearIndicator(SnippetContext.indicatorId, range.X, range.Y);
+
+            var caretPoint = indicators.Where(point =>
+            {
+                string text = Npp.GetTextBetween(point);
+                return text == " " || text == "|";
+            })
+                .FirstOrDefault();
+
+            if (caretPoint.X != caretPoint.Y)
+            {
+                Npp.SetTextBetween("", caretPoint);
+                Npp.SetSelection(caretPoint.X, caretPoint.X);
+            }
+        }
+
+        static public bool NavigateToNextParam(SnippetContext context)
+        {
+            var indicators = Npp.FindIndicatorRanges(SnippetContext.indicatorId);
+
+            if (!indicators.Any())
+                return false;
+
+            Point currentParam = context.CurrentParameter.Value;
+            string currentParamOriginalText = context.CurrentParameterValue;
+
+            Npp.SetSelection(currentParam.X, currentParam.X);
+            string currentParamDetectedText = Npp.GetWordAtCursor("\t\n\r ,;'\"".ToCharArray());
+
+
+            if (currentParamOriginalText != currentParamDetectedText)
+            {
+                //current parameter is modified, indicator is destroyed so restore the indicator first
+                Npp.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+                Npp.PlaceIndicator(SnippetContext.indicatorId, currentParam.X, currentParam.X + currentParamDetectedText.Length);
+
+                indicators = Npp.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
+
+                var paramsInfo = indicators.Select(p => new
+                {
+                    Index = indicators.IndexOf(p),
+                    Text = Npp.GetTextBetween(p),
+                    Range = p,
+                    Pos = p.X
+                })
+                                           .OrderBy(x => x.Pos)
+                                           .ToArray();
+
+                var paramsToUpdate = paramsInfo.Where(item => item.Text == currentParamOriginalText).ToArray();
+
+                foreach (var param in paramsToUpdate)
+                {
+                    Snippets.ReplaceTextAtIndicator(currentParamDetectedText, indicators[param.Index]);
+                    indicators = Npp.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
+                }
+            }
+
+            Point? nextParameter = null;
+
+            int currentParamIndex = indicators.FindIndex(x => x.X >= currentParam.X); //can also be logical 'next'
+            var prevParamsValues = indicators.Take(currentParamIndex).Select(p => Npp.GetTextBetween(p)).ToList();
+            prevParamsValues.Add(currentParamOriginalText);
+            prevParamsValues.Add(currentParamDetectedText);
+            prevParamsValues.Add(" ");
+            prevParamsValues.Add("|");
+
+            foreach (var range in indicators.ToArray())
+            {
+                if (currentParam.X < range.X && !prevParamsValues.Contains(Npp.GetTextBetween(range)))
+                {
+                    nextParameter = range;
+                    break;
+                }
+            }
+
+            if (!nextParameter.HasValue)
+                nextParameter = indicators.FirstOrDefault();
+
+            context.CurrentParameter = nextParameter;
+            if (context.CurrentParameter.HasValue)
+            {
+                Npp.SetSelection(context.CurrentParameter.Value.X, context.CurrentParameter.Value.Y);
+                context.CurrentParameterValue = Npp.GetTextBetween(context.CurrentParameter.Value);
+            }
+
+            return true;
+        }
 
         public static bool Contains(string snippetTag)
         {
@@ -119,44 +226,47 @@ namespace CSScriptIntellisense
             }
         }
 
-        public static string PrepareForIncertion(string text, int charsOffset, List<Point> paramsRegions)
+        public static SnippetContext PrepareForIncertion(string rawText, int charsOffset, int documentOffset = 0)
         {
-            paramsRegions.Clear();
+            var retval = new SnippetContext();
 
-            string retval = text;
+            retval.ReplacementString = rawText;
 
             string offset = new string(' ', charsOffset);
-            text = text.Replace(Environment.NewLine, Environment.NewLine + offset);
+            retval.ReplacementString = retval.ReplacementString.Replace(Environment.NewLine, Environment.NewLine + offset);
 
             int endPos = -1;
-            int startPos = text.IndexOf("$");
+            int startPos = retval.ReplacementString.IndexOf("$");
 
             while (startPos != -1)
             {
-                endPos = text.IndexOf("$", startPos + 1);
+                endPos = retval.ReplacementString.IndexOf("$", startPos + 1);
 
                 if (endPos != -1)
                 {
                     //'$item$' -> 'item'
                     int newEndPos = endPos - 2;
 
-                    paramsRegions.Add(new Point(startPos, newEndPos + 1));
+                    retval.Parameters.Add(new Point(startPos + documentOffset, newEndPos + 1 + documentOffset));
 
-                    string leftText = text.Substring(0, startPos);
-                    string rightText = text.Substring(endPos + 1);
-                    string placementValue = text.Substring(startPos + 1, endPos - startPos - 1);
+                    string leftText = retval.ReplacementString.Substring(0, startPos);
+                    string rightText = retval.ReplacementString.Substring(endPos + 1);
+                    string placementValue = retval.ReplacementString.Substring(startPos + 1, endPos - startPos - 1);
 
-                    text = leftText + placementValue + rightText;
+                    retval.ReplacementString = leftText + placementValue + rightText;
 
                     endPos = newEndPos;
                 }
                 else
                     break;
 
-                startPos = text.IndexOf("$", endPos + 1);
+                startPos = retval.ReplacementString.IndexOf("$", endPos + 1);
             }
 
-            return text;
+            if (retval.Parameters.Any())
+                retval.CurrentParameter = retval.Parameters.FirstOrDefault();
+
+            return retval;
         }
     }
 
@@ -232,38 +342,7 @@ namespace CSScriptIntellisense
             }
         }
 
-        static public IEnumerable<Point> FindIndicatorRanges(int indicator)
-        {
-            var ranges = new List<Point>();
-
-            IntPtr sci = Plugin.GetCurrentScintilla();
-
-            int testPosition = 0;
-
-            while (true)
-            {
-                //finding the indicator ranges
-                //For example indicator 4..6 in the doc 0..10 will have three logical regions:
-                //0..4, 4..6, 6..10
-                //Probing will produce following when outcome:
-                //probe for 0 : 0..4
-                //probe for 4 : 4..6
-                //probe for 6 : 4..10
-
-                int rangeStart = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, indicator, testPosition);
-                int rangeEnd = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, indicator, testPosition);
-                int value = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, indicator, testPosition);
-                if (value == 1) //indicator is present
-                    ranges.Add(new Point(rangeStart, rangeEnd));
-
-                if (testPosition == rangeEnd)
-                    break;
-
-                testPosition = rangeEnd;
-            }
-
-            return ranges;
-        }
+        
 
     }
 }

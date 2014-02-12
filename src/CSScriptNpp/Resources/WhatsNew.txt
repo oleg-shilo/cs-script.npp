@@ -1,11 +1,7 @@
-v1.0.1t.2
+v1.0.18.0
 
-* CheckFoUpdates does not include version into the downloaded MSI file name
+* Implemented checking for NPP non-system drive deployment from plugin update MSI.
 
-* Load script from history also opens the file
-
-* Version in AboutBox now also reflect the version of cscs.exe
-
-* Fixed "Add missing usings" when no other usings present.
-
-* Script compilation errors are now in Unicode
+* Implemented Code Snippets.
+Example: type 'for' and press Tab
+You can manage snippets from the Plugins->CS-Script->Code Snippets menu 

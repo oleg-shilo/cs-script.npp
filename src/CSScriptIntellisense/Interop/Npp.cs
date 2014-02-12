@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -55,6 +56,13 @@ namespace CSScriptIntellisense
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, indicator, ColorTranslator.ToWin32(color));
         }
 
+        static public void ClearIndicator(int indicator, int startPos, int endPos)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, indicator, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, startPos, endPos - startPos);
+        }
+
         static public void PlaceIndicator(int indicator, int startPos, int endPos)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -67,6 +75,39 @@ namespace CSScriptIntellisense
             var buffer = new StringBuilder(260);
             Win32.SendMessage(Plugin.NppData._nppHandle, NppMsg.NPPM_GETPLUGINSCONFIGDIR, 260, buffer);
             return buffer.ToString();
+        }
+
+        static public Point[] FindIndicatorRanges(int indicator)
+        {
+            var ranges = new List<Point>();
+
+            IntPtr sci = Plugin.GetCurrentScintilla();
+
+            int testPosition = 0;
+
+            while (true)
+            {
+                //finding the indicator ranges
+                //For example indicator 4..6 in the doc 0..10 will have three logical regions:
+                //0..4, 4..6, 6..10
+                //Probing will produce following when outcome:
+                //probe for 0 : 0..4
+                //probe for 4 : 4..6
+                //probe for 6 : 4..10
+
+                int rangeStart = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, indicator, testPosition);
+                int rangeEnd = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, indicator, testPosition);
+                int value = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, indicator, testPosition);
+                if (value == 1) //indicator is present
+                    ranges.Add(new Point(rangeStart, rangeEnd));
+
+                if (testPosition == rangeEnd)
+                    break;
+
+                testPosition = rangeEnd;
+            }
+
+            return ranges.ToArray();
         }
 
         static public string GetLine(int line)
@@ -154,6 +195,11 @@ namespace CSScriptIntellisense
             Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WM_COMMAND, (int)NppMenuCmd.IDM_FILE_EXIT, 0);
         }
 
+        static public string GetTextBetween(Point point)
+        {
+            return GetTextBetween(point.X, point.Y);
+        }
+
         static public string GetTextBetween(int start, int end = -1)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -166,6 +212,11 @@ namespace CSScriptIntellisense
                 Win32.SendMessage(sci, SciMsg.SCI_GETTEXTRANGE, 0, tr.NativePointer);
                 return tr.lpstrText;
             }
+        }
+
+        static public void SetTextBetween(string text, Point point)
+        {
+            SetTextBetween(text, point.X, point.Y);
         }
 
         static public void SetTextBetween(string text, int start, int end = -1)
@@ -231,6 +282,9 @@ namespace CSScriptIntellisense
             string rightText = Npp.TextAfterCursor(512);
 
             var delimiters = "\t\n\r .,:;'\"[]{}()".ToCharArray();
+
+            if (wordDelimiters != null)
+                delimiters = wordDelimiters;
 
             string wordLeftPart = "";
             int startPos = currentPos;

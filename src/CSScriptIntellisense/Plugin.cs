@@ -1,14 +1,13 @@
-using CSScriptIntellisense.Interop;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense.Interop;
+using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.TypeSystem;
 using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
@@ -91,6 +90,9 @@ namespace CSScriptIntellisense
 
                 //NPP already intercepts these shortcuts so we need to hook keyboard messages
                 KeyInterceptor.Instance.Add(Keys.Tab);
+                KeyInterceptor.Instance.Add(Keys.Return);
+                KeyInterceptor.Instance.Add(Keys.Escape);
+                KeyInterceptor.Instance.Add(Keys.Tab);
                 KeyInterceptor.Instance.Add(Keys.Space);
                 KeyInterceptor.Instance.Add(Keys.F12);
                 KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
@@ -103,23 +105,40 @@ namespace CSScriptIntellisense
         {
             if (Config.Instance.SnapshotsEnabled)
             {
-                if (key == Keys.Tab && Npp.IsCurrentScriptFile())
+                if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && Npp.IsCurrentScriptFile())
                 {
                     Modifiers modifiers = KeyInterceptor.GetModifiers();
 
                     if (!modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
                     {
-                        Point point;
-                        string token = Npp.GetWordAtCursor(out point);
-
-                        if (Snippets.Contains(token))
+                        if (currentSnippetContext != null)
                         {
-                            handled = true;
-                            Dispatcher.Shedule(10, () => //Invoke(() =>
-                             {
-                                 InsertCodeSnippet(token, point);
-                             }//)
-                            );
+                            if (key == Keys.Tab)
+                            {
+                                if (!Snippets.NavigateToNextParam(currentSnippetContext))
+                                    currentSnippetContext = null;
+                                else
+                                    handled = true;
+                            }
+                            else if (key == Keys.Escape || key == Keys.Return)
+                            {
+                                Snippets.FinalizeCurrent();
+                                if (key == Keys.Return)
+                                    handled = true;
+                                currentSnippetContext = null;
+                            }
+                        }
+                        else
+                        {
+                            Point point;
+                            string token = Npp.GetWordAtCursor(out point);
+
+                            if (Snippets.Contains(token))
+                            {
+                                handled = true;
+                                Dispatcher.Shedule(10, () =>
+                                     InsertCodeSnippet(token, point));
+                            }
                         }
                     }
                 }
@@ -194,6 +213,7 @@ namespace CSScriptIntellisense
             //}
         }
 
+        static SnippetContext currentSnippetContext = null;
 
         static void InsertCodeSnippet(string token, Point tokenPoints)
         {
@@ -208,17 +228,21 @@ namespace CSScriptIntellisense
                 //int selectionLength;
 
                 //relative selection in the replacement text
-                var snippetParametersRegions = new List<Point>();
-                replacement = Snippets.PrepareForIncertion(replacement, horizontalOffset, snippetParametersRegions);
+                currentSnippetContext = Snippets.PrepareForIncertion(replacement, horizontalOffset, tokenPoints.X);
 
-                Npp.ReplaceWordAtCaret(replacement);
+                Npp.ReplaceWordAtCaret(currentSnippetContext.ReplacementString);
 
-                int indicatorId = 8;
-                Npp.SetIndicatorStyle(indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+                Npp.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
 
-                foreach (var point in snippetParametersRegions)
+                foreach (var point in currentSnippetContext.Parameters)
                 {
-                    Npp.PlaceIndicator(indicatorId, point.X + tokenPoints.X, point.Y + tokenPoints.X);
+                    Npp.PlaceIndicator(SnippetContext.indicatorId, point.X, point.Y);
+                }
+
+                if (currentSnippetContext.CurrentParameter.HasValue)
+                {
+                    Npp.SetSelection(currentSnippetContext.CurrentParameter.Value.X, currentSnippetContext.CurrentParameter.Value.Y);
+                    currentSnippetContext.CurrentParameterValue = Npp.GetTextBetween(currentSnippetContext.CurrentParameter.Value);
                 }
 
                 //var detectedRanges = ActiveDev.FindIndicatorRanges(indicatorId);

@@ -265,6 +265,30 @@ namespace CSScriptIntellisense
 
     static class Extensions
     {
+        public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
+            int retVal = 0;
+            foreach (var item in items)
+            {
+                if (predicate(item)) return retVal;
+                retVal++;
+            }
+            return -1;
+        }
+        
+        public static int IndexOf<T>(this IEnumerable<T> items, T itemToFind)
+        {
+            int retVal = 0;
+            foreach (var item in items)
+            {
+                if (item.Equals(itemToFind)) return retVal;
+                retVal++;
+            }
+            return -1;
+        }
+
         public static int MatchingStartChars(this string text, string pattern, bool ignoreCase = false)
         {
             if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(pattern))

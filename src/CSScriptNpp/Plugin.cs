@@ -16,6 +16,10 @@ namespace CSScriptNpp
      * + version in AboutBox should also reflect the version of cscs.exe
      * + "Add missing usings" does not work if no other "usings" in the header.
      * + cscs.exe should respect Unicode when Console.Out
+     * + CheckFoUpdates checks and prevents running MSI if the plugin is not installed on system ProgramFiles
+     * + Setup should handle non sys-drive
+     * + CheckFoUpdates should not checlk for non sys-drive
+     * - on format ',' should not be removed from the end of line with '}'
      */
 
     public partial class Plugin
@@ -310,6 +314,20 @@ namespace CSScriptNpp
 
                 if (nppVersion < latestVersion)
                 {
+                    string progFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles).ToLower();
+                    string progFiles86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86).ToLower();
+                    string pluginLocation = Assembly.GetExecutingAssembly().Location.ToLower();
+
+                    //if (!pluginLocation.StartsWith(progFiles) && pluginLocation.StartsWith(progFiles86))
+                    //{
+                    //    MessageBox.Show("The newer version v" + version + " is available.\nHowever because Notepad++ is not installed in the System 'Program Files' you need to download the plugin binaries and (.7z) install them manually.", "CS-Script");
+                    //    try
+                    //    {
+                    //        Process.Start(HomeUrl);
+                    //    }
+                    //    catch { }
+                    //}
+                    //else 
                     if (DialogResult.Yes == MessageBox.Show("The newer version v" + version + " is available.\nDo you want to download and install it?\n\nWARNING: If you choose 'Yes' Notepad++ will be closed and all unsaved data may be lost.", "CS-Script", MessageBoxButtons.YesNo))
                     {
                         string msiFile = CSScriptHelper.GetLatestAvailableMsi(version);
