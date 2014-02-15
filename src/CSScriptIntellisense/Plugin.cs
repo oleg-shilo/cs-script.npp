@@ -100,6 +100,20 @@ namespace CSScriptIntellisense
                 SetCommand(cmdIndex++, "About", ShowAboutBox);
         }
 
+        static bool TriggerCodeSnippetInsertion()
+        {
+            Point point;
+            string token = Npp.GetWordAtCursor(out point);
+
+            if (Snippets.Contains(token))
+            {
+                Dispatcher.Shedule(10, () =>
+                     InsertCodeSnippet(token, point));
+                return true;
+            }
+            return false;
+        }
+
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
             if (Config.Instance.SnapshotsEnabled)
@@ -129,15 +143,8 @@ namespace CSScriptIntellisense
                         }
                         else
                         {
-                            Point point;
-                            string token = Npp.GetWordAtCursor(out point);
-
-                            if (Snippets.Contains(token))
-                            {
+                            if (TriggerCodeSnippetInsertion())
                                 handled = true;
-                                Dispatcher.Shedule(10, () =>
-                                     InsertCodeSnippet(token, point));
-                            }
                         }
                     }
                 }
@@ -493,7 +500,9 @@ namespace CSScriptIntellisense
                 if (form != null && form.Visible)
                     form.Close();
 
-                form = new AutocompleteForm(OnAutocompletionAccepted, items, NppEditor.GetSuggestionHint());
+                Action<ICompletionData> OnAccepted = data => OnAutocompletionAccepted(data, snippetsOnly);
+
+                form = new AutocompleteForm(OnAccepted, items, NppEditor.GetSuggestionHint());
                 form.Left = point.X;
                 form.Top = point.Y + 18;
                 form.FormClosed += (sender, e) =>
@@ -512,7 +521,7 @@ namespace CSScriptIntellisense
             }
         }
 
-        static void OnAutocompletionAccepted(ICompletionData data)
+        static void OnAutocompletionAccepted(ICompletionData data, bool snippetsOnlyMode)
         {
             if (data != null)
             {
@@ -526,6 +535,9 @@ namespace CSScriptIntellisense
                     Win32.SendMessage(sci, SciMsg.SCI_SETSELECTION, p.X, p.Y);
 
                 Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, data.CompletionText);
+
+                if (snippetsOnlyMode)
+                    TriggerCodeSnippetInsertion();
             }
 
             if (form != null)

@@ -14,8 +14,6 @@ class Script
     {
         string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp.dll");
         Version version = System.Reflection.Assembly.ReflectionOnlyLoadFrom(pluginFile).GetName().Version;
-
-        version.
         
         Project project =
             new Project("CS-Script for Notepad++",
