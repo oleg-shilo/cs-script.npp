@@ -1,3 +1,6 @@
+using CSScriptIntellisense.Interop;
+using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -5,9 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptIntellisense.Interop;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
 using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
@@ -67,6 +67,7 @@ namespace CSScriptIntellisense
                 Task.Factory.StartNew(SimpleCodeCompletion.Init);
 
                 setCommand(cmdIndex++, "Show auto-complete list", ShowSuggestionList, true, false, false, Keys.Space);
+                setCommand(cmdIndex++, "Insert Code Snippet", ShowSnippetsList, true, false, true, Keys.Space);
                 setCommand(cmdIndex++, "Add missing 'using'", AddMissingUsings, true, false, false, Keys.OemPeriod);
                 setCommand(cmdIndex++, "Re-analyze current document", Reparse, false, false, false, Keys.None);
                 if (!Config.Instance.DisableMethodInfo)
@@ -76,17 +77,15 @@ namespace CSScriptIntellisense
                 setCommand(cmdIndex++, "Find All References", FindAllReferences, false, false, true, Keys.F12);
                 setCommand(cmdIndex++, "---", null, false, false, false, Keys.None);
                 setCommand(cmdIndex++, "Settings", ShowConfig, false, false, false, Keys.None);
-                setCommand(cmdIndex++, "Code Snippets", Snippets.EditSnippetsConfig, false, false, false, Keys.None);
+                setCommand(cmdIndex++, "Manage Code Snippets", Snippets.EditSnippetsConfig, false, false, false, Keys.None);
                 setCommand(cmdIndex++, "---", null, false, false, false, Keys.None);
 #if DEBUG
-                setCommand(cmdIndex++, "Test", Test, true, false, true, Keys.L);
+                //setCommand(cmdIndex++, "Test", Test, true, false, true, Keys.L);
 #endif
                 if (standaloneSetup)
                     setCommand(cmdIndex++, "About", ShowAboutBox, false, false, false, Keys.None);
 
                 memberInfoPopup = new MemberInfoPopupManager(ShowQuickInfo);
-
-
 
                 //NPP already intercepts these shortcuts so we need to hook keyboard messages
                 KeyInterceptor.Instance.Add(Keys.Tab);
@@ -150,7 +149,12 @@ namespace CSScriptIntellisense
                 {
                     Modifiers modifiers = KeyInterceptor.GetModifiers();
 
-                    if (key == Keys.Space && modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
+                    if (key == Keys.Space && modifiers.IsCtrl && !modifiers.IsAlt && modifiers.IsShift)
+                    {
+                        handled = true;
+                        Dispatcher.Shedule(10, () => Invoke(ShowSnippetsList));
+                    }
+                    else if (key == Keys.Space && modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
                     {
                         handled = true;
                         Dispatcher.Shedule(10, () => Invoke(ShowSuggestionList));
@@ -224,7 +228,7 @@ namespace CSScriptIntellisense
                 int lineStartPos = Npp.GetLineStart(line);
 
                 int horizontalOffset = tokenPoints.X - lineStartPos;
-                //int selectionStart; 
+                //int selectionStart;
                 //int selectionLength;
 
                 //relative selection in the replacement text
@@ -433,50 +437,79 @@ namespace CSScriptIntellisense
 
         static AutocompleteForm form;
 
+        static void ShowSnippetsList()
+        {
+            HandleErrors(() =>
+            {
+                if (Npp.IsCurrentScriptFile())
+                {
+                    ShowSuggestionList(true);
+                }
+                else if (Config.Instance.InterceptCtrlSpace)
+                {
+                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_FUNCCALLTIP, 0);
+                }
+            });
+        }
         static void ShowSuggestionList()
         {
             HandleErrors(() =>
             {
                 if (Npp.IsCurrentScriptFile())
                 {
-                    var items = GetSuggestionItemsAtCaret();
-
-                    if (items.Count() > 0)
-                    {
-                        bool memberInfoWasShowing = memberInfoPopup.IsShowing;
-                        if (memberInfoWasShowing)
-                            memberInfoPopup.Close();
-
-                        Point point = Npp.GetCaretScreenLocation();
-
-                        if (form != null && form.Visible)
-                            form.Close();
-
-                        form = new AutocompleteForm(OnAutocompletionAccepted, items, NppEditor.GetSuggestionHint());
-                        form.Left = point.X;
-                        form.Top = point.Y + 18;
-                        form.FormClosed += (sender, e) =>
-                                            {
-                                                if (memberInfoWasShowing)
-                                                    ShowMethodInfo();
-                                            };
-                        form.KeyPress += (sender, e) =>
-                                            {
-                                                if (e.KeyChar >= ' ' || e.KeyChar == 8) //8 is backspace
-                                                    OnAutocompleteKeyPress(e.KeyChar);
-                                            };
-                        form.Show();
-
-                        OnAutocompleteKeyPress();
-                    }
+                    ShowSuggestionList(false);
                 }
                 else if (Config.Instance.InterceptCtrlSpace)
                 {
-                    const int WM_COMMAND = 0x0111;
-                    const int MENU_FUNCTION_COMPLETE = 50000;
-                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WM_COMMAND, MENU_FUNCTION_COMPLETE, 0);
+                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_AUTOCOMPLETE, 0);
                 }
             });
+        }
+
+        static void ShowSuggestionList(bool snippetsOnly)
+        {
+            IEnumerable<ICompletionData> items;
+
+            if (snippetsOnly)
+            {
+                items = GetSnippetsItems();
+            }
+            else
+            {
+                items = GetSuggestionItemsAtCaret();
+
+                if (!Npp.TextBeforeCursor(2).EndsWith(".")) //do not suggest snippets if expecting a member
+                    items = items.Concat(GetSnippetsItems());
+            }
+
+            if (items.Count() > 0)
+            {
+                bool memberInfoWasShowing = memberInfoPopup.IsShowing;
+                if (memberInfoWasShowing)
+                    memberInfoPopup.Close();
+
+                Point point = Npp.GetCaretScreenLocation();
+
+                if (form != null && form.Visible)
+                    form.Close();
+
+                form = new AutocompleteForm(OnAutocompletionAccepted, items, NppEditor.GetSuggestionHint());
+                form.Left = point.X;
+                form.Top = point.Y + 18;
+                form.FormClosed += (sender, e) =>
+                {
+                    if (memberInfoWasShowing)
+                        ShowMethodInfo();
+                };
+                form.KeyPress += (sender, e) =>
+                {
+                    if (e.KeyChar >= ' ' || e.KeyChar == 8) //8 is backspace
+                        OnAutocompleteKeyPress(e.KeyChar);
+                };
+                form.Show();
+
+                OnAutocompleteKeyPress();
+            }
         }
 
         static void OnAutocompletionAccepted(ICompletionData data)
@@ -667,6 +700,11 @@ namespace CSScriptIntellisense
             EnsureCurrentFileParsed();
 
             action(text, currentPos, file);
+        }
+
+        static IEnumerable<ICompletionData> GetSnippetsItems()
+        {
+            return Snippets.Keys.Select(x => new SnippetCompletionData { CompletionText = x, DisplayText = x });
         }
 
         static IEnumerable<ICompletionData> GetSuggestionItemsAtCaret()

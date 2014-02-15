@@ -15,6 +15,8 @@ class Script
         string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp.dll");
         Version version = System.Reflection.Assembly.ReflectionOnlyLoadFrom(pluginFile).GetName().Version;
 
+        version.
+        
         Project project =
             new Project("CS-Script for Notepad++",
                 new Dir(@"%ProgramFiles%\Notepad++\Plugins",
@@ -32,9 +34,11 @@ class Script
             new PathFileAction("%ProgramFiles%\\Notepad++\\notepad++.exe", "", "INSTALLDIR", Return.asyncNoWait, When.After, Step.InstallInitialize, Condition.NOT_Installed)
             {
                 Name = "Action_StartNPP" //need to give custom name as "Action1_notepad++.exe" is illegal because of '++'
-            },
+            }
+
+            //,
             //this one works
-            new ManagedAction(@"FindNpp", Return.check, When.Before, Step.LaunchConditions, Condition.NOT_Installed)
+            ,new ManagedAction(@"FindNpp", Return.check, When.Before, Step.LaunchConditions, Condition.NOT_Installed)
         };
 
         project.GUID = new Guid("6f930b47-2277-411d-9095-18614525889b");
@@ -63,7 +67,7 @@ public class CustonActions
                 return ActionResult.Failure;
             }
             else
-                session["INSTALLDIR"] = installDir;
+                session["INSTALLDIR"] = System.IO.Path.Combine(installDir, "plugins");
         }
         catch (Exception e)
         {
@@ -112,7 +116,7 @@ public class CustonActions
                 }
             }
         }
+
         return null;
     }
-
 }

@@ -207,6 +207,12 @@ namespace CSScriptIntellisense
     }
 
     [Flags]
+    public enum WinMsg : int
+    {
+        WM_COMMAND = 0x111
+    }
+
+    [Flags]
     public enum NppMsg : uint
     {
         //Here you can find how to use these messages : http://notepad-plus.sourceforge.net/uk/plugins-HOWTO.php 

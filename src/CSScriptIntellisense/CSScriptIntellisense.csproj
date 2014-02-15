@@ -194,6 +194,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Images\snippet.png" />
     <None Include="Images\unresolved.png" />
     <None Include="Interop\DllExport\Mono.Cecil.dll" />
     <None Include="Interop\DllExport\NppPlugin.DllExport.dll" />

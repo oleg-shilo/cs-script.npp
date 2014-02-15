@@ -72,11 +72,12 @@ namespace CSScriptIntellisense
             listBox1.Items.AddRange(items.ToArray());
             listBox1.SelectedItem = items.FirstOrDefault();
 
+            int extra = 5;
+
             var g = listBox1.CreateGraphics();
             var wideItem = items.Select(x => (int)g.MeasureString(x.DisplayText, listBox1.Font).Width).Max(x => x);
-            this.Width = Math.Min(wideItem + 40, 250);//40 = 20 for icon on left and 20 for scrollbar on right
-
-            this.Height = ((itemHeight + verticalSpacing) * Math.Min(listBox1.Items.Count, 10)) + 5;
+            this.Width = Math.Min(wideItem + 40 + extra, 250);//40 = 20 for icon on left and 20 for scrollbar on right
+            this.Height = ((itemHeight + verticalSpacing) * Math.Min(listBox1.Items.Count, 10)) + extra;
         }
 
         public IEnumerable<ICompletionData> ProcessSuggestionHint(string partialName, IEnumerable<ICompletionData> inputItems)
@@ -126,6 +127,11 @@ namespace CSScriptIntellisense
             if (item is IEntityCompletionData)
             {
                 itemType = (item as IEntityCompletionData).Entity.EntityType;
+            }
+
+            if (item is SnippetCompletionData)
+            {
+                return Res.Images.snippet;
             }
 
             if (item is CompletionData)
@@ -277,7 +283,7 @@ namespace CSScriptIntellisense
             }
             return -1;
         }
-        
+
         public static int IndexOf<T>(this IEnumerable<T> items, T itemToFind)
         {
             int retVal = 0;

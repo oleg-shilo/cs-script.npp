@@ -1,3 +1,4 @@
+using ICSharpCode.NRefactory.Completion;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,9 +20,41 @@ namespace CSScriptIntellisense
         public string ReplacementString = "";
     }
 
+    public class SnippetCompletionData : ICompletionData
+    {
+        public CompletionCategory CompletionCategory { get; set; } 
+        public string CompletionText { get; set; } 
+        public string Description { get; set; } 
+        public DisplayFlags DisplayFlags { get; set; } 
+        public string DisplayText { get; set; } 
+
+        public bool HasOverloads
+        {
+            get { return false; }
+        }
+
+        public void AddOverload(ICompletionData data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ICompletionData> OverloadedData
+        {
+            get { throw new NotImplementedException(); }
+        }
+    }
+
     public class Snippets
     {
         static public Dictionary<string, string> Map = new Dictionary<string, string>();
+
+        static public  IEnumerable<string> Keys
+        {
+            get
+            {
+                return Snippets.Map.Keys;
+            }
+        }
 
         static public void ReplaceTextAtIndicator(string text, Point indicatorRange)
         {
