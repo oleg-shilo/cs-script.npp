@@ -1,0 +1,37 @@
+#--------------------------------
+# After snippet generation all snippet parameters will be stripped from
+# the '$' characters and will be able to 'jump' between parameters with the 
+# 'Tab' button.
+# Syntax:
+#  #         - comment line indicator
+#  <name>=>  - snippet name line; start of the snippet section; name must be a ingle token without any delimiters 
+#  $<value>$ - snippet parameter 
+#  $|$       - special snippet parameter indicating the 
+#              caret position after the snippet insertion is completed. 
+#--------------------------------
+prop=>
+public $int$ $MyPorp$ { get; set; }$|$
+#--------------------------------
+for=>
+for (int $i$ = 0; $i$ < $length$; $i$++)
+{
+    $|$
+}
+#--------------------------------
+foreach=>
+foreach (var $item$ in $collection$)
+{
+    $|$
+}
+#--------------------------------
+class=>
+public class $MyClass$
+{
+    $|$
+}
+#--------------------------------
+while=>
+while ($true$)
+{
+    $|$
+}

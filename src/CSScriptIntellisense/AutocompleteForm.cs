@@ -64,15 +64,14 @@ namespace CSScriptIntellisense
         {
             listBox1.Items.Clear();
 
-            Debug.WriteLine("hint: " + partialName);
+            //Debug.WriteLine("hint: " + partialName);
 
-            //IEnumerable<ICompletionData> items = ProcessSuggestionHint("Get", rawItems);
             IEnumerable<ICompletionData> items = ProcessSuggestionHint(partialName, rawItems);
 
             listBox1.Items.AddRange(items.ToArray());
             listBox1.SelectedItem = items.FirstOrDefault();
 
-            int extra = 5;
+            int extra = 6;
 
             var g = listBox1.CreateGraphics();
             var wideItem = items.Select(x => (int)g.MeasureString(x.DisplayText, listBox1.Font).Width).Max(x => x);

@@ -129,7 +129,7 @@ namespace CSScriptIntellisense
             {
                 char current = getNext();
 
-                if (current == 'N')
+                if (current == ',')
                     Debug.WriteLine("");
 
                 if (!posSet && i > pos)
@@ -303,7 +303,7 @@ namespace CSScriptIntellisense
                                              .Append(IndentText, blockLevel)
                                              .Append(current);
 
-                                    if (!nextChar().IsOneOf(')', ';')) //not an inline lambda exp in the method call and not an if...else 
+                                    if (!nextChar().IsOneOf(')', ';', ',')) //not an inline lambda exp in the method call and not an if...else 
                                     {
                                         if (code.IsNonWhitespaceNext("else", i))
                                         {

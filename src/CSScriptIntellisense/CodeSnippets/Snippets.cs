@@ -22,11 +22,11 @@ namespace CSScriptIntellisense
 
     public class SnippetCompletionData : ICompletionData
     {
-        public CompletionCategory CompletionCategory { get; set; } 
-        public string CompletionText { get; set; } 
-        public string Description { get; set; } 
-        public DisplayFlags DisplayFlags { get; set; } 
-        public string DisplayText { get; set; } 
+        public CompletionCategory CompletionCategory { get; set; }
+        public string CompletionText { get; set; }
+        public string Description { get; set; }
+        public DisplayFlags DisplayFlags { get; set; }
+        public string DisplayText { get; set; }
 
         public bool HasOverloads
         {
@@ -48,7 +48,7 @@ namespace CSScriptIntellisense
     {
         static public Dictionary<string, string> Map = new Dictionary<string, string>();
 
-        static public  IEnumerable<string> Keys
+        static public IEnumerable<string> Keys
         {
             get
             {
@@ -173,7 +173,18 @@ namespace CSScriptIntellisense
                 if (!File.Exists(ConfigFile))
                     File.WriteAllText(ConfigFile, CSScriptIntellisense.CodeSnippets.Resources.snippets);
                 Read(ConfigFile);
+                SetupFileWatcher();
             }
+        }
+
+        static void SetupFileWatcher()
+        {
+            string dir = Path.GetDirectoryName(ConfigFile);
+            string fileName = Path.GetFileName(ConfigFile);
+            configWatcher = new FileSystemWatcher(dir, fileName);
+            configWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            configWatcher.Changed += configWatcher_Changed;
+            configWatcher.EnableRaisingEvents = true;
         }
 
         public static string GetTemplate(string snippetTag)
@@ -205,16 +216,6 @@ namespace CSScriptIntellisense
         static public void EditSnippetsConfig()
         {
             Npp.OpenFile(Snippets.ConfigFile);
-
-            if (configWatcher == null)
-            {
-                string dir = Path.GetDirectoryName(ConfigFile);
-                string fileName = Path.GetFileName(ConfigFile);
-                configWatcher = new FileSystemWatcher(dir, fileName);
-                configWatcher.NotifyFilter = NotifyFilters.LastWrite;
-                configWatcher.Changed += configWatcher_Changed;
-                configWatcher.EnableRaisingEvents = true;
-            }
         }
 
         static void configWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -375,7 +376,7 @@ namespace CSScriptIntellisense
             }
         }
 
-        
+
 
     }
 }

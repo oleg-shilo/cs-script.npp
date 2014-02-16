@@ -3,6 +3,7 @@ using ICSharpCode.NRefactory.Completion;
 using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -102,6 +103,8 @@ namespace CSScriptIntellisense
 
         static bool TriggerCodeSnippetInsertion()
         {
+            Debug.WriteLine("------------------ TRIGGER called");
+
             Point point;
             string token = Npp.GetWordAtCursor(out point);
 
@@ -124,8 +127,18 @@ namespace CSScriptIntellisense
 
                     if (!modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
                     {
-                        if (currentSnippetContext != null)
+                        if (currentSnippetContext == null) 
                         {
+                            //no snippet insertion in progress
+                            if (key == Keys.Tab)
+                            {
+                                if (TriggerCodeSnippetInsertion())
+                                    handled = true;
+                            }
+                        }
+                        else
+                        {
+                            //there is a snippet insertion in progress
                             if (key == Keys.Tab)
                             {
                                 if (!Snippets.NavigateToNextParam(currentSnippetContext))
@@ -140,11 +153,6 @@ namespace CSScriptIntellisense
                                     handled = true;
                                 currentSnippetContext = null;
                             }
-                        }
-                        else
-                        {
-                            if (TriggerCodeSnippetInsertion())
-                                handled = true;
                         }
                     }
                 }
@@ -235,8 +243,6 @@ namespace CSScriptIntellisense
                 int lineStartPos = Npp.GetLineStart(line);
 
                 int horizontalOffset = tokenPoints.X - lineStartPos;
-                //int selectionStart;
-                //int selectionLength;
 
                 //relative selection in the replacement text
                 currentSnippetContext = Snippets.PrepareForIncertion(replacement, horizontalOffset, tokenPoints.X);
@@ -256,18 +262,12 @@ namespace CSScriptIntellisense
                     currentSnippetContext.CurrentParameterValue = Npp.GetTextBetween(currentSnippetContext.CurrentParameter.Value);
                 }
 
-                //var detectedRanges = ActiveDev.FindIndicatorRanges(indicatorId);
-
-                //indicatorId = 9;
-                //Npp.SetIndicatorStyle(indicatorId, SciMsg.INDIC_BOX, Color.Red);
-
-                //foreach (var point in detectedRanges)
-                //{
-                //    Npp.PlaceIndicator(indicatorId, point.X, point.Y);
-                //}
-
-                //int nppSelectionStart = tokenPoints.X + selectionStart;
-                //Npp.SetSelection(nppSelectionStart, nppSelectionStart + selectionLength);
+                if (form != null)
+                {
+                    if (form.Visible)
+                        form.Close();
+                    form = null;
+                }
             }
         }
 
@@ -517,7 +517,7 @@ namespace CSScriptIntellisense
                 };
                 form.Show();
 
-                OnAutocompleteKeyPress();
+                OnAutocompleteKeyPress(allowNoText: true); //to grab current word at the caret an process it as a hint
             }
         }
 
@@ -548,22 +548,31 @@ namespace CSScriptIntellisense
             }
         }
 
-        static void OnAutocompleteKeyPress(char keyChar = char.MinValue)
+        static void OnAutocompleteKeyPress(char keyChar = char.MinValue, bool allowNoText = false)
         {
             NppEditor.ProcessKeyPress(keyChar);
 
             int currentPos = Npp.GetCaretPosition();
 
             string text = Npp.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
+            string hint = null;
+
             int pos = text.LastIndexOfAny(SimpleCodeCompletion.Delimiters);
             if (pos != -1)
             {
-                string token = text.Substring(pos + 1);
-                form.FilterFor(token.Trim());
+                hint = text.Substring(pos + 1).Trim();
+            }
+            else if (text.Length == currentPos) //start of the doc
+                hint = text;
+
+            if (hint != null)
+            {
+                form.FilterFor(hint);
             }
             else
             {
-                form.Close();
+                if (!allowNoText)
+                    form.Close();
             }
         }
 

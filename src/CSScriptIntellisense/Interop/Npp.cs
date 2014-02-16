@@ -291,8 +291,9 @@ namespace CSScriptIntellisense
 
             if (leftText != null)
             {
+                bool startOfDoc = leftText.Length == currentPos;
                 startPos = leftText.LastIndexOfAny(delimiters);
-                wordLeftPart = (startPos != -1) ? leftText.Substring(startPos + 1) : "";
+                wordLeftPart = (startPos != -1) ? leftText.Substring(startPos + 1) : (startOfDoc ? leftText : "");
                 int relativeStartPos = leftText.Length - startPos;
                 startPos = (startPos != -1) ? (currentPos - relativeStartPos) + 1 : 0;
             }

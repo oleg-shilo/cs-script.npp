@@ -1,7 +1,17 @@
 v1.0.18.0
 
+* Load script from history also opens the script file
+
+* Version in AboutBox now also reflect the version of cscs.exe
+
+* Fixed "Add missing usings..." when no other usings present.
+
+* Script compilation errors are now in Unicode
+
+* Improved document formatting
+
 * Implemented checking for NPP non-system drive deployment from plugin update MSI.
 
 * Implemented Code Snippets.
 Example: type 'for' and press Tab
-You can manage snippets from the Plugins->CS-Script->Code Snippets menu 
+You can manage snippets from the Plugins->CS-Script->'Manage Code Snippets' menu 

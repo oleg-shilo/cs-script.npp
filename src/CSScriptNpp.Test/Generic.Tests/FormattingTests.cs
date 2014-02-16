@@ -529,6 +529,31 @@ class Script
 }", newCode);
 
         }
-    }
 
+        [Fact]
+        public void ShouldNotBreakColloectionInits()
+        {
+            SourceCodeFormatter.UseTabs = false;
+            SourceCodeFormatter.IndentText = "    ";
+
+            string code = 
+@"var tests = new []
+{
+    new Test
+    {
+        Name = ""Action_StartNPP""
+    },
+    new Test
+    {
+        Name = ""Action_StartNPP""
+    }
+};";
+
+            int pos = 0;
+            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+
+            Assert.Equal(code, newCode); //no changes
+
+        }
+    }
 }

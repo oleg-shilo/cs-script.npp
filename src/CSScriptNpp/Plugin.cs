@@ -11,15 +11,6 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - CodeMap should reflect all members with the indication of the type name (eventually)
-     * + CheckFoUpdates does not include version into the downloaded MSI file name
-     * + load script from history should also open the file
-     * + version in AboutBox should also reflect the version of cscs.exe
-     * + "Add missing usings" does not work if no other "usings" in the header.
-     * + cscs.exe should respect Unicode when Console.Out
-     * + CheckFoUpdates checks and prevents running MSI if the plugin is not installed on system ProgramFiles
-     * + Setup should handle non sys-drive
-     * + CheckFoUpdates should not checlk for non sys-drive
-     * - on format ',' should not be removed from the end of line with '}'
      */
 
     public partial class Plugin
