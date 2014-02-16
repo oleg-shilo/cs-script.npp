@@ -1,5 +1,6 @@
 //css_ref %WIXSHARP_DIR%\WixSharp.dll;
 //css_dir %WIXSHARP_DIR%\\Wix_bin\SDK;
+
 using Microsoft.Win32;
 using IO = System.IO;
 using System;
@@ -14,7 +15,7 @@ class Script
     {
         string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp.dll");
         Version version = System.Reflection.Assembly.ReflectionOnlyLoadFrom(pluginFile).GetName().Version;
-        
+
         Project project =
             new Project("CS-Script for Notepad++",
                 new Dir(@"%ProgramFiles%\Notepad++\Plugins",
@@ -32,11 +33,8 @@ class Script
             new PathFileAction("%ProgramFiles%\\Notepad++\\notepad++.exe", "", "INSTALLDIR", Return.asyncNoWait, When.After, Step.InstallInitialize, Condition.NOT_Installed)
             {
                 Name = "Action_StartNPP" //need to give custom name as "Action1_notepad++.exe" is illegal because of '++'
-            }
-
-            //,
-            //this one works
-            ,new ManagedAction(@"FindNpp", Return.check, When.Before, Step.LaunchConditions, Condition.NOT_Installed)
+            },
+            new ManagedAction(@"FindNpp", Return.check, When.Before, Step.LaunchConditions, Condition.NOT_Installed)
         };
 
         project.GUID = new Guid("6f930b47-2277-411d-9095-18614525889b");
