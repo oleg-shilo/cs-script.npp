@@ -1,13 +1,13 @@
-﻿using CSScriptIntellisense;
-using CSScriptLibrary;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using UltraSharp.Cecil;
+using CSScriptIntellisense;
+using CSScriptLibrary;
+using System.Drawing;
 
 namespace CSScriptNpp
 {
@@ -21,6 +21,8 @@ namespace CSScriptNpp
 
             if (Config.Instance.BuildOnF7)
                 validateBtn.ToolTipText += " or F7";
+
+            Debugger.OnDebuggerStateChanged += RefreshControls;
 
             RefreshControls();
             ReloadScriptHistory();
@@ -256,7 +258,10 @@ void main(string[] args)
 
         public void Run()
         {
-            Run(false);
+            if (Debugger.IsRunning)
+                Debugger.Go();
+            else
+                Run(false);
         }
 
         void Run(bool asExternal)
@@ -342,7 +347,7 @@ void main(string[] args)
             }
         }
 
-        public void Debug()
+        public void Debug(bool breakOnFirstStep)
         {
             if (currentScript == null)
                 loadBtn.PerformClick();
@@ -354,15 +359,23 @@ void main(string[] args)
             else
             {
                 Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+                Plugin.ShowOutputPanel().ShowDebugOutput().Clear();
+
                 Task.Factory.StartNew(() =>
                 {
                     try
                     {
-                        CSScriptHelper.ExecuteDebug(currentScript);
+                        string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
+                        Debugger.Start(debuggingHost, "/dbg \"" + currentScript + "\"");
+
+                        if (breakOnFirstStep)
+                            Debugger.EntryBreakpointFile = currentScript;
+
+                        RefreshControls();
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show(e.Message);
+                        Plugin.OutputPanel.DebugOutput.WriteLine(e.Message);
                     }
                 });
             }
@@ -479,8 +492,8 @@ void main(string[] args)
             runBtn.Enabled = (treeView1.Nodes.Count > 0);
 
             bool running = (Plugin.RunningScript != null);
-            runBtn.Visible = !running;
-            stopBtn.Visible = running;
+            runBtn.Enabled = !running || Debugger.IsRunning;
+            stopBtn.Enabled = running || Debugger.IsRunning;
 
             if (running)
             {
@@ -631,6 +644,7 @@ void main(string[] args)
             {
                 MessageBox.Show("Script '" + scriptFile + "' does not exist.", "CS-Script");
             }
+            RefreshControls();
         }
 
         void outputBtn_Click(object sender, EventArgs e)
@@ -654,22 +668,7 @@ void main(string[] args)
 
         void stopBtn_Click(object sender, EventArgs e)
         {
-            if (Plugin.RunningScript != null)
-            {
-                try
-                {
-                    Plugin.RunningScript.Kill();
-                }
-                catch (Exception ex)
-                {
-                    Plugin.OutputPanel.BuildOutput.WriteLine(null)
-                                                  .WriteLine(ex.Message);
-                }
-            }
-        }
-
-        void ProjectPanel_KeyDown(object sender, KeyEventArgs e)
-        {
+            Plugin.Stop();
         }
 
         void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
@@ -766,7 +765,7 @@ void main(string[] args)
 
         private void configBtn_Click(object sender, EventArgs e)
         {
-           Plugin.ShowConfig();
+            Plugin.ShowConfig();
         }
 
         private void deployBtn_Click(object sender, EventArgs e)
@@ -814,6 +813,83 @@ void main(string[] args)
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             whatsNewPanel.Visible = false;
+        }
+
+        int index = 0;
+        bool inited = false;
+        const int MARK_BOOKMARK = 24;
+        const int MARK_HIDELINESBEGIN = 23;
+        const int MARK_HIDELINESEND = 22;
+        const int MARK_DEBUGSTEP = 8;
+        const int MARK_BREAKPOINT = 7;
+        const int INDICATOR_DEBUGSTEP = 9;
+
+        bool test1 = false;
+        private void test_Click(object sender, EventArgs e)
+        {
+            Debugger.Break(); return;
+            //ActiveDev.SetMarker(); return;
+            string[] points = new[]
+            {
+                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|12:9|12:10",
+                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|13:13|13:45",
+                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|14:13|14:47",
+                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|15:13|15:45",
+                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|16:13|16:26",
+                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|17:13|17:20",
+                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|18:9|18:10"
+            };
+
+            if (index >= points.Length)
+            {
+                index = 0;
+            }
+
+            var info = (int[][])points[index].Split('|').Skip(1).Select(x =>
+                {
+                    var parts = x.Split(':');
+                    return new int[] { int.Parse(parts.First()) - 1, int.Parse(parts.Last()) - 1 };
+                }).ToArray();
+
+            var xyPoints = info;
+
+            Npp.ClearIndicator(INDICATOR_DEBUGSTEP, start, end);
+
+            start = Npp.GetPosition(xyPoints[0][0], xyPoints[0][1]);
+            end = Npp.GetPosition(xyPoints[1][0], xyPoints[1][1]);
+
+            var debugStepPointColor = Color.Yellow;
+
+            //setup
+            Npp.SetIndicatorStyle(INDICATOR_DEBUGSTEP, SciMsg.INDIC_STRAIGHTBOX, debugStepPointColor);
+            Npp.SetIndicatorTransparency(INDICATOR_DEBUGSTEP, 90, 255);
+
+            Npp.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, Color.Black, debugStepPointColor);
+            Npp.SetMarkerStyle(MARK_BREAKPOINT, SciMsg.SC_MARK_CIRCLE, Color.Black, Color.Red);
+
+            //placement
+            Npp.PlaceMarker(MARK_BREAKPOINT, 14);
+
+            Npp.PlaceIndicator(INDICATOR_DEBUGSTEP, start, end);
+
+            Npp.DeleteAllMarkers(MARK_DEBUGSTEP);
+            Npp.PlaceMarker(MARK_DEBUGSTEP, xyPoints[0][0]);
+
+            index++;
+        }
+
+        static int start = -1;
+        static int end = -1;
+
+        int execute(SciMsg msg, int wParam, int lParam)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, msg, wParam, lParam);
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            Debugger.StepIn();
         }
     }
 }

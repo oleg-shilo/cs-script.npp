@@ -304,9 +304,42 @@ namespace CSScriptIntellisense
         }
     }
 
-    class ActiveDev
+    public class ActiveDev
     {
-        static void Style()
+        static public void SetMarker()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 0, (int)SciMsg.SC_MARK_CIRCLE);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 1, (int)SciMsg.SC_MARK_ROUNDRECT);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 2, (int)SciMsg.SC_MARK_ARROW);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 3, (int)SciMsg.SC_MARK_SMALLRECT);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 4, (int)SciMsg.SC_MARK_SHORTARROW);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 5, (int)SciMsg.SC_MARK_EMPTY);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 6, (int)SciMsg.SC_MARK_ARROWDOWN);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 7, (int)SciMsg.SC_MARK_MINUS);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 8, (int)SciMsg.SC_MARK_PLUS);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 9, (int)SciMsg.SC_MARK_ARROWS);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 10, (int)SciMsg.SC_MARK_DOTDOTDOT);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 11, (int)SciMsg.SC_MARK_BACKGROUND);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 12, (int)SciMsg.SC_MARK_LEFTRECT);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 13, (int)SciMsg.SC_MARK_FULLRECT);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 14, (int)SciMsg.SC_MARK_UNDERLINE);
+
+            for (int i = 15; i <= 32; i++)
+                Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, i, (int)SciMsg.SC_MARK_CHARACTER + i + 50);
+
+            //'add 1 marker to each line
+            for (int i = 0; i <= 32; i++)
+            {
+                Win32.SendMessage(sci, SciMsg.SCI_SETMARGINMASKN, 1, -1);//  'all symbols allowed
+                Win32.SendMessage(sci, SciMsg.SCI_MARKERADD, i, i);       //'line, marker#
+            }
+
+            //'set background of background marker to red
+            //SendMessage hSci, %SCI_MarkerSetBack, 11, Rgb(220,220,220)   'gray background
+        }
+
+        public static void Style()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
 
@@ -316,18 +349,19 @@ namespace CSScriptIntellisense
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 11, (int)SciMsg.INDIC_DIAGONAL);
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 12, (int)SciMsg.INDIC_STRIKE);
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 13, (int)SciMsg.INDIC_BOX);
-            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 14, (int)SciMsg.INDIC_ROUNDBOX);
+            //Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 14, (int)SciMsg.INDIC_ROUNDBOX);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 14, (int)SciMsg.INDIC_CONTAINER);
 
             for (int i = 8; i <= 14; i++)
             {
                 Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, i, 0);
-                Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, i, 0x00ff00);
+                Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, i, 0x0000ff);
                 int iStart = (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, i - 8, 0);
                 Win32.SendMessage(sci, SciMsg.SCI_INDICATORFILLRANGE, iStart, 7);
             }
         }
 
-        static void Unstyle()
+        public static void Unstyle()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
 
@@ -375,8 +409,5 @@ namespace CSScriptIntellisense
                 //Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, iStart, 7);
             }
         }
-
-
-
     }
 }

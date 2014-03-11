@@ -11,6 +11,37 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - CodeMap should reflect all members with the indication of the type name (eventually)
+     * - Debug
+     *      + set breakpoints
+     *      + Debug Shortcuts
+     *      + F5 should do GO but not Next
+     *      + integrate commands in main toolbar
+     *      + implement Debugger OnException event handler
+     *      + Shift+F5 should stop debugging
+     *      + need to report source step change even if it is the same location (e.g. inside of the loop)
+     *      + load from history should refresh toobar (e.g. now debug button is not enbeld after loading)
+     *      + breakpoint marker should be clickable
+     *      + on source position changed ignore event if file does not exist
+     *      + On sourcecode position changed/displayed bring the current line into view with scrolling 
+     *      + if not in break mode all Step* and GO shold be ignored
+     *      + stop debugging with Shift+F5
+     *      + implement Break
+     *      - clear all breakpoints on the file tab disabled (chanage) when debugging
+     *      - intercept DebugOutput
+     *      - integrate projects
+     *         + pack/embedd mdbg.exe
+     *         - clear npp.csproj
+     *      - Debug panel
+     *          - Locals panel
+     *          - Watch panel
+     *          - immediate panel
+     *          - buttons
+     *      - add/remove breakpoint should trigger to breakpoint changed events, which IDE is subscribed to
+     *      - RollOver evaluate
+     *      - test StepIn and StepOut
+     *      - persist breakpoints
+     *      - test debugger on UAC system
+     *      - configurable shortcuts
      */
 
     public partial class Plugin
@@ -28,6 +59,7 @@ namespace CSScriptNpp
 
             SetCommand(projectPanelId = index++, "Build (validate)", Build, new ShortcutKey(true, false, true, Keys.B));
             SetCommand(projectPanelId = index++, "Run", Run, new ShortcutKey(false, false, false, Keys.F5));
+            SetCommand(projectPanelId = index++, "Debug", Run, new ShortcutKey(false, true, false, Keys.F5));
             SetCommand(index++, "---", null);
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
             SetCommand(outputPanelId = index++, "Output Panel", DoOutputPanel, Config.Instance.ShowOutputPanel);
@@ -43,13 +75,15 @@ namespace CSScriptNpp
             KeyInterceptor.Instance.Add(Keys.Tab);
             KeyInterceptor.Instance.Add(Keys.F4);
             KeyInterceptor.Instance.Add(Keys.F7);
+            KeyInterceptor.Instance.Add(Keys.F9);
+            KeyInterceptor.Instance.Add(Keys.F10);
 
             KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
 
             //setup dependency injection, which may be overwritten by other plugins (e.g. NppScripts)
             Plugin.RunScript = () => Plugin.ProjectPanel.Run();
             Plugin.RunScriptAsExternal = () => Plugin.ProjectPanel.RunAsExternal();
-            Plugin.DebugScript = () => Plugin.ProjectPanel.Debug();
+            Plugin.DebugScript = () => Plugin.ProjectPanel.Debug(false);
         }
 
         static public Action RunScript;
@@ -83,11 +117,32 @@ namespace CSScriptNpp
                                       ShowProjectPanel();
                                       ProjectPanel.LoadCurrentDoc();
                                   }));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: true, key: Keys.F5), new Tuple<string, Action>(
+                                  "Stop running script",
+                                  Stop
+                                  ));
             internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F5), new Tuple<string, Action>(
-                                  "Run", () =>
+                                  "Run",
+                                  Run
+                                  ));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: true, isShift: false, key: Keys.F5), new Tuple<string, Action>(
+                                  "Debug", () =>
                                   {
-                                      if (Npp.IsCurrentScriptFile())
-                                          Run();
+                                      if (!Debugger.IsRunning)
+                                          DebugScript();
+                                  }));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F9), new Tuple<string, Action>(
+                                  "Toggle Breakpoint", () =>
+                                  {
+                                      Debugger.ToggleBreakpoint();
+                                  }));
+            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F10), new Tuple<string, Action>(
+                                  "Step Over", () =>
+                                  {
+                                      if (Debugger.IsRunning)
+                                          Debugger.StepOver();
+                                      else
+                                          Plugin.ProjectPanel.Debug(breakOnFirstStep: true);
                                   }));
             internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F5), new Tuple<string, Action>(
                                   "Run As External Process", () =>
@@ -181,8 +236,6 @@ namespace CSScriptNpp
             }
         }
 
-
-
         static public void Build()
         {
             if (runningScript == null)
@@ -195,11 +248,48 @@ namespace CSScriptNpp
 
         static public void Run()
         {
-            if (runningScript == null)
+            if (Debugger.IsRunning)
+            {
+                Debugger.Go();
+            }
+            else if (Npp.IsCurrentScriptFile() && runningScript == null)
             {
                 if (Plugin.ProjectPanel == null)
                     DoProjectPanel();
                 Plugin.RunScript();
+            }
+        }
+
+        static public void Debug()
+        {
+            if (!Debugger.IsRunning)
+            {
+                if (Plugin.ProjectPanel == null)
+                    DoProjectPanel();
+                Plugin.DebugScript();
+            }
+        }
+
+        static public void Stop()
+        {
+            if (Debugger.IsRunning)
+            {
+                Debugger.Exit();
+            }
+            else
+            {
+                if (Plugin.ProjectPanel == null)
+                {
+                    try
+                    {
+                        Plugin.RunningScript.Kill();
+                    }
+                    catch (Exception ex)
+                    {
+                        Plugin.OutputPanel.DebugOutput.WriteLine(null)
+                                                      .WriteLine(ex.Message);
+                    }
+                }
             }
         }
 
@@ -318,7 +408,7 @@ namespace CSScriptNpp
                     //    }
                     //    catch { }
                     //}
-                    //else 
+                    //else
                     if (DialogResult.Yes == MessageBox.Show("The newer version v" + version + " is available.\nDo you want to download and install it?\n\nWARNING: If you choose 'Yes' Notepad++ will be closed and all unsaved data may be lost.", "CS-Script", MessageBoxButtons.YesNo))
                     {
                         string msiFile = CSScriptHelper.GetLatestAvailableMsi(version);

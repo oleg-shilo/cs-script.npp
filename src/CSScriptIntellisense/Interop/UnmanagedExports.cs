@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using NppPlugin.DllExport;
-using System.Windows.Forms;
 
 namespace CSScriptIntellisense
 {
@@ -53,6 +53,14 @@ namespace CSScriptIntellisense
             else if (Plugin.Enabled && nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
             {
                 Plugin.OnCharTyped((char)nc.ch);
+            }
+            else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLSTART)
+            {
+                Debug.WriteLine("Tooltip started...");
+            }
+            else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLEND)
+            {
+                Debug.WriteLine("Tooltip started...");
             }
             else if (Plugin.Enabled && nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
             {

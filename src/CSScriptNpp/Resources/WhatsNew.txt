@@ -15,3 +15,6 @@ v1.0.18.0
 * Implemented Code Snippets.
 Example: type 'for' and press Tab
 You can manage snippets from the Plugins->CS-Script->'Manage Code Snippets' menu 
+
+v1.0.18.0+
+* Implemented using CS-Script global SearchDirs if CS-Script installed.

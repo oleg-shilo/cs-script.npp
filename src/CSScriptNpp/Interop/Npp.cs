@@ -1,6 +1,8 @@
 using System;
+using System.Drawing;
 using System.Text;
 using CSScriptIntellisense;
+using System.Collections.Generic;
 
 namespace CSScriptNpp
 {
@@ -39,6 +41,35 @@ namespace CSScriptNpp
             return buffer.ToString();
         }
 
+        static public void CancelCalltip()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
+        }
+        static public void ShowCalltip(int position, string text)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSHOW, position, text);
+        }
+
+        public static int ConvertToIntFromRGBA(byte red, byte green, byte blue, byte alpha)
+        {
+            return ((red << 24) | (green << 16) | (blue << 8) | (alpha));
+        }
+
+        static public void SetCalltipTime(int milliseconds)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr tt = Win32.SendMessage(sci, SciMsg.SCI_GETMOUSEDWELLTIME, 0, 0);
+
+            //Color: 0xBBGGRR
+            Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSETFORE, 0x000000, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSETBACK, 0xE3E3E3, 0);
+
+            Win32.SendMessage(sci, SciMsg.SCI_SETMOUSEDWELLTIME, milliseconds, 0);
+        }
+
         public static int GetCaretLineNumber()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -47,6 +78,22 @@ namespace CSScriptNpp
             return (int)Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
         }
 
+        public static int GetLineFromPosition(int pos)
+        {
+            return execute(SciMsg.SCI_LINEFROMPOSITION, pos, 0);
+        }
+
+        public static string[] GetOpenFiles()
+        {
+            int count = execute(NppMsg.NPPM_GETNBOPENFILES, 0, 0);
+            using (var cStrArray = new ClikeStringArray(count, Win32.MAX_PATH))
+            {
+                if (execute(NppMsg.NPPM_GETOPENFILENAMES, (int)cStrArray.NativePointer, count) != 0)
+                    return cStrArray.ManagedStringsUnicode.ToArray();
+                else
+                    return new string[0];
+            }
+        }
         static public int GetLineStart(int line)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -57,6 +104,12 @@ namespace CSScriptNpp
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             return (int)Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
+        }
+        
+        static public int GetLinesOnScreen()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINESONSCREEN, 0, 0);
         }
 
         static public void SetFirstVisibleLine(int line)
@@ -82,6 +135,89 @@ namespace CSScriptNpp
             var path = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
             return path.ToString();
+        }
+
+        static public int GetPosition(int line, int column)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0) + column;
+        }
+
+        static public void SetIndicatorStyle(int indicator, SciMsg style, Color color)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int)style);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, indicator, ColorTranslator.ToWin32(color));
+        }
+
+        static public void SetIndicatorTransparency(int indicator, int innerAlpha, int borderAlpha)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETALPHA, indicator, innerAlpha);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETOUTLINEALPHA, indicator, borderAlpha);
+        }
+
+        static public void ClearIndicator(int indicator, int startPos, int endPos = -1)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            if(endPos == -1)
+                endPos =  execute(SciMsg.SCI_GETLENGTH, 0, 0);
+
+            Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, indicator, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, startPos, endPos - startPos);
+        }
+
+        static public void PlaceIndicator(int indicator, int startPos, int endPos)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, indicator, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICATORFILLRANGE, startPos, endPos - startPos);
+        }
+
+        static public void SetMarkerStyle(int marker, SciMsg style, Color foreColor, Color backColor)
+        {
+            int mask = execute(SciMsg.SCI_GETMARGINMASKN, 1, 0);
+            execute(SciMsg.SCI_MARKERDEFINE, marker, (int)style);
+            execute(SciMsg.SCI_MARKERSETFORE, marker, ColorTranslator.ToWin32(foreColor));
+            execute(SciMsg.SCI_MARKERSETBACK, marker, ColorTranslator.ToWin32(backColor));
+            execute(SciMsg.SCI_SETMARGINMASKN, 1, (1 << marker) | mask);
+        }
+       
+        static public void SetMarkerStyle(int marker, Bitmap bitmap)
+        {
+            int mask = execute(SciMsg.SCI_GETMARGINMASKN, 1, 0);
+
+            string bookmark_xpm = Utils.ConvertToXPM(bitmap, "#FF00FF");
+            Win32.SendMessage(Plugin.GetCurrentScintilla(), SciMsg.SCI_MARKERDEFINEPIXMAP, marker, bookmark_xpm);
+
+            execute(SciMsg.SCI_SETMARGINMASKN, 1, (1 << marker) | mask);
+        }
+
+        static int execute(SciMsg msg, int wParam, int lParam)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, msg, wParam, lParam);
+        }
+
+        static int execute(NppMsg msg, int wParam, int lParam)
+        {
+            return (int)Win32.SendMessage(Npp.NppHandle, msg, wParam, lParam);
+        }
+
+        static public IntPtr PlaceMarker(int markerId, int line)
+        {
+            return (IntPtr)execute(SciMsg.SCI_MARKERADD, line, markerId);       //'line, marker#
+        }
+
+        static public void DeleteAllMarkers(int markerId)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDELETEALL, markerId, 0);
+        }
+        static public void DeleteMarker(IntPtr handle)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDELETEHANDLE, (int)handle, 0);
         }
     }
 }

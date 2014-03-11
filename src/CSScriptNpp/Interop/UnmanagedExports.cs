@@ -1,5 +1,7 @@
 ﻿using NppPlugin.DllExport;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace CSScriptNpp
@@ -60,16 +62,25 @@ namespace CSScriptNpp
             return _ptrPluginName;
         }
 
+        const int _SC_MARGE_SYBOLE = 1; //bookmark and breakpoint margin
+        const int SCI_CTRL = 2; //Ctrl pressed modifier for SCN_MARGINCLICK
+
+
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
             try
             {
                 SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
+                //Debug.WriteLine("Code: " + nc.nmhdr.code);
+
                 if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
                     CSScriptNpp.Plugin.OnNppReady();
+#if DEBUG
+                    Npp.SetCalltipTime(400);
+#endif
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
                 {
@@ -79,10 +90,47 @@ namespace CSScriptNpp
                 {
                     CSScriptIntellisense.Plugin.OnCharTyped((char)nc.ch);
                 }
+                else if (nc.nmhdr.code == (uint)SciMsg.SCN_MARGINCLICK)
+                {
+                    if (nc.margin == _SC_MARGE_SYBOLE && nc.modifiers == SCI_CTRL)
+                    {
+                        int lineClick = Npp.GetLineFromPosition(nc.position);
+                        Debugger.ToggleBreakpoint(lineClick);
+                    }
+                }
+                else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLSTART) //tooltip
+                {
+#if DEBUG
+                    //Npp.ShowCalltip(nc.position, "\u0001  1 of 3 \u0002  test tooltip " + Environment.TickCount);
+                    //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
+                    string tooltip = CSScriptIntellisense.Npp.GetWordAtPosition(nc.position);
+                    //                    tooltip = @"Creates all directories and subdirectories as specified by path.
+                    //--------------------------
+                    //Returns: A System.IO.DirectoryInfo as specified by path.
+                    //--------------------------
+                    //path: The directory path to create. 
+                    //path2: Fake parameter for testing.
+                    //--------------------------
+                    //Exceptions: 
+                    //  System.IO.IOException
+                    //  System.UnauthorizedAccessException
+                    //  System.ArgumentException
+                    //  System.ArgumentNullException
+                    //  System.IO.PathTooLongException
+                    //  System.IO.DirectoryNotFoundException
+                    //  System.NotSupportedException".Replace("\r\n", "\n");
+                    Npp.ShowCalltip(nc.position, tooltip);
+#endif
+                }
+                else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLEND)
+                {
+                    Npp.CancelCalltip();
+                }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
                     CSScriptIntellisense.Plugin.OnCurrentFileChanegd();
                     CSScriptNpp.Plugin.OnCurrentFileChanged();
+                    Debugger.OnCurrentFileChanged();
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {

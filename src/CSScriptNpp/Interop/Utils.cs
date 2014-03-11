@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
@@ -24,6 +25,48 @@ namespace CSScriptNpp
             }
         }
 
+        public static string ConvertToXPM(Bitmap bmp, string transparentColor)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<string> colors = new List<string>();
+            List<char> chars = new List<char>();
+            int width = bmp.Width;
+            int height = bmp.Height;
+            int index;
+            sb.Append("/* XPM */static char * xmp_data[] = {\"").Append(width).Append(" ").Append(height).Append(" ? 1\"");
+            int colorsIndex = sb.Length;
+            string col;
+            char c;
+            for (int y = 0; y < height; y++)
+            {
+                sb.Append(",\"");
+                for (int x = 0; x < width; x++)
+                {
+                    col = ColorTranslator.ToHtml(bmp.GetPixel(x, y));
+                    index = colors.IndexOf(col);
+                    if (index < 0)
+                    {
+                        index = colors.Count + 65;
+                        colors.Add(col);
+                        if (index > 90) index += 6;
+                        c = Encoding.ASCII.GetChars(new byte[] { (byte)(index & 0xff) })[0];
+                        chars.Add(c);
+                        sb.Insert(colorsIndex, ",\"" + c + " c " + col + "\"");
+                        colorsIndex += 14;
+                    }
+                    else c = (char)chars[index];
+                    sb.Append(c);
+                }
+                sb.Append("\"");
+            }
+            sb.Append("};");
+            string result = sb.ToString();
+            int p = result.IndexOf("?");
+            string finalColor = result.Substring(0, p) + colors.Count + result.Substring(p + 1).Replace(transparentColor.ToUpper(), "None");
+
+            return finalColor;
+        }
+
         public static bool IsSameTimestamp(string file1, string file2)
         {
             return File.GetLastWriteTimeUtc(file1) == File.GetLastWriteTimeUtc(file2);
@@ -32,6 +75,11 @@ namespace CSScriptNpp
         public static void SetSameTimestamp(string fileSrc, string fileDest)
         {
             File.SetLastWriteTimeUtc(fileDest, File.GetLastWriteTimeUtc(fileSrc));
+        }
+
+        public static bool IsSameAs(this string text, string textToCompare, bool ignoreCase)
+        {
+            return string.Compare(text, textToCompare, ignoreCase) == 0;
         }
 
         public static bool ParseAsFileReference(this string text, out string file, out int line, out int column)

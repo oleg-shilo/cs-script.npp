@@ -63,6 +63,8 @@
     <Compile Include="CodeMapPanel.Designer.cs">
       <DependentUpon>CodeMapPanel.cs</DependentUpon>
     </Compile>
+    <None Include="CSScriptNpp\css_dbg.cs" />
+    <Compile Include="CSScriptNpp\MDbg\Debugger.cs" />
     <Compile Include="Dialogs\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,6 +96,8 @@
     <Compile Include="Interop\LocalWindowsHook.cs" />
     <Compile Include="Interop\Npp.cs" />
     <Compile Include="Interop\WinHook.cs" />
+    <Compile Include="CSScriptNpp\MDbg\DebuggerServer.cs" />
+    <Compile Include="CSScriptNpp\MDbg\RemoteChannelServer.cs" />
     <Compile Include="OutputPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -281,6 +285,51 @@
       <Project>{eb8fc3a3-93e8-457b-b281-fafa5119611a}</Project>
       <Name>CSScriptIntellisense</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSScriptNpp\css_dbg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\css_dbg.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSScriptNpp\MDbg\enc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\MDbg\ildasm.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\MDbg\mdbg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\MDbg\mdbgeng.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\MDbg\mdbgext.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\MDbg\NativeDebugWrappers.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\MDbg\npp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\MDbg\pdb2xml.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\MDbg\raw.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSScriptNpp\MDbg\corapi.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\breakpoint.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

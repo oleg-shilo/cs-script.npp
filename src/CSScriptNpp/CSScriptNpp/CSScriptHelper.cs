@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 using CSScriptLibrary;
 
 namespace CSScriptNpp
@@ -53,6 +53,7 @@ namespace CSScriptNpp
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
+            searchDirs.AddRange(GetGlobalSearchDirs());
 
             var sources = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
             sources.Insert(0, script);
@@ -186,6 +187,28 @@ namespace CSScriptNpp
             }
         }
 
+        static string[] GetGlobalSearchDirs()
+        {
+            var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
+            if (csscriptDir != null)
+            {
+                try
+                {
+                    var configFile = Path.Combine(csscriptDir, "css_config.xml");
+
+                    if (File.Exists(configFile))
+                    {
+                        var doc = new XmlDocument();
+                        doc.Load(configFile);
+
+                        return doc.FirstChild.SelectSingleNode("searchDirs").InnerText.Split(';');
+                    }
+                }
+                catch { }
+            }
+            return new string[0];
+        }
+
         static public void Build(string scriptFileCmd)
         {
             var p = new Process();
@@ -239,6 +262,7 @@ namespace CSScriptNpp
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
+            searchDirs.AddRange(GetGlobalSearchDirs());
 
             if (NppScriptsDir != null)
                 searchDirs.Add(NppScriptsDir);

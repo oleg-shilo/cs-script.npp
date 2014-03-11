@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace CSScriptIntellisense
 {
-    class Npp
+    public class Npp
     {
         public const int DocEnd = -1;
 
@@ -234,9 +234,15 @@ namespace CSScriptIntellisense
 
         static public string TextAfterCursor(int maxLength)
         {
-            int bufCapacity = maxLength + 1;
             IntPtr hCurrentEditView = Plugin.GetCurrentScintilla();
             int currentPos = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            return TextAfterPosition(currentPos, maxLength);
+        }
+        static public string TextAfterPosition(int position, int maxLength)
+        {
+            int bufCapacity = maxLength + 1;
+            IntPtr hCurrentEditView = Plugin.GetCurrentScintilla();
+            int currentPos = position;
             int fullLength = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETLENGTH, 0, 0);
             int startPos = currentPos;
             int endPos = Math.Min(currentPos + bufCapacity, fullLength);
@@ -271,15 +277,29 @@ namespace CSScriptIntellisense
             return GetWordAtCursor(out point, wordDelimiters);
         }
 
+
         static public string GetWordAtCursor(out Point point, char[] wordDelimiters = null)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-
             int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            return GetWordAtPosition(currentPos, out point, wordDelimiters);
+        }
+
+        static public string GetWordAtPosition(int position, char[] wordDelimiters = null)
+        {
+            Point point;
+            return GetWordAtPosition(position, out point, wordDelimiters);
+        }
+
+        static public string GetWordAtPosition(int position, out Point point, char[] wordDelimiters = null)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+
+            int currentPos = position;
             int fullLength = (int)Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
 
-            string leftText = Npp.TextBeforeCursor(512);
-            string rightText = Npp.TextAfterCursor(512);
+            string leftText = Npp.TextBeforePosition(currentPos, 512);
+            string rightText = Npp.TextAfterPosition(currentPos, 512);
 
             var delimiters = "\t\n\r .,:;'\"[]{}()".ToCharArray();
 
@@ -399,11 +419,11 @@ namespace CSScriptIntellisense
             return r;
         }
 
-        static public string TextBeforeCursor(int maxLength)
+        static public string TextBeforePosition(int position, int maxLength)
         {
             int bufCapacity = maxLength + 1;
             IntPtr hCurrentEditView = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = position;
             int beginPos = currentPos - maxLength;
             int startPos = (beginPos > 0) ? beginPos : 0;
             int size = currentPos - startPos;
@@ -418,6 +438,14 @@ namespace CSScriptIntellisense
             }
             else
                 return null;
+        }
+
+        static public string TextBeforeCursor(int maxLength)
+        {
+            IntPtr hCurrentEditView = Plugin.GetCurrentScintilla();
+            int currentPos = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+
+            return TextBeforePosition(currentPos, maxLength);
         }
 
         [DllImport("user32.dll", SetLastError = true)]

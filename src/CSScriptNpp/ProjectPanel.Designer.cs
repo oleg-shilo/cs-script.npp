@@ -39,6 +39,8 @@
             this.histotyBtn = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.validateBtn = new System.Windows.Forms.ToolStripButton();
+            this.test = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.stopBtn = new System.Windows.Forms.ToolStripButton();
             this.runBtn = new System.Windows.Forms.ToolStripButton();
             this.debugBtn = new System.Windows.Forms.ToolStripButton();
@@ -74,7 +76,7 @@
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(430, -1);
+            this.pictureBox1.Location = new System.Drawing.Point(484, -1);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 21);
             this.pictureBox1.TabIndex = 11;
@@ -84,8 +86,8 @@
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.BackColor = System.Drawing.Color.White;
             this.treeView1.HideSelection = false;
@@ -96,7 +98,7 @@
             this.treeView1.SelectedImageIndex = 0;
             this.treeView1.ShowNodeToolTips = true;
             this.treeView1.ShowRootLines = false;
-            this.treeView1.Size = new System.Drawing.Size(487, 239);
+            this.treeView1.Size = new System.Drawing.Size(541, 239);
             this.treeView1.TabIndex = 3;
             this.treeView1.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCollapse);
             this.treeView1.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterExpand);
@@ -120,6 +122,8 @@
             this.newBtn,
             this.histotyBtn,
             this.validateBtn,
+            this.test,
+            this.toolStripButton1,
             this.stopBtn,
             this.runBtn,
             this.debugBtn,
@@ -138,7 +142,7 @@
             this.shortcutsBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(487, 31);
+            this.toolStrip1.Size = new System.Drawing.Size(541, 31);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -168,7 +172,7 @@
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(57, 6);
             // 
             // validateBtn
             // 
@@ -181,6 +185,28 @@
             this.validateBtn.ToolTipText = "Build (validate) current script\r\nShortcut: Ctrl+Shift+B";
             this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
             // 
+            // test
+            // 
+            this.test.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.test.Image = ((System.Drawing.Image)(resources.GetObject("test.Image")));
+            this.test.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.test.Name = "test";
+            this.test.Size = new System.Drawing.Size(30, 28);
+            this.test.Text = "test";
+            this.test.Visible = false;
+            this.test.Click += new System.EventHandler(this.test_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 28);
+            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Visible = false;
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
             // stopBtn
             // 
             this.stopBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -190,7 +216,6 @@
             this.stopBtn.Size = new System.Drawing.Size(23, 28);
             this.stopBtn.Text = "stop";
             this.stopBtn.ToolTipText = "Stop running script";
-            this.stopBtn.Visible = false;
             this.stopBtn.Click += new System.EventHandler(this.stopBtn_Click);
             // 
             // runBtn
@@ -284,7 +309,7 @@
             this.aboutBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.aboutBtn.Image = global::CSScriptNpp.Resources.Resources.about;
             this.aboutBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.aboutBtn.Name = "aboutBtn";    
+            this.aboutBtn.Name = "aboutBtn";
             this.aboutBtn.Size = new System.Drawing.Size(23, 28);
             this.aboutBtn.Text = "aboutBtn";
             this.aboutBtn.ToolTipText = "About CS-Script plugin";
@@ -384,8 +409,8 @@
             // 
             // whatsNewTxt
             // 
-            this.whatsNewTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.whatsNewTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.whatsNewTxt.BackColor = System.Drawing.Color.White;
             this.whatsNewTxt.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -395,13 +420,13 @@
             this.whatsNewTxt.Name = "whatsNewTxt";
             this.whatsNewTxt.ReadOnly = true;
             this.whatsNewTxt.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.whatsNewTxt.Size = new System.Drawing.Size(452, 187);
+            this.whatsNewTxt.Size = new System.Drawing.Size(506, 187);
             this.whatsNewTxt.TabIndex = 5;
             // 
             // whatsNewPanel
             // 
-            this.whatsNewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.whatsNewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.whatsNewPanel.BackColor = System.Drawing.Color.White;
             this.whatsNewPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -410,7 +435,7 @@
             this.whatsNewPanel.Controls.Add(this.whatsNewTxt);
             this.whatsNewPanel.Location = new System.Drawing.Point(12, 40);
             this.whatsNewPanel.Name = "whatsNewPanel";
-            this.whatsNewPanel.Size = new System.Drawing.Size(463, 216);
+            this.whatsNewPanel.Size = new System.Drawing.Size(517, 216);
             this.whatsNewPanel.TabIndex = 10;
             // 
             // label1
@@ -428,14 +453,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(487, 268);
+            this.ClientSize = new System.Drawing.Size(541, 268);
             this.Controls.Add(this.whatsNewPanel);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.treeView1);
             this.KeyPreview = true;
             this.Name = "ProjectPanel";
             this.Text = "ManageScripts";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ProjectPanel_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
@@ -483,5 +507,7 @@
         private System.Windows.Forms.Panel whatsNewPanel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ToolStripButton test;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }

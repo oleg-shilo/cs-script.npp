@@ -1372,7 +1372,7 @@ namespace CSScriptNpp
         INDIC_BOX = 6,
         INDIC_ROUNDBOX = 7,
         INDIC_MAX = 31,
-        INDIC_CONTAINER = 8,
+        INDIC_STRAIGHTBOX = 8,
         INDIC0_MASK = 0x20,
         INDIC1_MASK = 0x40,
         INDIC2_MASK = 0x80,
@@ -1471,7 +1471,7 @@ namespace CSScriptNpp
         SCI_FINDTEXT = 2150,
         SCI_FORMATRANGE = 2151,
         SCI_GETFIRSTVISIBLELINE = 2152,
-        SCI_SETFIRSTVISIBLELINE = 2613, 
+        SCI_SETFIRSTVISIBLELINE = 2613,
         SCI_GETLINE = 2153,
         SCI_GETLINECOUNT = 2154,
         SCI_SETMARGINLEFT = 2155,
@@ -1845,6 +1845,8 @@ namespace CSScriptNpp
         SCI_ANNOTATIONSETSTYLEOFFSET = 2550,
         SCI_ANNOTATIONGETSTYLEOFFSET = 2551,
         UNDO_MAY_COALESCE = 1,
+        SCI_INDICSETOUTLINEALPHA = 2558,
+        SCI_INDICGETOUTLINEALPHA = 2559,
         SCI_ADDUNDOACTION = 2560,
         SCI_CHARPOSITIONFROMPOINT = 2561,
         SCI_CHARPOSITIONFROMPOINTCLOSE = 2562,
@@ -2135,6 +2137,9 @@ namespace CSScriptNpp
 
     public class Win32
     {
+        [DllImport("user32.dll")]
+        static public extern bool SetForegroundWindow(IntPtr hWnd);
+
         [DllImport("user32")]
         public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
