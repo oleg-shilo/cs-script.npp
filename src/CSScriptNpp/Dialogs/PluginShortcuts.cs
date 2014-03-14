@@ -38,5 +38,11 @@ namespace CSScriptNpp
                 column.Width = -1;
             }
         }
+
+        private void PluginShortcuts_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+                Close();
+        }
     }
 }

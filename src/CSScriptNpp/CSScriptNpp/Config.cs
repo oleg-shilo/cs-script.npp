@@ -41,6 +41,7 @@ namespace CSScriptNpp
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
         public bool ShowCodeMapPanel = false;
+        public bool ShowDebugPanel = false;
         public int OutputPanelCapacity = 10000; //num of characters
         public bool LocalDebug = true;
 
@@ -58,6 +59,7 @@ namespace CSScriptNpp
             SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
             SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
             SetValue(Section, "ShowCodeMapPanel", ShowCodeMapPanel);
+            SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
             SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
             SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             SetValue(Section, "InterceptConsole", InterceptConsole);
@@ -81,6 +83,7 @@ namespace CSScriptNpp
             ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
             ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
             ShowCodeMapPanel = GetValue(Section, "ShowCodeMapPanel", ShowCodeMapPanel);
+            ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel);
             SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
             SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
             OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);

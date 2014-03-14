@@ -19,6 +19,11 @@ namespace CSScriptNpp
         {
             InitializeComponent();
 
+#if DEBUG
+            //testButton3.Visible =
+            //testButton2.Visible =
+            //testButton1.Visible = true;
+#endif
             if (Config.Instance.BuildOnF7)
                 validateBtn.ToolTipText += " or F7";
 
@@ -349,6 +354,9 @@ void main(string[] args)
 
         public void Debug(bool breakOnFirstStep)
         {
+            if (Plugin.DebugPanel == null)
+                Plugin.DoDebugPanel();
+
             if (currentScript == null)
                 loadBtn.PerformClick();
 
@@ -827,7 +835,8 @@ void main(string[] args)
         bool test1 = false;
         private void test_Click(object sender, EventArgs e)
         {
-            Debugger.Break(); return;
+
+            Debugger.StepOut(); return;
             //ActiveDev.SetMarker(); return;
             string[] points = new[]
             {
@@ -890,6 +899,11 @@ void main(string[] args)
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             Debugger.StepIn();
+        }
+
+        private void testButton3_Click(object sender, EventArgs e)
+        {
+            Debugger.Break();
         }
     }
 }

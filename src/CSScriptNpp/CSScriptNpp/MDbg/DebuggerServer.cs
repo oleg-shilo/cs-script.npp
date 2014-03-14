@@ -12,6 +12,8 @@ namespace CSScriptNpp
     {
         public static string SourceCode = "source=>";
         public static string Process = "process=>";
+        public static string Trace = "trace=>";
+        public static string CallStack = "callstack=>";
         public static string State = "state=>";
         public static string Breakpoints = "breakpoints=>";
         public static string Diagnostics = "debugger=>";
@@ -86,7 +88,7 @@ namespace CSScriptNpp
         static event Action<string, int> OnSourceCodePositionChaned;
         static public Action<string> OnNotificationReceived;
         static public Action OnDebuggerStateChanged;
-        static public Action<string> OnDebuggeePrrocessNotification;
+        static public Action<string> OnDebuggeeProcessNotification;
 
         static void Init()
         {
@@ -146,8 +148,8 @@ namespace CSScriptNpp
                             {
                                 name = Process.GetProcessById(debuggeeProcessId).ProcessName;
 
-                                if (OnDebuggeePrrocessNotification != null)
-                                    OnDebuggeePrrocessNotification("The process [" + debuggeeProcessId + "] started");
+                                if (OnDebuggeeProcessNotification != null)
+                                    OnDebuggeeProcessNotification("The process [" + debuggeeProcessId + "] started");
 
                                 //debugger often stuck even if debuggee is terminated
                                 Process.GetProcessById(debuggeeProcessId).WaitForExit();
@@ -155,8 +157,10 @@ namespace CSScriptNpp
                             }
                             catch { }
 
-                            if (OnDebuggeePrrocessNotification != null)
-                                OnDebuggeePrrocessNotification("The process [" + debuggeeProcessId + "] has exited.");
+                            if (OnDebuggeeProcessNotification != null)
+                                OnDebuggeeProcessNotification("The process [" + debuggeeProcessId + "] has exited.");
+
+                            Plugin.GetDebugPanel().UpdateCallstack("");
                         });
             }
             return message;
@@ -200,7 +204,7 @@ namespace CSScriptNpp
 
             string debuggerApp = Environment.ExpandEnvironmentVariables("%MDBG_EXE%");
 
-            debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbg.exe");
+            //debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbg.exe");
 
             var debugger = Process.Start(new ProcessStartInfo
                             {

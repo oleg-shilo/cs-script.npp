@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSScriptNpp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,10 @@ namespace Testpad
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            var panel = new DebugPanel();
+            panel.UpdateCallstack("Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}[External Code]|{$NL}");
+            panel.ShowDialog();
+            //Application.Run(new Form1());
         }
     }
 }

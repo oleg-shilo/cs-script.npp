@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using DbMon.NET;
+using System.Text;
 
 namespace DbMon
 {
@@ -33,12 +34,6 @@ namespace DbMon
         {
             string msg = string.Format("{0}: {1}", pid, text);
             Console.Write(msg);
-
-            //lock (listeners)
-            //{
-            //foreach (var item in listeners)
-            //    Win32.SendWindowsStringMessage(item, 0, msg);
-            //}
         }
 
         //static List<IntPtr> listeners = new List<IntPtr>();

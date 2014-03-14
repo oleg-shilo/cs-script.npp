@@ -304,6 +304,7 @@ namespace CSScriptIntellisense
         }
     }
 
+#if DEBUG
     public class ActiveDev
     {
         static public void SetMarker()
@@ -410,4 +411,5 @@ namespace CSScriptIntellisense
             }
         }
     }
+#endif
 }

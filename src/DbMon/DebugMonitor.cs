@@ -280,7 +280,10 @@ namespace DbMon.NET
                         // the process ID of the client that sent the debug string.
                         FireOnOutputDebugString(
                                 Marshal.ReadInt32(m_SharedMem),
+                                //Marshal.PtrToStringUni(pString)); //gibberish
+                                //Marshal.PtrToStringAuto(pString));//gibberish
                                 Marshal.PtrToStringAnsi(pString));
+                                //Marshal.PtrToStringBSTR(pString));//protected-memory exception
                     }
                 }
 

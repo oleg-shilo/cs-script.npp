@@ -100,6 +100,20 @@ namespace CSScriptNpp
             return (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0);
         }
 
+        public static void SetCaretPosition(int pos)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_SETCURRENTPOS, pos, 0);
+        }
+
+        public static void ClearSelection()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0); ;
+        }
+
         static public int GetFirstVisibleLine()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();

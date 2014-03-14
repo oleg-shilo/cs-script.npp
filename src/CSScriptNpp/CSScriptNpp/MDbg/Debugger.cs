@@ -12,7 +12,7 @@ namespace CSScriptNpp
         {
             DebuggerServer.OnNotificationReceived = HandleNotification;
             DebuggerServer.OnDebuggerStateChanged = HandleDebuggerStateChanged;
-            DebuggerServer.OnDebuggeePrrocessNotification = message => Plugin.OutputPanel.DebugOutput.WriteLine(message);
+            DebuggerServer.OnDebuggeeProcessNotification = message => Plugin.OutputPanel.DebugOutput.WriteLine(message);
 
             var debugStepPointColor = Color.Yellow;
 
@@ -56,6 +56,7 @@ namespace CSScriptNpp
                 if (message.StartsWith(NppCategory.Process))
                 {
                     ClearDebuggingMarkers();
+
                     if (message.EndsWith(":STARTED"))
                     {
                         foreach (string info in breakpoints.Keys)
@@ -67,25 +68,30 @@ namespace CSScriptNpp
                         Go();
                     }
                 }
+                else if (message.StartsWith(NppCategory.Trace))
+                {
+                    Plugin.OutputPanel.DebugOutput.Write(message.Substring(NppCategory.Trace.Length));
+                }
+                else if (message.StartsWith(NppCategory.CallStack))
+                {
+                    Plugin.GetDebugPanel().UpdateCallstack(message.Substring(NppCategory.CallStack.Length));
+                }
                 else if (message.StartsWith(NppCategory.SourceCode))
                 {
-                    //if (stopsCount != 0) //first stop is not a break point but process entry
+                    var sourceLocation = message.Substring(NppCategory.SourceCode.Length);
+
+                    string file = sourceLocation.Split('|').First();
+
+                    if (File.Exists(file))
                     {
-                        var sourceLocation = message.Substring(NppCategory.SourceCode.Length);
-
-                        string file = sourceLocation.Split('|').First();
-
-                        if (File.Exists(file))
+                        if (Npp.GetCurrentFile().IsSameAs(file, true))
                         {
-                            if (Npp.GetCurrentFile().IsSameAs(file, true))
-                            {
-                                ProcessDebuggingStepChange(sourceLocation);
-                            }
-                            else
-                            {
-                                OnNextFileOpenComplete = () => ProcessDebuggingStepChange(sourceLocation);
-                                Npp.OpenFile(file);
-                            }
+                            ProcessDebuggingStepChange(sourceLocation);
+                        }
+                        else
+                        {
+                            OnNextFileOpenComplete = () => ProcessDebuggingStepChange(sourceLocation);
+                            Npp.OpenFile(file); //needs to by asynchronous
                         }
                     }
                 }
@@ -96,23 +102,35 @@ namespace CSScriptNpp
 
         static Action OnNextFileOpenComplete;
 
+        public static void OpenStackLocation(string sourceLocation)
+        {
+            string file = sourceLocation.Split('|').First();
+            OnNextFileOpenComplete = () => ProcessOpenStackLocation(sourceLocation);
+            Npp.OpenFile(file); //needs to by asynchronous
+        }
+
+        static void ProcessOpenStackLocation(string sourceLocation)
+        {
+            var location = Debugger.FileLocation.Parse(sourceLocation);
+
+            int start = Npp.GetFirstVisibleLine();
+            int end = start + Npp.GetLinesOnScreen();
+            if (location.Line > end || location.Line < start)
+            {
+                Npp.SetFirstVisibleLine(Math.Max(location.Line - (end - start) / 2, 0));
+            }
+
+            Npp.SetCaretPosition(location.Start);
+            Npp.ClearSelection(); //need this one as otherwise parasitic selection can be triggered 
+
+            Win32.SetForegroundWindow(Npp.NppHandle);
+            Win32.SetForegroundWindow(Npp.CurrentScintilla);
+        }
+
         static void ProcessDebuggingStepChange(string sourceLocation)
         {
-            var parts = sourceLocation.Split('|');
-            string file = parts.First();
-
-            var points = parts.Skip(1).Select(x =>
-            {
-                var coordinates = x.Split(':');
-                var line = int.Parse(coordinates.First()) - 1;
-                var column = int.Parse(coordinates.Last()) - 1;
-                return Npp.GetPosition(line, column);
-            });
-
-
-            var location = new FileLocation { File = file, Start = points.First(), End = points.Last() };
-
-            ShowSourceLocation(location);
+            var location = FileLocation.Parse(sourceLocation);
+            ShowBreakpointSourceLocation(location);
         }
 
         const int MARK_BOOKMARK = 24;
@@ -128,6 +146,22 @@ namespace CSScriptNpp
             public int Start;
             public int End;
             public int Line { get { return Npp.GetLineFromPosition(Start); } }
+
+            static public FileLocation Parse(string sourceLocation)
+            {
+                var parts = sourceLocation.Split('|');
+                string file = parts.First();
+
+                var points = parts.Skip(1).Select(x =>
+                {
+                    var coordinates = x.Split(':');
+                    var line = int.Parse(coordinates.First()) - 1;
+                    var column = int.Parse(coordinates.Last()) - 1;
+                    return Npp.GetPosition(line, column);
+                });
+
+                return new FileLocation { File = file, Start = points.First(), End = points.Last() };
+            }
         }
 
         static FileLocation lastLocation;
@@ -150,7 +184,7 @@ namespace CSScriptNpp
                 line = lineClick;
             else
                 line = Npp.GetCaretLineNumber();
-            
+
             string key = BuildBreakpointKey(file, line);
 
             if (breakpoints.ContainsKey(key))
@@ -169,7 +203,7 @@ namespace CSScriptNpp
             }
         }
 
-        static void ShowSourceLocation(FileLocation location)
+        static void ShowBreakpointSourceLocation(FileLocation location)
         {
             ClearDebuggingMarkers();
 
@@ -181,8 +215,11 @@ namespace CSScriptNpp
             int end = start + Npp.GetLinesOnScreen();
             if (location.Line > end || location.Line < start)
             {
-                Npp.SetFirstVisibleLine(Math.Max(location.Line-(end-start)/2, 0));
+                Npp.SetFirstVisibleLine(Math.Max(location.Line - (end - start) / 2, 0));
             }
+
+            Npp.SetCaretPosition(location.Start);
+            Npp.ClearSelection(); //need this one as otherwise parasitic selection can be triggered 
 
             Win32.SetForegroundWindow(Npp.NppHandle);
             Win32.SetForegroundWindow(Npp.CurrentScintilla);

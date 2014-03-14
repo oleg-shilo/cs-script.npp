@@ -57,6 +57,12 @@
   -->
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="DebugPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DebugPanel.Designer.cs">
+      <DependentUpon>DebugPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="CodeMapPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -149,6 +155,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DebugPanel.resx">
+      <DependentUpon>DebugPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CodeMapPanel.resx">
       <DependentUpon>CodeMapPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -330,6 +339,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\breakpoint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\step.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\step_display.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

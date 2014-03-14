@@ -39,8 +39,9 @@
             this.histotyBtn = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.validateBtn = new System.Windows.Forms.ToolStripButton();
-            this.test = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.testButton3 = new System.Windows.Forms.ToolStripButton();
+            this.testButton2 = new System.Windows.Forms.ToolStripButton();
+            this.testButton1 = new System.Windows.Forms.ToolStripButton();
             this.stopBtn = new System.Windows.Forms.ToolStripButton();
             this.runBtn = new System.Windows.Forms.ToolStripButton();
             this.debugBtn = new System.Windows.Forms.ToolStripButton();
@@ -122,8 +123,9 @@
             this.newBtn,
             this.histotyBtn,
             this.validateBtn,
-            this.test,
-            this.toolStripButton1,
+            this.testButton3,
+            this.testButton2,
+            this.testButton1,
             this.stopBtn,
             this.runBtn,
             this.debugBtn,
@@ -185,27 +187,39 @@
             this.validateBtn.ToolTipText = "Build (validate) current script\r\nShortcut: Ctrl+Shift+B";
             this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
             // 
-            // test
+            // testButton3
             // 
-            this.test.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.test.Image = ((System.Drawing.Image)(resources.GetObject("test.Image")));
-            this.test.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.test.Name = "test";
-            this.test.Size = new System.Drawing.Size(30, 28);
-            this.test.Text = "test";
-            this.test.Visible = false;
-            this.test.Click += new System.EventHandler(this.test_Click);
+            this.testButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.testButton3.Image = ((System.Drawing.Image)(resources.GetObject("testButton3.Image")));
+            this.testButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.testButton3.Name = "testButton3";
+            this.testButton3.Size = new System.Drawing.Size(40, 28);
+            this.testButton3.Text = "Break";
+            this.testButton3.Visible = false;
+            this.testButton3.Click += new System.EventHandler(this.testButton3_Click);
             // 
-            // toolStripButton1
+            // testButton2
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 28);
-            this.toolStripButton1.Text = "toolStripButton1";
-            this.toolStripButton1.Visible = false;
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.testButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.testButton2.Image = ((System.Drawing.Image)(resources.GetObject("testButton2.Image")));
+            this.testButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.testButton2.Name = "testButton2";
+            this.testButton2.Size = new System.Drawing.Size(44, 28);
+            this.testButton2.Text = "StepIn";
+            this.testButton2.ToolTipText = "StepIn";
+            this.testButton2.Visible = false;
+            this.testButton2.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // testButton1
+            // 
+            this.testButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.testButton1.Image = ((System.Drawing.Image)(resources.GetObject("testButton1.Image")));
+            this.testButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.testButton1.Name = "testButton1";
+            this.testButton1.Size = new System.Drawing.Size(54, 28);
+            this.testButton1.Text = "StepOut";
+            this.testButton1.Visible = false;
+            this.testButton1.Click += new System.EventHandler(this.test_Click);
             // 
             // stopBtn
             // 
@@ -507,7 +521,8 @@
         private System.Windows.Forms.Panel whatsNewPanel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.ToolStripButton test;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton testButton1;
+        private System.Windows.Forms.ToolStripButton testButton2;
+        private System.Windows.Forms.ToolStripButton testButton3;
     }
 }
