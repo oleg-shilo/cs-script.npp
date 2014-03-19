@@ -14,6 +14,8 @@ namespace CSScriptNpp
         public static string Process = "process=>";
         public static string Trace = "trace=>";
         public static string CallStack = "callstack=>";
+        public static string Invoke = "invoke=>";
+        public static string Locals = "locals=>";
         public static string State = "state=>";
         public static string Breakpoints = "breakpoints=>";
         public static string Diagnostics = "debugger=>";
@@ -160,7 +162,7 @@ namespace CSScriptNpp
                             if (OnDebuggeeProcessNotification != null)
                                 OnDebuggeeProcessNotification("The process [" + debuggeeProcessId + "] has exited.");
 
-                            Plugin.GetDebugPanel().UpdateCallstack("");
+                            Plugin.GetDebugPanel().Clear();
                         });
             }
             return message;
@@ -204,7 +206,7 @@ namespace CSScriptNpp
 
             string debuggerApp = Environment.ExpandEnvironmentVariables("%MDBG_EXE%");
 
-            //debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbg.exe");
+            debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbg.exe");
 
             var debugger = Process.Start(new ProcessStartInfo
                             {

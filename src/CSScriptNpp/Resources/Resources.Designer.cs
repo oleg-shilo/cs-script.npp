@@ -141,6 +141,16 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap dbg_container {
+            get {
+                object obj = ResourceManager.GetObject("dbg_container", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] DbMon {
@@ -176,6 +186,16 @@ namespace CSScriptNpp.Resources {
         internal static System.Drawing.Bitmap debug_detach {
             get {
                 object obj = ResourceManager.GetObject("debug_detach", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap field {
+            get {
+                object obj = ResourceManager.GetObject("field", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -226,6 +246,16 @@ namespace CSScriptNpp.Resources {
         internal static System.Drawing.Bitmap outputpanel {
             get {
                 object obj = ResourceManager.GetObject("outputpanel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap property {
+            get {
+                object obj = ResourceManager.GetObject("property", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

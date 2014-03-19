@@ -87,8 +87,8 @@
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.BackColor = System.Drawing.Color.White;
             this.treeView1.HideSelection = false;
@@ -251,7 +251,7 @@
             this.debugBtn.Name = "debugBtn";
             this.debugBtn.Size = new System.Drawing.Size(23, 28);
             this.debugBtn.Text = "Debug";
-            this.debugBtn.ToolTipText = "Debug script with the syestem default debugger";
+            this.debugBtn.ToolTipText = "Debug script with the system default debugger";
             this.debugBtn.Click += new System.EventHandler(this.debugBtn_Click);
             // 
             // toolStripSeparator2
@@ -423,8 +423,8 @@
             // 
             // whatsNewTxt
             // 
-            this.whatsNewTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.whatsNewTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.whatsNewTxt.BackColor = System.Drawing.Color.White;
             this.whatsNewTxt.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -439,8 +439,8 @@
             // 
             // whatsNewPanel
             // 
-            this.whatsNewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.whatsNewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.whatsNewPanel.BackColor = System.Drawing.Color.White;
             this.whatsNewPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;

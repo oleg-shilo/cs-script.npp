@@ -1,4 +1,5 @@
 ﻿using CSScriptNpp;
+using CSScriptNpp.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,12 @@ namespace Testpad
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var panel = new DebugPanel();
-            panel.UpdateCallstack("Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}[External Code]|{$NL}");
+            var panel = new AutoWatchPanel();
+            panel.Test();
             panel.ShowDialog();
+            //var panel = new DebugPanel();
+            //panel.UpdateCallstack("Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}[External Code]|{$NL}");
+            //panel.ShowDialog();
             //Application.Run(new Form1());
         }
     }

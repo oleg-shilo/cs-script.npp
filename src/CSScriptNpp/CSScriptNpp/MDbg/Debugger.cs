@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace CSScriptNpp
 {
@@ -46,6 +47,67 @@ namespace CSScriptNpp
             ClearDebuggingMarkers();
         }
 
+        static Dictionary<string, Action<string>> invokeCompleteHandlers = new Dictionary<string, Action<string>>();
+        static int invokeId = 0;
+        static string GetNextInvokeId()
+        {
+            lock (typeof(Debugger))
+            {
+                invokeId++;
+                return invokeId.ToString();
+            }
+        }
+
+        public static string Invoke(string command, string args)
+        {
+            string retval = null;
+            BeginInvoke(command, args, result => retval = result);
+
+            int start = Environment.TickCount;
+            int timeout = 1000;
+
+            while (retval == null && (Environment.TickCount-start) < timeout)
+            {
+                Thread.Sleep(1);
+            }
+
+            return retval;
+
+        }
+
+        public static void BeginInvoke(string command, string args, Action<string> resultHandler)
+        {
+            //<id>:<command>:<args>
+            string id = GetNextInvokeId();
+            lock (invokeCompleteHandlers)
+            {
+                invokeCompleteHandlers.Add(id, resultHandler);
+            }
+            MessageQueue.AddCommand(NppCategory.Invoke + string.Format("{0}:{1}:{2}", id, command, args ?? ""));
+        }
+
+        public static void OnInvokeComplete(string notification)
+        {
+            //<id>:<result>
+            string[] parts = notification.Split(new[] { ':' }, 2);
+            string id = parts[0];
+            string result = parts[1];
+            
+            Action<string> handler = null;
+            
+            lock (invokeCompleteHandlers)
+            {
+                if (invokeCompleteHandlers.ContainsKey(id))
+                {
+                    handler = invokeCompleteHandlers[id];
+                    invokeCompleteHandlers.Remove(id);
+                }
+            }
+            
+            if(handler != null)
+                handler(result);
+        }
+
         static void HandleNotification(string message)
         {
             //process=>7924:STARTED
@@ -68,6 +130,10 @@ namespace CSScriptNpp
                         Go();
                     }
                 }
+                else if (message.StartsWith(NppCategory.Invoke))
+                {
+                    OnInvokeComplete(message.Substring(NppCategory.Invoke.Length));
+                }
                 else if (message.StartsWith(NppCategory.Trace))
                 {
                     Plugin.OutputPanel.DebugOutput.Write(message.Substring(NppCategory.Trace.Length));
@@ -75,6 +141,10 @@ namespace CSScriptNpp
                 else if (message.StartsWith(NppCategory.CallStack))
                 {
                     Plugin.GetDebugPanel().UpdateCallstack(message.Substring(NppCategory.CallStack.Length));
+                }
+                else if (message.StartsWith(NppCategory.Locals))
+                {
+                    Plugin.GetDebugPanel().UpdateLocals(message.Substring(NppCategory.Locals.Length));
                 }
                 else if (message.StartsWith(NppCategory.SourceCode))
                 {
@@ -101,6 +171,7 @@ namespace CSScriptNpp
         static char[] delimiter = new[] { '|' };
 
         static Action OnNextFileOpenComplete;
+
 
         public static void OpenStackLocation(string sourceLocation)
         {

@@ -77,6 +77,18 @@
     <Compile Include="Dialogs\AboutBox.designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\AutoWatchPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AutoWatchPanel.Designer.cs">
+      <DependentUpon>AutoWatchPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\CallStackPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CallStackPanel.Designer.cs">
+      <DependentUpon>CallStackPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -153,6 +165,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DebugPanel.resx">
@@ -163,6 +176,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AutoWatchPanel.resx">
+      <DependentUpon>AutoWatchPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\CallStackPanel.resx">
+      <DependentUpon>CallStackPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
@@ -345,6 +364,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\step_display.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_container.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\field.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\property.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

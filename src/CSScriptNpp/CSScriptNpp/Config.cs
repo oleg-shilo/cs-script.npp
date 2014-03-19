@@ -83,7 +83,7 @@ namespace CSScriptNpp
             ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
             ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
             ShowCodeMapPanel = GetValue(Section, "ShowCodeMapPanel", ShowCodeMapPanel);
-            ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel);
+            //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway. 
             SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
             SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
             OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
