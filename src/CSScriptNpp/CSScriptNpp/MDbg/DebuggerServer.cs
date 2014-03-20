@@ -45,22 +45,46 @@ namespace CSScriptNpp
 
         static public void Go()
         {
-            if (IsRunning) MessageQueue.AddCommand("go");
+            if (IsRunning)
+            {
+                MessageQueue.AddCommand("go");
+                IsInBreak = false;
+            }
         }
 
         static public void StepOver()
         {
-            if (IsRunning) MessageQueue.AddCommand("next");
+            if (IsRunning)
+            {
+                MessageQueue.AddCommand("next");
+                IsInBreak = false;
+            }
         }
 
         static public void StepIn()
         {
-            if (IsRunning) MessageQueue.AddCommand("step");
+            if (IsRunning)
+            {
+                MessageQueue.AddCommand("step");
+                IsInBreak = false;
+            }
         }
 
         static public void StepOut()
         {
-            if (IsRunning) MessageQueue.AddCommand("out");
+            if (IsRunning)
+            {
+                MessageQueue.AddCommand("out");
+                IsInBreak = false;
+            }
+        }
+
+        static public void SetInstructionPointer(int line)
+        {
+            if (IsRunning)
+            {
+                MessageQueue.AddCommand("setip " + line);
+            }
         }
 
         static public void Run(string application, string args = null)
@@ -79,6 +103,19 @@ namespace CSScriptNpp
             }
         }
 
+        static bool isInBreak;
+
+        static public bool IsInBreak
+        {
+            get { return isInBreak; }
+            set
+            {
+                isInBreak = value;
+                if (OnDebuggerStateChanged != null)
+                    OnDebuggerStateChanged();
+            }
+        }
+
         static public int DebuggerProcessId
         {
             get
@@ -87,7 +124,6 @@ namespace CSScriptNpp
             }
         }
 
-        static event Action<string, int> OnSourceCodePositionChaned;
         static public Action<string> OnNotificationReceived;
         static public Action OnDebuggerStateChanged;
         static public Action<string> OnDebuggeeProcessNotification;
@@ -106,11 +142,7 @@ namespace CSScriptNpp
 
                         if (message.StartsWith(NppCategory.SourceCode))
                         {
-                            if (OnSourceCodePositionChaned != null)
-                            {
-                                string[] parts = message.Substring(NppCategory.SourceCode.Length).Split('|');
-                                //OnSourceCodePositionChaned();
-                            }
+                            IsInBreak = true;
                         }
                         else if (message.StartsWith(NppCategory.Process))
                         {
@@ -144,12 +176,10 @@ namespace CSScriptNpp
                 if (debuggeeProcessId != 0)
                     Task.Factory.StartNew(() =>
                         {
-                            string name = "";
-                            Process proc = null;
+                            IsInBreak = false;
+
                             try
                             {
-                                name = Process.GetProcessById(debuggeeProcessId).ProcessName;
-
                                 if (OnDebuggeeProcessNotification != null)
                                     OnDebuggeeProcessNotification("The process [" + debuggeeProcessId + "] started");
 

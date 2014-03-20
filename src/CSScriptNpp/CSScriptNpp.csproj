@@ -374,6 +374,30 @@
   <ItemGroup>
     <None Include="Resources\property.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_go.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_setnext.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_stepin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_stepout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_stepover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_togglebp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_break.png" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

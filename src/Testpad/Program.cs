@@ -18,12 +18,14 @@ namespace Testpad
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var panel = new AutoWatchPanel();
-            panel.Test();
+            
+            //var panel = new AutoWatchPanel();
+            //panel.Test();
+
+            var panel = new DebugPanel();
+            panel.UpdateCallstack("Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}[External Code]|{$NL}");
             panel.ShowDialog();
-            //var panel = new DebugPanel();
-            //panel.UpdateCallstack("Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}[External Code]|{$NL}");
-            //panel.ShowDialog();
+            
             //Application.Run(new Form1());
         }
     }

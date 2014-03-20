@@ -1,7 +1,5 @@
 ﻿using CSScriptNpp.Dialogs;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,29 +16,24 @@ namespace CSScriptNpp
         public DebugPanel()
         {
             InitializeComponent();
-            this.stack.Columns[1].Width = 100;
-            treeView1.BeforeExpand += treeView1_BeforeExpand;
-            tabControl1.SelectedIndex = 3;
-            //listView1.OwnerDraw = false;
-            //return;
 
             locals = new AutoWatchPanel();
             callstack = new CallStackPanel();
 
             tabControl1.AddTab("Auto Watch", locals);
             tabControl1.AddTab("Call Stack", callstack);
+
+            Debugger.OnDebuggerStateChanged += UpdateControlsState;
         }
 
-        void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        void UpdateControlsState()
         {
-            var valueId = e.Node.Tag as string;
-            e.Node.Nodes.Clear();
-            string data = Debugger.Invoke("locals", valueId);
-            if (data != null)
-            {
-                var nestedNodes = ToNodes(data);
-                e.Node.Nodes.AddRange(nestedNodes);
-            }
+            breakBtn.Enabled =
+            stopBtn.Enabled = Debugger.IsRunning;
+
+            stepIntoBtn.Enabled =
+            stepOutBtn.Enabled =
+            setNextBtn.Enabled = Debugger.IsRunning && Debugger.IsInBreak;
         }
 
         public void Clear()
@@ -54,90 +47,60 @@ namespace CSScriptNpp
             callstack.UpdateCallstack(data);
         }
 
-        TreeNode[] ToNodes(string data)
-        {
-            if (string.IsNullOrEmpty(data))
-                return new TreeNode[0];
-
-            var root = XElement.Parse(data);
-
-            return root.Elements().Select(dbgValue =>
-            {
-                TreeNode node;
-
-                string id = dbgValue.Attribute("id").Value;
-                bool isArray = dbgValue.Attribute("isArray").Value == "true";
-                bool isComplex = dbgValue.Attribute("isComplex").Value == "true";
-                string type = dbgValue.Attribute("typeName").Value;
-                string valName = dbgValue.Attribute("name").Value;
-
-                if (isArray)
-                {
-                    // It would be nice to display array length here too.
-                    // Add a "dummy" sub-node to signify that this node is expandable. We then trap
-                    // the BeforeExpand event to add the real children.
-                    node = new TreeNode(valName + " (type='" + type + "'):",
-                               new TreeNode[1] { new TreeNode("dummy") });
-                }
-                else if (isComplex)
-                {
-                    // This will include both instance and static fields
-                    // It will also include all base class fields.
-                    node = new TreeNode(valName + " (type='" + type + "'):",
-                               new TreeNode[1] { new TreeNode("dummy") });
-                }
-                else
-                {
-                    // This is a catch-all for primitives.
-                    string stValue = dbgValue.Attribute("value").Value;
-                    node = new TreeNode(valName + " (type='" + type + "') value=" + stValue);
-                }
-
-                node.Tag = id;
-
-                return node;
-            }).ToArray();
-        }
-
         public void UpdateLocals(string data)
         {
             Invoke((Action)delegate
             {
-                treeView1.Nodes.Clear();
-                treeView1.Nodes.AddRange(ToNodes(data));
                 locals.SetData(data);
             });
         }
 
-        string FormatXML(string data)
+        private void goBtn_Click(object sender, EventArgs e)
         {
-            var xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(data);
-
-            using (var stringWriter = new StringWriter())
-            using (var xmlWriter = new XmlTextWriter(stringWriter) { Formatting = Formatting.Indented, Indentation = 4 })
+            if (Debugger.IsRunning)
             {
-                xmlDocument.WriteTo(xmlWriter);
-                return stringWriter.ToString();
+                Debugger.Go();
+            }
+            else
+            {
+                Plugin.DebugScript();//this will also load the script
             }
         }
 
 
-
-        private void button1_Click(object sender, EventArgs e)
+        private void stepOverBtn_Click(object sender, EventArgs e)
         {
-            label1.Text = Debugger.Invoke(textBox1.Text, null);
+            Plugin.StepOver();
         }
 
-        void DebuggerInvokeTest()
+        private void breakBtn_Click(object sender, EventArgs e)
         {
-            Debugger.BeginInvoke(textBox1.Text, null, result =>
-            {
-                Invoke((Action)delegate
-                {
-                    label1.Text = result;
-                });
-            });
+            Debugger.Break();
+        }
+
+        private void stopBtn_Click(object sender, EventArgs e)
+        {
+            Debugger.Stop();
+        }
+
+        private void stepIntoBtn_Click(object sender, EventArgs e)
+        {
+            Debugger.StepIn();
+        }
+
+        private void stepOutBtn_Click(object sender, EventArgs e)
+        {
+            Debugger.StepOut();
+        }
+
+        private void setNextBtn_Click(object sender, EventArgs e)
+        {
+            Debugger.SetInstructionPointer();
+        }
+
+        private void tobbleBpBtn_Click(object sender, EventArgs e)
+        {
+            Debugger.ToggleBreakpoint();
         }
     }
 }

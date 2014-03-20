@@ -66,7 +66,7 @@ namespace CSScriptNpp
             int start = Environment.TickCount;
             int timeout = 1000;
 
-            while (retval == null && (Environment.TickCount-start) < timeout)
+            while (retval == null && (Environment.TickCount - start) < timeout)
             {
                 Thread.Sleep(1);
             }
@@ -92,9 +92,9 @@ namespace CSScriptNpp
             string[] parts = notification.Split(new[] { ':' }, 2);
             string id = parts[0];
             string result = parts[1];
-            
+
             Action<string> handler = null;
-            
+
             lock (invokeCompleteHandlers)
             {
                 if (invokeCompleteHandlers.ContainsKey(id))
@@ -103,8 +103,8 @@ namespace CSScriptNpp
                     invokeCompleteHandlers.Remove(id);
                 }
             }
-            
-            if(handler != null)
+
+            if (handler != null)
                 handler(result);
         }
 
@@ -293,7 +293,6 @@ namespace CSScriptNpp
             Npp.ClearSelection(); //need this one as otherwise parasitic selection can be triggered 
 
             Win32.SetForegroundWindow(Npp.NppHandle);
-            Win32.SetForegroundWindow(Npp.CurrentScintilla);
         }
 
         static void ClearDebuggingMarkers()
@@ -322,20 +321,39 @@ namespace CSScriptNpp
 
         static new public void StepOver()
         {
-            ClearDebuggingMarkers();
-            DebuggerServer.StepOver();
+            if (IsRunning && IsInBreak)
+            {
+                ClearDebuggingMarkers();
+                DebuggerServer.StepOver();
+            }
         }
 
         static new public void StepIn()
         {
-            ClearDebuggingMarkers();
-            DebuggerServer.StepIn();
+            if (IsRunning && IsInBreak)
+            {
+                ClearDebuggingMarkers();
+                DebuggerServer.StepIn();
+            }
         }
 
         static new public void StepOut()
         {
-            ClearDebuggingMarkers();
-            DebuggerServer.StepOut();
+            if (IsRunning && IsInBreak)
+            {
+                ClearDebuggingMarkers();
+                DebuggerServer.StepOut();
+            }
+        }
+
+        static public void SetInstructionPointer()
+        {
+            if (IsRunning && IsInBreak)
+            {
+                ClearDebuggingMarkers();
+                DebuggerServer.SetInstructionPointer(Npp.GetCaretLineNumber()+1); //debugger is 1-based
+                DebuggerServer.Break(); //need to break to trigger reporting the current step
+            }
         }
 
         static public void Start(string app, string args)

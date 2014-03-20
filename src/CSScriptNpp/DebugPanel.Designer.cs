@@ -29,138 +29,140 @@
         private void InitializeComponent()
         {
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.treeView1 = new System.Windows.Forms.TreeView();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.stack = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.goBtn = new System.Windows.Forms.ToolStripButton();
+            this.breakBtn = new System.Windows.Forms.ToolStripButton();
+            this.stopBtn = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.stepOverBtn = new System.Windows.Forms.ToolStripButton();
+            this.stepIntoBtn = new System.Windows.Forms.ToolStripButton();
+            this.stepOutBtn = new System.Windows.Forms.ToolStripButton();
+            this.setNextBtn = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tobbleBpBtn = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage3.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.goBtn,
+            this.breakBtn,
+            this.stopBtn,
+            this.toolStripSeparator1,
+            this.stepOverBtn,
+            this.stepIntoBtn,
+            this.stepOutBtn,
+            this.setNextBtn,
+            this.toolStripSeparator2,
+            this.tobbleBpBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(545, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // tabPage3
+            // goBtn
             // 
-            this.tabPage3.Controls.Add(this.label1);
-            this.tabPage3.Controls.Add(this.textBox1);
-            this.tabPage3.Controls.Add(this.button1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(537, 236);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Watch";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.goBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.goBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_go;
+            this.goBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.goBtn.Name = "goBtn";
+            this.goBtn.Size = new System.Drawing.Size(23, 22);
+            this.goBtn.Text = "Start Debugging";
+            this.goBtn.ToolTipText = "Start Debugging (F5)";
+            this.goBtn.Click += new System.EventHandler(this.goBtn_Click);
             // 
-            // button1
+            // breakBtn
             // 
-            this.button1.Location = new System.Drawing.Point(169, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.breakBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.breakBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_break;
+            this.breakBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.breakBtn.Name = "breakBtn";
+            this.breakBtn.Size = new System.Drawing.Size(23, 22);
+            this.breakBtn.Text = "Break All";
+            this.breakBtn.Click += new System.EventHandler(this.breakBtn_Click);
             // 
-            // textBox1
+            // stopBtn
             // 
-            this.textBox1.Location = new System.Drawing.Point(8, 6);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(155, 20);
-            this.textBox1.TabIndex = 1;
+            this.stopBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stopBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_stop;
+            this.stopBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stopBtn.Name = "stopBtn";
+            this.stopBtn.Size = new System.Drawing.Size(23, 22);
+            this.stopBtn.Text = "Stop Debugging";
+            this.stopBtn.ToolTipText = "Stop Debugging (Shift+F5)";
+            this.stopBtn.Click += new System.EventHandler(this.stopBtn_Click);
             // 
-            // label1
+            // toolStripSeparator1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(324, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // tabPage1
+            // stepOverBtn
             // 
-            this.tabPage1.Controls.Add(this.treeView1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(537, 236);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Locals";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.stepOverBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stepOverBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_stepover;
+            this.stepOverBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stepOverBtn.Name = "stepOverBtn";
+            this.stepOverBtn.Size = new System.Drawing.Size(23, 22);
+            this.stepOverBtn.Text = "toolStripButton4";
+            this.stepOverBtn.ToolTipText = "Step Over (F10)";
+            this.stepOverBtn.Click += new System.EventHandler(this.stepOverBtn_Click);
             // 
-            // treeView1
+            // stepIntoBtn
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Location = new System.Drawing.Point(3, 3);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(531, 230);
-            this.treeView1.TabIndex = 1;
+            this.stepIntoBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stepIntoBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_stepin;
+            this.stepIntoBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stepIntoBtn.Name = "stepIntoBtn";
+            this.stepIntoBtn.Size = new System.Drawing.Size(23, 22);
+            this.stepIntoBtn.Text = "Step Into";
+            this.stepIntoBtn.ToolTipText = "Step Into (F11)";
+            this.stepIntoBtn.Click += new System.EventHandler(this.stepIntoBtn_Click);
             // 
-            // tabPage2
+            // stepOutBtn
             // 
-            this.tabPage2.Controls.Add(this.stack);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(537, 236);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Call Stack";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.stepOutBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stepOutBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_stepout;
+            this.stepOutBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stepOutBtn.Name = "stepOutBtn";
+            this.stepOutBtn.Size = new System.Drawing.Size(23, 22);
+            this.stepOutBtn.Text = "Step Out";
+            this.stepOutBtn.Click += new System.EventHandler(this.stepOutBtn_Click);
             // 
-            // stack
+            // setNextBtn
             // 
-            this.stack.Activation = System.Windows.Forms.ItemActivation.TwoClick;
-            this.stack.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-            this.stack.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.stack.FullRowSelect = true;
-            this.stack.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.stack.HideSelection = false;
-            this.stack.Location = new System.Drawing.Point(3, 3);
-            this.stack.MultiSelect = false;
-            this.stack.Name = "stack";
-            this.stack.OwnerDraw = true;
-            this.stack.Size = new System.Drawing.Size(531, 230);
-            this.stack.TabIndex = 0;
-            this.stack.UseCompatibleStateImageBehavior = false;
-            this.stack.View = System.Windows.Forms.View.Details;
+            this.setNextBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.setNextBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_setnext;
+            this.setNextBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.setNextBtn.Name = "setNextBtn";
+            this.setNextBtn.Size = new System.Drawing.Size(23, 22);
+            this.setNextBtn.Text = "Set Next Statement";
+            this.setNextBtn.ToolTipText = "Set Next Statement (Ctrl+F10)";
+            this.setNextBtn.Click += new System.EventHandler(this.setNextBtn_Click);
             // 
-            // columnHeader1
+            // toolStripSeparator2
             // 
-            this.columnHeader1.Text = "";
-            this.columnHeader1.Width = 20;
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // columnHeader2
+            // tobbleBpBtn
             // 
-            this.columnHeader2.Text = "Name";
-            this.columnHeader2.Width = 25;
+            this.tobbleBpBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tobbleBpBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_togglebp;
+            this.tobbleBpBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tobbleBpBtn.Name = "tobbleBpBtn";
+            this.tobbleBpBtn.Size = new System.Drawing.Size(23, 22);
+            this.tobbleBpBtn.Text = "Toggle Breakpoint";
+            this.tobbleBpBtn.Click += new System.EventHandler(this.tobbleBpBtn_Click);
             // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(0, 28);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -177,11 +179,8 @@
             this.Controls.Add(this.tabControl1);
             this.Name = "DebugPanel";
             this.Text = "DebugPanel";
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -190,17 +189,17 @@
         #endregion
 
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.ListView stack;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.ToolStripButton goBtn;
+        private System.Windows.Forms.ToolStripButton breakBtn;
+        private System.Windows.Forms.ToolStripButton stopBtn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton stepOverBtn;
+        private System.Windows.Forms.ToolStripButton stepIntoBtn;
+        private System.Windows.Forms.ToolStripButton stepOutBtn;
+        private System.Windows.Forms.ToolStripButton setNextBtn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton tobbleBpBtn;
 
     }
 }

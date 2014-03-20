@@ -214,4 +214,28 @@
   <data name="property" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>property.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="dbg_break" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>dbg_break.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dbg_go" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>dbg_go.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dbg_setnext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>dbg_setnext.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dbg_stepin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>dbg_stepin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dbg_stepout" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>dbg_stepout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dbg_stepover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>dbg_stepover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dbg_stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>dbg_stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dbg_togglebp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>dbg_togglebp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
