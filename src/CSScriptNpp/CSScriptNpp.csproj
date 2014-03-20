@@ -63,13 +63,6 @@
     <Compile Include="DebugPanel.Designer.cs">
       <DependentUpon>DebugPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="CodeMapPanel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CodeMapPanel.Designer.cs">
-      <DependentUpon>CodeMapPanel.cs</DependentUpon>
-    </Compile>
-    <None Include="CSScriptNpp\css_dbg.cs" />
     <Compile Include="CSScriptNpp\MDbg\Debugger.cs" />
     <Compile Include="Dialogs\AboutBox.cs">
       <SubType>Form</SubType>
@@ -88,6 +81,12 @@
     </Compile>
     <Compile Include="Dialogs\CallStackPanel.Designer.cs">
       <DependentUpon>CallStackPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\CodeMapPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CodeMapPanel.Designer.cs">
+      <DependentUpon>CodeMapPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ConfigForm.cs">
       <SubType>Form</SubType>
@@ -171,9 +170,6 @@
     <EmbeddedResource Include="DebugPanel.resx">
       <DependentUpon>DebugPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CodeMapPanel.resx">
-      <DependentUpon>CodeMapPanel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -182,6 +178,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\CallStackPanel.resx">
       <DependentUpon>CallStackPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\CodeMapPanel.resx">
+      <DependentUpon>CodeMapPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
@@ -315,14 +314,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSScriptNpp\css_dbg.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\css_dbg.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="CSScriptNpp\MDbg\enc.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -397,6 +388,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dbg_break.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSScriptNpp\csws.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSScriptNpp\css_dbg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSScriptNpp\css_dbg.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

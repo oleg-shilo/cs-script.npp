@@ -22,7 +22,7 @@ namespace CSScriptNpp
 
             CSScriptIntellisense.Config.Instance.SetFileName(base.file);
             CSScriptIntellisense.Config.Instance.Section = "Intellisense";
-            
+
             Open();
         }
 
@@ -40,7 +40,7 @@ namespace CSScriptNpp
         public int SciptHistoryMaxCount = 10;
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
-        public bool ShowCodeMapPanel = false;
+        public bool DebugAsConsole = true;
         public bool ShowDebugPanel = false;
         public int OutputPanelCapacity = 10000; //num of characters
         public bool LocalDebug = true;
@@ -58,7 +58,7 @@ namespace CSScriptNpp
 
             SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
             SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
-            SetValue(Section, "ShowCodeMapPanel", ShowCodeMapPanel);
+            SetValue(Section, "DebugAsConsole", DebugAsConsole);
             SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
             SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
             SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
@@ -82,7 +82,7 @@ namespace CSScriptNpp
         {
             ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
             ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
-            ShowCodeMapPanel = GetValue(Section, "ShowCodeMapPanel", ShowCodeMapPanel);
+            DebugAsConsole = GetValue(Section, "DebugAsConsole", DebugAsConsole);
             //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway. 
             SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
             SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);

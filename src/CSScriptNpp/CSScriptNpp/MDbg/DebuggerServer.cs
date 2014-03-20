@@ -23,6 +23,11 @@ namespace CSScriptNpp
 
     class DebuggerServer
     {
+        static DebuggerServer()
+        {
+            debugAsConsole = Config.Instance.DebugAsConsole;
+        }
+
         static public void Break()
         {
             if (IsRunning) MessageQueue.AddCommand("break");
@@ -37,11 +42,6 @@ namespace CSScriptNpp
         {
             MessageQueue.AddCommand("breakpoint-|" + fileLineInfo);
         }
-
-        //static public void GetBreakpoints()
-        //{
-        //    MessageQueue.AddCommand("breakpoints");
-        //}
 
         static public void Go()
         {
@@ -93,6 +93,18 @@ namespace CSScriptNpp
                 MessageQueue.AddCommand(string.Format("mo nc on\nrun \"{0}\"", application));
             else
                 MessageQueue.AddCommand(string.Format("mo nc on\nrun \"{0}\" {1}", application, args));
+        }
+
+        static bool debugAsConsole;
+
+        static public bool DebugAsConsole
+        {
+            get { return debugAsConsole; }
+            set
+            {
+                debugAsConsole = value;
+                Config.Instance.DebugAsConsole = debugAsConsole;
+            }
         }
 
         static public bool IsRunning

@@ -66,18 +66,22 @@
             this.whatsNewTxt = new System.Windows.Forms.TextBox();
             this.whatsNewPanel = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.solutionContextMenu.SuspendLayout();
             this.itemContextMenu.SuspendLayout();
             this.whatsNewPanel.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(484, -1);
+            this.pictureBox1.Location = new System.Drawing.Point(920, -1);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 21);
             this.pictureBox1.TabIndex = 11;
@@ -87,19 +91,17 @@
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.BackColor = System.Drawing.Color.White;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.HideSelection = false;
             this.treeView1.ImageIndex = 0;
             this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Location = new System.Drawing.Point(0, 28);
+            this.treeView1.Location = new System.Drawing.Point(3, 3);
             this.treeView1.Name = "treeView1";
             this.treeView1.SelectedImageIndex = 0;
             this.treeView1.ShowNodeToolTips = true;
             this.treeView1.ShowRootLines = false;
-            this.treeView1.Size = new System.Drawing.Size(541, 239);
+            this.treeView1.Size = new System.Drawing.Size(975, 423);
             this.treeView1.TabIndex = 3;
             this.treeView1.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCollapse);
             this.treeView1.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterExpand);
@@ -144,7 +146,7 @@
             this.shortcutsBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(541, 31);
+            this.toolStrip1.Size = new System.Drawing.Size(989, 31);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -423,8 +425,8 @@
             // 
             // whatsNewTxt
             // 
-            this.whatsNewTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.whatsNewTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.whatsNewTxt.BackColor = System.Drawing.Color.White;
             this.whatsNewTxt.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -434,22 +436,22 @@
             this.whatsNewTxt.Name = "whatsNewTxt";
             this.whatsNewTxt.ReadOnly = true;
             this.whatsNewTxt.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.whatsNewTxt.Size = new System.Drawing.Size(506, 187);
+            this.whatsNewTxt.Size = new System.Drawing.Size(942, 426);
             this.whatsNewTxt.TabIndex = 5;
             // 
             // whatsNewPanel
             // 
-            this.whatsNewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.whatsNewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.whatsNewPanel.BackColor = System.Drawing.Color.White;
             this.whatsNewPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.whatsNewPanel.Controls.Add(this.pictureBox1);
             this.whatsNewPanel.Controls.Add(this.label1);
             this.whatsNewPanel.Controls.Add(this.whatsNewTxt);
-            this.whatsNewPanel.Location = new System.Drawing.Point(12, 40);
+            this.whatsNewPanel.Location = new System.Drawing.Point(12, 23);
             this.whatsNewPanel.Name = "whatsNewPanel";
-            this.whatsNewPanel.Size = new System.Drawing.Size(517, 216);
+            this.whatsNewPanel.Size = new System.Drawing.Size(953, 455);
             this.whatsNewPanel.TabIndex = 10;
             // 
             // label1
@@ -463,14 +465,39 @@
             this.label1.TabIndex = 10;
             this.label1.Text = "What\'s new?";
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Alignment = System.Windows.Forms.TabAlignment.Bottom;
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Location = new System.Drawing.Point(0, 34);
+            this.tabControl1.Multiline = true;
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(989, 455);
+            this.tabControl1.TabIndex = 11;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.treeView1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 4);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(981, 429);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Script Project";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
             // ProjectPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 268);
+            this.ClientSize = new System.Drawing.Size(989, 490);
             this.Controls.Add(this.whatsNewPanel);
             this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.tabControl1);
             this.KeyPreview = true;
             this.Name = "ProjectPanel";
             this.Text = "ManageScripts";
@@ -481,6 +508,8 @@
             this.itemContextMenu.ResumeLayout(false);
             this.whatsNewPanel.ResumeLayout(false);
             this.whatsNewPanel.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -524,5 +553,7 @@
         private System.Windows.Forms.ToolStripButton testButton1;
         private System.Windows.Forms.ToolStripButton testButton2;
         private System.Windows.Forms.ToolStripButton testButton3;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
     }
 }

@@ -1,11 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSScriptNpp", "CSScriptNpp\CSScriptNpp.csproj", "{23B08B10-8297-4A90-9B6D-43DAC7416004}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A2272B4F-44F6-4FB2-86A0-3EC99C0947F7} = {A2272B4F-44F6-4FB2-86A0-3EC99C0947F7}
+		{8860B29B-749F-4925-86C8-F9C4B93C9DA5} = {8860B29B-749F-4925-86C8-F9C4B93C9DA5}
 		{EB8FC3A3-93E8-457B-B281-FAFA5119611A} = {EB8FC3A3-93E8-457B-B281-FAFA5119611A}
 		{E0A601D8-5E4F-4119-BEC1-C7F1E46C1F9F} = {E0A601D8-5E4F-4119-BEC1-C7F1E46C1F9F}
 	EndProjectSection
@@ -30,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSScriptNpp.Test", "CSScrip
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testpad", "Testpad\Testpad.csproj", "{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "css_dbg", "css_dbg\css_dbg.csproj", "{8860B29B-749F-4925-86C8-F9C4B93C9DA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +64,10 @@ Global
 		{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{607700D5-8BFC-4A1F-A2DE-4E2B3125D23A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8860B29B-749F-4925-86C8-F9C4B93C9DA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8860B29B-749F-4925-86C8-F9C4B93C9DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8860B29B-749F-4925-86C8-F9C4B93C9DA5}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{8860B29B-749F-4925-86C8-F9C4B93C9DA5}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,5 +75,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E0A601D8-5E4F-4119-BEC1-C7F1E46C1F9F} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{A2272B4F-44F6-4FB2-86A0-3EC99C0947F7} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
+		{8860B29B-749F-4925-86C8-F9C4B93C9DA5} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 	EndGlobalSection
 EndGlobal

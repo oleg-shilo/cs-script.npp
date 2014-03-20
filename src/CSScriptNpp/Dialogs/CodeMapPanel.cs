@@ -120,7 +120,7 @@ namespace CSScriptNpp
         private void refreshLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Cursor = Cursors.WaitCursor;
-            GenerateContent();
+            RefreshContent();
             Cursor = Cursors.Default;
         }
     }

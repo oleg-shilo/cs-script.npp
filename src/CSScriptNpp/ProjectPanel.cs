@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,27 +8,26 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSScriptIntellisense;
 using CSScriptLibrary;
-using System.Drawing;
+using CSScriptNpp.Dialogs;
 
 namespace CSScriptNpp
 {
     public partial class ProjectPanel : Form
     {
         static internal string currentScript;
+        CodeMapPanel mapPanel;
 
         public ProjectPanel()
         {
             InitializeComponent();
 
-#if DEBUG
-            //testButton3.Visible =
-            //testButton2.Visible =
-            //testButton1.Visible = true;
-#endif
             if (Config.Instance.BuildOnF7)
                 validateBtn.ToolTipText += " or F7";
 
             Debugger.OnDebuggerStateChanged += RefreshControls;
+
+            mapPanel = new CodeMapPanel();
+            tabControl1.AddTab("Code Map", mapPanel);
 
             RefreshControls();
             ReloadScriptHistory();
@@ -373,8 +373,9 @@ void main(string[] args)
                 {
                     try
                     {
+                        string targetType = Debugger.DebugAsConsole ? "cscs.exe" : "csws.exe";
                         string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
-                        Debugger.Start(debuggingHost, "/dbg \"" + currentScript + "\"");
+                        Debugger.Start(debuggingHost, targetType +" /dbg \"" + currentScript + "\"");
 
                         if (breakOnFirstStep)
                             Debugger.EntryBreakpointFile = currentScript;

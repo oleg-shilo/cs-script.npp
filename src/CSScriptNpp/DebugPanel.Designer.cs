@@ -39,12 +39,14 @@
             this.setNextBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tobbleBpBtn = new System.Windows.Forms.ToolStripButton();
+            this.appTypeCombo = new System.Windows.Forms.ToolStripComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
+            this.toolStrip1.AutoSize = false;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.goBtn,
@@ -56,7 +58,8 @@
             this.stepOutBtn,
             this.setNextBtn,
             this.toolStripSeparator2,
-            this.tobbleBpBtn});
+            this.tobbleBpBtn,
+            this.appTypeCombo});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(545, 25);
@@ -158,6 +161,19 @@
             this.tobbleBpBtn.Text = "Toggle Breakpoint";
             this.tobbleBpBtn.Click += new System.EventHandler(this.tobbleBpBtn_Click);
             // 
+            // appTypeCombo
+            // 
+            this.appTypeCombo.AutoSize = false;
+            this.appTypeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.appTypeCombo.DropDownWidth = 80;
+            this.appTypeCombo.Items.AddRange(new object[] {
+            "Console",
+            "Windows"});
+            this.appTypeCombo.Name = "appTypeCombo";
+            this.appTypeCombo.Size = new System.Drawing.Size(121, 25);
+            this.appTypeCombo.ToolTipText = "Application Type";
+            this.appTypeCombo.SelectedIndexChanged += new System.EventHandler(this.appTypeCombo_SelectedIndexChanged);
+            // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -182,7 +198,6 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -200,6 +215,7 @@
         private System.Windows.Forms.ToolStripButton setNextBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton tobbleBpBtn;
+        private System.Windows.Forms.ToolStripComboBox appTypeCombo;
 
     }
 }

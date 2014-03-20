@@ -23,7 +23,14 @@ namespace CSScriptNpp
             tabControl1.AddTab("Auto Watch", locals);
             tabControl1.AddTab("Call Stack", callstack);
 
+            if (Debugger.DebugAsConsole)
+                appTypeCombo.SelectedIndex = 0;
+            else
+                appTypeCombo.SelectedIndex = 1;
+
             Debugger.OnDebuggerStateChanged += UpdateControlsState;
+
+            appTypeCombo.Width = 80;           
         }
 
         void UpdateControlsState()
@@ -101,6 +108,11 @@ namespace CSScriptNpp
         private void tobbleBpBtn_Click(object sender, EventArgs e)
         {
             Debugger.ToggleBreakpoint();
+        }
+
+        private void appTypeCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Debugger.DebugAsConsole = (appTypeCombo.SelectedIndex == 0);
         }
     }
 }

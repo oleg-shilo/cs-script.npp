@@ -32,22 +32,25 @@ namespace CSScriptNpp
      *      + clear all breakpoints on the file tab disabled (change) when debugging
      *      + test debugger on clean non-dev system (Win7 x32)
      *      + Implement 'Set Next Statement'
-     *      - set breakpoint from secondary source file
+     *      + set breakpoint from secondary source file
      *      - test debugger on UAC system
      *      - start debugging as non-console script-process when there is cs-s directive to do so
-     *      - integrate projects
+     *      + integrate projects
      *         + pack/embed mdbg.exe
      *         - clear npp.csproj
-     *      - Debug panel
+     *      + Debug panel
      *          + Callstack panel
      *          + buttons
-     *          - Locals panel
+     *          + Locals panel
      *            + static vs. non-static members
-     *            + allov copy to clipboard
+     *            + allow copy to clipboard
      *            + properties
      *            + VS styling
-     *            - reflect selection
-     *            - 'name' column autosize
+     *            + reflect selection
+     *            + 'name' column autosize
+     *            
+     *      - Debug panel
+     *          - Locals panel
      *            - cahced update
      *          - Watch panel
      *            - cahced update
@@ -66,7 +69,6 @@ namespace CSScriptNpp
         public const string PluginName = "CS-Script";
         public static int projectPanelId = -1;
         public static int outputPanelId = -1;
-        public static int codeMapPanelId = -1;
         public static int debugPanelId = -1;
 
         public static Dictionary<ShortcutKey, Tuple<string, Action>> internalShortcuts = new Dictionary<ShortcutKey, Tuple<string, Action>>();
@@ -81,8 +83,7 @@ namespace CSScriptNpp
             SetCommand(index++, "---", null);
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
             SetCommand(outputPanelId = index++, "Output Panel", DoOutputPanel, Config.Instance.ShowOutputPanel);
-            SetCommand(codeMapPanelId = index++, "CodeMap Panel", DoCodeMapPanel, Config.Instance.ShowCodeMapPanel);
-            SetCommand(debugPanelId = index++, "Debug Panel", DoDebugPanel, Config.Instance.ShowCodeMapPanel);
+            SetCommand(debugPanelId = index++, "Debug Panel", DoDebugPanel, Config.Instance.ShowDebugPanel);
             SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
             SetCommand(index++, "About", ShowAbout);
@@ -255,25 +256,17 @@ namespace CSScriptNpp
             Plugin.DebugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
         }
 
-        static public void DoCodeMapPanel()
-        {
-            Plugin.CodeMapPanel = ShowDockablePanel<CodeMapPanel>("C# Code Map", codeMapPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-        }
-
         static public void ShowSecondaryPanels()
         {
             if (Plugin.OutputPanel == null)
                 DoOutputPanel();
 
-            if (Plugin.CodeMapPanel == null)
-                DoCodeMapPanel();
 
             if (Plugin.DebugPanel == null)
                 DoDebugPanel();
 
             Plugin.SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
             Plugin.SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
-            Plugin.SetDockedPanelVisible(Plugin.CodeMapPanel, codeMapPanelId, true);
         }
 
         static public void DoProjectPanel()
@@ -297,10 +290,6 @@ namespace CSScriptNpp
             {
                 Plugin.DoOutputPanel();
             }
-            else if (toggleScondaryPanelsCount == 1 && (Plugin.CodeMapPanel == null || !Plugin.CodeMapPanel.Visible))
-            {
-                Plugin.DoCodeMapPanel();
-            }
             else if (toggleScondaryPanelsCount == 3 && (Plugin.DebugPanel == null || !Plugin.DebugPanel.Visible))
             {
                 Plugin.DoDebugPanel();
@@ -308,7 +297,6 @@ namespace CSScriptNpp
             else if (toggleScondaryPanelsCount == 4)
             {
                 Plugin.DoOutputPanel();
-                Plugin.DoCodeMapPanel();
                 Plugin.DoDebugPanel();
             }
 
@@ -369,7 +357,8 @@ namespace CSScriptNpp
             {
                 try
                 {
-                    Plugin.RunningScript.Kill();
+                    if (Plugin.RunningScript != null)
+                        Plugin.RunningScript.Kill();
                 }
                 catch (Exception ex)
                 {
@@ -431,9 +420,6 @@ namespace CSScriptNpp
             if (Config.Instance.ShowOutputPanel)
                 DoOutputPanel();
 
-            if (Config.Instance.ShowCodeMapPanel)
-                DoCodeMapPanel();
-
             if (Config.Instance.ShowDebugPanel)
                 DoDebugPanel();
 
@@ -446,7 +432,6 @@ namespace CSScriptNpp
         {
             Config.Instance.ShowProjectPanel = (dockedManagedPanels.ContainsKey(projectPanelId) && dockedManagedPanels[projectPanelId].Visible);
             Config.Instance.ShowOutputPanel = (dockedManagedPanels.ContainsKey(outputPanelId) && dockedManagedPanels[outputPanelId].Visible);
-            Config.Instance.ShowCodeMapPanel = (dockedManagedPanels.ContainsKey(codeMapPanelId) && dockedManagedPanels[codeMapPanelId].Visible);
             Config.Instance.ShowDebugPanel = (dockedManagedPanels.ContainsKey(debugPanelId) && dockedManagedPanels[debugPanelId].Visible);
             Config.Instance.Save();
             OutputPanel.Clean();
