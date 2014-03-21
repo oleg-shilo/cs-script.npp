@@ -108,6 +108,7 @@
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseDoubleClick);
+            this.treeView1.SizeChanged += new System.EventHandler(this.treeView1_SizeChanged);
             // 
             // imageList1
             // 
@@ -221,7 +222,6 @@
             this.testButton1.Size = new System.Drawing.Size(54, 28);
             this.testButton1.Text = "StepOut";
             this.testButton1.Visible = false;
-            this.testButton1.Click += new System.EventHandler(this.test_Click);
             // 
             // stopBtn
             // 

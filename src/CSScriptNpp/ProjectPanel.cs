@@ -375,7 +375,7 @@ void main(string[] args)
                     {
                         string targetType = Debugger.DebugAsConsole ? "cscs.exe" : "csws.exe";
                         string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
-                        Debugger.Start(debuggingHost, targetType +" /dbg \"" + currentScript + "\"");
+                        Debugger.Start(debuggingHost, string.Format("{0} {1} /dbg  \"{2}\"", Process.GetCurrentProcess().Id, targetType, currentScript));
 
                         if (breakOnFirstStep)
                             Debugger.EntryBreakpointFile = currentScript;
@@ -824,79 +824,6 @@ void main(string[] args)
             whatsNewPanel.Visible = false;
         }
 
-        int index = 0;
-        bool inited = false;
-        const int MARK_BOOKMARK = 24;
-        const int MARK_HIDELINESBEGIN = 23;
-        const int MARK_HIDELINESEND = 22;
-        const int MARK_DEBUGSTEP = 8;
-        const int MARK_BREAKPOINT = 7;
-        const int INDICATOR_DEBUGSTEP = 9;
-
-        bool test1 = false;
-        private void test_Click(object sender, EventArgs e)
-        {
-
-            Debugger.StepOut(); return;
-            //ActiveDev.SetMarker(); return;
-            string[] points = new[]
-            {
-                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|12:9|12:10",
-                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|13:13|13:45",
-                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|14:13|14:47",
-                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|15:13|15:45",
-                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|16:13|16:26",
-                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|17:13|17:20",
-                @"c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|18:9|18:10"
-            };
-
-            if (index >= points.Length)
-            {
-                index = 0;
-            }
-
-            var info = (int[][])points[index].Split('|').Skip(1).Select(x =>
-                {
-                    var parts = x.Split(':');
-                    return new int[] { int.Parse(parts.First()) - 1, int.Parse(parts.Last()) - 1 };
-                }).ToArray();
-
-            var xyPoints = info;
-
-            Npp.ClearIndicator(INDICATOR_DEBUGSTEP, start, end);
-
-            start = Npp.GetPosition(xyPoints[0][0], xyPoints[0][1]);
-            end = Npp.GetPosition(xyPoints[1][0], xyPoints[1][1]);
-
-            var debugStepPointColor = Color.Yellow;
-
-            //setup
-            Npp.SetIndicatorStyle(INDICATOR_DEBUGSTEP, SciMsg.INDIC_STRAIGHTBOX, debugStepPointColor);
-            Npp.SetIndicatorTransparency(INDICATOR_DEBUGSTEP, 90, 255);
-
-            Npp.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, Color.Black, debugStepPointColor);
-            Npp.SetMarkerStyle(MARK_BREAKPOINT, SciMsg.SC_MARK_CIRCLE, Color.Black, Color.Red);
-
-            //placement
-            Npp.PlaceMarker(MARK_BREAKPOINT, 14);
-
-            Npp.PlaceIndicator(INDICATOR_DEBUGSTEP, start, end);
-
-            Npp.DeleteAllMarkers(MARK_DEBUGSTEP);
-            Npp.PlaceMarker(MARK_DEBUGSTEP, xyPoints[0][0]);
-
-            index++;
-        }
-
-        static int start = -1;
-        static int end = -1;
-
-        int execute(SciMsg msg, int wParam, int lParam)
-        {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, msg, wParam, lParam);
-        }
-
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             Debugger.StepIn();
@@ -905,6 +832,11 @@ void main(string[] args)
         private void testButton3_Click(object sender, EventArgs e)
         {
             Debugger.Break();
+        }
+
+        private void treeView1_SizeChanged(object sender, EventArgs e)
+        {
+            treeView1.Invalidate(); //WinForm TreeView has nasty rendering artifact on window maximize
         }
     }
 }
