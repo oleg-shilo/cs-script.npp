@@ -34,7 +34,7 @@ namespace CSScriptNpp
      *      + set breakpoint from secondary source file
      *      + start debugging as non-console vs console
      *      + move code panel to project panel as a tab
-     *      + Project Panel repainting artefact
+     *      + Project Panel repainting artifact
      *      - test debugger on UAC system
      *      + integrate projects
      *         + pack/embed mdbg.exe

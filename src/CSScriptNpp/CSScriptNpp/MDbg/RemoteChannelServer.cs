@@ -119,7 +119,7 @@ namespace CSScriptNpp
                 Notify("ERROR: " + e.Message);
             }
 
-            Notify("In.Client disconnected.");
+            Notify("In.Client disconnected");
         }
 
         void PushCommands()

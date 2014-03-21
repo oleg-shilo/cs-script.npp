@@ -220,12 +220,12 @@ using System.Windows.Forms;
 
 class Script
 {
-	[STAThread]
-	static public void Main(string[] args)
-	{
+    [STAThread]
+    static public void Main(string[] args)
+    {
         Console.WriteLine(""Hello World!"");
         Debug.WriteLine(""Hello World!"");
-	}
+    }
 }";
 
         const string defaultClasslessScriptCode =
@@ -375,7 +375,7 @@ void main(string[] args)
                     {
                         string targetType = Debugger.DebugAsConsole ? "cscs.exe" : "csws.exe";
                         string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
-                        Debugger.Start(debuggingHost, string.Format("{0} {1} /dbg  \"{2}\"", Process.GetCurrentProcess().Id, targetType, currentScript));
+                        Debugger.Start(debuggingHost, string.Format("{0} /dbg  \"{1}\"", targetType, currentScript));
 
                         if (breakOnFirstStep)
                             Debugger.EntryBreakpointFile = currentScript;
