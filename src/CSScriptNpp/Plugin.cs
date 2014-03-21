@@ -35,10 +35,11 @@ namespace CSScriptNpp
      *      + start debugging as non-console vs console
      *      + move code panel to project panel as a tab
      *      + Project Panel repainting artifact
+     *      - build distro
      *      - test debugger on UAC system
      *      + integrate projects
      *         + pack/embed mdbg.exe
-     *         - clear npp.csproj
+     *         + clear npp.csproj
      *      + Debug panel
      *          + Callstack panel
      *          + buttons
