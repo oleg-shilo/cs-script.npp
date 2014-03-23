@@ -70,6 +70,20 @@ namespace CSScriptNpp
             Win32.SendMessage(sci, SciMsg.SCI_SETMOUSEDWELLTIME, milliseconds, 0);
         }
 
+        static public string GetTextBetween(int start, int end = -1)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+
+            if (end == -1)
+                end = (int)Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
+
+            using (var tr = new Sci_TextRange(start, end, end - start + 1)) //+1 for null termination
+            {
+                Win32.SendMessage(sci, SciMsg.SCI_GETTEXTRANGE, 0, tr.NativePointer);
+                return tr.lpstrText;
+            }
+        }
+
         public static int GetCaretLineNumber()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -119,7 +133,7 @@ namespace CSScriptNpp
             IntPtr sci = Plugin.GetCurrentScintilla();
             return (int)Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
         }
-        
+
         static public int GetLinesOnScreen()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -174,8 +188,8 @@ namespace CSScriptNpp
         static public void ClearIndicator(int indicator, int startPos, int endPos = -1)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            if(endPos == -1)
-                endPos =  execute(SciMsg.SCI_GETLENGTH, 0, 0);
+            if (endPos == -1)
+                endPos = execute(SciMsg.SCI_GETLENGTH, 0, 0);
 
             Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, indicator, 0);
             Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, startPos, endPos - startPos);
@@ -196,7 +210,7 @@ namespace CSScriptNpp
             execute(SciMsg.SCI_MARKERSETBACK, marker, ColorTranslator.ToWin32(backColor));
             execute(SciMsg.SCI_SETMARGINMASKN, 1, (1 << marker) | mask);
         }
-       
+
         static public void SetMarkerStyle(int marker, Bitmap bitmap)
         {
             int mask = execute(SciMsg.SCI_GETMARGINMASKN, 1, 0);

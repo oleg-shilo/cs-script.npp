@@ -1,3 +1,4 @@
+using CSScriptLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,8 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
-using CSScriptLibrary;
 
 namespace CSScriptNpp
 {
@@ -110,6 +111,48 @@ namespace CSScriptNpp
 
             if (output.Length > 0 && output.ToString().StartsWith("Error: Specified file could not be compiled."))
                 throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
+        }
+
+        static char[] delimiter = new char[] { '-' };
+        static public bool Verify(string scriptFileCmd, out string entryFile)
+        {
+
+            entryFile = null;
+
+            var p = new Process();
+            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+            p.StartInfo.Arguments = "/nl /l /ca /verbose " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            p.Start();
+
+            var output = new StringBuilder();
+
+            string autoGenFilePattern = Path.GetFileNameWithoutExtension(scriptFileCmd) + ".g" + Path.GetExtension(scriptFileCmd);
+            string line = null;
+            while (null != (line = p.StandardOutput.ReadLine()))
+            {
+                if (entryFile == null && line.EndsWith(autoGenFilePattern))
+                {
+                    entryFile = line.Split(delimiter, 2).Last().TrimStart();
+                }
+                output.AppendLine(line);
+            }
+            p.WaitForExit();
+
+            string stdOutput = output.ToString();
+
+            if (stdOutput.Contains("Error: Specified file could not be compiled."))
+                return false;
+            else
+                return true;
+        }
+
+        static public bool IsAutoclassScript(string text)
+        {
+            return Regex.Matches(text, @"\s?//css_args\s+/ac\s+").Count != 0;
         }
 
         static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion)

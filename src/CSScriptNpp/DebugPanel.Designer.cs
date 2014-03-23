@@ -143,7 +143,7 @@
             this.setNextBtn.Name = "setNextBtn";
             this.setNextBtn.Size = new System.Drawing.Size(23, 22);
             this.setNextBtn.Text = "Set Next Statement";
-            this.setNextBtn.ToolTipText = "Set Next Statement (Ctrl+F10)";
+            this.setNextBtn.ToolTipText = "Set Next Statement (Ctrl+Shift+F10)";
             this.setNextBtn.Click += new System.EventHandler(this.setNextBtn_Click);
             // 
             // toolStripSeparator2

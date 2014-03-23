@@ -22,13 +22,26 @@ class Script
                     new File(@"Plugins\CSScriptNpp.dll"),
                     new Dir("CSScriptNpp",
                         new File(@"Plugins\CSScriptNpp\cscs.exe"),
+                        new File(@"Plugins\CSScriptNpp\csws.exe"),
+                        new File(@"Plugins\CSScriptNpp\cscs.v3.5.exe"),
+                        new File(@"Plugins\CSScriptNpp\css_dbg.exe"),
+                        new File(@"Plugins\CSScriptNpp\css_dbg.pdb"),
                         new File(@"Plugins\CSScriptNpp\CSScriptIntellisense.dll"),
                         new File(@"Plugins\CSScriptNpp\CSScriptLibrary.dll"),
                         new File(@"Plugins\CSScriptNpp\Mono.Cecil.dll"),
                         new File(@"Plugins\CSScriptNpp\ICSharpCode.NRefactory.CSharp.dll"),
-                        new File(@"Plugins\CSScriptNpp\ICSharpCode.NRefactory.dll"))));
+                        new File(@"Plugins\CSScriptNpp\ICSharpCode.NRefactory.dll"),
+                        new Dir("Mdbg",
+                            new File(@"Plugins\CSScriptNpp\Mdbg\corapi.dll"),
+                            new File(@"Plugins\CSScriptNpp\Mdbg\enc.dll"),
+                            new File(@"Plugins\CSScriptNpp\Mdbg\mdbg.exe"),
+                            new File(@"Plugins\CSScriptNpp\Mdbg\mdbgeng.dll"),
+                            new File(@"Plugins\CSScriptNpp\Mdbg\mdbgext.dll"),
+                            new File(@"Plugins\CSScriptNpp\Mdbg\NativeDebugWrappers.dll"),
+                            new File(@"Plugins\CSScriptNpp\Mdbg\npp.dll"),
+                            new File(@"Plugins\CSScriptNpp\Mdbg\raw.dll")))));
 
-        project.Actions = new WixSharp.Action[]
+        project.Actions = new WixSharp.Action[] 
         {
             new PathFileAction("%ProgramFiles%\\Notepad++\\notepad++.exe", "", "INSTALLDIR", Return.asyncNoWait, When.After, Step.InstallInitialize, Condition.NOT_Installed)
             {

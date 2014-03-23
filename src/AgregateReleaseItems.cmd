@@ -1,5 +1,6 @@
 echo off
 md "..\bin\Plugins\CSScriptNpp"
+md "..\bin\Plugins\CSScriptNpp\Mdbg"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 
