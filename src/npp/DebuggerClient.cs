@@ -102,6 +102,10 @@ namespace gui
             {
                 ProcessBreakpoint(command);
             }
+            else if (command.StartsWith("gotoframe")) //not native Mdbg command
+            {
+                ProcessFrameNavigation(command);
+            }
             else if (command.StartsWith(NppCategory.Invoke)) //not native Mdbg command
             {
                 ProcessInvoke(command.Substring(NppCategory.Invoke.Length));
@@ -121,6 +125,30 @@ namespace gui
             }
         }
 
+
+        public void ProcessFrameNavigation(string command)
+        {
+            //gotoframe|<frameId>
+            string[] parts = command.Split('|');
+            if (parts[0] == "gotoframe")
+            {
+                string id = parts[1];
+                {
+                    try
+                    {
+                        var frame = GetFrameByIndex(shell.Debugger.Processes.Active.Threads.Active, int.Parse(id));
+                        shell.Debugger.Processes.Active.Threads.Active.CurrentFrame = frame;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // if it throws an invalid op, then that means our frames somehow got out of sync and we weren't fully refreshed.
+                        return;
+                    }
+
+                    ReportsCurrentState();
+                }
+            }
+        }
 
         public void ProcessBreakpoint(string command)
         {
@@ -370,11 +398,14 @@ namespace gui
             if (!process.Threads.Active.HaveCurrentFrame)
                 return null; //No frame for current thread #" + thread.Number);
 
-            foreach (var framePair in GetCallStackList(shell.Debugger.Processes.Active.Threads.Active))
-                if (framePair.m_frame.SourcePosition != null)
-                    return FormatSourcePosition(framePair.m_frame);
+            //foreach (var framePair in GetCallStackList(shell.Debugger.Processes.Active.Threads.Active))
+            //    if (framePair.m_frame.SourcePosition != null && process.Threads.Active.CurrentFrame == framePair.m_frame)
+            //        return FormatSourcePosition(framePair.m_frame);
 
-            return null;
+            if (!process.Threads.Active.CurrentFrame.IsInfoOnly)
+                return FormatSourcePosition(process.Threads.Active.CurrentFrame);
+            else
+                return null;
         }
 
         string FormatSourcePosition(MDbgFrame frame)
@@ -409,10 +440,9 @@ namespace gui
                 MessageQueue.AddNotification(NppCategory.SourceCode + position);
             }
         }
+
         void ReportsCurrentState()
         {
-            //Debug.Assert(false);
-
             reportedValues.Clear();
 
             ReportSourceCodePosition();
@@ -429,24 +459,29 @@ namespace gui
 
         void ReportCallStack()
         {
+            int frameIndex = 0;
+            var activeFrame = shell.Debugger.Processes.Active.Threads.Active.HaveCurrentFrame ? shell.Debugger.Processes.Active.Threads.Active.CurrentFrame : null;
+
             var result = new List<string>();
             foreach (FramePair frame in GetCallStackList(shell.Debugger.Processes.Active.Threads.Active))
             {
+                string isActive = (frame.m_frame == activeFrame) ? "+" : "-";
+
                 if (frame.m_frame.SourcePosition != null)
                 {
                     string callInfo = FormatCallInfo(frame.m_frame);
                     string sourceRef = "";
                     sourceRef = FormatSourcePosition(frame.m_frame);
-                    result.Add(string.Format("{0}|{1}{2}", callInfo, sourceRef, lineDelimiter));
+                    result.Add(string.Format("{0}{1}|{2}|{3}{4}", isActive, frameIndex, callInfo, sourceRef, lineDelimiter));
                 }
                 else if (frame.m_frame.IsInfoOnly)
                 {
-                    result.Add(string.Format("{0}|{1}{2}", "[External Code]", "", lineDelimiter));
+                    result.Add(string.Format("{0}{1}|{2}|{3}{4}", isActive, frameIndex, "[External Code]", "", lineDelimiter));
                 }
+
+                frameIndex++;
             }
 
-
-            result = result.Distinct().ToList();
             if (result.Any())
             {
                 string data = string.Join("", result.ToArray());
@@ -728,6 +763,25 @@ namespace gui
 
             internal MDbgFrame m_frame;
             String m_displayString;
+        }
+
+        static MDbgFrame GetFrameByIndex(MDbgThread thread, int index)
+        {
+            MDbgFrame f = thread.BottomFrame;
+
+            int count = 0;
+            int depth = 20;
+
+            while (f != null && (depth == 0 || count < depth))
+            {
+                if (count == index)
+                    return f;
+
+                count++;
+                f = f.NextUp;
+            }
+
+            return null;
         }
 
         static FramePair[] GetCallStackList(MDbgThread thread)

@@ -245,6 +245,22 @@ namespace CSScriptNpp
             return file + "|" + (line + 1); //server debugger operates in '1-based' lines
         }
 
+        static public void RunToCursor()
+        {
+            if (IsRunning && IsInBreak)
+            {
+                string file = Npp.GetCurrentFile();
+                int line = Npp.GetCaretLineNumber();
+                string key = BuildBreakpointKey(file, line);
+                DebuggerServer.AddBreakpoint(key);
+                DebuggerServer.Go();
+                DebuggerServer.OnBreak = ()=>
+                {
+                    DebuggerServer.RemoveBreakpoint(key);
+                };
+            }
+        }
+
         static public void ToggleBreakpoint(int lineClick = -1)
         {
             string file = Npp.GetCurrentFile();
@@ -337,6 +353,14 @@ namespace CSScriptNpp
             }
         }
 
+        static new public void GoToFrame(string frameId)
+        {
+            if (IsRunning && IsInBreak)
+            {
+                DebuggerServer.GoToFrame(frameId);
+            }
+        }
+
         static new public void StepOut()
         {
             if (IsRunning && IsInBreak)
@@ -351,7 +375,7 @@ namespace CSScriptNpp
             if (IsRunning && IsInBreak)
             {
                 ClearDebuggingMarkers();
-                DebuggerServer.SetInstructionPointer(Npp.GetCaretLineNumber()+1); //debugger is 1-based
+                DebuggerServer.SetInstructionPointer(Npp.GetCaretLineNumber() + 1); //debugger is 1-based
                 DebuggerServer.Break(); //need to break to trigger reporting the current step
             }
         }

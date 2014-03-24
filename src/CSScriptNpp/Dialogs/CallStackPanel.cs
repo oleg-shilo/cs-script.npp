@@ -18,15 +18,14 @@ namespace CSScriptNpp.Dialogs
 
         public void UpdateCallstack(string data)
         {
-            currentSourceCallIndex = 0;
             //<call_info>|<source_location>{$NL}
             string lineDelimiter = "{$NL}";
             stack.Items.Clear();
             var items = data.Split(new string[] { lineDelimiter }, StringSplitOptions.RemoveEmptyEntries)
                             .Select(line =>
                             {
-                                var tokens = line.Split(new[] { '|' }, 2);
-                                return new { Call = tokens.First(), Source = tokens.Last() };
+                                var tokens = line.Split(new[] { '|' }, 3);
+                                return new { Id = tokens[0], Call = tokens[1], Source = tokens[2] };
                             })
                             .ToArray();
 
@@ -36,7 +35,8 @@ namespace CSScriptNpp.Dialogs
             {
                 var li = new ListViewItem("");
                 li.SubItems.Add(item.Call);
-                li.Tag = item.Source;
+                //li.Tag = item.Source;
+                li.Tag = item.Id;
 
                 maxWidth = Math.Max(maxWidth, (int)g.MeasureString(item.Call, stack.Font).Width);
                 this.stack.Items.Add(li);
@@ -44,8 +44,6 @@ namespace CSScriptNpp.Dialogs
 
             this.stack.Columns[1].Width = maxWidth + 10;
         }
-
-        int currentSourceCallIndex = 0;
 
         private void stack_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
@@ -59,7 +57,7 @@ namespace CSScriptNpp.Dialogs
             {
                 if (e.ItemIndex == 0)
                     e.Graphics.DrawImage(Resources.Resources.step, new Point(e.Bounds.X + 2, e.Bounds.Y + 1));
-                else if (e.ItemIndex == currentSourceCallIndex)
+                else if (e.Item.Tag != null && e.Item.Tag.ToString().StartsWith("+"))
                     e.Graphics.DrawImage(Resources.Resources.step_display, new Point(e.Bounds.X + 2, e.Bounds.Y + 2));
             }
         }
@@ -71,14 +69,17 @@ namespace CSScriptNpp.Dialogs
 
         private void stack_DoubleClick(object sender, EventArgs e)
         {
-            string locationSpec = stack.SelectedItems[0].Tag as string;
+            //[+]|[-]N
+            string frameIndex = (stack.SelectedItems[0].Tag as string).Substring(1);
 
-            if (string.IsNullOrEmpty(locationSpec))
+            if (string.IsNullOrEmpty(frameIndex))
                 return;
 
-            Debugger.OpenStackLocation(locationSpec);
-            currentSourceCallIndex = stack.SelectedIndices[0];
-            stack.Invalidate();
+            Debugger.GoToFrame(frameIndex);
+
+            //Debugger.OpenStackLocation(locationSpec);
+            //currentSourceCallIndex = stack.SelectedIndices[0];
+            //stack.Invalidate();
         }
     }
 }

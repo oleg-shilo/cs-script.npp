@@ -173,6 +173,16 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dbg_runtocusrsor {
+            get {
+                object obj = ResourceManager.GetObject("dbg_runtocusrsor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dbg_setnext {
             get {
                 object obj = ResourceManager.GetObject("dbg_setnext", resourceCulture);
@@ -458,23 +468,19 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to v1.0.18.0
-        ///
-        ///* Load script from history also opens the script file
-        ///
-        ///* Version in AboutBox now also reflect the version of cscs.exe
-        ///
-        ///* Fixed &quot;Add missing usings...&quot; when no other usings present.
-        ///
-        ///* Script compilation errors are now in Unicode
-        ///
-        ///* Improved document formatting
-        ///
-        ///* Implemented checking for NPP non-system drive deployment from plugin update MSI.
-        ///
-        ///* Implemented Code Snippets.
-        ///Example: type &apos;for&apos; and press Tab
-        ///You can manage snippets from the Plugins-&gt;CS-Script-&gt;&apos;Manage Code Snippets&apos;  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to v1.0.19.0
+        ///* Implemented Integrated Debugger.
+        ///  - Step Over
+        ///  - Step In
+        ///  - Step Out
+        ///  - Set Next Statement
+        ///  - Toggle breakpoint
+        ///  - &apos;Call Stack&apos; Panel
+        ///  - &apos;Locals&apos; Panel
+        ///-----------
+        ///To start using the debugger just create the script and press F10.
+        ///The debugger implements major VS debugging features however it has various temporary limitations (read more on the Release Home page). 
+        ///-----------.
         /// </summary>
         internal static string WhatsNew {
             get {

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugPanel));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.goBtn = new System.Windows.Forms.ToolStripButton();
             this.breakBtn = new System.Windows.Forms.ToolStripButton();
@@ -41,6 +42,7 @@
             this.tobbleBpBtn = new System.Windows.Forms.ToolStripButton();
             this.appTypeCombo = new System.Windows.Forms.ToolStripComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.runToCursorBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,6 +59,7 @@
             this.stepIntoBtn,
             this.stepOutBtn,
             this.setNextBtn,
+            this.runToCursorBtn,
             this.toolStripSeparator2,
             this.tobbleBpBtn,
             this.appTypeCombo});
@@ -170,7 +173,7 @@
             "Console",
             "Windows"});
             this.appTypeCombo.Name = "appTypeCombo";
-            this.appTypeCombo.Size = new System.Drawing.Size(121, 25);
+            this.appTypeCombo.Size = new System.Drawing.Size(121, 23);
             this.appTypeCombo.ToolTipText = "Application Type";
             this.appTypeCombo.SelectedIndexChanged += new System.EventHandler(this.appTypeCombo_SelectedIndexChanged);
             // 
@@ -184,6 +187,17 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(545, 262);
             this.tabControl1.TabIndex = 2;
+            // 
+            // runToCursorBtn
+            // 
+            this.runToCursorBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.runToCursorBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_runtocusrsor;
+            this.runToCursorBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.runToCursorBtn.Name = "runToCursorBtn";
+            this.runToCursorBtn.Size = new System.Drawing.Size(23, 22);
+            this.runToCursorBtn.Text = "Run to cursor";
+            this.runToCursorBtn.ToolTipText = "Run to cursor (Ctrl+F10)";
+            this.runToCursorBtn.Click += new System.EventHandler(this.runToCursorBtn_Click);
             // 
             // DebugPanel
             // 
@@ -216,6 +230,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton tobbleBpBtn;
         private System.Windows.Forms.ToolStripComboBox appTypeCombo;
+        private System.Windows.Forms.ToolStripButton runToCursorBtn;
 
     }
 }

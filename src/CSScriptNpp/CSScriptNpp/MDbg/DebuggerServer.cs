@@ -70,6 +70,14 @@ namespace CSScriptNpp
             }
         }
 
+        static public void GoToFrame(string frameId)
+        {
+            if (IsRunning)
+            {
+                MessageQueue.AddCommand("gotoframe|" + frameId);
+            }
+        }
+
         static public void StepOut()
         {
             if (IsRunning)
@@ -122,9 +130,16 @@ namespace CSScriptNpp
             get { return isInBreak; }
             set
             {
-                isInBreak = value;
+                if (isInBreak != value)
+                {
+                    isInBreak = value;
+                    if (isInBreak && OnBreak != null)
+                        OnBreak();
+                }
+
                 if (OnDebuggerStateChanged != null)
                     OnDebuggerStateChanged();
+
             }
         }
 
@@ -136,9 +151,10 @@ namespace CSScriptNpp
             }
         }
 
-        static public Action<string> OnNotificationReceived;
-        static public Action OnDebuggerStateChanged;
-        static public Action<string> OnDebuggeeProcessNotification;
+        static public Action<string> OnNotificationReceived; //debugger notification received
+        static public Action OnDebuggerStateChanged; //breakpoint, step advance, process exit
+        static public Action OnBreak; //breakpoint hit
+        static public Action<string> OnDebuggeeProcessNotification; //debugger process state change
 
         static void Init()
         {

@@ -54,8 +54,8 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="npp.cs" />
     <Compile Include="RemoteChannelClient.cs" />
-    <Compile Include="gui.cs" />
     <Compile Include="DebuggerClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

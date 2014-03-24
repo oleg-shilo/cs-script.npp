@@ -30,7 +30,7 @@ namespace CSScriptNpp
 
             Debugger.OnDebuggerStateChanged += UpdateControlsState;
 
-            appTypeCombo.Width = 80;           
+            appTypeCombo.Width = 80;
         }
 
         void UpdateControlsState()
@@ -38,6 +38,7 @@ namespace CSScriptNpp
             breakBtn.Enabled =
             stopBtn.Enabled = Debugger.IsRunning;
 
+            runToCursorBtn.Enabled =
             stepIntoBtn.Enabled =
             stepOutBtn.Enabled =
             setNextBtn.Enabled = Debugger.IsRunning && Debugger.IsInBreak;
@@ -113,6 +114,11 @@ namespace CSScriptNpp
         private void appTypeCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             Debugger.DebugAsConsole = (appTypeCombo.SelectedIndex == 0);
+        }
+
+        private void runToCursorBtn_Click(object sender, EventArgs e)
+        {
+            Debugger.RunToCursor();
         }
     }
 }
