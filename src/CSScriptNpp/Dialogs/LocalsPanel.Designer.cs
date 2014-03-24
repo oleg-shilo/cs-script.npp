@@ -1,6 +1,6 @@
 ﻿namespace CSScriptNpp.Dialogs
 {
-    partial class AutoWatchPanel
+    partial class LocalsPanel
     {
         /// <summary>
         /// Required designer variable.

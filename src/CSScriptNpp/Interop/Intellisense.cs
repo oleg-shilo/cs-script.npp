@@ -9,6 +9,7 @@ namespace CSScriptNpp
 
         public static void EnsureIntellisenseIntegration()
         {
+            CSScriptIntellisense.Plugin.SuppressCodeTolltips = () => Debugger.IsInBreak;
             CSScriptIntellisense.Plugin.DisplayInOutputPanel = CSScriptNpp.OutputPanel.DisplayInGenericOutputPanel;
             CSScriptIntellisense.Plugin.ResolveCurrentFile =
                 () =>

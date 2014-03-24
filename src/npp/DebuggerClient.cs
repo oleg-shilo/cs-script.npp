@@ -1,19 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using gui.CSScriptNpp;
 using Microsoft.Samples.Debugging.CorDebug;
 using Microsoft.Samples.Debugging.CorDebug.NativeApi;
 using Microsoft.Samples.Debugging.MdbgEngine;
 using Microsoft.Samples.Tools.Mdbg;
-using gui.CSScriptNpp;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace gui
@@ -125,7 +123,6 @@ namespace gui
             }
         }
 
-
         public void ProcessFrameNavigation(string command)
         {
             //gotoframe|<frameId>
@@ -175,27 +172,46 @@ namespace gui
 
             try
             {
-                if (action == "locals" && IsInBreakMode())
+                if (IsInBreakMode())
                 {
-                    if (reportedValues.ContainsKey(args))
+                    if (action == "locals")
                     {
-                        MDbgValue value = reportedValues[args];
-                        MDbgValue[] items = null;
-
-                        if (value.IsArrayType)
+                        if (reportedValues.ContainsKey(args))
                         {
-                            items = value.GetArrayItems();
-                        }
-                        else if (value.IsComplexType)
-                        {
-                            items = value.GetFields().Concat(
-                                    value.GetProperties()).ToArray();
-                        }
+                            MDbgValue value = reportedValues[args];
+                            MDbgValue[] items = null;
 
-                        if (items != null)
-                            result = "<items>" + string.Join("", items.Where(x => !x.Name.Contains("$")) //ignore any internal vars 
-                                                                      .Select(x => Serialize(x))
-                                                                      .ToArray()) + "</items>";
+                            if (value.IsArrayType)
+                            {
+                                items = value.GetArrayItems();
+                            }
+                            else if (value.IsComplexType)
+                            {
+                                items = value.GetFields().Concat(
+                                        value.GetProperties()).ToArray();
+                            }
+
+                            if (items != null)
+                                result = "<items>" + string.Join("", items.Where(x => !x.Name.Contains("$")) //ignore any internal vars
+                                                                          .Select(x => Serialize(x))
+                                                                          .ToArray()) + "</items>";
+                        }
+                    }
+                    else if (action == "resolve_primitive")
+                    {
+                        try
+                        {
+                            MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(args, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+
+                            if (value != null && !value.IsArrayType && !value.IsComplexType)
+                            {
+                                result = Serialize(value, args);
+                            }
+                        }
+                        catch
+                        {
+                            result = "<items/>";
+                        }
                     }
                 }
             }
@@ -210,7 +226,7 @@ namespace gui
         Dictionary<string, MDbgValue> reportedValues = new Dictionary<string, MDbgValue>();
         int reportedValuesCount = 0;
 
-        string Serialize(MDbgValue val)
+        string Serialize(MDbgValue val, string displayName = null)
         {
             lock (reportedValues)
             {
@@ -220,7 +236,7 @@ namespace gui
                 string name = val.Name;
 
                 XElement result = new XElement("value",
-                                               new XAttribute("name", name),
+                                               new XAttribute("name", displayName??name),
                                                new XAttribute("id", valueId),
                                                new XAttribute("isProperty", val.IsProperty),
                                                new XAttribute("isStatic", val.IsStatic),
@@ -422,8 +438,6 @@ namespace gui
         {
             var args = string.Join(", ", frame.Function.GetArguments(frame).Select(a => a.TypeName.ReplaceClrAliaces() + " " + a.Name).ToArray());
 
-
-
             return string.Format("{0}!{1}({2}) Line {3}",
                                   Path.GetFileName(frame.Function.Module.CorModule.Assembly.Name),
                                   frame.Function.FullName,
@@ -503,10 +517,9 @@ namespace gui
                     MDbgValue[] arguments = f.GetArguments(frame);
 
                     result = "<locals>" + string.Join("", arguments.Concat(locals)
-                                                                   .Where(x => !x.Name.Contains("$")) //ignore any internal vars 
+                                                                   .Where(x => !x.Name.Contains("$")) //ignore any internal vars
                                                                    .Select(x => Serialize(x))
                                                                    .ToArray()) + "</locals>";
-
                 }
             }
             catch (Exception e)
@@ -515,8 +528,6 @@ namespace gui
 
             MessageQueue.AddNotification(NppCategory.Locals + result);
         }
-
-
 
         void ReportDebugTermination()
         {
@@ -536,9 +547,7 @@ namespace gui
         {
             if (!shell.Debugger.Processes.HaveActive)
             {
-                //CommandBase.WriteOutput("STOP: Process Exited");
                 ReportDebugTermination();
-                //ReportSourceCodePosition();
                 return; // don't try to display current location
             }
             else
@@ -546,183 +555,16 @@ namespace gui
                 if (lastActiveprocess == null)
                 {
                     shell.Debugger.Processes.Active.PostDebugEvent += Active_PostDebugEvent;
-                    // shell.Debugger.Processes.Active.
                     lastActiveprocessId = shell.Debugger.Processes.Active.CorProcess.Id;
                     MessageQueue.AddNotification(NppCategory.Process + lastActiveprocessId + ":STARTED");
-
                     lastActiveprocess = shell.Debugger.Processes.Active;
                 }
-                //object stopReason = shell.Debugger.Processes.Active.StopReason;
-
-                //if (stopReason != null)
-                //{
-                //    Type stopReasonType = stopReason.GetType();
-                //    if (stopReasonType == typeof(StepCompleteStopReason))
-                //    {
-                //        // just ignore those
-                //    }
-                //    else if (stopReasonType == typeof(ThreadCreatedStopReason))
-                //    {
-                //        //CommandBase.WriteOutput("STOP: Thread Created");
-                //    }
-                //    else if (stopReasonType == typeof(BreakpointHitStopReason))
-                //    {
-                //        MDbgBreakpoint b = (stopReason as BreakpointHitStopReason).Breakpoint;
-                //        if (b.Number == 0)                     // specal case to keep compatibility with our test scripts.
-                //        {
-                //            //CommandBase.WriteOutput("STOP: Breakpoint Hit");
-                //        }
-                //        else
-                //        {
-                //            //CommandBase.WriteOutput(String.Format(CultureInfo.InvariantCulture, "STOP: Breakpoint {0} Hit", new Object[] { b.Number }));
-                //        }
-                //    }
-
-                //    else if (stopReasonType == typeof(ExceptionThrownStopReason))
-                //    {
-                //        ExceptionThrownStopReason ex = (ExceptionThrownStopReason)stopReason;
-                //        //CommandBase.WriteOutput("STOP: Exception thrown");
-                //        //PrintCurrentException(); //zos
-                //        if (shell.Debugger.Options.StopOnExceptionEnhanced || ex.ExceptionEnhancedOn)
-                //        {
-                //            // when we are in ExceptionEnhanced mode, we print more information
-                //            //CommandBase.WriteOutput("\tOffset:    " + ex.Offset);
-                //            //CommandBase.WriteOutput("\tEventType: " + ex.EventType);
-                //            //CommandBase.WriteOutput("\tIntercept: " + (ex.Flags != 0));
-                //        }
-                //    }
-
-                //    else if (stopReasonType == typeof(UnhandledExceptionThrownStopReason))
-                //    {
-                //        //CommandBase.WriteOutput("STOP: Unhandled Exception thrown");
-                //        ////PrintCurrentException(); //zos
-                //        //CommandBase.WriteOutput("");
-                //        //CommandBase.WriteOutput("This is unhandled exception, continuing will end the process");
-                //    }
-
-                //    else if (stopReasonType == typeof(ExceptionUnwindStopReason))
-                //    {
-                //        //CommandBase.WriteOutput("STOP: Exception unwind");
-                //        //CommandBase.WriteOutput("EventType: " + (stopReason as ExceptionUnwindStopReason).EventType);
-                //    }
-
-                //    else if (stopReasonType == typeof(ModuleLoadedStopReason))
-                //    {
-                //        //CommandBase.WriteOutput("STOP: Module loaded: " + (stopReason as ModuleLoadedStopReason).Module.CorModule.Name);
-                //    }
-                //    else if (stopReasonType == typeof(AssemblyLoadedStopReason))
-                //    {
-                //        //CommandBase.WriteOutput("STOP: Assembly loaded: " + (stopReason as AssemblyLoadedStopReason).Assembly.Name);
-                //    }
-                //    else if (stopReasonType == typeof(MDANotificationStopReason))
-                //    {
-                //        CorMDA mda = (stopReason as MDANotificationStopReason).CorMDA;
-
-                //        //CommandBase.WriteOutput("STOP: MDANotification");
-                //        //CommandBase.WriteOutput("Name=" + mda.Name);
-                //        //CommandBase.WriteOutput("XML=" + mda.XML);
-                //    }
-                //    else if (stopReasonType == typeof(MDbgErrorStopReason))
-                //    {
-                //        Exception e = (stopReason as MDbgErrorStopReason).ExceptionThrown;
-                //        //CommandBase.WriteOutput("STOP: MdbgError");
-                //        //CommandBase.WriteOutput(FormatExceptionDiagnosticText(e)); //zos
-                //    }
-                //    else
-                //    {
-                //        //CommandBase.WriteOutput("STOP " + shell.Debugger.Processes.Active.StopReason);
-                //    }
-                //}
             }
-
-            if (!shell.Debugger.Processes.Active.Threads.HaveActive)
-            {
-                //ReportSourceCodePosition();
-                return;                                     // we won't try to show current location
-            }
-
-            //MDbgThread thr = shell.Debugger.Processes.Active.Threads.Active;
-
-            //MDbgSourcePosition pos = thr.CurrentSourcePosition;
-            //if (pos == null)
-            //{
-            //    MDbgFrame f = thr.CurrentFrame;
-            //    if (f.IsManaged)
-            //    {
-            //        CorDebugMappingResult mappingResult;
-            //        uint ip;
-            //        f.CorFrame.GetIP(out ip, out mappingResult);
-            //        string s = "IP: " + ip + " @ " + f.Function.FullName + " - " + mappingResult;
-            //        //CommandBase.WriteOutput(s);
-            //    }
-            //    else
-            //    {
-            //        //CommandBase.WriteOutput("<Located in native code.>");
-            //    }
-            //}
-            //else
-            //{
-            //    string fileLoc = shell.FileLocator.GetFileLocation(pos.Path);
-            //    if (fileLoc == null)
-            //    {
-            //        // Using the full path makes debugging output inconsistent during automated test runs.
-            //        // For testing purposes we'll get rid of them.
-            //        //CommandBase.WriteOutput("located at line "+pos.Line + " in "+ pos.Path);
-            //        //CommandBase.WriteOutput("located at line " + pos.Line + " in " + System.IO.Path.GetFileName(pos.Path));
-            //    }
-            //    else
-            //    {
-            //        IMDbgSourceFile file = shell.SourceFileMgr.GetSourceFile(fileLoc);
-            //        string prefixStr = pos.Line.ToString(CultureInfo.InvariantCulture) + ":";
-
-            //        if (pos.Line < 1 || pos.Line > file.Count)
-            //        {
-            //            //CommandBase.WriteOutput("located at line " + pos.Line + " in " + pos.Path);
-            //            throw new MDbgShellException(string.Format("Could not display current location; file {0} doesn't have line {1}.",
-            //                                                       file.Path, pos.Line));
-            //        }
-            //        Debug.Assert((pos.Line > 0) && (pos.Line <= file.Count));
-            //        string lineContent = file[pos.Line];
-
-            //        if (pos.StartColumn == 0 && pos.EndColumn == 0
-            //            || !(CommandBase.Shell.IO is IMDbgIO2)) // or we don't have support for IMDbgIO2
-            //        {
-            //            // we don't know location in the line
-            //            //CommandBase.Shell.IO.WriteOutput(MDbgOutputConstants.StdOutput, prefixStr + lineContent + "\n");
-            //        }
-            //        else
-            //        {
-            //            int hiStart;
-            //            if (pos.StartColumn > 0)
-            //            {
-            //                hiStart = pos.StartColumn - 1;
-            //            }
-            //            else
-            //            {
-            //                hiStart = 0;
-            //            }
-
-            //            int hiLen;
-            //            if (pos.EndColumn == 0                   // we don't know ending position
-            //                || (pos.EndLine > pos.StartLine)) // multi-line statement, select whole 1st line
-            //            {
-            //                hiLen = lineContent.Length;
-            //            }
-            //            else
-            //            {
-            //                hiLen = pos.EndColumn - 1 - hiStart;
-            //            }
-            //            Debug.Assert(CommandBase.Shell.IO is IMDbgIO2); // see if condition above
-            //            //(CommandBase.Shell.IO as IMDbgIO2).WriteOutput(MDbgOutputConstants.StdOutput, prefixStr + lineContent + "\n",
-            //            //                                 hiStart + prefixStr.Length, hiLen);
-            //        }
-            //    }
-            //}
-            //ReportSourceCodePosition();
         }
 
         //bool breakOnStepComplete = false;
         bool test = true;
+
         void Active_PostDebugEvent(object sender, CustomPostCallbackEventArgs e)
         {
             if (test)

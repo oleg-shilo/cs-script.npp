@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace CSScriptNpp
 {
@@ -58,6 +59,21 @@ namespace CSScriptNpp
             }
         }
 
+        public static string GetDebugTooltipValue(string content)
+        {
+            if (IsInBreak && IsRunning)
+            {
+                string data = Debugger.Invoke("resolve_primitive", content);
+                try
+                {
+                    var dbgValue = XElement.Parse(data);
+                    return content + " | " + dbgValue.Attribute("value").Value;
+                }
+                catch { }
+            }
+            return null;
+        }
+
         public static string Invoke(string command, string args)
         {
             string retval = null;
@@ -72,7 +88,6 @@ namespace CSScriptNpp
             }
 
             return retval;
-
         }
 
         public static void BeginInvoke(string command, string args, Action<string> resultHandler)
@@ -254,7 +269,7 @@ namespace CSScriptNpp
                 string key = BuildBreakpointKey(file, line);
                 DebuggerServer.AddBreakpoint(key);
                 DebuggerServer.Go();
-                DebuggerServer.OnBreak = ()=>
+                DebuggerServer.OnBreak = () =>
                 {
                     DebuggerServer.RemoveBreakpoint(key);
                 };

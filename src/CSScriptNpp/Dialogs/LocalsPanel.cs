@@ -9,10 +9,10 @@ using System.Windows.Forms;
 
 namespace CSScriptNpp.Dialogs
 {
-    public partial class AutoWatchPanel : Form
+    public partial class LocalsPanel : Form
     {
         DebugObjectsPanel content;
-        public AutoWatchPanel()
+        public LocalsPanel()
         {
             InitializeComponent();
             content = new DebugObjectsPanel();

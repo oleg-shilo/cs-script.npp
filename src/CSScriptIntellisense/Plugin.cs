@@ -15,7 +15,6 @@ namespace CSScriptIntellisense
 {
     /*
      TODO:
-     * - Code Map needs improvements (e.g. does not processes properties in System.String)
      */
 
     static public partial class Plugin
@@ -38,6 +37,7 @@ namespace CSScriptIntellisense
 
         static bool SingleFileMode = false;
         static internal bool Enabled = false;
+        static public Func<bool> SuppressCodeTolltips = () => false;
 
         static MemberInfoPopupManager memberInfoPopup;
 
@@ -127,7 +127,7 @@ namespace CSScriptIntellisense
 
                     if (!modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
                     {
-                        if (currentSnippetContext == null) 
+                        if (currentSnippetContext == null)
                         {
                             //no snippet insertion in progress
                             if (key == Keys.Tab)

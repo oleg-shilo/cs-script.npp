@@ -291,6 +291,13 @@ namespace CSScriptIntellisense
             return GetWordAtPosition(position, out point, wordDelimiters);
         }
 
+        static char[] statementDelimiters = " ,:;'\"[]{}()".ToCharArray();
+        static public string GetStatementAtPosition(int position)
+        {
+            Point point;
+            return GetWordAtPosition(position, out point, statementDelimiters);
+        }
+
         static public string GetWordAtPosition(int position, out Point point, char[] wordDelimiters = null)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();

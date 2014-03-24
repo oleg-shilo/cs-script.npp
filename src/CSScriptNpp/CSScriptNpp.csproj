@@ -70,11 +70,23 @@
     <Compile Include="Dialogs\AboutBox.designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\AutoWatchPanel.cs">
+    <Compile Include="Dialogs\LocalsPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\AutoWatchPanel.Designer.cs">
-      <DependentUpon>AutoWatchPanel.cs</DependentUpon>
+    <Compile Include="Dialogs\LocalsPanel.designer.cs">
+      <DependentUpon>LocalsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\WatchPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\WatchPanel.Designer.cs">
+      <DependentUpon>WatchPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DebugObjectsPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\DebugObjectsPanel.Designer.cs">
+      <DependentUpon>DebugObjectsPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\CallStackPanel.cs">
       <SubType>Form</SubType>
@@ -173,8 +185,8 @@
     <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\AutoWatchPanel.resx">
-      <DependentUpon>AutoWatchPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\DebugObjectsPanel.resx">
+      <DependentUpon>DebugObjectsPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\CallStackPanel.resx">
       <DependentUpon>CallStackPanel.cs</DependentUpon>
@@ -193,6 +205,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ScriptNameInput.resx">
       <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\WatchPanel.resx">
+      <DependentUpon>WatchPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OutputPanel.resx">
       <DependentUpon>OutputPanel.cs</DependentUpon>

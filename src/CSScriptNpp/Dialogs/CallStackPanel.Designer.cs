@@ -63,7 +63,7 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Name";
-            this.columnHeader2.Width = 25;
+            this.columnHeader2.Width = 100;
             // 
             // CallStackPanel
             // 

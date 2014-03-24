@@ -171,7 +171,7 @@ namespace CSScriptIntellisense
 
         public void hook_MouseMove()
         {
-            if (Enabled)
+            if (Enabled && !Plugin.SuppressCodeTolltips())
             {
                 if (lastScheduledPoint != Cursor.Position)
                 {

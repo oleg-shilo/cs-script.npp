@@ -10,25 +10,32 @@ namespace CSScriptNpp
 {
     public partial class DebugPanel : Form
     {
-        AutoWatchPanel locals;
+        WatchPanel watch;
+        LocalsPanel locals;
         CallStackPanel callstack;
 
         public DebugPanel()
         {
             InitializeComponent();
 
-            locals = new AutoWatchPanel();
+            watch = new WatchPanel();
+            locals = new LocalsPanel();
             callstack = new CallStackPanel();
 
-            tabControl1.AddTab("Auto Watch", locals);
+            tabControl1.AddTab("Locals", locals);
             tabControl1.AddTab("Call Stack", callstack);
+            tabControl1.AddTab("Watch", watch);
 
             if (Debugger.DebugAsConsole)
                 appTypeCombo.SelectedIndex = 0;
             else
                 appTypeCombo.SelectedIndex = 1;
 
-            Debugger.OnDebuggerStateChanged += UpdateControlsState;
+            Debugger.OnDebuggerStateChanged += ()=>
+            {
+                watch.RefreshData();
+                UpdateControlsState();
+            };
 
             appTypeCombo.Width = 80;
         }

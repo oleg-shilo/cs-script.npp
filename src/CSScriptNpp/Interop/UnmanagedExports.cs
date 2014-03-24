@@ -65,7 +65,6 @@ namespace CSScriptNpp
         const int _SC_MARGE_SYBOLE = 1; //bookmark and breakpoint margin
         const int SCI_CTRL = 2; //Ctrl pressed modifier for SCN_MARGINCLICK
 
-
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
@@ -103,23 +102,9 @@ namespace CSScriptNpp
 #if DEBUG
                     //Npp.ShowCalltip(nc.position, "\u0001  1 of 3 \u0002  test tooltip " + Environment.TickCount);
                     //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
-                    string tooltip = CSScriptIntellisense.Npp.GetWordAtPosition(nc.position);
                     //                    tooltip = @"Creates all directories and subdirectories as specified by path.
-                    //--------------------------
-                    //Returns: A System.IO.DirectoryInfo as specified by path.
-                    //--------------------------
-                    //path: The directory path to create. 
-                    //path2: Fake parameter for testing.
-                    //--------------------------
-                    //Exceptions: 
-                    //  System.IO.IOException
-                    //  System.UnauthorizedAccessException
-                    //  System.ArgumentException
-                    //  System.ArgumentNullException
-                    //  System.IO.PathTooLongException
-                    //  System.IO.DirectoryNotFoundException
-                    //  System.NotSupportedException".Replace("\r\n", "\n");
-                    Npp.ShowCalltip(nc.position, tooltip);
+
+                    Npp.OnCalltipRequest(nc.position);
 #endif
                 }
                 else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLEND)

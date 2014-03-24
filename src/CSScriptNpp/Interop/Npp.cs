@@ -41,13 +41,37 @@ namespace CSScriptNpp
             return buffer.ToString();
         }
 
+        //static internal bool ShowingCalltip = false;
+
         static public void CancelCalltip()
         {
+            //ShowingCalltip = false;
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
         }
+
+        static public void OnCalltipRequest(int position)
+        {
+            if (Debugger.IsInBreak)
+            {
+                string content = CSScriptIntellisense.Npp.GetStatementAtPosition(position);
+                if (!string.IsNullOrEmpty(content))
+                {
+                    //ShowingCalltip = true;
+                    string tooltip = Debugger.GetDebugTooltipValue(content);
+                    if (tooltip != null)
+                    {
+                        Npp.ShowCalltip(position, tooltip);
+                        return;
+                    }
+                    //ShowingCalltip = false;
+                }
+            }
+        }
+
         static public void ShowCalltip(int position, string text)
         {
+           // ShowingCalltip = true;
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSHOW, position, text);

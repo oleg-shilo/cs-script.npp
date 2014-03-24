@@ -31,11 +31,18 @@ namespace CSScriptNpp.Dialogs
 
             var g = CreateGraphics();
             int maxWidth = 100;
+            string prevCall = "";
             foreach (var item in items)
             {
+                //collapse duplicated not navigatable frames e.g. [External Call]
+                if (item.Call.StartsWith("[") && 
+                    item.Call.EndsWith("]") && 
+                    prevCall == item.Call) 
+                    continue;
+
+                prevCall = item.Call;
                 var li = new ListViewItem("");
                 li.SubItems.Add(item.Call);
-                //li.Tag = item.Source;
                 li.Tag = item.Id;
 
                 maxWidth = Math.Max(maxWidth, (int)g.MeasureString(item.Call, stack.Font).Width);
