@@ -30,7 +30,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -75,6 +75,12 @@
     </Compile>
     <Compile Include="Dialogs\LocalsPanel.designer.cs">
       <DependentUpon>LocalsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\QuickWatchPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\QuickWatchPanel.Designer.cs">
+      <DependentUpon>QuickWatchPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\WatchPanel.cs">
       <SubType>Form</SubType>
@@ -205,6 +211,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ScriptNameInput.resx">
       <DependentUpon>ScriptNameInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\QuickWatchPanel.resx">
+      <DependentUpon>QuickWatchPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\WatchPanel.resx">
       <DependentUpon>WatchPanel.cs</DependentUpon>
@@ -413,6 +422,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dbg_runtocusrsor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_qwatch.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

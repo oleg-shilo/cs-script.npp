@@ -2,6 +2,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -24,14 +26,14 @@ namespace CSScriptNpp
 
             tabControl1.AddTab("Locals", locals);
             tabControl1.AddTab("Call Stack", callstack);
-            tabControl1.AddTab("Watch", watch);
+            //tabControl1.AddTab("Watch", watch);
 
             if (Debugger.DebugAsConsole)
                 appTypeCombo.SelectedIndex = 0;
             else
                 appTypeCombo.SelectedIndex = 1;
 
-            Debugger.OnDebuggerStateChanged += ()=>
+            Debugger.OnDebuggerStateChanged += () =>
             {
                 watch.RefreshData();
                 UpdateControlsState();
@@ -126,6 +128,11 @@ namespace CSScriptNpp
         private void runToCursorBtn_Click(object sender, EventArgs e)
         {
             Debugger.RunToCursor();
+        }
+
+        private void quickWatch_Click(object sender, EventArgs e)
+        {
+            QuickWatchPanel.ShowDialogAsynch();
         }
     }
 }

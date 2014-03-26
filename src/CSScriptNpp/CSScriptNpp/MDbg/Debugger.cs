@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace CSScriptNpp
@@ -13,7 +16,7 @@ namespace CSScriptNpp
         static Debugger()
         {
             DebuggerServer.OnNotificationReceived = HandleNotification;
-            DebuggerServer.OnDebuggerStateChanged = HandleDebuggerStateChanged;
+            DebuggerServer.OnDebuggerStateChanged += HandleDebuggerStateChanged;
             DebuggerServer.OnDebuggeeProcessNotification = message => Plugin.OutputPanel.DebugOutput.WriteLine(message);
 
             var debugStepPointColor = Color.Yellow;
@@ -22,7 +25,6 @@ namespace CSScriptNpp
             Npp.SetIndicatorTransparency(INDICATOR_DEBUGSTEP, 90, 255);
 
             Npp.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, Color.Black, debugStepPointColor);
-            //Npp.SetMarkerStyle(MARK_BREAKPOINT, SciMsg.SC_MARK_CIRCLE, Color.Black, Color.Red);
             Npp.SetMarkerStyle(MARK_BREAKPOINT, CSScriptNpp.Resources.Resources.breakpoint);
         }
 
@@ -61,13 +63,16 @@ namespace CSScriptNpp
 
         public static string GetDebugTooltipValue(string content)
         {
-            if (IsInBreak && IsRunning)
+            if (IsInBreak && IsRunning && !string.IsNullOrWhiteSpace(content))
             {
                 string data = Debugger.Invoke("resolve_primitive", content);
                 try
                 {
-                    var dbgValue = XElement.Parse(data);
-                    return content + " | " + dbgValue.Attribute("value").Value;
+                    if (!string.IsNullOrEmpty(data))
+                    {
+                        var dbgValue = XElement.Parse(data);
+                        return content + " | " + dbgValue.Attribute("value").Value;
+                    }
                 }
                 catch { }
             }
@@ -77,20 +82,38 @@ namespace CSScriptNpp
         public static string Invoke(string command, string args)
         {
             string retval = null;
-            BeginInvoke(command, args, result => retval = result);
+            bool done = false;
+
+            var id = BeginInvoke(command, args, result =>
+                {
+                    retval = result ?? "";
+                    done = true;
+                });
 
             int start = Environment.TickCount;
             int timeout = 1000;
 
-            while (retval == null && (Environment.TickCount - start) < timeout)
+            while (!done)
             {
-                Thread.Sleep(1);
+                if ((Environment.TickCount - start) > timeout)
+                {
+                    lock (invokeCompleteHandlers)
+                    {
+                        if (invokeCompleteHandlers.ContainsKey(id))
+                        {
+                            invokeCompleteHandlers.Remove(id);
+                        }
+                    }
+                    break;
+                }
+                else
+                    Thread.Sleep(1);
             }
 
             return retval;
         }
 
-        public static void BeginInvoke(string command, string args, Action<string> resultHandler)
+        public static string BeginInvoke(string command, string args, Action<string> resultHandler)
         {
             //<id>:<command>:<args>
             string id = GetNextInvokeId();
@@ -98,7 +121,9 @@ namespace CSScriptNpp
             {
                 invokeCompleteHandlers.Add(id, resultHandler);
             }
+            Debug.WriteLine("Invoke send: " + id + "; " + string.Format("{0}:{1}:{2}", id, command, args ?? ""));
             MessageQueue.AddCommand(NppCategory.Invoke + string.Format("{0}:{1}:{2}", id, command, args ?? ""));
+            return id;
         }
 
         public static void OnInvokeComplete(string notification)
@@ -110,6 +135,8 @@ namespace CSScriptNpp
 
             Action<string> handler = null;
 
+            Debug.WriteLine("Invoke received: " + id + "; " + result);
+
             lock (invokeCompleteHandlers)
             {
                 if (invokeCompleteHandlers.ContainsKey(id))
@@ -119,14 +146,33 @@ namespace CSScriptNpp
                 }
             }
 
+            Debug.WriteLine("Invoke returned: id=" + id + " size=" + result.Length);
+
             if (handler != null)
                 handler(result);
         }
+
+        static int lastNOSOURCEBREAK = 0;
+
+        static public event Action OnFrameChanged; //breakpoint, step advance, process exit
+        static public event Action<string> OnNotification;
 
         static void HandleNotification(string message)
         {
             //process=>7924:STARTED
             //source=>c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|12:9|12:10
+
+            Debug.WriteLine("Received: " + message);
+
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    if (OnNotification != null)
+                        OnNotification(message);
+                }
+                catch { }
+            });
 
             HandleErrors(() =>
             {
@@ -144,6 +190,10 @@ namespace CSScriptNpp
 
                         Go();
                     }
+                    else if (message.EndsWith(":ENDED"))
+                    {
+                        NotifyOnDebugStepChanges();
+                    }
                 }
                 else if (message.StartsWith(NppCategory.Invoke))
                 {
@@ -153,6 +203,21 @@ namespace CSScriptNpp
                 {
                     Plugin.OutputPanel.DebugOutput.Write(message.Substring(NppCategory.Trace.Length));
                 }
+                else if (message.StartsWith(NppCategory.State))
+                {
+                    if (message.Substring(NppCategory.State.Length) == "NOSOURCEBREAK")
+                        Task.Factory.StartNew(() =>
+                        {
+                            //The break can be caused by 'Debugger.Break();'
+                            //Trigger user break to force source code entry if available as a small usability improvement.
+                            if ((Environment.TickCount - lastNOSOURCEBREAK) > 1500) //Just in case, prevent infinite loop.
+                            {
+                                lastNOSOURCEBREAK = Environment.TickCount;
+                                Thread.Sleep(200); //even 80 is enough
+                                Debugger.Break();
+                            }
+                        });
+                }
                 else if (message.StartsWith(NppCategory.CallStack))
                 {
                     Plugin.GetDebugPanel().UpdateCallstack(message.Substring(NppCategory.CallStack.Length));
@@ -160,6 +225,7 @@ namespace CSScriptNpp
                 else if (message.StartsWith(NppCategory.Locals))
                 {
                     Plugin.GetDebugPanel().UpdateLocals(message.Substring(NppCategory.Locals.Length));
+                    NotifyOnDebugStepChanges();
                 }
                 else if (message.StartsWith(NppCategory.SourceCode))
                 {
@@ -183,10 +249,18 @@ namespace CSScriptNpp
             });
         }
 
+        static void NotifyOnDebugStepChanges()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                if (OnFrameChanged != null)
+                    OnFrameChanged();
+            });
+        }
+
         static char[] delimiter = new[] { '|' };
 
         static Action OnNextFileOpenComplete;
-
 
         public static void OpenStackLocation(string sourceLocation)
         {

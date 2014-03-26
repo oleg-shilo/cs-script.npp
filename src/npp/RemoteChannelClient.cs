@@ -47,6 +47,7 @@ namespace gui.CSScriptNpp
         public static string Trace = "trace=>";
         public static string CallStack = "callstack=>";
         public static string Locals = "locals=>";
+        public static string Watch = "watch=>";
         public static string Invoke = "invoke=>";
         public static string Process = "process=>";
         public static string Breakpoints = "breakpoints=>";

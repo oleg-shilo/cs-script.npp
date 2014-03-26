@@ -292,9 +292,11 @@ namespace CSScriptIntellisense
         }
 
         static char[] statementDelimiters = " ,:;'\"[]{}()".ToCharArray();
-        static public string GetStatementAtPosition(int position)
+        static public string GetStatementAtPosition(int position = -1)
         {
             Point point;
+            if (position == -1)
+                position = Npp.GetCaretPosition();
             return GetWordAtPosition(position, out point, statementDelimiters);
         }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace CSScriptNpp
 {
@@ -77,9 +78,7 @@ namespace CSScriptNpp
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
                     CSScriptNpp.Plugin.OnNppReady();
-#if DEBUG
                     Npp.SetCalltipTime(400);
-#endif
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
                 {
@@ -99,13 +98,11 @@ namespace CSScriptNpp
                 }
                 else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLSTART) //tooltip
                 {
-#if DEBUG
                     //Npp.ShowCalltip(nc.position, "\u0001  1 of 3 \u0002  test tooltip " + Environment.TickCount);
                     //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
                     //                    tooltip = @"Creates all directories and subdirectories as specified by path.
 
-                    Npp.OnCalltipRequest(nc.position);
-#endif
+                    Task.Factory.StartNew(()=>Npp.OnCalltipRequest(nc.position)); //must be asynch to allow processing other Debugger notifications 
                 }
                 else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLEND)
                 {

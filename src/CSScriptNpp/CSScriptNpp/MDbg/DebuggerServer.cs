@@ -12,6 +12,7 @@ namespace CSScriptNpp
     {
         public static string SourceCode = "source=>";
         public static string Process = "process=>";
+        public static string Watch = "watch=>";
         public static string Trace = "trace=>";
         public static string CallStack = "callstack=>";
         public static string Invoke = "invoke=>";
@@ -36,6 +37,11 @@ namespace CSScriptNpp
         static public void AddBreakpoint(string fileLineInfo)
         {
             MessageQueue.AddCommand("breakpoint+|" + fileLineInfo);
+        }
+
+        static public void AddWatch(string id, string expression)
+        {
+            MessageQueue.AddCommand("watch|" + id + "|" + expression);
         }
 
         static public void RemoveBreakpoint(string fileLineInfo)
@@ -119,7 +125,12 @@ namespace CSScriptNpp
         {
             get
             {
-                return debuggerProcessId != 0 && Process.GetProcessById(debuggerProcessId) != null;
+                try
+                {
+                    return debuggerProcessId != 0 && Process.GetProcessById(debuggerProcessId) != null;
+                }
+                catch { }
+                return false;
             }
         }
 
@@ -151,10 +162,11 @@ namespace CSScriptNpp
             }
         }
 
-        static public Action<string> OnNotificationReceived; //debugger notification received
-        static public Action OnDebuggerStateChanged; //breakpoint, step advance, process exit
-        static public Action OnBreak; //breakpoint hit
-        static public Action<string> OnDebuggeeProcessNotification; //debugger process state change
+        static protected Action<string> OnNotificationReceived; //debugger notification received
+        static public event Action OnDebuggerStateChanged; //breakpoint, step advance, process exit
+
+        static protected Action OnBreak; //breakpoint hit
+        static protected Action<string> OnDebuggeeProcessNotification; //debugger process state change
 
         static void Init()
         {
@@ -186,6 +198,8 @@ namespace CSScriptNpp
 
                         if (OnNotificationReceived != null)
                         {
+                            //NOTE: do not start any communication with the debugger from any OnNotificationReceived handler as 
+                            //the communication channel is blocked until all handlers return
                             OnNotificationReceived(message);
                         }
                     }
@@ -219,6 +233,8 @@ namespace CSScriptNpp
 
                             if (OnDebuggeeProcessNotification != null)
                                 OnDebuggeeProcessNotification("The process [" + debuggeeProcessId + "] has exited.");
+
+                            IsInBreak = false;
 
                             Plugin.GetDebugPanel().Clear();
                         });

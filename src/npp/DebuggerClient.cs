@@ -5,6 +5,7 @@ using Microsoft.Samples.Debugging.MdbgEngine;
 using Microsoft.Samples.Tools.Mdbg;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -80,6 +81,8 @@ namespace gui
 
             command = mdbgInputQueue.WaitItem();
 
+            WaitForEvalsCoTomplete();
+
             return (command != NppCommand.Exit);
         }
 
@@ -92,6 +95,9 @@ namespace gui
 
         public void ExecuteCommand(string command)
         {
+            if (string.IsNullOrEmpty(command))
+                return;
+
             if (command == "break") //not native Mdbg command
             {
                 Break(true);
@@ -103,6 +109,10 @@ namespace gui
             else if (command.StartsWith("gotoframe")) //not native Mdbg command
             {
                 ProcessFrameNavigation(command);
+            }
+            else if (command.StartsWith("watch")) //not native Mdbg command
+            {
+                ProcessRegisterWatch(command);
             }
             else if (command.StartsWith(NppCategory.Invoke)) //not native Mdbg command
             {
@@ -161,8 +171,23 @@ namespace gui
             }
         }
 
+        Dictionary<string, string> WatchExpressions = new Dictionary<string, string>();
+
+        public void ProcessRegisterWatch(string command)
+        {
+            //watch|<expressionId>|<expression>
+            string[] parts = command.Split(new[] { '|' }, 3);
+            WatchExpressions.Add(parts[1], parts[2]);
+        }
+
         public void ProcessInvoke(string command)
         {
+            if (test)
+            {
+                //test = false;
+                //Debug.Assert(false);
+            }
+
             //<invokeId>:<action>:<args>
             string[] parts = command.Split(new[] { ':' }, 3);
             string id = parts[0];
@@ -204,8 +229,23 @@ namespace gui
                             MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(args, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
 
                             if (value != null && !value.IsArrayType && !value.IsComplexType)
-                            {
                                 result = Serialize(value, args);
+                        }
+                        catch
+                        {
+                            result = null;
+                        }
+                    }
+                    else if (action == "resolve")
+                    {
+                        try
+                        {
+                            MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(args, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+
+                            if (value != null)
+                            {
+                                result = "<items>" + Serialize(value, args) + "</items>";
+
                             }
                         }
                         catch
@@ -219,7 +259,6 @@ namespace gui
             {
                 result = "Error: " + e.Message;
             }
-
             MessageQueue.AddNotification(NppCategory.Invoke + id + ":" + result);
         }
 
@@ -236,7 +275,7 @@ namespace gui
                 string name = val.Name;
 
                 XElement result = new XElement("value",
-                                               new XAttribute("name", displayName??name),
+                                               new XAttribute("name", displayName ?? name),
                                                new XAttribute("id", valueId),
                                                new XAttribute("isProperty", val.IsProperty),
                                                new XAttribute("isStatic", val.IsStatic),
@@ -244,7 +283,6 @@ namespace gui
 
                 try
                 {
-                    string st = null;
                     if (val.IsArrayType)
                     {
                         // It would be nice to display array length here too.
@@ -426,12 +464,15 @@ namespace gui
 
         string FormatSourcePosition(MDbgFrame frame)
         {
-            return String.Format("{0}|{1}:{2}|{3}:{4}",
-                frame.SourcePosition.Path,
-                frame.SourcePosition.StartLine,
-                frame.SourcePosition.StartColumn,
-                frame.SourcePosition.EndLine,
-                frame.SourcePosition.EndColumn);
+            if (frame.SourcePosition == null)
+                return null;
+            else
+                return String.Format("{0}|{1}:{2}|{3}:{4}",
+                    frame.SourcePosition.Path,
+                    frame.SourcePosition.StartLine,
+                    frame.SourcePosition.StartColumn,
+                    frame.SourcePosition.EndLine,
+                    frame.SourcePosition.EndColumn);
         }
 
         string FormatCallInfo(MDbgFrame frame)
@@ -451,6 +492,19 @@ namespace gui
 
             if (position != null)
             {
+                //Task.Factory.StartNew(() =>
+                //    {
+                //try
+                //{
+                //    Thread.Sleep(100);
+                //    string expression = "t.MyCount";
+                //    Console.WriteLine("Resolving " + expression);
+                //    MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+                //    Console.WriteLine("Resolved " + expression);
+                //}
+                //catch { }
+                //  });
+
                 MessageQueue.AddNotification(NppCategory.SourceCode + position);
             }
         }
@@ -462,6 +516,7 @@ namespace gui
             ReportSourceCodePosition();
             ReportCallStack();
             ReportLocals();
+            ReportWatch();
         }
 
         void ReportLogMessage(string message)
@@ -562,22 +617,26 @@ namespace gui
             }
         }
 
-        //bool breakOnStepComplete = false;
         bool test = true;
 
         void Active_PostDebugEvent(object sender, CustomPostCallbackEventArgs e)
         {
-            if (test)
-            {
-                test = false;
-                //Debug.Assert(false);
-            }
+            //if (test)
+            //{
+            //    test = false;
+            //    Debug.Assert(false);
+            //}
 
             if (e.CallbackType == ManagedCallbackType.OnProcessExit)
                 ReportDebugTermination();
 
+            Debug.WriteLine(e.CallbackType);
+
             if (e.CallbackType == ManagedCallbackType.OnBreakpoint || e.CallbackType == ManagedCallbackType.OnBreak || e.CallbackType == ManagedCallbackType.OnStepComplete)
             {
+                if (GetCurrentSourcePosition() == null)
+                    MessageQueue.AddNotification(NppCategory.State + "NOSOURCEBREAK"); //can be caused by 'Debugger.Break();'
+
                 ReportsCurrentState();
             }
 
@@ -588,6 +647,66 @@ namespace gui
             }
 
             WriteOutput("meta=>", e.CallbackType.ToString());
+        }
+
+        bool EvalsInProgress = false;
+        AutoResetEvent EvalsCompleted = new AutoResetEvent(false);
+
+        void WaitForEvalsCoTomplete()
+        {
+            if (EvalsInProgress)
+                EvalsCompleted.WaitOne();
+        }
+
+        void ReportWatch()
+        {
+            try
+            {
+                //the following code can completely derail the the debugger. 
+                //Even despite the try..catch !!!!!!
+                //Bad, bad Debugger!
+                return; 
+
+                Thread.Sleep(700);
+                if (IsInBreakMode())
+                {
+                    foreach (var id in WatchExpressions.Keys)
+                    {
+                        string expressionValue = "";
+                        try
+                        {
+                            string expression = WatchExpressions[id];
+                            MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+
+                            if (value != null)
+                            {
+                                expressionValue = "<items>" + Serialize(value, expression) + "</items>";
+                            }
+                        }
+                        catch
+                        {
+                            expressionValue = "<items/>";
+                        }
+
+                        //MessageQueue.AddNotification(NppCategory.Watch + id + "|" + expressionValue);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        void ReportWatchAcynch()
+        {
+            EvalsInProgress = true;
+
+            Task.Factory.StartNew(() =>
+                {
+                    ReportWatch();
+                    EvalsInProgress = false;
+                    EvalsCompleted.Set();
+                });
         }
 
         class FramePair

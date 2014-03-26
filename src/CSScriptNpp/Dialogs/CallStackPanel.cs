@@ -35,9 +35,9 @@ namespace CSScriptNpp.Dialogs
             foreach (var item in items)
             {
                 //collapse duplicated not navigatable frames e.g. [External Call]
-                if (item.Call.StartsWith("[") && 
-                    item.Call.EndsWith("]") && 
-                    prevCall == item.Call) 
+                if (item.Call.StartsWith("[") &&
+                    item.Call.EndsWith("]") &&
+                    prevCall == item.Call)
                     continue;
 
                 prevCall = item.Call;

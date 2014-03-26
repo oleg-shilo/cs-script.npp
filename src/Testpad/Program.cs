@@ -24,7 +24,7 @@ namespace Testpad
             //panel.Test();
 
             var panel = new DebugPanel();
-            panel.UpdateCallstack("Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}[External Code]|{$NL}");
+            panel.UpdateCallstack("+1|Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}+2|[External Code]|{$NL}");
             panel.ShowDialog();
 
             //Application.Run(new Form1());

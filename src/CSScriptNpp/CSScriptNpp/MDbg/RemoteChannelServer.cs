@@ -9,22 +9,77 @@ using System.Threading.Tasks;
 
 namespace CSScriptNpp
 {
-    class WaitableQueue<T> : Queue<T>
+    class WaitableQueueDbg<T> : Queue<T>
     {
-        AutoResetEvent itemAvailable = new AutoResetEvent(false);
+        public string Name { get; set; }
+
+        AutoResetEvent itemAvailable = new AutoResetEvent(true);
 
         public new void Enqueue(T item)
         {
-            base.Enqueue(item);
-            itemAvailable.Set();
+            lock (this)
+            {
+                base.Enqueue(item);
+                if (item.ToString().Contains("invoke"))
+                    Debug.WriteLine("Queue is about to signal (" + Count + ")");
+                itemAvailable.Set();
+                if (item.ToString().Contains("invoke"))
+                    Debug.WriteLine("Queue is signaled (" + Count + ")");
+            }
+        }
+
+        int ccc = 0;
+        public T WaitItem()
+        {
+            ccc++;
+            Debug.WriteLine("Start Waiting...");
+            while (true)
+            {
+                lock (this)
+                {
+                    if (base.Count > 0)
+                    {
+                        if (ccc == 4)
+                            Debug.WriteLine("!!!!!(" + Count + ")");
+                        Debug.WriteLine("Dequeueing...(" + Count + ")");
+
+                        return base.Dequeue();
+                    }
+                }
+
+                if (Name == "Notifications") Debug.WriteLine("Waiting...(" + Count + ")");
+                itemAvailable.WaitOne(1000);
+                if (Name == "Notifications") Debug.WriteLine("Waiting is over ...(" + Count + ")");
+            }
+        }
+    }
+
+    class WaitableQueue<T> : Queue<T>
+    {
+        public string Name { get; set; }
+
+        AutoResetEvent itemAvailable = new AutoResetEvent(true);
+
+        public new void Enqueue(T item)
+        {
+            lock (this)
+            {
+                base.Enqueue(item);
+                itemAvailable.Set();
+            }
         }
 
         public T WaitItem()
         {
             while (true)
             {
-                if (base.Count > 0)
-                    return base.Dequeue();
+                lock (this)
+                {
+                    if (base.Count > 0)
+                    {
+                        return base.Dequeue();
+                    }
+                }
 
                 itemAvailable.WaitOne();
             }
@@ -34,15 +89,18 @@ namespace CSScriptNpp
     class MessageQueue
     {
         static WaitableQueue<string> commands = new WaitableQueue<string>();
+        static WaitableQueue<string> notifications = new WaitableQueue<string>();
 
         static public void AddCommand(string data)
         {
+            if (data == "")
+                Debug.Assert(false);
+
             if (data == "npp.exit")
                 Debug.WriteLine("");
             commands.Enqueue(data);
         }
 
-        static WaitableQueue<string> notifications = new WaitableQueue<string>();
 
         static public void AddNotification(string data)
         {
@@ -57,7 +115,8 @@ namespace CSScriptNpp
 
         static public string WaitForNotification()
         {
-            return notifications.WaitItem();
+            var data = notifications.WaitItem();
+            return data;
         }
 
         static public string WaitForCommand()
@@ -148,7 +207,7 @@ namespace CSScriptNpp
                     }
                 }
             }
-            catch 
+            catch
             {
                 //Notify("ERROR: " + e.Message);
             }

@@ -173,6 +173,16 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dbg_qwatch {
+            get {
+                object obj = ResourceManager.GetObject("dbg_qwatch", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dbg_runtocusrsor {
             get {
                 object obj = ResourceManager.GetObject("dbg_runtocusrsor", resourceCulture);
