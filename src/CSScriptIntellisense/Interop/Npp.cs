@@ -456,6 +456,14 @@ namespace CSScriptIntellisense
 
             return TextBeforePosition(currentPos, maxLength);
         }
+        
+        /// <summary>
+        /// Retrieve the height of a particular line of text in pixels.
+        /// </summary>
+        static public int GetTextHeight(int line)
+        {
+            return (int)Win32.SendMessage(CurrentScintilla, SciMsg.SCI_TEXTHEIGHT, line, 0);
+        }
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, IntPtr windowTitle);

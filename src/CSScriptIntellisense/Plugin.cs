@@ -504,7 +504,7 @@ namespace CSScriptIntellisense
 
                 form = new AutocompleteForm(OnAccepted, items, NppEditor.GetSuggestionHint());
                 form.Left = point.X;
-                form.Top = point.Y + 18;
+                form.Top = point.Y + Npp.GetTextHeight(Npp.GetCaretLineNumber());
                 form.FormClosed += (sender, e) =>
                 {
                     if (memberInfoWasShowing)
