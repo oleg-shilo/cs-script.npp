@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugPanel));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.goBtn = new System.Windows.Forms.ToolStripButton();
             this.breakBtn = new System.Windows.Forms.ToolStripButton();
@@ -40,8 +41,9 @@
             this.runToCursorBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tobbleBpBtn = new System.Windows.Forms.ToolStripButton();
-            this.appTypeCombo = new System.Windows.Forms.ToolStripComboBox();
             this.quickWatch = new System.Windows.Forms.ToolStripButton();
+            this.appTypeCombo = new System.Windows.Forms.ToolStripComboBox();
+            this.breakOnExceptionBtn = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -63,7 +65,8 @@
             this.toolStripSeparator2,
             this.tobbleBpBtn,
             this.quickWatch,
-            this.appTypeCombo});
+            this.appTypeCombo,
+            this.breakOnExceptionBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(545, 25);
@@ -176,6 +179,16 @@
             this.tobbleBpBtn.Text = "Toggle Breakpoint";
             this.tobbleBpBtn.Click += new System.EventHandler(this.tobbleBpBtn_Click);
             // 
+            // quickWatch
+            // 
+            this.quickWatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.quickWatch.Image = global::CSScriptNpp.Resources.Resources.dbg_qwatch;
+            this.quickWatch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.quickWatch.Name = "quickWatch";
+            this.quickWatch.Size = new System.Drawing.Size(23, 22);
+            this.quickWatch.Text = "QuickWatch";
+            this.quickWatch.Click += new System.EventHandler(this.quickWatch_Click);
+            // 
             // appTypeCombo
             // 
             this.appTypeCombo.AutoSize = false;
@@ -189,15 +202,15 @@
             this.appTypeCombo.ToolTipText = "Application Type";
             this.appTypeCombo.SelectedIndexChanged += new System.EventHandler(this.appTypeCombo_SelectedIndexChanged);
             // 
-            // quickWatch
+            // breakOnExceptionBtn
             // 
-            this.quickWatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.quickWatch.Image = global::CSScriptNpp.Resources.Resources.dbg_qwatch;
-            this.quickWatch.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.quickWatch.Name = "quickWatch";
-            this.quickWatch.Size = new System.Drawing.Size(23, 22);
-            this.quickWatch.Text = "QuickWatch";
-            this.quickWatch.Click += new System.EventHandler(this.quickWatch_Click);
+            this.breakOnExceptionBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.breakOnExceptionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_remove_stoponexc;
+            this.breakOnExceptionBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.breakOnExceptionBtn.Name = "breakOnExceptionBtn";
+            this.breakOnExceptionBtn.Size = new System.Drawing.Size(23, 22);
+            this.breakOnExceptionBtn.Text = "Toggle Break On Exceptions";
+            this.breakOnExceptionBtn.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // tabControl1
             // 
@@ -243,6 +256,7 @@
         private System.Windows.Forms.ToolStripComboBox appTypeCombo;
         private System.Windows.Forms.ToolStripButton runToCursorBtn;
         private System.Windows.Forms.ToolStripButton quickWatch;
+        private System.Windows.Forms.ToolStripButton breakOnExceptionBtn;
 
     }
 }

@@ -29,8 +29,10 @@ namespace CSScriptNpp
         public bool ClasslessScriptByDefault = false;
         public bool DistributeScriptAsScriptByDefault = true;
         public bool InterceptConsole = false;
+        public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
         public bool BuildOnF7 = true;
+        public bool BreakOnException = false;
         public bool CheckUpdatesOnStartup = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
@@ -62,12 +64,14 @@ namespace CSScriptNpp
             SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
             SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
             SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
+            SetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
             SetValue(Section, "InterceptConsole", InterceptConsole);
             SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
             SetValue(Section, "SciptHistory", SciptHistory);
             SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
             SetValue(Section, "LocalDebug", LocalDebug);
             SetValue(Section, "BuildOnF7", BuildOnF7);
+            SetValue(Section, "BreakOnException", BreakOnException);
             SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
             SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
             SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
@@ -89,10 +93,11 @@ namespace CSScriptNpp
             OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
             NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             InterceptConsole = GetValue(Section, "InterceptConsole", InterceptConsole);
+            QuickViewAutoRefreshAvailable = GetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
             LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
             TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
             ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
-            BuildOnF7 = GetValue(Section, "BuildOnF7", BuildOnF7);
+            BreakOnException = GetValue(Section, "BreakOnException", BreakOnException);
             LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
             CheckUpdatesOnStartup = GetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
             FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);

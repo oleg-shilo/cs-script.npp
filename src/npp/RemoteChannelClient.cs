@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace gui.CSScriptNpp
+namespace npp.CSScriptNpp
 {
     class MessageQueue
     {
@@ -47,9 +47,12 @@ namespace gui.CSScriptNpp
         public static string Trace = "trace=>";
         public static string CallStack = "callstack=>";
         public static string Locals = "locals=>";
+        public static string Threads = "threads=>";
         public static string Watch = "watch=>";
         public static string Invoke = "invoke=>";
+        public static string Exception = "exception=>";
         public static string Process = "process=>";
+        public static string Settings = "settings=>";
         public static string Breakpoints = "breakpoints=>";
         public static string State = "state=>";
     }

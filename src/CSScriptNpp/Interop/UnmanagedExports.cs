@@ -78,7 +78,7 @@ namespace CSScriptNpp
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
                     CSScriptNpp.Plugin.OnNppReady();
-                    Npp.SetCalltipTime(400);
+                    Npp.SetCalltipTime(200);
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
                 {
@@ -102,7 +102,7 @@ namespace CSScriptNpp
                     //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
                     //                    tooltip = @"Creates all directories and subdirectories as specified by path.
 
-                    Task.Factory.StartNew(()=>Npp.OnCalltipRequest(nc.position)); //must be asynch to allow processing other Debugger notifications 
+                    Npp.OnCalltipRequest(nc.position);
                 }
                 else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLEND)
                 {

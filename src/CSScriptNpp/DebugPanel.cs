@@ -14,6 +14,7 @@ namespace CSScriptNpp
     {
         WatchPanel watch;
         LocalsPanel locals;
+        ThreadsPanel threads;
         CallStackPanel callstack;
 
         public DebugPanel()
@@ -22,10 +23,12 @@ namespace CSScriptNpp
 
             watch = new WatchPanel();
             locals = new LocalsPanel();
+            threads = new ThreadsPanel();
             callstack = new CallStackPanel();
 
             tabControl1.AddTab("Locals", locals);
             tabControl1.AddTab("Call Stack", callstack);
+            tabControl1.AddTab("Threads", threads);
             //tabControl1.AddTab("Watch", watch);
 
             if (Debugger.DebugAsConsole)
@@ -40,6 +43,7 @@ namespace CSScriptNpp
             };
 
             appTypeCombo.Width = 80;
+            RefreshBreakOnException();
         }
 
         void UpdateControlsState()
@@ -57,11 +61,17 @@ namespace CSScriptNpp
         {
             UpdateCallstack("");
             UpdateLocals("");
+            UpdateThreads("");
         }
 
         public void UpdateCallstack(string data)
         {
             callstack.UpdateCallstack(data);
+        }
+
+        public void UpdateThreads(string data)
+        {
+            threads.UpdateThreads(data);
         }
 
         public void UpdateLocals(string data)
@@ -132,7 +142,27 @@ namespace CSScriptNpp
 
         private void quickWatch_Click(object sender, EventArgs e)
         {
-            QuickWatchPanel.ShowDialogAsynch();
+            QuickWatchPanel.PopupDialog();
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            Debugger.BreakOnException = !Debugger.BreakOnException;
+            RefreshBreakOnException();
+        }
+
+        void RefreshBreakOnException()
+        {
+            if (Debugger.BreakOnException)
+            {
+                this.breakOnExceptionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_remove_stoponexc;
+                this.breakOnExceptionBtn.ToolTipText = "Disable 'Break On Exception'";
+            }
+            else
+            {
+                this.breakOnExceptionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_set_stoponexc;
+                this.breakOnExceptionBtn.ToolTipText = "Enable 'Break On Exception'";
+            }
         }
     }
 }

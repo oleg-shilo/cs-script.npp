@@ -23,6 +23,8 @@ class Program
     {
         string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         string css_asm = Path.Combine(dir, engine);
+        if (css_asm.EndsWith("csws.exe", StringComparison.OrdinalIgnoreCase))
+            Environment.SetEnvironmentVariable("CSS_IsRuntimeErrorReportingSupressed", "true");
         AppDomain.CurrentDomain.ExecuteAssembly(css_asm, args);
     }
 }

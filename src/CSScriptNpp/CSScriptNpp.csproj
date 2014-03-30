@@ -70,6 +70,12 @@
     <Compile Include="Dialogs\AboutBox.designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ThreadsPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ThreadsPanel.Designer.cs">
+      <DependentUpon>ThreadsPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\LocalsPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -190,6 +196,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ThreadsPanel.resx">
+      <DependentUpon>ThreadsPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\DebugObjectsPanel.resx">
       <DependentUpon>DebugObjectsPanel.cs</DependentUpon>
@@ -425,6 +434,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dbg_qwatch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_remove_stoponexc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_set_stoponexc.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

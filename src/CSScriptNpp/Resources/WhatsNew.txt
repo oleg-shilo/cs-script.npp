@@ -1,12 +1,17 @@
-v1.0.19.0
+v1.0.19.0-v1.0.20.0
 * Implemented Integrated Debugger.
   - Step Over
   - Step In
   - Step Out
   - Set Next Statement
+  - Run to cursor
   - Toggle breakpoint
   - 'Call Stack' Panel
   - 'Locals' Panel
+  - QuickWatch panel
+  - Threads panel
+  - Optional breaking on user Exceptions
+  - Showing fields/properties values on mouse rollover
 -----------
 To start using the debugger just create the script and press F10.
 The debugger implements major VS debugging features however it has various temporary limitations (read more on the Release Home page). 

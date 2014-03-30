@@ -1,4 +1,4 @@
-using gui.CSScriptNpp;
+using npp.CSScriptNpp;
 using Microsoft.Samples.Debugging.CorDebug;
 using Microsoft.Samples.Debugging.CorDebug.NativeApi;
 using Microsoft.Samples.Debugging.MdbgEngine;
@@ -14,8 +14,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using System.Text;
 
-namespace gui
+namespace npp
 {
     class WaitableQueue<T> : Queue<T>
     {
@@ -49,6 +50,17 @@ namespace gui
 
         public DebuggerClient(IMDbgShell shell)
         {
+            shell.OnStepExecitionFailure = step =>
+                {
+                    Task.Factory.StartNew(() =>
+                        {
+                            //step has failed usually it loses the source code location so trigger it
+                            //by breaking the already stopped applications.
+                            Thread.Sleep(700);
+                            ResetAndReport();
+                        });
+                };
+
             this.shell = shell;
             channel.Trace = message => Console.WriteLine(message);
             channel.Start();
@@ -61,6 +73,22 @@ namespace gui
                         ExecuteCommand(command);
                     }
                 });
+        }
+
+        void ResetAndReport()
+        {
+            try { shell.Debugger.Processes.Active.Go().WaitOne(); }
+            catch { }
+            try { shell.Debugger.Processes.Active.AsyncStop().WaitOne(); }
+            catch { }
+            ReportSourceCodePosition();
+        }
+
+        void BreakAndReport()
+        {
+            try { shell.Debugger.Processes.Active.AsyncStop().WaitOne(); }
+            catch { }
+            ReportSourceCodePosition();
         }
 
         public void Close()
@@ -110,13 +138,17 @@ namespace gui
             {
                 ProcessFrameNavigation(command);
             }
-            else if (command.StartsWith("watch")) //not native Mdbg command
+            else if (command.StartsWith("gotothread")) //not native Mdbg command
             {
-                ProcessRegisterWatch(command);
+                ProcessThreadSwitch(command);
             }
             else if (command.StartsWith(NppCategory.Invoke)) //not native Mdbg command
             {
                 ProcessInvoke(command.Substring(NppCategory.Invoke.Length));
+            }
+            else if (command.StartsWith(NppCategory.Settings)) //not native Mdbg command
+            {
+                ProcessSettings(command.Substring(NppCategory.Settings.Length));
             }
             else if (command == NppCommand.Exit)
             {
@@ -152,7 +184,41 @@ namespace gui
                         return;
                     }
 
-                    ReportsCurrentState();
+                    ReportCurrentState();
+                }
+            }
+        }
+
+        public void ProcessThreadSwitch(string command)
+        {
+            //gotothread|<threadId>
+            string[] parts = command.Split('|');
+            if (parts[0] == "gotothread" && IsInBreakMode())
+            {
+                string id = parts[1];
+
+                MDbgThread match = null;
+                try
+                {
+                    foreach (MDbgThread t in shell.Debugger.Processes.Active.Threads)
+                    {
+                        if (t.Id.ToString() == id)
+                        {
+                            match = t;
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                    // if it throws an invalid op, then that means our frames somehow got out of sync and we weren't fully refreshed.
+                    return;
+                }
+
+                if (match != null)
+                {
+                    shell.Debugger.Processes.Active.Threads.Active = match;
+                    ReportCurrentState();
                 }
             }
         }
@@ -171,15 +237,15 @@ namespace gui
             }
         }
 
-        Dictionary<string, string> WatchExpressions = new Dictionary<string, string>();
-
-        public void ProcessRegisterWatch(string command)
+        public void ProcessSettings(string command)
         {
-            //watch|<expressionId>|<expression>
-            string[] parts = command.Split(new[] { '|' }, 3);
-            WatchExpressions.Add(parts[1], parts[2]);
-        }
+            //<name>=<value>[|<name>=<value>]
+            if (command.Contains("breakonexception=true"))
+                breakOnException = true;
+            else if (command.Contains("breakonexception=false"))
+                breakOnException = false;
 
+        }
         public void ProcessInvoke(string command)
         {
             if (test)
@@ -290,8 +356,6 @@ namespace gui
                         // the BeforeExpand event to add the real children.
                         result.Add(new XAttribute("isComplex", true),
                                    new XAttribute("isArray", true));
-
-                        //string.Format("{0}:{1}  (type='{2}') array:{$MORE}", valueId, reportedValuesCount, name, val.TypeName);
                     }
                     else if (val.IsComplexType)
                     {
@@ -299,7 +363,6 @@ namespace gui
                         // It will also include all base class fields.
                         result.Add(new XAttribute("isComplex", true),
                                    new XAttribute("isArray", false));
-                        //string.Format("{0}:{1}  (type='{2}') fields:{$MORE}", valueId, name, val.TypeName);
                     }
                     else
                     {
@@ -308,7 +371,6 @@ namespace gui
                         result.Add(new XAttribute("isComplex", false),
                                    new XAttribute("isArray", false),
                                    new XAttribute("value", stValue));
-                        //result = string.Format("{0}:{1}  (type='{2}') value={3}", valueId, name, val.TypeName, stValue);
                     }
                 }
                 catch (System.Runtime.InteropServices.COMException)
@@ -316,7 +378,6 @@ namespace gui
                     result.Add(new XAttribute("isComplex", false),
                                    new XAttribute("isArray", false),
                                    new XAttribute("value", "<unavailable>"));
-                    //result = string.Format("{0}:{1}=<unavailable>", valueId, name);
                 }
 
                 return result.ToString();
@@ -326,15 +387,26 @@ namespace gui
         public void Break(bool reportPosition)
         {
             shell.Debugger.Processes.Active.AsyncStop().WaitOne();
+
             if (reportPosition)
-                ReportsCurrentState();
+                ReportCurrentState();
         }
 
         MDbgFrame GetCurrentFrame()
         {
             try
             {
-                return shell.Debugger.Processes.Active.Threads.Active.CurrentFrame;
+                return GetCurrentThread().CurrentFrame;
+            }
+            catch { }
+            return null;
+        }
+
+        MDbgThread GetCurrentThread()
+        {
+            try
+            {
+                return shell.Debugger.Processes.Active.Threads.Active;
             }
             catch { }
             return null;
@@ -452,10 +524,6 @@ namespace gui
             if (!process.Threads.Active.HaveCurrentFrame)
                 return null; //No frame for current thread #" + thread.Number);
 
-            //foreach (var framePair in GetCallStackList(shell.Debugger.Processes.Active.Threads.Active))
-            //    if (framePair.m_frame.SourcePosition != null && process.Threads.Active.CurrentFrame == framePair.m_frame)
-            //        return FormatSourcePosition(framePair.m_frame);
-
             if (!process.Threads.Active.CurrentFrame.IsInfoOnly)
                 return FormatSourcePosition(process.Threads.Active.CurrentFrame);
             else
@@ -464,15 +532,21 @@ namespace gui
 
         string FormatSourcePosition(MDbgFrame frame)
         {
-            if (frame.SourcePosition == null)
+            var f = frame;
+            while (f != null && f.SourcePosition == null)
+            {
+                f = f.NextUp;
+            }
+
+            if (f == null || f.SourcePosition == null)
                 return null;
             else
                 return String.Format("{0}|{1}:{2}|{3}:{4}",
-                    frame.SourcePosition.Path,
-                    frame.SourcePosition.StartLine,
-                    frame.SourcePosition.StartColumn,
-                    frame.SourcePosition.EndLine,
-                    frame.SourcePosition.EndColumn);
+                    f.SourcePosition.Path,
+                    f.SourcePosition.StartLine,
+                    f.SourcePosition.StartColumn,
+                    f.SourcePosition.EndLine,
+                    f.SourcePosition.EndColumn);
         }
 
         string FormatCallInfo(MDbgFrame frame)
@@ -492,31 +566,18 @@ namespace gui
 
             if (position != null)
             {
-                //Task.Factory.StartNew(() =>
-                //    {
-                //try
-                //{
-                //    Thread.Sleep(100);
-                //    string expression = "t.MyCount";
-                //    Console.WriteLine("Resolving " + expression);
-                //    MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
-                //    Console.WriteLine("Resolved " + expression);
-                //}
-                //catch { }
-                //  });
-
                 MessageQueue.AddNotification(NppCategory.SourceCode + position);
             }
         }
 
-        void ReportsCurrentState()
+        void ReportCurrentState()
         {
             reportedValues.Clear();
 
             ReportSourceCodePosition();
             ReportCallStack();
             ReportLocals();
-            ReportWatch();
+            ReportThreads();
         }
 
         void ReportLogMessage(string message)
@@ -555,6 +616,38 @@ namespace gui
             {
                 string data = string.Join("", result.ToArray());
                 MessageQueue.AddNotification(NppCategory.CallStack + data);
+            }
+        }
+
+
+        void ReportThreads()
+        {
+            if (IsInBreakMode())
+            {
+                MDbgThread tActive = GetCurrentThread();
+
+                var threadsInfo = new StringBuilder();
+
+                foreach (MDbgThread t in shell.Debugger.Processes.Active.Threads)
+                {
+                    string stFrame = "<unknown>";
+
+                    try
+                    {
+                        if (t.BottomFrame != null)
+                            stFrame = t.BottomFrame.Function.FullName;
+                    }
+                    catch { }//t.BottomFrame can throw
+
+                    threadsInfo.AppendFormat("<thread id=\"{0}\" name=\"{1}\" active=\"{2}\" number=\"{3}\" />",
+                                             t.Id,
+                                             stFrame.Replace("<", "$&lt;").Replace(">", "&gt;"),
+                                             (t == tActive),
+                                             t.Number,
+                                             stFrame);
+                }
+
+                MessageQueue.AddNotification(NppCategory.Threads + "<threads>" + threadsInfo.ToString() + "</threads>");
             }
         }
 
@@ -609,7 +702,7 @@ namespace gui
             {
                 if (lastActiveprocess == null)
                 {
-                    shell.Debugger.Processes.Active.PostDebugEvent += Active_PostDebugEvent;
+                    shell.Debugger.Processes.Active.PostDebugEvent += OnPostDebugEvent;
                     lastActiveprocessId = shell.Debugger.Processes.Active.CorProcess.Id;
                     MessageQueue.AddNotification(NppCategory.Process + lastActiveprocessId + ":STARTED");
                     lastActiveprocess = shell.Debugger.Processes.Active;
@@ -619,7 +712,9 @@ namespace gui
 
         bool test = true;
 
-        void Active_PostDebugEvent(object sender, CustomPostCallbackEventArgs e)
+        bool breakOnException = true;
+
+        void OnPostDebugEvent(object sender, CustomPostCallbackEventArgs e)
         {
             //if (test)
             //{
@@ -630,14 +725,12 @@ namespace gui
             if (e.CallbackType == ManagedCallbackType.OnProcessExit)
                 ReportDebugTermination();
 
-            Debug.WriteLine(e.CallbackType);
-
             if (e.CallbackType == ManagedCallbackType.OnBreakpoint || e.CallbackType == ManagedCallbackType.OnBreak || e.CallbackType == ManagedCallbackType.OnStepComplete)
             {
                 if (GetCurrentSourcePosition() == null)
                     MessageQueue.AddNotification(NppCategory.State + "NOSOURCEBREAK"); //can be caused by 'Debugger.Break();'
 
-                ReportsCurrentState();
+                ReportCurrentState();
             }
 
             if (e.CallbackType == ManagedCallbackType.OnLogMessage)
@@ -646,7 +739,93 @@ namespace gui
                 ReportLogMessage(args.Message);
             }
 
+            if (breakOnException && e.CallbackType == ManagedCallbackType.OnException)
+            {
+                string position = GetCurrentSourcePosition();
+
+                CorExceptionEventArgs args = (CorExceptionEventArgs)e.CallbackArgs;
+
+                string info = SerializeException(args.Thread.CurrentException).Replace("\r\n", "\n").Replace("\n", "{$NL}");
+
+                if (position != null)
+                {
+                    if (!position.Contains("css_dbg.cs|")) //If it is a script launcher then just ignore it.
+                    {
+                        bool isDifferentThread = SwitchToThread(args.Thread);
+                        if (!isDifferentThread)
+                        {
+                            BreakAndReport();
+                            MessageQueue.AddNotification(NppCategory.Exception + "user+:User code Exception.{$NL}Location: " + position + "{$NL}" + info);
+                        }
+                    }
+                }
+                else
+                {
+                    MessageQueue.AddNotification(NppCategory.Exception + "user-:Non-user code Exception." + "{$NL}" + info);
+                    BreakAndReport();
+                }
+            }
+
             WriteOutput("meta=>", e.CallbackType.ToString());
+        }
+
+        bool SwitchToThread(CorThread thread)
+        {
+            try
+            {
+                foreach (MDbgThread t in shell.Debugger.Processes.Active.Threads)
+                {
+                    if (t.Id == thread.Id)
+                    {
+                        if (shell.Debugger.Processes.Active.Threads.Active != t)
+                        {
+                            shell.Debugger.Processes.Active.Threads.Active = t;
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // if it throws an invalid op, then that means our frames somehow got out of sync and we weren't fully refreshed.
+            }
+            return false;
+        }
+
+        string SerializeException(CorValue exception)
+        {
+            var result = new StringBuilder();
+            MDbgValue ex = new MDbgValue(shell.Debugger.Processes.Active, exception);
+
+            result.Append(ex.GetStringValue(0) + ": ");
+            foreach (MDbgValue f in ex.GetFields())
+            {
+                string outputValue = f.GetStringValue(0);
+
+                if (f.Name == "_message")
+                {
+                    result.AppendLine(outputValue);
+                    break;
+
+                }
+
+                //if (f.Name == "_xptrs" || f.Name == "_xcode" || f.Name == "_stackTrace" ||
+                //    f.Name == "_remoteStackTraceString" || f.Name == "_remoteStackIndex" ||
+                //    f.Name == "_exceptionMethodString")
+                //{
+                //    continue;
+                //}
+
+                //// remove new line characters in string
+                //if (outputValue != "<null>" && outputValue != null && (f.Name == "_exceptionMethodString" || f.Name == "_remoteStackTraceString"))
+                //{
+                //    outputValue = outputValue.Replace('\n', '#');
+                //}
+
+                //string name = f.Name.Substring(1,1).ToUpper()+f.Name.Substring(2);
+                //result.AppendLine("\t" + name + "=" + outputValue);
+            }
+            return result.ToString();
         }
 
         bool EvalsInProgress = false;
@@ -658,55 +837,71 @@ namespace gui
                 EvalsCompleted.WaitOne();
         }
 
+        bool IsSet(CorDebugUserState value, CorDebugUserState bitValue)
+        {
+            return (value | bitValue) == value;
+        }
+
+        bool IsEvalSafe()
+        {
+            //shell.Debugger.Processes.Active.AsyncStop().WaitOne();
+
+            var proc = shell.Debugger.Processes.Active;
+            ICorDebugThread dbgThred = proc.Threads.Active.CorThread.Raw;
+
+            ///http://blogs.msdn.com/b/jmstall/archive/2005/11/15/funceval-rules.aspx
+            ///Dangers of Eval: http://blogs.msdn.com/b/jmstall/archive/2005/03/23/400794.aspx
+            CorDebugUserState pState;
+            dbgThred.GetUserState(out pState);
+            if ((!IsSet(pState, CorDebugUserState.USER_UNSAFE_POINT) && IsSet(pState, CorDebugUserState.USER_STOPPED)) || pState == CorDebugUserState.USER_NONE)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         void ReportWatch()
         {
-            try
-            {
-                //the following code can completely derail the the debugger. 
-                //Even despite the try..catch !!!!!!
-                //Bad, bad Debugger!
-                return; 
-
-                Thread.Sleep(700);
-                if (IsInBreakMode())
+            if (IsEvalSafe())
+                try
                 {
-                    foreach (var id in WatchExpressions.Keys)
+                    //the following code can completely derail (dead-lock) the the debugger. 
+                    //Bad, bad Debugger!
+                    //http://blogs.msdn.com/b/jmstall/archive/2005/11/15/funceval-rules.aspx
+                    //Dngers of Eval: http://blogs.msdn.com/b/jmstall/archive/2005/03/23/400794.aspx
+
+                    if (IsInBreakMode())
                     {
+                        string result = "";
+                        Console.WriteLine("-------------------");
                         string expressionValue = "";
                         try
                         {
-                            string expression = WatchExpressions[id];
+                            string expression = "";
+
                             MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
 
                             if (value != null)
                             {
-                                expressionValue = "<items>" + Serialize(value, expression) + "</items>";
+                                //expressionValue = "<items>" + Serialize(value, expression) + "</items>";
+                                expressionValue = Serialize(value, expression);
+                                result += expressionValue;
                             }
+                            Console.WriteLine(expression + "|" + expressionValue);
                         }
                         catch
                         {
-                            expressionValue = "<items/>";
+                            //expressionValue = "<items/>";
                         }
-
-                        //MessageQueue.AddNotification(NppCategory.Watch + id + "|" + expressionValue);
+                        Console.WriteLine("-------------------");
                     }
                 }
-            }
-            catch (Exception e)
-            {
-            }
-        }
-
-        void ReportWatchAcynch()
-        {
-            EvalsInProgress = true;
-
-            Task.Factory.StartNew(() =>
+                catch (Exception e)
                 {
-                    ReportWatch();
-                    EvalsInProgress = false;
-                    EvalsCompleted.Set();
-                });
+                }
         }
 
         class FramePair
@@ -805,46 +1000,4 @@ namespace gui
         }
     }
 
-    static class Utils
-    {
-        static public string ReplaceClrAliaces(this string text, bool hideSystemNamespace = false)
-        {
-            if (string.IsNullOrEmpty(text))
-                return text;
-            else
-            {
-                var retval = text.ReplaceWholeWord("System.Object", "object")
-                                 .ReplaceWholeWord("System.Boolean", "bool")
-                                 .ReplaceWholeWord("System.Byte", "byte")
-                                 .ReplaceWholeWord("System.SByte", "sbyte")
-                                 .ReplaceWholeWord("System.Char", "char")
-                                 .ReplaceWholeWord("System.Decimal", "decimal")
-                                 .ReplaceWholeWord("System.Double", "double")
-                                 .ReplaceWholeWord("System.Single", "float")
-                                 .ReplaceWholeWord("System.Int32", "int")
-                                 .ReplaceWholeWord("System.UInt32", "uint")
-                                 .ReplaceWholeWord("System.Int64", "long")
-                                 .ReplaceWholeWord("System.UInt64", "ulong")
-                                 .ReplaceWholeWord("System.Object", "object")
-                                 .ReplaceWholeWord("System.Int16", "short")
-                                 .ReplaceWholeWord("System.UInt16", "ushort")
-                                 .ReplaceWholeWord("System.String", "string")
-                                 .ReplaceWholeWord("System.Void", "void")
-                                 .ReplaceWholeWord("Void", "void");
-                if (hideSystemNamespace && retval.StartsWith("System."))
-                {
-                    string typeName = retval.Substring("System.".Length);
-                    if (!typeName.Contains('.')) // it is not a complex namespace
-                        retval = typeName;
-                }
-
-                return retval;
-            }
-        }
-
-        static public string ReplaceWholeWord(this string text, string pattern, string replacement)
-        {
-            return Regex.Replace(text, @"\b(" + pattern + @")\b", replacement);
-        }
-    }
 }

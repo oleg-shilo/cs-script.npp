@@ -26,6 +26,8 @@ namespace CSScriptNpp
 
             Npp.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, Color.Black, debugStepPointColor);
             Npp.SetMarkerStyle(MARK_BREAKPOINT, CSScriptNpp.Resources.Resources.breakpoint);
+
+            Debugger.BreakOnException = Config.Instance.BreakOnException;
         }
 
         public static void OnCurrentFileChanged()
@@ -71,7 +73,7 @@ namespace CSScriptNpp
                     if (!string.IsNullOrEmpty(data))
                     {
                         var dbgValue = XElement.Parse(data);
-                        return content + " | " + dbgValue.Attribute("value").Value;
+                        return content + ": " + dbgValue.Attribute("value").Value;
                     }
                 }
                 catch { }
@@ -121,9 +123,47 @@ namespace CSScriptNpp
             {
                 invokeCompleteHandlers.Add(id, resultHandler);
             }
-            Debug.WriteLine("Invoke send: " + id + "; " + string.Format("{0}:{1}:{2}", id, command, args ?? ""));
+            // Debug.WriteLine("Invoke send: " + id + "; " + string.Format("{0}:{1}:{2}", id, command, args ?? ""));
             MessageQueue.AddCommand(NppCategory.Invoke + string.Format("{0}:{1}:{2}", id, command, args ?? ""));
             return id;
+        }
+
+        public static void OnException(string message)
+        {
+            //user+:<description>{$NL}Location: <file|line,column|line,column>{$NL}<exceptionName>{$NL}<info>
+            string exceptionData = message.Replace("{$NL}", "\n");
+
+            if (exceptionData.StartsWith("user+"))
+            {
+                string[] lines = exceptionData.Substring("user+".Length + 1).Split(nlDelimiter, 4);
+
+                string description = lines[0];
+                string location = lines[1];
+                string excName = lines[2];
+                string info = lines[3];
+
+                string[] locationParts = location.Split('|');
+
+                string exceptionMessageShort = string.Format("{0}\r\n  {1}\r\n  {2} ({3})", description, excName, locationParts[0], locationParts[1].Replace(":", ", "));
+                Plugin.OutputPanel.ShowDebugOutput().WriteLine(exceptionMessageShort);
+
+                string exceptionMessageFull = string.Format("{0}\n{1} ({2})\n{3}\n{4}",
+                                                  description,
+                                                  locationParts[0], locationParts[1].Replace(":", ", "),
+                                                  excName,
+                                                  info);
+
+                var nativeWindow = new NativeWindow();
+                nativeWindow.AssignHandle(Plugin.NppData._nppHandle);
+                MessageBox.Show(nativeWindow, exceptionMessageFull, "CS-Script");
+            }
+            else
+            {
+                //user-:<description>{$NL}<exceptionName>{$NL}<info>
+                string[] lines = exceptionData.Substring("user+".Length + 1).Split(nlDelimiter, 2);
+                Plugin.OutputPanel.ShowDebugOutput().WriteLine(lines[0] + "\r\n  " + lines[1]);
+                Go();
+            }
         }
 
         public static void OnInvokeComplete(string notification)
@@ -195,6 +235,10 @@ namespace CSScriptNpp
                         NotifyOnDebugStepChanges();
                     }
                 }
+                else if (message.StartsWith(NppCategory.Exception))
+                {
+                    OnException(message.Substring(NppCategory.Exception.Length));
+                }
                 else if (message.StartsWith(NppCategory.Invoke))
                 {
                     OnInvokeComplete(message.Substring(NppCategory.Invoke.Length));
@@ -221,6 +265,10 @@ namespace CSScriptNpp
                 else if (message.StartsWith(NppCategory.CallStack))
                 {
                     Plugin.GetDebugPanel().UpdateCallstack(message.Substring(NppCategory.CallStack.Length));
+                }
+                else if (message.StartsWith(NppCategory.Threads))
+                {
+                    Plugin.GetDebugPanel().UpdateThreads(message.Substring(NppCategory.Threads.Length));
                 }
                 else if (message.StartsWith(NppCategory.Locals))
                 {
@@ -259,6 +307,7 @@ namespace CSScriptNpp
         }
 
         static char[] delimiter = new[] { '|' };
+        static char[] nlDelimiter = new[] { '\n' };
 
         static Action OnNextFileOpenComplete;
 
@@ -332,6 +381,23 @@ namespace CSScriptNpp
         static string BuildBreakpointKey(string file, int line)
         {
             return file + "|" + (line + 1); //server debugger operates in '1-based' lines
+        }
+
+        static bool breakOnException = false;
+
+        static public bool BreakOnException
+        {
+            get { return breakOnException; }
+            set
+            {
+                breakOnException = value;
+                SendSettings(breakOnException);
+                if (breakOnException != Config.Instance.BreakOnException)
+                {
+                    Config.Instance.BreakOnException = breakOnException;
+                    Config.Instance.Save();
+                }
+            }
         }
 
         static public void RunToCursor()
@@ -433,6 +499,14 @@ namespace CSScriptNpp
             }
         }
 
+        static new public void RegiterWatch(string expression, bool add)
+        {
+            if (IsRunning)
+            {
+                DebuggerServer.StepOver();
+            }
+        }
+
         static new public void StepIn()
         {
             if (IsRunning && IsInBreak)
@@ -447,6 +521,14 @@ namespace CSScriptNpp
             if (IsRunning && IsInBreak)
             {
                 DebuggerServer.GoToFrame(frameId);
+            }
+        }
+
+        static new public void GoToThread(string threadId)
+        {
+            if (IsRunning && IsInBreak)
+            {
+                DebuggerServer.GoToThread(threadId);
             }
         }
 
@@ -474,6 +556,7 @@ namespace CSScriptNpp
             if (!IsRunning)
             {
                 Start();
+                SendSettings(BreakOnException);
                 Run(app, args ?? "");
                 EntryBreakpointFile = null;
             }

@@ -183,9 +183,29 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dbg_remove_stoponexc {
+            get {
+                object obj = ResourceManager.GetObject("dbg_remove_stoponexc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dbg_runtocusrsor {
             get {
                 object obj = ResourceManager.GetObject("dbg_runtocusrsor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap dbg_set_stoponexc {
+            get {
+                object obj = ResourceManager.GetObject("dbg_set_stoponexc", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

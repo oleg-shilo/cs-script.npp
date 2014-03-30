@@ -27,13 +27,13 @@ namespace CSScriptIntellisense
           delegate
           {
               Assembly[] assemblies = {
-					typeof(object).Assembly,                    // mscorlib.dll
-					typeof(Uri).Assembly,                       // System.dll
-					typeof(Form).Assembly,                      // System.Windows.Forms.dll
-					typeof(System.Linq.Enumerable).Assembly,    // System.Core.dll
-					typeof(System.Xml.XmlDocument).Assembly,    // System.Xml.dll
-					typeof(System.Drawing.Bitmap).Assembly,     // System.Drawing.dll
-				};
+                    typeof(object).Assembly,                    // mscorlib.dll
+                    typeof(Uri).Assembly,                       // System.dll
+                    typeof(Form).Assembly,                      // System.Windows.Forms.dll
+                    typeof(System.Linq.Enumerable).Assembly,    // System.Core.dll
+                    typeof(System.Xml.XmlDocument).Assembly,    // System.Xml.dll
+                    typeof(System.Drawing.Bitmap).Assembly,     // System.Drawing.dll
+                };
 
               var projectContents = new IUnresolvedAssembly[assemblies.Length];
               Parallel.For(0, assemblies.Length, i =>
@@ -111,8 +111,8 @@ namespace CSScriptIntellisense
 
                 var doc = new ReadOnlyDocument(editorText);
 
-                if(editorText.Length <= offset)
-                    offset = editorText.Length-1;
+                if (editorText.Length <= offset)
+                    offset = editorText.Length - 1;
 
                 if (editorText[offset] != '.') //we may be at the partially complete word
                     for (int i = offset - 1; i >= 0; i--)

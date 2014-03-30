@@ -12,12 +12,14 @@ namespace CSScriptNpp
     {
         public static string SourceCode = "source=>";
         public static string Process = "process=>";
-        public static string Watch = "watch=>";
         public static string Trace = "trace=>";
+        public static string Threads = "threads=>";
         public static string CallStack = "callstack=>";
         public static string Invoke = "invoke=>";
+        public static string Exception = "exception=>";
         public static string Locals = "locals=>";
         public static string State = "state=>";
+        public static string Settings = "settings=>";
         public static string Breakpoints = "breakpoints=>";
         public static string Diagnostics = "debugger=>";
     }
@@ -84,12 +86,28 @@ namespace CSScriptNpp
             }
         }
 
+        static public void GoToThread(string threadId)
+        {
+            if (IsRunning)
+            {
+                MessageQueue.AddCommand("gotothread|" + threadId);
+            }
+        }
+
         static public void StepOut()
         {
             if (IsRunning)
             {
                 MessageQueue.AddCommand("out");
                 IsInBreak = false;
+            }
+        }
+
+        static public void SendSettings(bool breakOnException)
+        {
+            if (IsRunning)
+            {
+                MessageQueue.AddCommand(NppCategory.Settings + "breakonexception=" + (breakOnException ? "true" : "false"));
             }
         }
 
