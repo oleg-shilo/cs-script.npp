@@ -114,6 +114,16 @@ namespace CSScriptNpp
                     CSScriptNpp.Plugin.OnCurrentFileChanged();
                     Debugger.OnCurrentFileChanged();
                 }
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILEOPENED)
+                {
+                    string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
+                    Debugger.LoadBreakPointsFor(file);
+                }
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED || nc.nmhdr.code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
+                {
+                    string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
+                    Debugger.SaveBreakPointsFor(file);
+                }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {
                     Marshal.FreeHGlobal(_ptrPluginName);

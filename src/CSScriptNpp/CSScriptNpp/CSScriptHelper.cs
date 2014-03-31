@@ -426,6 +426,28 @@ namespace CSScriptNpp
             }
         }
 
+        static public string GetDbgInfoFile(string script, bool create = false)
+        {
+            string uniqueScriptHash = Path.GetFullPath(script).ToLower() //Win is not case-sensitive
+                                                              .GetHashCode()
+                                                              .ToString();
+
+            var file = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\" + uniqueScriptHash + "\\" + Path.GetFileName(script) + ".dbg");
+
+            if (create)
+            {
+                var dir = Path.GetDirectoryName(file);
+
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                if (!File.Exists(file))
+                    File.WriteAllText(file, "");
+            }
+
+            return file;
+        }
+
         static public string GetLatestAvailableVersion()
         {
             try

@@ -30,8 +30,82 @@ namespace CSScriptNpp
             Debugger.BreakOnException = Config.Instance.BreakOnException;
         }
 
+        static public void LoadBreakPointsFor(string file)
+        {
+            string expectedkeyPreffix = file + "|";
+            string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPreffix, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+            foreach (var key in fileBreakpoints)
+                breakpoints.Remove(key); //clear old if any
+
+            try
+            {
+                string dbg = CSScriptHelper.GetDbgInfoFile(file);
+                if (File.Exists(dbg))
+                    foreach (var key in File.ReadAllLines(dbg).Skip(1))
+                        breakpoints.Add(key, IntPtr.Zero);
+            }
+            catch { }
+        }
+
+        static public void SaveBreakPointsFor(string file)
+        {
+            string expectedkeyPreffix = file + "|";
+            string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPreffix, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+            if (fileBreakpoints.Any())
+            {
+                try
+                {
+                    string dbg = CSScriptHelper.GetDbgInfoFile(file, true);
+                    string[] header = new[] { "#script: " + file };
+                    File.WriteAllLines(dbg, header.Concat(fileBreakpoints).ToArray());
+                }
+                catch { }
+            }
+            else
+            {
+                string dbg = CSScriptHelper.GetDbgInfoFile(file);
+                if (File.Exists(dbg))
+                    try
+                    {
+                        File.Delete(dbg);
+                    }
+                    catch { }
+            }
+        }
+
+        static void RefreshBreakPointsForCurrentTab()
+        {
+            try
+            {
+                string file = Npp.GetCurrentFile();
+
+                string expectedkeyPreffix = file + "|";
+                string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPreffix, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+                foreach (var key in fileBreakpoints)
+                {
+                    if (breakpoints[key] == IntPtr.Zero) //not placed yet
+                    {
+                        //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
+                        int line = int.Parse(key.Split('|').Last()) - 1;
+                        breakpoints[key] = Npp.PlaceMarker(MARK_BREAKPOINT, line);
+                    }
+                }
+            }
+            catch { }
+        }
+
         public static void OnCurrentFileChanged()
         {
+            string file = Npp.GetCurrentFile();
+
+            string dbg = CSScriptHelper.GetDbgInfoFile(file);
+
+            if (File.Exists(dbg))
+                RefreshBreakPointsForCurrentTab();
+
             if (!IsRunning)
             {
                 OnNextFileOpenComplete = null;

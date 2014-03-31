@@ -202,6 +202,13 @@ namespace CSScriptNpp
             return path.ToString();
         }
 
+        static public string GetTabFile(int index)
+        {
+            var path = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(NppHandle, NppMsg.NPPM_GETFULLPATHFROMBUFFERID, index, path);
+            return path.ToString();
+        }
+
         static public int GetPosition(int line, int column)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
