@@ -304,8 +304,10 @@ namespace CSScriptNpp
                             {
                                 FileName = debuggerApp,
                                 Arguments = "!load npp.dll",
+#if !DEBUG 
                                 CreateNoWindow = true,
                                 UseShellExecute = false
+#endif
                             });
 
             MessageQueue.AddNotification(NppCategory.Diagnostics + debugger.Id + ":STARTED");

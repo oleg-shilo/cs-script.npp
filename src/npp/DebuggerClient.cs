@@ -729,6 +729,10 @@ namespace npp
                     MessageQueue.AddNotification(NppCategory.State + "NOSOURCEBREAK"); //can be caused by 'Debugger.Break();'
 
                 ReportCurrentState();
+#if DEBUG 
+                ReportWatch();
+#endif
+
             }
 
             if (e.CallbackType == ManagedCallbackType.OnLogMessage)
@@ -861,6 +865,7 @@ namespace npp
             }
         }
 
+        //for dev evaluation purpose only
         void ReportWatch()
         {
             if (IsEvalSafe())
@@ -869,7 +874,7 @@ namespace npp
                     //the following code can completely derail (dead-lock) the the debugger. 
                     //Bad, bad Debugger!
                     //http://blogs.msdn.com/b/jmstall/archive/2005/11/15/funceval-rules.aspx
-                    //Dngers of Eval: http://blogs.msdn.com/b/jmstall/archive/2005/03/23/400794.aspx
+                    //Dangers of Eval: http://blogs.msdn.com/b/jmstall/archive/2005/03/23/400794.aspx
 
                     if (IsInBreakMode())
                     {
@@ -878,7 +883,11 @@ namespace npp
                         string expressionValue = "";
                         try
                         {
-                            string expression = "";
+                            //public class Test { public int MyPorp { get; set; } }
+                            //...
+                            //var t = new Test();                            
+                            //t.MyPorp = 9;
+                            string expression = "t.MyProp";
 
                             MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
 
@@ -888,7 +897,7 @@ namespace npp
                                 expressionValue = Serialize(value, expression);
                                 result += expressionValue;
                             }
-                            Console.WriteLine(expression + "|" + expressionValue);
+                            Console.WriteLine(expression + ": " + expressionValue);
                         }
                         catch
                         {
