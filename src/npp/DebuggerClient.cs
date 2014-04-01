@@ -670,9 +670,7 @@ namespace npp
                                                                    .ToArray()) + "</locals>";
                 }
             }
-            catch (Exception e)
-            {
-            }
+            catch { }
 
             MessageQueue.AddNotification(NppCategory.Locals + result);
         }
@@ -899,9 +897,7 @@ namespace npp
                         Console.WriteLine("-------------------");
                     }
                 }
-                catch (Exception e)
-                {
-                }
+                catch { }
         }
 
         class FramePair

@@ -12,25 +12,25 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Debugger outstanding features
-     *      + persist breakpoints
      *      - Debug panel
      *          - Watch panel
      *          - Modules panel
      *          - Debug Objects panel 
-     *              - wraps value text instead of trubcatiing 
-     *              - should show oversized tvalue text as tooltip 
+     *              - wraps value text instead of truncating 
+     *              - should show oversized value text as tooltip 
      *      - handle breakpoints in auto-generated files
      *      - make handling Debug.Assert user friendlier
      *      - when debugging auto-script plugin should set invisible breakpoint to the meaningful first line
      *      
      * - Desirable but not essential features
+     *      - Aollow disabling auto-update from config file
      *      - F12 should work on constructors e.g. 'new Te|st();'
      *      - configurable shortcuts
      *      - CodeMap should reflect all members with the indication of the type name (eventually)
      *      - Debug panel
      *          - Auto-refresh fields and auto-properties (""__BackingField"")
      *          - Locals panel
-     *            - cached update (not recommended as it requires asyncg funcevals)
+     *            - cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
      *              - reconstruct the tree branch by branch
      *            
