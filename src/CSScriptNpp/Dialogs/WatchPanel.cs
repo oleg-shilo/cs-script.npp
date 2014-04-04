@@ -22,20 +22,24 @@ namespace CSScriptNpp.Dialogs
             contentPanel.Controls.Add(content);
             content.Dock = DockStyle.Fill;
             content.Visible = true;
+            content.IsReadOnly = false;
+            content.OnDagDropText += content_OnDagDropText;
+            Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
         }
 
-        public void RefreshData()
+        void content_OnDagDropText(string data)
         {
-
+            content.AddWatchObject(new DbgObject
+                {
+                    DbgId = "",
+                    Name = data,
+                    IsExpression = true
+                });
         }
 
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        void Debugger_OnWatchUpdate(string data)
         {
-            if (e.KeyCode == Keys.Return)
-            {
-                string data = Debugger.Invoke("resolve", textBox1.Text);
-                content.SetData(data);
-            }
+            content.SetData(data);
         }
     }
 }

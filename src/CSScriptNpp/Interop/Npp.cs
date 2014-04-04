@@ -46,34 +46,59 @@ namespace CSScriptNpp
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
-            ShowingCalltip = false;
+            Calltip.IsShowing = false;
         }
 
-        static public bool ShowingCalltip = false;
+        class Calltip
+        {
+            static public bool IsShowing = false;
+            static public string LastExpression = null;
+            static public string LastEval = null;
+        }
 
         static public void OnCalltipRequest(int position)
         {
-            if (ShowingCalltip) return;
+            if (position == -1)
+            {
+                Calltip.LastEval =
+                Calltip.LastExpression = null; //if DBG frame is changed so clear the data
+            }
+            else
+            {
+                if (Calltip.IsShowing) return;
 
-            ShowingCalltip = true;
-            Task.Factory.StartNew(() =>  //must be asynch to allow processing other Debugger notifications 
-                {
-                    if (Debugger.IsInBreak)
+                Calltip.IsShowing = true;
+
+                Task.Factory.StartNew(() =>  //must be asynch to allow processing other Debugger notifications 
                     {
-                        string content = CSScriptIntellisense.Npp.GetStatementAtPosition(position);
-                        if (!string.IsNullOrEmpty(content))
+                        if (Debugger.IsInBreak)
                         {
-                            string tooltip = Debugger.GetDebugTooltipValue(content);
-                            if (tooltip != null)
+                            string content = CSScriptIntellisense.Npp.GetStatementAtPosition(position);
+                            if (!string.IsNullOrEmpty(content))
                             {
-                                Npp.ShowCalltip(position, tooltip);
-                                return;
+                                string tooltip;
+                                if (content == Calltip.LastExpression ) //if DBG frame is changed the LastExpression is cleared
+                                {
+                                    tooltip = Calltip.LastEval;
+                                }
+                                else
+                                {
+                                    tooltip = Debugger.GetDebugTooltipValue(content);
+                                    Calltip.LastEval = tooltip;
+                                    Calltip.LastExpression = content;
+                                }
+
+                                if (tooltip != null)
+                                {
+                                    Npp.ShowCalltip(position, tooltip);
+                                    return;
+                                }
                             }
                         }
-                    }
 
-                    ShowingCalltip = false;
-                });
+                        Calltip.IsShowing = false;
+                    });
+            }
         }
 
         static public void ShowCalltip(int position, string text)

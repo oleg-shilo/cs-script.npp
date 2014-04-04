@@ -240,7 +240,13 @@ namespace CSScriptNpp
             }
         }
 
-        public static void OnInvokeComplete(string notification)
+        static void OnWatchData(string notification)
+        {
+            if (OnWatchUpdate != null)
+                OnWatchUpdate(notification);
+        }
+
+        static void OnInvokeComplete(string notification)
         {
             //<id>:<result>
             string[] parts = notification.Split(new[] { ':' }, 2);
@@ -268,6 +274,7 @@ namespace CSScriptNpp
 
         static int lastNOSOURCEBREAK = 0;
 
+        static public event Action<string> OnWatchUpdate;
         static public event Action OnFrameChanged; //breakpoint, step advance, process exit
         static public event Action<string> OnNotification;
 
@@ -317,6 +324,10 @@ namespace CSScriptNpp
                 {
                     OnInvokeComplete(message.Substring(NppCategory.Invoke.Length));
                 }
+                else if (message.StartsWith(NppCategory.Watch))
+                {
+                    OnWatchData(message.Substring(NppCategory.Watch.Length));
+                }
                 else if (message.StartsWith(NppCategory.Trace))
                 {
                     Plugin.OutputPanel.DebugOutput.Write(message.Substring(NppCategory.Trace.Length));
@@ -347,7 +358,7 @@ namespace CSScriptNpp
                 else if (message.StartsWith(NppCategory.Locals))
                 {
                     Plugin.GetDebugPanel().UpdateLocals(message.Substring(NppCategory.Locals.Length));
-                    NotifyOnDebugStepChanges();
+                    NotifyOnDebugStepChanges(); //zos remove
                 }
                 else if (message.StartsWith(NppCategory.SourceCode))
                 {

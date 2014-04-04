@@ -19,6 +19,7 @@ namespace CSScriptNpp
         public static string Exception = "exception=>";
         public static string Locals = "locals=>";
         public static string State = "state=>";
+        public static string Watch = "watch=>";
         public static string Settings = "settings=>";
         public static string Breakpoints = "breakpoints=>";
         public static string Diagnostics = "debugger=>";

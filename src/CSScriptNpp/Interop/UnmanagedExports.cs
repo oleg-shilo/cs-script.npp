@@ -38,6 +38,8 @@ namespace CSScriptNpp
                 Plugin.FuncItems.Add(item.ToLocal());
 
             CSScriptIntellisense.Plugin.FuncItems.Items.Clear();
+
+            Debugger.OnFrameChanged += ()=> Npp.OnCalltipRequest(-1); //clear_all_cache
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]

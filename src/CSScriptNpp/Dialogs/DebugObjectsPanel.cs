@@ -13,14 +13,86 @@ namespace CSScriptNpp.Dialogs
 {
     public partial class DebugObjectsPanel : Form
     {
+        private System.Windows.Forms.TextBox editBox = new System.Windows.Forms.TextBox();
+        private ListViewItem focucedItem;
+        private int X = 0;
+        private int Y = 0;
+
         public DebugObjectsPanel()
         {
             InitializeComponent();
+
+            //listView1.Enabled = true;
+            listView1.MouseDoubleClick += listView1_MouseDoubleClick;
+            listView1.MouseDown += listView1_MouseDown;
+
+            editBox.Size = new System.Drawing.Size(0, 0);
+            editBox.Location = new System.Drawing.Point(0, 0);
+            this.Controls.AddRange(new System.Windows.Forms.Control[] { this.editBox });
+            editBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EditOver);
+            editBox.LostFocus += new System.EventHandler(this.FocusOver);
+            editBox.Font = listView1.Font;
+            editBox.BackColor = Color.LightYellow;
+            editBox.BorderStyle = BorderStyle.Fixed3D;
+            editBox.Hide();
+            editBox.Text = "";
+        }
+
+        private string subItemText;
+        private int subItemSelected = 0;
+
+        void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            // Check the subitem clicked .
+            int nStart = X;
+            int spos = 0;
+            int epos = listView1.Columns[0].Width;
+            for (int i = 0; i < listView1.Columns.Count; i++)
+            {
+                if (nStart > spos && nStart < epos)
+                {
+                    subItemSelected = i;
+                    break;
+                }
+
+                spos = epos;
+                epos += listView1.Columns[i].Width;
+            }
+
+            subItemText = focucedItem.SubItems[subItemSelected].Text;
+
+            string colName = listView1.Columns[subItemSelected].Text;
+
+            Rectangle r = new Rectangle(spos, focucedItem.Bounds.Y, epos, focucedItem.Bounds.Bottom);
+            editBox.Size = new System.Drawing.Size(epos - spos, focucedItem.Bounds.Bottom - focucedItem.Bounds.Top);
+            editBox.Location = new System.Drawing.Point(spos, focucedItem.Bounds.Y);
+            editBox.Show();
+            editBox.Text = subItemText;
+            editBox.SelectAll();
+            editBox.Focus();
+        }
+
+        private void EditOver(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 13)
+            {
+                focucedItem.SubItems[subItemSelected].Text = editBox.Text;
+                editBox.Hide();
+            }
+
+            if (e.KeyChar == 27)
+                editBox.Hide();
+        }
+
+        private void FocusOver(object sender, System.EventArgs e)
+        {
+            focucedItem.SubItems[subItemSelected].Text = editBox.Text;
+            editBox.Hide();
         }
 
         public void SetData(string data)
         {
-            AddWatchObjects(ToWatchObjects(data));
+            ResetWatchObjects(ToWatchObjects(data));
         }
 
         DbgObject[] ToWatchObjects(string data)
@@ -79,7 +151,12 @@ namespace CSScriptNpp.Dialogs
             return result.ToArray();
         }
 
-        public void AddWatchObjects(params DbgObject[] items)
+        public void AddWatchObject(DbgObject item)
+        {
+            listView1.Items.Add(item.ToListViewItem());
+        }
+
+        public void ResetWatchObjects(params DbgObject[] items)
         {
             listView1.Items.Clear();
 
@@ -131,10 +208,10 @@ namespace CSScriptNpp.Dialogs
 
                 if (dbgObject.IsSeparator)
                     icon = Resources.Resources.dbg_container;
-                else if (!dbgObject.IsField)
-                    icon = Resources.Resources.property;
-                else
+                else if (dbgObject.IsField || dbgObject.IsExpression)
                     icon = Resources.Resources.field;
+                else
+                    icon = Resources.Resources.property;
 
                 e.Graphics.DrawImage(icon, range.End + 6, e.Bounds.Y);
 
@@ -221,7 +298,10 @@ namespace CSScriptNpp.Dialogs
 
         private void listView1_MouseDown(object sender, MouseEventArgs e)
         {
-            ListViewItem selection = listView1.GetItemAt(e.X, e.Y);
+            focucedItem = listView1.GetItemAt(e.X, e.Y);
+            X = e.X;
+            Y = e.Y;
+            
             ListViewHitTestInfo info = listView1.HitTest(e.X, e.Y);
             if (info.Item != null)
             {
@@ -295,6 +375,29 @@ namespace CSScriptNpp.Dialogs
                 catch { }
             }
         }
+
+        public bool IsReadOnly = true;
+
+        private void listView1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (!IsReadOnly && e.Data.GetDataPresent(DataFormats.StringFormat))
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void listView1_DragDrop(object sender, DragEventArgs e)
+        {
+            if (OnDagDropText != null)
+                OnDagDropText((string)e.Data.GetData(DataFormats.StringFormat));
+        }
+
+        public event Action<string> OnDagDropText;
+
+        private void listView1_MouseDoubleClick_1(object sender, MouseEventArgs e)
+        {
+            MessageBox.Show("DoubleClick");
+        }
     }
 
     public class Range
@@ -331,6 +434,7 @@ namespace CSScriptNpp.Dialogs
         public string DbgId { get; set; }
         public bool IsPublic { get; set; }
         public bool IsSeparator { get; set; }
+        public bool IsExpression { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }
         public string Type { get; set; }
@@ -376,16 +480,18 @@ namespace CSScriptNpp.Dialogs
 
         public static IEnumerable<ListViewItem> ToListViewItems(this IEnumerable<DbgObject> items)
         {
-            return items.Select(x =>
-            {
-                string name = x.Name;
+            return items.Select(x => x.ToListViewItem());
+        }
 
-                var li = new ListViewItem(name);
-                li.SubItems.Add(x.Value);
-                li.SubItems.Add(x.Type);
-                li.Tag = x;
-                return li;
-            });
+        public static ListViewItem ToListViewItem(this DbgObject item)
+        {
+            string name = item.Name;
+
+            var li = new ListViewItem(name);
+            li.SubItems.Add(item.Value);
+            li.SubItems.Add(item.Type);
+            li.Tag = item;
+            return li;
         }
 
         public static IEnumerable<ListViewItem> LootupListViewItems(this ListView listView, IEnumerable<DbgObject> items)

@@ -39,6 +39,9 @@ namespace CSScriptNpp
 
             Output output = GetVisibleOutput();
 
+            if (output == null)
+                return;
+
             int currentPos = -1;
             int prevPos = -1;
 

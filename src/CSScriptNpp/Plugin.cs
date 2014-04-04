@@ -168,7 +168,7 @@ namespace CSScriptNpp
                                   {
                                       OutputPanel.TryNavigateToFileReference(toNext: true);
                                   }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F4), new Tuple<string, Action>(
+            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: true, key: Keys.F4), new Tuple<string, Action>(
                                  "Previous File Location in Output", () =>
                                   {
                                       OutputPanel.TryNavigateToFileReference(toNext: false);

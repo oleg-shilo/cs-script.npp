@@ -50,16 +50,16 @@ namespace npp
 
         public DebuggerClient(IMDbgShell shell)
         {
-            shell.OnStepExecitionFailure = step =>
-                {
-                    Task.Factory.StartNew(() =>
-                        {
-                            //step has failed usually it loses the source code location so trigger it
-                            //by breaking the already stopped applications.
-                            Thread.Sleep(700);
-                            ResetAndReport();
-                        });
-                };
+            //shell.OnStepExecitionFailure = step =>
+            //    {
+            //        Task.Factory.StartNew(() =>
+            //            {
+            //                //step has failed usually it loses the source code location so trigger it
+            //                //by breaking the already stopped applications.
+            //                Thread.Sleep(700);
+            //                ResetAndReport();
+            //            });
+            //    };
 
             this.shell = shell;
             channel.Trace = message => Console.WriteLine(message);
@@ -73,15 +73,6 @@ namespace npp
                         ExecuteCommand(command);
                     }
                 });
-        }
-
-        void ResetAndReport()
-        {
-            try { shell.Debugger.Processes.Active.Go().WaitOne(); }
-            catch { }
-            try { shell.Debugger.Processes.Active.AsyncStop().WaitOne(); }
-            catch { }
-            ReportSourceCodePosition();
         }
 
         void BreakAndReport()
@@ -125,6 +116,8 @@ namespace npp
         {
             if (string.IsNullOrEmpty(command))
                 return;
+
+            Console.WriteLine("Received command: " + command.Substring(0, Math.Min(50, command.Length)));
 
             if (command == "break") //not native Mdbg command
             {
@@ -184,7 +177,7 @@ namespace npp
                         return;
                     }
 
-                    ReportCurrentState();
+                    //ReportCurrentState();
                 }
             }
         }
@@ -338,6 +331,20 @@ namespace npp
                 int valueId = reportedValuesCount++;
                 reportedValues.Add(valueId.ToString(), val);
 
+                if (val == null)
+                {
+                    return new XElement("value",
+                                        new XAttribute("name", displayName ?? "<unknown>"),
+                                        new XAttribute("id", valueId),
+                                        new XAttribute("isProperty", false),
+                                        new XAttribute("isStatic", false),
+                                        new XAttribute("isComplex", false),
+                                        new XAttribute("isArray", false),
+                                        new XAttribute("value", "<N/A>"),
+                                        new XAttribute("typeName", "<N/A>"))
+                                        .ToString();
+                }
+
                 string name = val.Name;
 
                 XElement result = new XElement("value",
@@ -388,8 +395,8 @@ namespace npp
         {
             shell.Debugger.Processes.Active.AsyncStop().WaitOne();
 
-            if (reportPosition)
-                ReportCurrentState();
+            //if (reportPosition)
+            //ReportCurrentState();
         }
 
         MDbgFrame GetCurrentFrame()
@@ -705,6 +712,9 @@ namespace npp
                     MessageQueue.AddNotification(NppCategory.Process + lastActiveprocessId + ":STARTED");
                     lastActiveprocess = shell.Debugger.Processes.Active;
                 }
+
+                ReportCurrentState();
+                ReportWatch();
             }
         }
 
@@ -728,9 +738,9 @@ namespace npp
                 if (GetCurrentSourcePosition() == null)
                     MessageQueue.AddNotification(NppCategory.State + "NOSOURCEBREAK"); //can be caused by 'Debugger.Break();'
 
-                ReportCurrentState();
-#if DEBUG 
-                ReportWatch();
+                //ReportCurrentState();
+#if DEBUG
+                //ReportWatch();
 #endif
 
             }
@@ -839,36 +849,18 @@ namespace npp
                 EvalsCompleted.WaitOne();
         }
 
-        bool IsSet(CorDebugUserState value, CorDebugUserState bitValue)
-        {
-            return (value | bitValue) == value;
-        }
+        
+      
 
-        bool IsEvalSafe()
-        {
-            //shell.Debugger.Processes.Active.AsyncStop().WaitOne();
+        List<string> WatchExpressions = new List<string>() { "t.MyCount", "t.MyProp" };
 
-            var proc = shell.Debugger.Processes.Active;
-            ICorDebugThread dbgThred = proc.Threads.Active.CorThread.Raw;
-
-            ///http://blogs.msdn.com/b/jmstall/archive/2005/11/15/funceval-rules.aspx
-            ///Dangers of Eval: http://blogs.msdn.com/b/jmstall/archive/2005/03/23/400794.aspx
-            CorDebugUserState pState;
-            dbgThred.GetUserState(out pState);
-            if ((!IsSet(pState, CorDebugUserState.USER_UNSAFE_POINT) && IsSet(pState, CorDebugUserState.USER_STOPPED)) || pState == CorDebugUserState.USER_NONE)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        //for dev evaluation purpose only
         void ReportWatch()
         {
-            if (IsEvalSafe())
+            if (!shell.Debugger.Processes.Active.IsEvalSafe())
+            {
+                Console.WriteLine("<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>");
+            }
+            else
                 try
                 {
                     //the following code can completely derail (dead-lock) the the debugger. 
@@ -878,33 +870,32 @@ namespace npp
 
                     if (IsInBreakMode())
                     {
-                        string result = "";
-                        Console.WriteLine("-------------------");
-                        string expressionValue = "";
-                        try
+                        var watchValues = new StringBuilder();
+
+                        foreach (string expression in WatchExpressions)
                         {
-                            //public class Test { public int MyPorp { get; set; } }
-                            //...
-                            //var t = new Test();                            
-                            //t.MyPorp = 9;
-                            string expression = "t.MyProp";
-
-                            MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
-
-                            if (value != null)
+                            string expressionValue = "";
+                            try
                             {
-                                //expressionValue = "<items>" + Serialize(value, expression) + "</items>";
+                                //public class Test { public int MyPorp { get; set; } }
+                                //...
+                                //var t = new Test();                            
+                                //t.MyPorp = 9;
+                                //string expression = "t.MyCount";
+
+                                MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+
                                 expressionValue = Serialize(value, expression);
-                                result += expressionValue;
+                                watchValues.Append(expressionValue);
                             }
-                            Console.WriteLine(expression + ": " + expressionValue);
+                            catch
+                            {
+                            }
                         }
-                        catch
-                        {
-                            //expressionValue = "<items/>";
-                        }
-                        Console.WriteLine("-------------------");
+
+                        MessageQueue.AddNotification(NppCategory.Watch + "<items>" + watchValues + "</items>");
                     }
+
                 }
                 catch { }
         }

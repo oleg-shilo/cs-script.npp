@@ -36,11 +36,7 @@ namespace CSScriptNpp
             else
                 appTypeCombo.SelectedIndex = 1;
 
-            Debugger.OnDebuggerStateChanged += () =>
-            {
-                watch.RefreshData();
-                UpdateControlsState();
-            };
+            Debugger.OnDebuggerStateChanged += UpdateControlsState;
 
             appTypeCombo.Width = 80;
             RefreshBreakOnException();
