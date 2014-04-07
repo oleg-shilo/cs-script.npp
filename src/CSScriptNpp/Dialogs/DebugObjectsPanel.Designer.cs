@@ -1,4 +1,6 @@
-﻿namespace CSScriptNpp.Dialogs
+﻿using System.Drawing;
+using System.Windows.Forms;
+namespace CSScriptNpp.Dialogs
 {
     partial class DebugObjectsPanel
     {
@@ -65,23 +67,24 @@
             this.listView1.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.listView1_DrawSubItem);
             this.listView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
             this.listView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
-            this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick_1);
+            this.listView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listView1_KeyDown);
+            this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
             this.listView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDown);
             // 
             // columnHeader4
             // 
             this.columnHeader4.Text = "Name";
-            this.columnHeader4.Width = 40;
+            this.columnHeader4.Width = 70;
             // 
             // columnHeader5
             // 
             this.columnHeader5.Text = "Value";
-            this.columnHeader5.Width = 40;
+            this.columnHeader5.Width = 70;
             // 
             // columnHeader6
             // 
             this.columnHeader6.Text = "Type";
-            this.columnHeader6.Width = 40;
+            this.columnHeader6.Width = 70;
             // 
             // contextMenuStrip1
             // 
@@ -113,6 +116,22 @@
         }
 
         #endregion
+
+        class EditBox : TextBox
+        {
+            public bool IsEditing;
+        }
+
+        private EditBox editBox = new EditBox();
+
+        void InitInPlaceEditor()
+        {
+            editBox.KeyDown += editBox_KeyDown;
+            editBox.LostFocus += this.FocusOver;
+            editBox.Font = listView1.Font;
+            listView1.Controls.AddRange(new Control[] { this.editBox });
+            editBox.Hide();
+        }
 
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader4;

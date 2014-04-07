@@ -1,98 +1,177 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using CSScriptIntellisense;
 
 namespace CSScriptNpp.Dialogs
 {
     public partial class DebugObjectsPanel : Form
     {
-        private System.Windows.Forms.TextBox editBox = new System.Windows.Forms.TextBox();
         private ListViewItem focucedItem;
-        private int X = 0;
-        private int Y = 0;
 
         public DebugObjectsPanel()
         {
             InitializeComponent();
-
-            //listView1.Enabled = true;
-            listView1.MouseDoubleClick += listView1_MouseDoubleClick;
-            listView1.MouseDown += listView1_MouseDown;
-
-            editBox.Size = new System.Drawing.Size(0, 0);
-            editBox.Location = new System.Drawing.Point(0, 0);
-            this.Controls.AddRange(new System.Windows.Forms.Control[] { this.editBox });
-            editBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EditOver);
-            editBox.LostFocus += new System.EventHandler(this.FocusOver);
-            editBox.Font = listView1.Font;
-            editBox.BackColor = Color.LightYellow;
-            editBox.BorderStyle = BorderStyle.Fixed3D;
-            editBox.Hide();
-            editBox.Text = "";
+            InitInPlaceEditor();
         }
 
-        private string subItemText;
-        private int subItemSelected = 0;
+        private int selectedSubItem = 0;
 
         void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // Check the subitem clicked .
-            int nStart = X;
             int spos = 0;
-            int epos = listView1.Columns[0].Width;
+
             for (int i = 0; i < listView1.Columns.Count; i++)
             {
-                if (nStart > spos && nStart < epos)
+                int epos = spos + listView1.Columns[i].Width;
+
+                if (spos < e.X && e.X < epos)
                 {
-                    subItemSelected = i;
+                    selectedSubItem = i;
                     break;
                 }
 
                 spos = epos;
-                epos += listView1.Columns[i].Width;
             }
 
-            subItemText = focucedItem.SubItems[subItemSelected].Text;
+            //currently allow editing name only
+            if (selectedSubItem != 0) //currently allow editing name only
+                return;
 
-            string colName = listView1.Columns[subItemSelected].Text;
+            //changing the name of the item allows only fro the root DbgObject
+            if (selectedSubItem == 0 && (focucedItem.Tag as DbgObject).Parent != null)
+                return;
 
-            Rectangle r = new Rectangle(spos, focucedItem.Bounds.Y, epos, focucedItem.Bounds.Bottom);
-            editBox.Size = new System.Drawing.Size(epos - spos, focucedItem.Bounds.Bottom - focucedItem.Bounds.Top);
-            editBox.Location = new System.Drawing.Point(spos, focucedItem.Bounds.Y);
+            int xOffset = 2;
+
+            editBox.Size = new Size(listView1.Columns[selectedSubItem].Width - xOffset, focucedItem.Bounds.Bottom - focucedItem.Bounds.Top);
+            editBox.Location = new Point(spos + xOffset, focucedItem.Bounds.Y);
+            editBox.IsEditing = true;
             editBox.Show();
-            editBox.Text = subItemText;
+            editBox.Text = focucedItem.SubItems[selectedSubItem].Text;
             editBox.SelectAll();
             editBox.Focus();
         }
 
-        private void EditOver(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        void editBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyChar == 13)
-            {
-                focucedItem.SubItems[subItemSelected].Text = editBox.Text;
-                editBox.Hide();
-            }
+            if (e.KeyData == Keys.Return)
+                EndEditing();
 
-            if (e.KeyChar == 27)
+            else if (e.KeyData == Keys.Escape)
                 editBox.Hide();
         }
 
+        public delegate void OnEditCellCompleteHandler(int column, string oldValue, string newValue);
+
+        public event OnEditCellCompleteHandler OnEditCellComplete;
+
         private void FocusOver(object sender, System.EventArgs e)
         {
-            focucedItem.SubItems[subItemSelected].Text = editBox.Text;
-            editBox.Hide();
+            EndEditing();
+        }
+
+        void EndEditing()
+        {
+            if (editBox.IsEditing)
+            {
+                string oldValue;
+                string newValue = editBox.Text;
+                editBox.IsEditing = false;
+                if (focucedItem.Tag != AddNewPlaceholder)
+                {
+                    oldValue = focucedItem.SubItems[selectedSubItem].Text;
+                    focucedItem.SubItems[selectedSubItem].Text = newValue;
+                    if (selectedSubItem == 0 && newValue == "")
+                    {
+                        listView1.Items.Remove(focucedItem);
+                        focucedItem = null;
+                    }
+                }
+                else
+                {
+                    oldValue = null;
+                    AddWatchExpression(newValue);
+                }
+                editBox.Hide();
+
+                if (OnEditCellComplete != null)
+                    OnEditCellComplete(selectedSubItem, oldValue, newValue);
+            }
+        }
+
+        public void ClearWatchExpressions()
+        {
+            listView1.Items.Clear();
+            Debugger.RemoveAllWatch();
+        }
+
+        public void AddWatchExpression(string expression)
+        {
+            expression = expression.Trim();
+            if (!string.IsNullOrEmpty(expression))
+            {
+                AddWatchObject(new DbgObject
+                    {
+                        DbgId = "",
+                        Name = expression,
+                        IsExpression = true,
+                        Value = "<N/A>",
+                        Type = "<N/A>",
+                    });
+
+                Debugger.AddWatch(expression);
+            }
         }
 
         public void SetData(string data)
         {
             ResetWatchObjects(ToWatchObjects(data));
+        }
+
+        public void UpdateData(string data)
+        {
+            DbgObject[] freshObjects = ToWatchObjects(data);
+
+            var nonRootItems = new List<ListViewItem>();
+
+            bool updated = false;
+
+            foreach (ListViewItem item in listView1.Items)
+            {
+                var itemObject = item.Tag as DbgObject;
+                if (itemObject != null)
+                {
+                    itemObject.IsModified = false;
+                    if (itemObject.Parent != null)
+                    {
+                        nonRootItems.Add(item);
+                    }
+                    else
+                    {
+                        DbgObject update = freshObjects.Where(x => x.Name == itemObject.Name).FirstOrDefault();
+                        if (update != null)
+                        {
+                            itemObject.CopyDbgDataFrom(update);
+                            itemObject.IsModified = (item.SubItems[1].Text != update.Value);
+                            item.SubItems[1].Text = update.Value;
+                            item.SubItems[2].Text = update.Type;
+                            updated = true;
+                        }
+                    }
+                }
+            }
+
+            nonRootItems.ForEach(x =>
+               listView1.Items.Remove(x));
+
+            if (updated)
+                listView1.Invalidate();
         }
 
         DbgObject[] ToWatchObjects(string data)
@@ -109,23 +188,19 @@ namespace CSScriptNpp.Dialogs
                 if (valName.EndsWith("__BackingField")) //ignore auto-property backing fields
                     return null;
 
-                string id = dbgValue.Attribute("id").Value;
-                bool isArray = dbgValue.Attribute("isArray").Value == "true";
-                bool isStatic = dbgValue.Attribute("isStatic").Value == "true";
-                bool isField = dbgValue.Attribute("isProperty").Value == "false";
-                bool isComplex = dbgValue.Attribute("isComplex").Value == "true";
-                string type = dbgValue.Attribute("typeName").Value;
+
+                Func<string, bool> getBoolAttribute = attrName => dbgValue.Attribute(attrName).Value == "true";
 
                 var dbgObject = new DbgObject();
-                dbgObject.DbgId = id;
+                dbgObject.DbgId = dbgValue.Attribute("id").Value;
                 dbgObject.Name = valName;
-                dbgObject.Type = type;
-                dbgObject.IsArray = isArray;
-                dbgObject.HasChildren = isComplex;
-                dbgObject.IsField = isField;
-                dbgObject.IsStatic = isStatic;
+                dbgObject.Type = dbgValue.Attribute("typeName").Value.ReplaceClrAliaces();
+                dbgObject.IsArray = getBoolAttribute("isArray");
+                dbgObject.HasChildren = getBoolAttribute("isComplex");
+                dbgObject.IsField = !getBoolAttribute("isProperty");
+                dbgObject.IsStatic = getBoolAttribute("isStatic");
 
-                if (!isComplex)
+                if (!dbgObject.HasChildren)
                 {
                     // This is a catch-all for primitives.
                     string stValue = dbgValue.Attribute("value").Value;
@@ -151,18 +226,27 @@ namespace CSScriptNpp.Dialogs
             return result.ToArray();
         }
 
-        public void AddWatchObject(DbgObject item)
+        protected void AddWatchObject(DbgObject item)
         {
-            listView1.Items.Add(item.ToListViewItem());
+            int insertionPosition = listView1.Items.Count;
+
+            if (listView1.Items.Count > 0 && listView1.Items[listView1.Items.Count - 1].Tag == AddNewPlaceholder)
+                insertionPosition--;
+            listView1.Items.Insert(insertionPosition, item.ToListViewItem());
         }
 
-        public void ResetWatchObjects(params DbgObject[] items)
+        protected void ResetWatchObjects(params DbgObject[] items)
         {
             listView1.Items.Clear();
 
             foreach (var item in items.ToListViewItems())
                 listView1.Items.Add(item);
+
+            if (!IsReadOnly)
+                listView1.Items.Add(AddNewPlaceholder.ToListViewItem());
         }
+
+        DbgObject AddNewPlaceholder = new DbgObject { DbgId = "AddNewPlaceholder", Name = "" };
 
         void InsertWatchObjects(int index, params DbgObject[] items)
         {
@@ -174,6 +258,7 @@ namespace CSScriptNpp.Dialogs
         }
 
         int triangleMargin = 8;
+        int xMargin = 27; //fixed; to accommodate the icon
 
         Range GetItemExpenderClickableRange(ListViewItem item)
         {
@@ -189,7 +274,14 @@ namespace CSScriptNpp.Dialogs
 
             var dbgObject = (DbgObject)e.Item.Tag;
 
+            if (dbgObject == AddNewPlaceholder)
+                return;
+
             var textBrush = Brushes.Black;
+
+            if (e.ColumnIndex == 1 && dbgObject.IsModified) //'Value' has changed
+                textBrush = Brushes.Red;
+
             if (!Debugger.IsInBreak)
                 textBrush = Brushes.DarkGray;
 
@@ -197,7 +289,6 @@ namespace CSScriptNpp.Dialogs
             {
 
                 var clickableRange = GetItemExpenderClickableRange(e.Item);
-                int xMargin = 27; //fixed; to accommodate the icon
 
                 int X = e.Bounds.X + clickableRange.Start;
                 int Y = e.Bounds.Y;
@@ -206,9 +297,11 @@ namespace CSScriptNpp.Dialogs
 
                 Image icon;
 
-                if (dbgObject.IsSeparator)
+                if (dbgObject.IsUnresolved)
+                    icon = Resources.Resources.unresolved_value;
+                else if (dbgObject.IsSeparator)
                     icon = Resources.Resources.dbg_container;
-                else if (dbgObject.IsField || dbgObject.IsExpression)
+                else if (dbgObject.IsField)
                     icon = Resources.Resources.field;
                 else
                     icon = Resources.Resources.property;
@@ -286,8 +379,9 @@ namespace CSScriptNpp.Dialogs
                 {
                     listView1.Columns[e.ColumnIndex].Width = requiredWidth + 5;
                 }
-                e.Graphics.DrawString(e.SubItem.Text, listView1.Font, textBrush, e.Bounds);
-                //e.DrawText();
+
+                if (!dbgObject.IsUnresolved)
+                    e.Graphics.DrawString(e.SubItem.Text, listView1.Font, textBrush, e.Bounds);
             }
         }
 
@@ -299,9 +393,7 @@ namespace CSScriptNpp.Dialogs
         private void listView1_MouseDown(object sender, MouseEventArgs e)
         {
             focucedItem = listView1.GetItemAt(e.X, e.Y);
-            X = e.X;
-            Y = e.Y;
-            
+
             ListViewHitTestInfo info = listView1.HitTest(e.X, e.Y);
             if (info.Item != null)
             {
@@ -394,9 +486,34 @@ namespace CSScriptNpp.Dialogs
 
         public event Action<string> OnDagDropText;
 
-        private void listView1_MouseDoubleClick_1(object sender, MouseEventArgs e)
+        private void listView1_KeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show("DoubleClick");
+            if (e.KeyData == Keys.Delete)
+                DeleteSelected();
+        }
+
+        public void DeleteSelected()
+        {
+            var rootsToRemove = listView1.SelectedItems.Cast<ListViewItem>().Where(x => x.GetDbgObject().Parent == null).ToList();
+
+            DbgObject[] rootObjectsToRemove = rootsToRemove.Select(x => x.GetDbgObject()).ToArray();
+
+            var leafsToRemove = listView1.Items.Cast<ListViewItem>().Where(x => x.GetDbgObject().IsDescendantOfAny(rootObjectsToRemove)).ToList();
+
+            leafsToRemove.ForEach(x => listView1.Items.Remove(x));
+            rootsToRemove.ForEach(x =>
+                {
+                    listView1.Items.Remove(x);
+
+                    string expressionToRemove = x.GetDbgObject().Name;
+
+                    //there can be duplicated expressions left, which is a valid situation and the expressions need to be preserved
+                    var identicalExpressions = listView1.Items
+                                                        .Cast<ListViewItem>()
+                                                        .Where(y => y.GetDbgObject().Name == expressionToRemove);
+                    if (!identicalExpressions.Any())
+                        Debugger.RemoveWatch(expressionToRemove);
+                });
         }
     }
 
@@ -411,48 +528,6 @@ namespace CSScriptNpp.Dialogs
         }
     }
 
-    public class DbgObject
-    {
-        DbgObject[] children;
-
-        public DbgObject[] Children
-        {
-            get { return children; }
-            set
-            {
-                children = value;
-                if (Children != null)
-                    Array.ForEach(Children, x => x.Parent = this);
-            }
-        }
-        public DbgObject Parent { get; set; }
-        public bool HasChildren { get; set; }
-        public bool IsExpanded { get; set; }
-        public bool IsStatic { get; set; }
-        public bool IsArray { get; set; }
-        public bool IsField { get; set; }
-        public string DbgId { get; set; }
-        public bool IsPublic { get; set; }
-        public bool IsSeparator { get; set; }
-        public bool IsExpression { get; set; }
-        public string Name { get; set; }
-        public string Value { get; set; }
-        public string Type { get; set; }
-        public int IndentationLevel
-        {
-            get
-            {
-                int level = 0;
-                DbgObject parent = this.Parent;
-                while (parent != null)
-                {
-                    level++;
-                    parent = parent.Parent;
-                }
-                return level;
-            }
-        }
-    }
 
     static class Extensions
     {
@@ -492,6 +567,11 @@ namespace CSScriptNpp.Dialogs
             li.SubItems.Add(item.Type);
             li.Tag = item;
             return li;
+        }
+
+        public static DbgObject GetDbgObject(this ListViewItem item)
+        {
+            return item.Tag as DbgObject;
         }
 
         public static IEnumerable<ListViewItem> LootupListViewItems(this ListView listView, IEnumerable<DbgObject> items)

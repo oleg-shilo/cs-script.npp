@@ -42,9 +42,14 @@ namespace CSScriptNpp
             MessageQueue.AddCommand("breakpoint+|" + fileLineInfo);
         }
 
-        static public void AddWatch(string id, string expression)
+        static protected void AddWatchExpression(string expression)
         {
-            MessageQueue.AddCommand("watch|" + id + "|" + expression);
+            MessageQueue.AddCommand("watch+|" + expression);
+        }
+
+        static public void RemoveWatchExpression(string expression)
+        {
+            MessageQueue.AddCommand("watch-|" + expression);
         }
 
         static public void RemoveBreakpoint(string fileLineInfo)

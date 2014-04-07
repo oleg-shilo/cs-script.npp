@@ -70,6 +70,7 @@
     <Compile Include="Dialogs\AboutBox.designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\DbgObject.cs" />
     <Compile Include="Dialogs\ThreadsPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -440,6 +441,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dbg_set_stoponexc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\unresolved_value.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_addwatch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_removeallwatch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_removewatch.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

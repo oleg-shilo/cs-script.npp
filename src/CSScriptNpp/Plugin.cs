@@ -11,24 +11,32 @@ using UltraSharp.Cecil;
 namespace CSScriptNpp
 {
     /*TODO:
-     * - Debugger outstanding features
-     *      - Debug panel
-     *          - Watch panel
-     *          - Modules panel
-     *          - Debug Objects panel 
-     *              - wraps value text instead of truncating 
-     *              - should show oversized value text as tooltip 
-     *      - handle breakpoints in auto-generated files
-     *      - make handling Debug.Assert user friendlier
-     *      - when debugging auto-script plugin should set invisible breakpoint to the meaningful first line
+     * - Outstanding features
+     *      - Debugger
+     *          - Debug panel
+     *              - Watch panel
+     *                  + add button
+     *                  + delete button
+     *                  + delete all button
+     *                  + auto update
+     *                  + setting Watch expressions
+     *                  + removing Watch expressions
+     *              - Debug Objects panel
+     *                  + CLR-Type values should be replaced with aliaces
+     *                  + Reflect the value change with color
+     *                  - wraps value text instead of truncating 
+     *                  - should show oversized value text as tooltip 
+     *              - Modules panel
+     *          - handle breakpoints in auto-generated files
+     *          - make handling Debug.Assert user friendlier
+     *          - when debugging auto-script plugin should set invisible breakpoint to the meaningful first line
+     *      - configurable shortcuts
      *      
      * - Desirable but not essential features
      *      - Aollow disabling auto-update from config file
      *      - F12 should work on constructors e.g. 'new Te|st();'
-     *      - configurable shortcuts
      *      - CodeMap should reflect all members with the indication of the type name (eventually)
      *      - Debug panel
-     *          - Auto-refresh fields and auto-properties (""__BackingField"")
      *          - Locals panel
      *            - cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)

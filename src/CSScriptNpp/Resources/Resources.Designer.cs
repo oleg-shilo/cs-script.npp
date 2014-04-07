@@ -143,6 +143,16 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dbg_addwatch {
+            get {
+                object obj = ResourceManager.GetObject("dbg_addwatch", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dbg_break {
             get {
                 object obj = ResourceManager.GetObject("dbg_break", resourceCulture);
@@ -186,6 +196,26 @@ namespace CSScriptNpp.Resources {
         internal static System.Drawing.Bitmap dbg_remove_stoponexc {
             get {
                 object obj = ResourceManager.GetObject("dbg_remove_stoponexc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap dbg_removeallwatch {
+            get {
+                object obj = ResourceManager.GetObject("dbg_removeallwatch", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap dbg_removewatch {
+            get {
+                object obj = ResourceManager.GetObject("dbg_removewatch", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -473,6 +503,16 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap unresolved_value {
+            get {
+                object obj = ResourceManager.GetObject("unresolved_value", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap vs {
             get {
                 object obj = ResourceManager.GetObject("vs", resourceCulture);
@@ -498,19 +538,24 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to v1.0.19.0
+        ///   Looks up a localized string similar to v1.0.19.0-v1.0.20.1
         ///* Implemented Integrated Debugger.
         ///  - Step Over
         ///  - Step In
         ///  - Step Out
         ///  - Set Next Statement
+        ///  - Run to cursor
         ///  - Toggle breakpoint
         ///  - &apos;Call Stack&apos; Panel
         ///  - &apos;Locals&apos; Panel
+        ///  - QuickWatch panel
+        ///  - Threads panel
+        ///  - Optional breaking on user Exceptions
+        ///  - Showing fields/properties values on mouse rollover
+        ///  - Breakpoints persistence
         ///-----------
         ///To start using the debugger just create the script and press F10.
-        ///The debugger implements major VS debugging features however it has various temporary limitations (read more on the Release Home page). 
-        ///-----------.
+        ///The debugger implements major VS debugging features how [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WhatsNew {
             get {

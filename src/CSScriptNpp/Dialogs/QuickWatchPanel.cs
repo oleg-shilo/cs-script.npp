@@ -6,14 +6,6 @@ namespace CSScriptNpp.Dialogs
 {
     public partial class QuickWatchPanel : Form
     {
-        static string GetStatementAtCaret()
-        {
-            string expression = Npp.GetSelectedText();
-            if (string.IsNullOrWhiteSpace(expression))
-                expression = CSScriptIntellisense.Npp.GetStatementAtPosition();
-            return expression;
-        }
-
         static QuickWatchPanel Instance;
         static bool singleton = true;
         static bool ownedByNpp = true;
@@ -22,7 +14,7 @@ namespace CSScriptNpp.Dialogs
             if (singleton && Instance != null)
             {
                 Win32.SetForegroundWindow(Instance.Handle);
-                Instance.SetExpression(GetStatementAtCaret());
+                Instance.SetExpression(Utils.GetStatementAtCaret());
                 return;
             }
 
@@ -30,7 +22,7 @@ namespace CSScriptNpp.Dialogs
             {
                 var dialog = new QuickWatchPanel();
                 Instance = dialog;
-                string expression = GetStatementAtCaret();
+                string expression = Utils.GetStatementAtCaret();
 
                 dialog.SetExpression(expression)
                       .SetAutoRefreshAvailable(Config.Instance.QuickViewAutoRefreshAvailable);

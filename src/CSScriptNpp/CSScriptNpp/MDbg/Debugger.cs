@@ -460,6 +460,7 @@ namespace CSScriptNpp
 
         static FileLocation lastLocation;
 
+        static List<string> watchExtressions = new List<string>();
         static Dictionary<string, IntPtr> breakpoints = new Dictionary<string, IntPtr>();
         static public string EntryBreakpointFile;
 
@@ -499,6 +500,32 @@ namespace CSScriptNpp
                     DebuggerServer.RemoveBreakpoint(key);
                 };
             }
+        }
+
+        static public void AddWatch(string expression)
+        {
+            if (!watchExtressions.Contains(expression))
+            {
+                watchExtressions.Add(expression);
+            }
+            if (IsRunning)
+                DebuggerServer.AddWatchExpression(expression);
+        }
+
+        static public void RemoveWatch(string expression)
+        {
+            if (watchExtressions.Contains(expression))
+            {
+                watchExtressions.Remove(expression);
+                if (IsRunning)
+                    DebuggerServer.RemoveWatchExpression(expression);
+            }
+        }
+
+        static public void RemoveAllWatch()
+        {
+            watchExtressions.ForEach(x => DebuggerServer.RemoveWatchExpression(x));
+            watchExtressions.Clear();
         }
 
         static public void ToggleBreakpoint(int lineClick = -1)
@@ -584,14 +611,6 @@ namespace CSScriptNpp
             }
         }
 
-        static new public void RegiterWatch(string expression, bool add)
-        {
-            if (IsRunning)
-            {
-                DebuggerServer.StepOver();
-            }
-        }
-
         static new public void StepIn()
         {
             if (IsRunning && IsInBreak)
@@ -642,6 +661,7 @@ namespace CSScriptNpp
             {
                 Start();
                 SendSettings(BreakOnException);
+                watchExtressions.ForEach(x => DebuggerServer.AddWatchExpression(x));
                 Run(app, args ?? "");
                 EntryBreakpointFile = null;
             }

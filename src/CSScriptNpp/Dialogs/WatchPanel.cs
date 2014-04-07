@@ -24,22 +24,41 @@ namespace CSScriptNpp.Dialogs
             content.Visible = true;
             content.IsReadOnly = false;
             content.OnDagDropText += content_OnDagDropText;
+            content.OnEditCellComplete += content_OnEditCellComplete;
             Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
+        }
+
+        void content_OnEditCellComplete(int column, string oldValue, string newValue)
+        {
+            if (string.IsNullOrEmpty(oldValue) && !string.IsNullOrEmpty(newValue))
+                Debugger.AddWatch(newValue);
+            else if (!string.IsNullOrEmpty(oldValue) && string.IsNullOrEmpty(newValue))
+                Debugger.RemoveWatch(oldValue);
         }
 
         void content_OnDagDropText(string data)
         {
-            content.AddWatchObject(new DbgObject
-                {
-                    DbgId = "",
-                    Name = data,
-                    IsExpression = true
-                });
+            content.AddWatchExpression(data);
         }
 
         void Debugger_OnWatchUpdate(string data)
         {
-            content.SetData(data);
+            content.UpdateData(data);
+        }
+
+        private void addExpressionBtn_Click(object sender, EventArgs e)
+        {
+            content.AddWatchExpression(Utils.GetStatementAtCaret());
+        }
+
+        private void deleteExpressionBtn_Click(object sender, EventArgs e)
+        {
+            content.DeleteSelected();
+        }
+
+        private void deleteAllExpressionsBtn_Click(object sender, EventArgs e)
+        {
+            content.ClearWatchExpressions();
         }
     }
 }

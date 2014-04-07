@@ -1,20 +1,18 @@
-using npp.CSScriptNpp;
 using Microsoft.Samples.Debugging.CorDebug;
 using Microsoft.Samples.Debugging.CorDebug.NativeApi;
 using Microsoft.Samples.Debugging.MdbgEngine;
 using Microsoft.Samples.Tools.Mdbg;
+using npp.CSScriptNpp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Text;
 
 namespace npp
 {
@@ -127,6 +125,10 @@ namespace npp
             {
                 ProcessBreakpoint(command);
             }
+            else if (command.StartsWith("watch")) //not native Mdbg command
+            {
+                ProcessWatch(command);
+            }
             else if (command.StartsWith("gotoframe")) //not native Mdbg command
             {
                 ProcessFrameNavigation(command);
@@ -186,7 +188,7 @@ namespace npp
         {
             //gotothread|<threadId>
             string[] parts = command.Split('|');
-            if (parts[0] == "gotothread" && IsInBreakMode())
+            if (parts[0] == "gotothread" && IsInBreakMode)
             {
                 string id = parts[1];
 
@@ -230,6 +232,34 @@ namespace npp
             }
         }
 
+        public void ProcessWatch(string command)
+        {
+            //<watch-|watch+>|<expression>
+            string[] parts = command.Split('|');
+            string operation = parts[0];
+            string expression = parts[1];
+
+            if (operation == "watch+")
+            {
+                if (!WatchExpressions.Contains(expression))
+                {
+                    Console.WriteLine(">> WatchAdd: " + expression);
+                    WatchExpressions.Add(expression);
+                }
+
+                if (IsInBreakMode)
+                    ReportSingleWatch(expression);
+            }
+            else if (operation == "watch-")
+            {
+                if (WatchExpressions.Contains(expression))
+                {
+                    Console.WriteLine(">> WatchRemove: " + expression);
+                    WatchExpressions.Remove(expression);
+                }
+            }
+        }
+
         public void ProcessSettings(string command)
         {
             //<name>=<value>[|<name>=<value>]
@@ -237,8 +267,8 @@ namespace npp
                 breakOnException = true;
             else if (command.Contains("breakonexception=false"))
                 breakOnException = false;
-
         }
+
         public void ProcessInvoke(string command)
         {
             if (test)
@@ -256,7 +286,7 @@ namespace npp
 
             try
             {
-                if (IsInBreakMode())
+                if (IsInBreakMode)
                 {
                     if (action == "locals")
                     {
@@ -304,7 +334,6 @@ namespace npp
                             if (value != null)
                             {
                                 result = "<items>" + Serialize(value, args) + "</items>";
-
                             }
                         }
                         catch
@@ -422,20 +451,23 @@ namespace npp
         //alive and in the break point mode
         bool CanProceed()
         {
-            return IsInBreakMode();
+            return IsInBreakMode;
         }
 
-        bool IsInBreakMode()
+        bool IsInBreakMode
         {
-            try
+            get
             {
-                if (shell.Debugger.Processes.HaveActive)
+                try
                 {
-                    return !shell.Debugger.Processes.Active.IsRunning && shell.Debugger.Processes.Active.IsAlive;
+                    if (shell.Debugger.Processes.HaveActive)
+                    {
+                        return !shell.Debugger.Processes.Active.IsRunning && shell.Debugger.Processes.Active.IsAlive;
+                    }
                 }
+                catch { }
+                return false;
             }
-            catch { }
-            return false;
         }
 
         public void Exit()
@@ -626,10 +658,9 @@ namespace npp
             }
         }
 
-
         void ReportThreads()
         {
-            if (IsInBreakMode())
+            if (IsInBreakMode)
             {
                 MDbgThread tActive = GetCurrentThread();
 
@@ -664,7 +695,7 @@ namespace npp
 
             try
             {
-                if (IsInBreakMode())
+                if (IsInBreakMode)
                 {
                     MDbgFrame frame = GetCurrentFrame();
                     MDbgFunction f = frame.Function;
@@ -742,7 +773,6 @@ namespace npp
 #if DEBUG
                 //ReportWatch();
 #endif
-
             }
 
             if (e.CallbackType == ManagedCallbackType.OnLogMessage)
@@ -818,7 +848,6 @@ namespace npp
                 {
                     result.AppendLine(outputValue);
                     break;
-
                 }
 
                 //if (f.Name == "_xptrs" || f.Name == "_xcode" || f.Name == "_stackTrace" ||
@@ -849,10 +878,18 @@ namespace npp
                 EvalsCompleted.WaitOne();
         }
 
-        
-      
+        List<string> WatchExpressions = new List<string>();
 
-        List<string> WatchExpressions = new List<string>() { "t.MyCount", "t.MyProp" };
+        void ReportSingleWatch(string expression)
+        {
+            if (shell.Debugger.Processes.Active.IsEvalSafe())
+                try
+                {
+                    MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+                    MessageQueue.AddNotification(NppCategory.Watch + "<items>" + Serialize(value, expression) + "</items>");
+                }
+                catch { }
+        }
 
         void ReportWatch()
         {
@@ -863,12 +900,12 @@ namespace npp
             else
                 try
                 {
-                    //the following code can completely derail (dead-lock) the the debugger. 
+                    //the following code can completely derail (dead-lock) the the debugger.
                     //Bad, bad Debugger!
                     //http://blogs.msdn.com/b/jmstall/archive/2005/11/15/funceval-rules.aspx
                     //Dangers of Eval: http://blogs.msdn.com/b/jmstall/archive/2005/03/23/400794.aspx
 
-                    if (IsInBreakMode())
+                    if (IsInBreakMode)
                     {
                         var watchValues = new StringBuilder();
 
@@ -879,7 +916,7 @@ namespace npp
                             {
                                 //public class Test { public int MyPorp { get; set; } }
                                 //...
-                                //var t = new Test();                            
+                                //var t = new Test();
                                 //t.MyPorp = 9;
                                 //string expression = "t.MyCount";
 
@@ -895,7 +932,6 @@ namespace npp
 
                         MessageQueue.AddNotification(NppCategory.Watch + "<items>" + watchValues + "</items>");
                     }
-
                 }
                 catch { }
         }
@@ -995,5 +1031,4 @@ namespace npp
             return (FramePair[])l.ToArray(typeof(FramePair));
         }
     }
-
 }

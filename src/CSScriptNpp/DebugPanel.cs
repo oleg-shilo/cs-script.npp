@@ -1,12 +1,6 @@
 ﻿using CSScriptNpp.Dialogs;
 using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace CSScriptNpp
 {
@@ -28,8 +22,8 @@ namespace CSScriptNpp
 
             tabControl1.AddTab("Locals", locals);
             tabControl1.AddTab("Call Stack", callstack);
+            tabControl1.AddTab("Watch", watch);
             tabControl1.AddTab("Threads", threads);
-            //tabControl1.AddTab("Watch", watch);
 
             if (Debugger.DebugAsConsole)
                 appTypeCombo.SelectedIndex = 0;
@@ -89,7 +83,6 @@ namespace CSScriptNpp
                 Plugin.DebugScript();//this will also load the script
             }
         }
-
 
         private void stepOverBtn_Click(object sender, EventArgs e)
         {

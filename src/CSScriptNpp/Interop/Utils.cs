@@ -1,12 +1,10 @@
-using System;
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Win32;
 
 namespace CSScriptNpp
 {
@@ -23,6 +21,14 @@ namespace CSScriptNpp
                     return (vs2010 != null || vs2012 != null || vs2013 != null);
                 }
             }
+        }
+
+        static public string GetStatementAtCaret()
+        {
+            string expression = Npp.GetSelectedText();
+            if (string.IsNullOrWhiteSpace(expression))
+                expression = CSScriptIntellisense.Npp.GetStatementAtPosition();
+            return expression;
         }
 
         public static string ConvertToXPM(Bitmap bmp, string transparentColor)
