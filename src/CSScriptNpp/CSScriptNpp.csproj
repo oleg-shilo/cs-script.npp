@@ -71,6 +71,12 @@
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\DbgObject.cs" />
+    <Compile Include="Dialogs\ModulesPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ModulesPanel.Designer.cs">
+      <DependentUpon>ModulesPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ThreadsPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,6 +203,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ModulesPanel.resx">
+      <DependentUpon>ModulesPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ThreadsPanel.resx">
       <DependentUpon>ThreadsPanel.cs</DependentUpon>
@@ -453,6 +462,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dbg_removewatch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_addwatch_at_caret.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

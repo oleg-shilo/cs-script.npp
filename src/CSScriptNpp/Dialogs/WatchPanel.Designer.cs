@@ -33,6 +33,7 @@
             this.addExpressionBtn = new System.Windows.Forms.ToolStripButton();
             this.deleteExpressionBtn = new System.Windows.Forms.ToolStripButton();
             this.deleteAllExpressionsBtn = new System.Windows.Forms.ToolStripButton();
+            this.addAtCaretBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,6 +51,7 @@
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addAtCaretBtn,
             this.addExpressionBtn,
             this.deleteExpressionBtn,
             this.deleteAllExpressionsBtn});
@@ -66,13 +68,13 @@
             this.addExpressionBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addExpressionBtn.Name = "addExpressionBtn";
             this.addExpressionBtn.Size = new System.Drawing.Size(23, 22);
-            this.addExpressionBtn.ToolTipText = "Add Expression from the caret position";
+            this.addExpressionBtn.ToolTipText = "Add Expression";
             this.addExpressionBtn.Click += new System.EventHandler(this.addExpressionBtn_Click);
             // 
             // deleteExpressionBtn
             // 
             this.deleteExpressionBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.deleteExpressionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_removeallwatch;
+            this.deleteExpressionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_removewatch;
             this.deleteExpressionBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteExpressionBtn.Name = "deleteExpressionBtn";
             this.deleteExpressionBtn.Size = new System.Drawing.Size(23, 22);
@@ -83,13 +85,24 @@
             // deleteAllExpressionsBtn
             // 
             this.deleteAllExpressionsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.deleteAllExpressionsBtn.Image = global::CSScriptNpp.Properties.Resources.clean;
+            this.deleteAllExpressionsBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_removeallwatch;
             this.deleteAllExpressionsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteAllExpressionsBtn.Name = "deleteAllExpressionsBtn";
             this.deleteAllExpressionsBtn.Size = new System.Drawing.Size(23, 22);
             this.deleteAllExpressionsBtn.Text = "toolStripButton1";
             this.deleteAllExpressionsBtn.ToolTipText = "Delete All Expressions";
             this.deleteAllExpressionsBtn.Click += new System.EventHandler(this.deleteAllExpressionsBtn_Click);
+            // 
+            // addAtCaretBtn
+            // 
+            this.addAtCaretBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.addAtCaretBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_addwatch_at_caret;
+            this.addAtCaretBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addAtCaretBtn.Name = "addAtCaretBtn";
+            this.addAtCaretBtn.Size = new System.Drawing.Size(23, 22);
+            this.addAtCaretBtn.Text = "toolStripButton2";
+            this.addAtCaretBtn.ToolTipText = "Add Expression from the caret position";
+            this.addAtCaretBtn.Click += new System.EventHandler(this.addAtCaretBtn_Click);
             // 
             // WatchPanel
             // 
@@ -99,7 +112,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.contentPanel);
             this.Name = "WatchPanel";
-            this.Text = "DebugObjectsPanel";
+            this.Text = "WatchPanel";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -114,5 +127,6 @@
         private System.Windows.Forms.ToolStripButton addExpressionBtn;
         private System.Windows.Forms.ToolStripButton deleteExpressionBtn;
         private System.Windows.Forms.ToolStripButton deleteAllExpressionsBtn;
+        private System.Windows.Forms.ToolStripButton addAtCaretBtn;
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CSScriptIntellisense;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using CSScriptIntellisense;
 
 namespace CSScriptNpp.Dialogs
 {
@@ -23,6 +23,8 @@ namespace CSScriptNpp.Dialogs
 
         void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            focucedItem = listView1.GetItemAt(e.X, e.Y);
+
             // Check the subitem clicked .
             int spos = 0;
 
@@ -39,21 +41,33 @@ namespace CSScriptNpp.Dialogs
                 spos = epos;
             }
 
+            StartEditing(focucedItem, selectedSubItem);
+        }
+
+        void StartEditing(ListViewItem item, int subItem)
+        {
+            int spos = 0;
+
+            for (int i = 0; i < subItem; i++)
+            {
+                spos += listView1.Columns[i].Width;
+            }
+
             //currently allow editing name only
-            if (selectedSubItem != 0) //currently allow editing name only
+            if (subItem != 0) //currently allow editing name only
                 return;
 
             //changing the name of the item allows only fro the root DbgObject
-            if (selectedSubItem == 0 && (focucedItem.Tag as DbgObject).Parent != null)
+            if (subItem == 0 && (item.Tag as DbgObject).Parent != null)
                 return;
 
             int xOffset = 2;
 
-            editBox.Size = new Size(listView1.Columns[selectedSubItem].Width - xOffset, focucedItem.Bounds.Bottom - focucedItem.Bounds.Top);
-            editBox.Location = new Point(spos + xOffset, focucedItem.Bounds.Y);
+            editBox.Size = new Size(listView1.Columns[subItem].Width - xOffset, item.Bounds.Bottom - item.Bounds.Top);
+            editBox.Location = new Point(spos + xOffset, item.Bounds.Y);
             editBox.IsEditing = true;
             editBox.Show();
-            editBox.Text = focucedItem.SubItems[selectedSubItem].Text;
+            editBox.Text = item.SubItems[subItem].Text;
             editBox.SelectAll();
             editBox.Focus();
         }
@@ -62,7 +76,6 @@ namespace CSScriptNpp.Dialogs
         {
             if (e.KeyData == Keys.Return)
                 EndEditing();
-
             else if (e.KeyData == Keys.Escape)
                 editBox.Hide();
         }
@@ -83,10 +96,12 @@ namespace CSScriptNpp.Dialogs
                 string oldValue;
                 string newValue = editBox.Text;
                 editBox.IsEditing = false;
-                if (focucedItem.Tag != AddNewPlaceholder)
+                if (focucedItem.GetDbgObject() != AddNewPlaceholder)
                 {
                     oldValue = focucedItem.SubItems[selectedSubItem].Text;
                     focucedItem.SubItems[selectedSubItem].Text = newValue;
+                    focucedItem.GetDbgObject().Name = newValue;
+
                     if (selectedSubItem == 0 && newValue == "")
                     {
                         listView1.Items.Remove(focucedItem);
@@ -109,6 +124,14 @@ namespace CSScriptNpp.Dialogs
         {
             listView1.Items.Clear();
             Debugger.RemoveAllWatch();
+            ResetWatchObjects();
+        }
+
+        public void StartAddWatch()
+        {
+            focucedItem = listView1.Items[listView1.Items.Count - 1];
+            selectedSubItem = 0;
+            StartEditing(focucedItem, selectedSubItem);
         }
 
         public void AddWatchExpression(string expression)
@@ -159,8 +182,9 @@ namespace CSScriptNpp.Dialogs
                         {
                             itemObject.CopyDbgDataFrom(update);
                             itemObject.IsModified = (item.SubItems[1].Text != update.Value);
-                            item.SubItems[1].Text = update.Value;
+                            item.SubItems[1].Text = update.DispayValue;
                             item.SubItems[2].Text = update.Type;
+                            item.ToolTipText = update.Tooltip;
                             updated = true;
                         }
                     }
@@ -188,7 +212,6 @@ namespace CSScriptNpp.Dialogs
                 if (valName.EndsWith("__BackingField")) //ignore auto-property backing fields
                     return null;
 
-
                 Func<string, bool> getBoolAttribute = attrName => dbgValue.Attribute(attrName).Value == "true";
 
                 var dbgObject = new DbgObject();
@@ -208,7 +231,6 @@ namespace CSScriptNpp.Dialogs
                 }
 
                 return dbgObject;
-
             }).Where(x => x != null);
 
             var staticMembers = values.Where(x => x.IsStatic);
@@ -246,7 +268,7 @@ namespace CSScriptNpp.Dialogs
                 listView1.Items.Add(AddNewPlaceholder.ToListViewItem());
         }
 
-        DbgObject AddNewPlaceholder = new DbgObject { DbgId = "AddNewPlaceholder", Name = "" };
+        DbgObject AddNewPlaceholder = new DbgObject { DbgId = "AddNewPlaceholder", Name = "", IsEditPlaceholder = true };
 
         void InsertWatchObjects(int index, params DbgObject[] items)
         {
@@ -287,7 +309,6 @@ namespace CSScriptNpp.Dialogs
 
             if (e.ColumnIndex == 0)
             {
-
                 var clickableRange = GetItemExpenderClickableRange(e.Item);
 
                 int X = e.Bounds.X + clickableRange.Start;
@@ -392,8 +413,6 @@ namespace CSScriptNpp.Dialogs
 
         private void listView1_MouseDown(object sender, MouseEventArgs e)
         {
-            focucedItem = listView1.GetItemAt(e.X, e.Y);
-
             ListViewHitTestInfo info = listView1.HitTest(e.X, e.Y);
             if (info.Item != null)
             {
@@ -421,11 +440,12 @@ namespace CSScriptNpp.Dialogs
                     {
                         string data = Debugger.Invoke("locals", dbgObject.DbgId);
                         dbgObject.Children = ToWatchObjects(data);
-                        dbgObject.HasChildren = dbgObject.Children.Any(); //readjust as complex type (e.g. array) may not have children after the deep inspection 
+                        dbgObject.HasChildren = dbgObject.Children.Any(); //readjust as complex type (e.g. array) may not have children after the deep inspection
                         if (dbgObject.IsArray)
                         {
                             dbgObject.Value = string.Format("[{0} items]", dbgObject.Children.Count());
-                            item.SubItems[1].Text = dbgObject.Value;
+                            item.SubItems[1].Text = dbgObject.DispayValue;
+                            item.ToolTipText = dbgObject.Tooltip;
                         }
                     }
 
@@ -446,26 +466,6 @@ namespace CSScriptNpp.Dialogs
             // client coordinates within the given ListView
             Point localPoint = listView.PointToClient(mousePosition);
             return listView.GetItemAt(localPoint.X, localPoint.Y);
-        }
-
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (listView1.SelectedItems.Count > 0)
-            {
-                try
-                {
-                    var buffer = new StringBuilder();
-
-                    foreach (ListViewItem item in listView1.SelectedItems)
-                    {
-                        var dbgObject = item.Tag as DbgObject;
-                        buffer.AppendLine(string.Format("{0} {1} {2}", dbgObject.Name, dbgObject.Value, dbgObject.Type));
-                    }
-                    Clipboard.SetText(buffer.ToString());
-
-                }
-                catch { }
-            }
         }
 
         public bool IsReadOnly = true;
@@ -515,6 +515,51 @@ namespace CSScriptNpp.Dialogs
                         Debugger.RemoveWatch(expressionToRemove);
                 });
         }
+
+        private void copyValuespMenu_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                try
+                {
+                    var buffer = new StringBuilder();
+
+                    foreach (ListViewItem item in listView1.SelectedItems)
+                        buffer.AppendLine(item.GetDbgObject().Value);
+
+                    Clipboard.SetText(buffer.ToString());
+                }
+                catch { }
+            }
+        }
+
+        private void copyRowsMenu_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                try
+                {
+                    var buffer = new StringBuilder();
+
+                    foreach (ListViewItem item in listView1.SelectedItems)
+                    {
+                        var dbgObject = item.GetDbgObject();
+                        buffer.AppendLine(string.Format("{0} {1} {2}", dbgObject.Name, dbgObject.Value, dbgObject.Type));
+                    }
+                    Clipboard.SetText(buffer.ToString());
+                }
+                catch { }
+            }
+        }
+
+        ToolTip toolTip = new ToolTip();
+
+        private void listView1_ItemMouseHover(object sender, ListViewItemMouseHoverEventArgs e)
+        {
+            var cursor = this.PointToClient(MousePosition);
+            cursor.Offset(15, 15);
+            toolTip.Show(e.Item.ToolTipText, this, cursor.X, cursor.Y, 1000);
+        }
     }
 
     public class Range
@@ -522,12 +567,12 @@ namespace CSScriptNpp.Dialogs
         public int Start { get; set; }
         public int End { get; set; }
         public int Width { get { return End - Start; } }
+
         public bool Contains(int point)
         {
             return Start < point && point < End;
         }
     }
-
 
     static class Extensions
     {
@@ -566,6 +611,11 @@ namespace CSScriptNpp.Dialogs
             li.SubItems.Add(item.Value);
             li.SubItems.Add(item.Type);
             li.Tag = item;
+            if (item.IsEditPlaceholder)
+                li.ToolTipText = "Double-click to add/edit";
+            else
+                li.ToolTipText = item.Tooltip;
+
             return li;
         }
 

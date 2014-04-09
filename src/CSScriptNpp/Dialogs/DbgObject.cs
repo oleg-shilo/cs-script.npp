@@ -37,14 +37,40 @@ namespace CSScriptNpp.Dialogs
         public bool IsStatic { get; set; }
         public bool IsArray { get; set; }
         public bool IsField { get; set; }
+        public bool IsEditPlaceholder { get; set; }
         public string DbgId { get; set; }
         public bool IsPublic { get; set; }
         public bool IsSeparator { get; set; }
         public bool IsExpression { get; set; }
         public bool IsModified { get; set; }
         public string Name { get; set; }
-        public string Value { get; set; }
         public string Type { get; set; }
+
+        string _value;
+
+        public string Value
+        {
+            get { return _value; }
+            set
+            {
+                _value = value;
+
+                Tooltip = null;
+                if (_value != null && _value.Length > TrancationSize)
+                {
+                    Tooltip = "Display value has been truncated";
+                    DispayValue = _value.Substring(0, TrancationSize).Replace("\r\n", "") + "...";
+                }
+                else
+                    DispayValue = _value;
+            }
+        }
+
+        public string Tooltip { get; set; }
+        public string DispayValue { get; set; }
+
+        public const int TrancationSize = 40;
+
         public bool IsUnresolved
         {
             get
@@ -57,11 +83,14 @@ namespace CSScriptNpp.Dialogs
         {
             this.DbgId = source.DbgId;
             this.Value = source.Value;
+            this.DispayValue = source.DispayValue;
             this.Type = source.Type;
             this.IsStatic = source.IsStatic;
             this.IsArray = source.IsArray;
             this.IsField = source.IsField;
             this.IsPublic = source.IsPublic;
+            this.Tooltip = source.Tooltip;
+            this.IsModified = source.IsModified;
             this.HasChildren = source.HasChildren;
         }
 

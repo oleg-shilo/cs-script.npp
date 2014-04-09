@@ -6,24 +6,42 @@ namespace CSScriptNpp
 {
     public partial class DebugPanel : Form
     {
-        WatchPanel watch;
-        LocalsPanel locals;
-        ThreadsPanel threads;
         CallStackPanel callstack;
+        LocalsPanel locals;
+        WatchPanel watch;
+        ThreadsPanel threads;
+        ModulesPanel modules;
 
         public DebugPanel()
         {
             InitializeComponent();
 
-            watch = new WatchPanel();
             locals = new LocalsPanel();
-            threads = new ThreadsPanel();
             callstack = new CallStackPanel();
+            watch = new WatchPanel();
+            threads = new ThreadsPanel();
+            modules = new ModulesPanel();
 
             tabControl1.AddTab("Locals", locals);
             tabControl1.AddTab("Call Stack", callstack);
             tabControl1.AddTab("Watch", watch);
             tabControl1.AddTab("Threads", threads);
+            tabControl1.AddTab("Modules", modules);
+
+            try
+            {
+                tabControl1.SelectedIndex = Config.Instance.DebugPanelInitialTab;
+            }
+            catch { }
+
+            this.VisibleChanged += (s, e) =>
+                                {
+                                    if (!Visible)
+                                    {
+                                        Config.Instance.DebugPanelInitialTab = tabControl1.SelectedIndex;
+                                        Config.Instance.Save();
+                                    }
+                                };
 
             if (Debugger.DebugAsConsole)
                 appTypeCombo.SelectedIndex = 0;
@@ -52,6 +70,8 @@ namespace CSScriptNpp
             UpdateCallstack("");
             UpdateLocals("");
             UpdateThreads("");
+            UpdateModules("");
+            watch.Refresh();
         }
 
         public void UpdateCallstack(string data)
@@ -62,6 +82,11 @@ namespace CSScriptNpp
         public void UpdateThreads(string data)
         {
             threads.UpdateThreads(data);
+        }
+       
+        public void UpdateModules(string data)
+        {
+            modules.Update(data);
         }
 
         public void UpdateLocals(string data)

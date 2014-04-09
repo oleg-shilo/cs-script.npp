@@ -243,7 +243,7 @@ namespace npp
             {
                 if (!WatchExpressions.Contains(expression))
                 {
-                    Console.WriteLine(">> WatchAdd: " + expression);
+                    //Console.WriteLine(">> WatchAdd: " + expression);
                     WatchExpressions.Add(expression);
                 }
 
@@ -254,7 +254,7 @@ namespace npp
             {
                 if (WatchExpressions.Contains(expression))
                 {
-                    Console.WriteLine(">> WatchRemove: " + expression);
+                    //Console.WriteLine(">> WatchRemove: " + expression);
                     WatchExpressions.Remove(expression);
                 }
             }
@@ -617,6 +617,7 @@ namespace npp
             ReportCallStack();
             ReportLocals();
             ReportThreads();
+            ReportModules();
         }
 
         void ReportLogMessage(string message)
@@ -686,6 +687,29 @@ namespace npp
                 }
 
                 MessageQueue.AddNotification(NppCategory.Threads + "<threads>" + threadsInfo.ToString() + "</threads>");
+            }
+        }
+        
+        void ReportModules()
+        {
+            if (IsInBreakMode)
+            {
+                var threadsInfo = new StringBuilder();
+
+                int i = 1;
+                foreach (MDbgModule m in shell.Debugger.Processes.Active.Modules)
+                {
+                    string fullname = m.CorModule.Name;
+                    string name = Path.GetFileName(fullname);
+                    string directory = Path.GetDirectoryName(fullname);
+
+                    threadsInfo.AppendFormat("<module index=\"{0}\" name=\"{1}\" location=\"{2}\"/>",
+                                             i++,
+                                             name.Replace("<", "$&lt;").Replace(">", "&gt;"),
+                                             directory.Replace("<", "$&lt;").Replace(">", "&gt;"));
+                }
+
+                MessageQueue.AddNotification(NppCategory.Modules + "<modules>" + threadsInfo.ToString() + "</modules>");
             }
         }
 

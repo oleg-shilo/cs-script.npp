@@ -14,6 +14,7 @@ namespace CSScriptNpp
         public static string Process = "process=>";
         public static string Trace = "trace=>";
         public static string Threads = "threads=>";
+        public static string Modules = "modules=>";
         public static string CallStack = "callstack=>";
         public static string Invoke = "invoke=>";
         public static string Exception = "exception=>";
@@ -310,10 +311,10 @@ namespace CSScriptNpp
                             {
                                 FileName = debuggerApp,
                                 Arguments = "!load npp.dll",
-#if !DEBUG 
+//#if !DEBUG 
                                 CreateNoWindow = true,
                                 UseShellExecute = false
-#endif
+//#endif
                             });
 
             MessageQueue.AddNotification(NppCategory.Diagnostics + debugger.Id + ":STARTED");

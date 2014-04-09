@@ -23,6 +23,7 @@ namespace CSScriptNpp.Dialogs
             content.Dock = DockStyle.Fill;
             content.Visible = true;
             content.IsReadOnly = false;
+            content.ClearWatchExpressions();
             content.OnDagDropText += content_OnDagDropText;
             content.OnEditCellComplete += content_OnEditCellComplete;
             Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
@@ -30,10 +31,14 @@ namespace CSScriptNpp.Dialogs
 
         void content_OnEditCellComplete(int column, string oldValue, string newValue)
         {
-            if (string.IsNullOrEmpty(oldValue) && !string.IsNullOrEmpty(newValue))
-                Debugger.AddWatch(newValue);
-            else if (!string.IsNullOrEmpty(oldValue) && string.IsNullOrEmpty(newValue))
-                Debugger.RemoveWatch(oldValue);
+            if (oldValue != newValue)
+            {
+                if (!string.IsNullOrEmpty(oldValue))
+                    Debugger.RemoveWatch(oldValue);
+
+                if (!string.IsNullOrEmpty(newValue))
+                    Debugger.AddWatch(newValue);
+            }
         }
 
         void content_OnDagDropText(string data)
@@ -48,7 +53,7 @@ namespace CSScriptNpp.Dialogs
 
         private void addExpressionBtn_Click(object sender, EventArgs e)
         {
-            content.AddWatchExpression(Utils.GetStatementAtCaret());
+            content.StartAddWatch();
         }
 
         private void deleteExpressionBtn_Click(object sender, EventArgs e)
@@ -59,6 +64,11 @@ namespace CSScriptNpp.Dialogs
         private void deleteAllExpressionsBtn_Click(object sender, EventArgs e)
         {
             content.ClearWatchExpressions();
+        }
+
+        private void addAtCaretBtn_Click(object sender, EventArgs e)
+        {
+            content.AddWatchExpression(Utils.GetStatementAtCaret());
         }
     }
 }

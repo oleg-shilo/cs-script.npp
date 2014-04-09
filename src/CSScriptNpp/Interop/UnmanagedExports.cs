@@ -74,7 +74,6 @@ namespace CSScriptNpp
             try
             {
                 SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
-                //Debug.WriteLine("Code: " + nc.nmhdr.code);
 
                 if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
                 {

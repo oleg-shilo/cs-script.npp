@@ -1,3 +1,4 @@
+using CSScriptNpp.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -147,7 +148,12 @@ namespace CSScriptNpp
                     if (!string.IsNullOrEmpty(data))
                     {
                         var dbgValue = XElement.Parse(data);
-                        return content + ": " + dbgValue.Attribute("value").Value;
+                        var dbgValueText = dbgValue.Attribute("value").Value;
+
+                        if (dbgValueText.Length > DbgObject.TrancationSize)
+                            return content + ": <value has been truncated because it is too long>";
+                        else
+                            return content + ": " + dbgValue.Attribute("value").Value;
                     }
                 }
                 catch { }
@@ -354,6 +360,10 @@ namespace CSScriptNpp
                 else if (message.StartsWith(NppCategory.Threads))
                 {
                     Plugin.GetDebugPanel().UpdateThreads(message.Substring(NppCategory.Threads.Length));
+                }
+                else if (message.StartsWith(NppCategory.Modules))
+                {
+                    Plugin.GetDebugPanel().UpdateModules(message.Substring(NppCategory.Modules.Length));
                 }
                 else if (message.StartsWith(NppCategory.Locals))
                 {

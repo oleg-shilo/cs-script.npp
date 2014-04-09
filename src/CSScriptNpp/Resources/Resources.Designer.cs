@@ -153,6 +153,16 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dbg_addwatch_at_caret {
+            get {
+                object obj = ResourceManager.GetObject("dbg_addwatch_at_caret", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dbg_break {
             get {
                 object obj = ResourceManager.GetObject("dbg_break", resourceCulture);

@@ -40,6 +40,7 @@ namespace CSScriptNpp
         public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
         public string SciptHistory = "";
         public int SciptHistoryMaxCount = 10;
+        public int DebugPanelInitialTab = 0;
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
         public bool DebugAsConsole = true;
@@ -69,6 +70,7 @@ namespace CSScriptNpp
             SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
             SetValue(Section, "SciptHistory", SciptHistory);
             SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+            SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
             SetValue(Section, "LocalDebug", LocalDebug);
             SetValue(Section, "BuildOnF7", BuildOnF7);
             SetValue(Section, "BreakOnException", BreakOnException);
@@ -90,10 +92,11 @@ namespace CSScriptNpp
             //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway. 
             SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
             SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+            DebugPanelInitialTab = GetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
             OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
             NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
             InterceptConsole = GetValue(Section, "InterceptConsole", InterceptConsole);
-            QuickViewAutoRefreshAvailable = GetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
+            //QuickViewAutoRefreshAvailable = GetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
             LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
             TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
             ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);

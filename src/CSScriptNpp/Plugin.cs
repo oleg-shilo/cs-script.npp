@@ -14,19 +14,16 @@ namespace CSScriptNpp
      * - Outstanding features
      *      - Debugger
      *          - Debug panel
+     *              - QuickWatch panel
+     *                  - auto update
+     *                  - Setting the variable/expression value
      *              - Watch panel
-     *                  + add button
-     *                  + delete button
-     *                  + delete all button
-     *                  + auto update
-     *                  + setting Watch expressions
-     *                  + removing Watch expressions
+     *                  - Pining sub-values
+     *                  - Setting the variable/expression value
+     *                  - Handle global (non varable based) expressions likes Environment.TickCount
+     *                  - Handle method expressions like Console.WriteLine("test")
      *              - Debug Objects panel
-     *                  + CLR-Type values should be replaced with aliaces
-     *                  + Reflect the value change with color
-     *                  - wraps value text instead of truncating 
-     *                  - should show oversized value text as tooltip 
-     *              - Modules panel
+     *                  - Refresh value on demand
      *          - handle breakpoints in auto-generated files
      *          - make handling Debug.Assert user friendlier
      *          - when debugging auto-script plugin should set invisible breakpoint to the meaningful first line

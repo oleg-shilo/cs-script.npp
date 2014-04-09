@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugPanel));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.goBtn = new System.Windows.Forms.ToolStripButton();
             this.breakBtn = new System.Windows.Forms.ToolStripButton();

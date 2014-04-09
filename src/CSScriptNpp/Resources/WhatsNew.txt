@@ -1,4 +1,4 @@
-v1.0.19.0-v1.0.20.1
+v1.0.19.0-v1.0.21.0
 * Implemented Integrated Debugger.
   - Step Over
   - Step In
@@ -10,6 +10,8 @@ v1.0.19.0-v1.0.20.1
   - 'Locals' Panel
   - QuickWatch panel
   - Threads panel
+  - Watch panel
+  - Modules panel
   - Optional breaking on user Exceptions
   - Showing fields/properties values on mouse rollover
   - Breakpoints persistence
