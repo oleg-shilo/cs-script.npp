@@ -10,7 +10,7 @@ namespace CSScriptNpp
     {
         public static void Init()
         {
-            //Debug.Assert(false);
+            Debug.Assert(false);
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 

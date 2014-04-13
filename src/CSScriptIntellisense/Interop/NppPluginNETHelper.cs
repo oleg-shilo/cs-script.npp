@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Drawing;
 
 namespace CSScriptIntellisense
 {
@@ -21,6 +22,17 @@ namespace CSScriptIntellisense
     [StructLayout(LayoutKind.Sequential)]
     public struct ShortcutKey
     {
+        public ShortcutKey(string data)
+        {
+            //Ctrl+Shift+Alt+Key
+            var parts = data.Split('+');
+            _key = Convert.ToByte(Enum.Parse(typeof(Keys), parts.Last()));
+            parts = parts.Take(parts.Length - 1).ToArray();
+            _isCtrl = Convert.ToByte(parts.Contains("Ctrl"));
+            _isShift = Convert.ToByte(parts.Contains("Shift"));
+            _isAlt = Convert.ToByte(parts.Contains("Alt"));
+        }
+
         public ShortcutKey(bool isCtrl, bool isAlt, bool isShift, Keys key)
         {
             // the types 'bool' and 'char' have a size of 1 byte only!
@@ -33,6 +45,16 @@ namespace CSScriptIntellisense
         public byte _isAlt;
         public byte _isShift;
         public byte _key;
+
+
+        public bool IsCtrl { get { return _isCtrl != 0; } }
+        public bool IsShift { get { return _isShift != 0; } }
+        public bool IsAlt { get { return _isAlt != 0; } }
+
+        public bool IsSet
+        {
+            get { return _key != 0; }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

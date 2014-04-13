@@ -45,11 +45,12 @@ namespace CSScriptIntellisense
         {
             int cmdIndex = 0;
             CommandMenuInit(ref cmdIndex,
-                (index, name, handler, isCtrl, isAlt, isShift, key) =>
+                (index, name, handler, shortcut) =>
                 {
-                    Plugin.SetCommand(index, name, handler, new ShortcutKey(isCtrl, isAlt, isShift, key));
+                    Plugin.SetCommand(index, name, handler, shortcut);
                 });
         }
+
 
         //this method will also be called from the parent plugin
         static public void CommandMenuInit(ref int cmdIndex, CSScriptNpp.SetMenuCommand setCommand)
@@ -67,34 +68,34 @@ namespace CSScriptIntellisense
 
                 Task.Factory.StartNew(SimpleCodeCompletion.Init);
 
-                setCommand(cmdIndex++, "Show auto-complete list", ShowSuggestionList, true, false, false, Keys.Space);
-                setCommand(cmdIndex++, "Insert Code Snippet", ShowSnippetsList, true, false, true, Keys.Space);
-                setCommand(cmdIndex++, "Add missing 'using'", AddMissingUsings, true, false, false, Keys.OemPeriod);
-                setCommand(cmdIndex++, "Re-analyze current document", Reparse, false, false, false, Keys.None);
+                //'_' preffix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"
+                setCommand(cmdIndex++, "Show auto-complete list", ShowSuggestionList, "_ShowAutoComplete:Ctrl+Space");
+                setCommand(cmdIndex++, "Insert Code Snippet", ShowSnippetsList, "_InsertCodeSnippet:Ctrl+Shift+Space");
+                setCommand(cmdIndex++, "Add missing 'using'", AddMissingUsings, "_AddMissingUsings:Ctrl+OemPeriod");
+                setCommand(cmdIndex++, "Re-analyze current document", Reparse, null);
                 if (!Config.Instance.DisableMethodInfo)
-                    setCommand(cmdIndex++, "Show Method Info", ShowMethodInfo, false, false, false, Keys.F6);
-                setCommand(cmdIndex++, "Format Document", FormatDocument, true, false, false, Keys.F8);
-                setCommand(cmdIndex++, "Go To Definition", GoToDefinition, false, false, false, Keys.F12);
-                setCommand(cmdIndex++, "Find All References", FindAllReferences, false, false, true, Keys.F12);
-                setCommand(cmdIndex++, "---", null, false, false, false, Keys.None);
-                setCommand(cmdIndex++, "Settings", ShowConfig, false, false, false, Keys.None);
-                setCommand(cmdIndex++, "Manage Code Snippets", Snippets.EditSnippetsConfig, false, false, false, Keys.None);
-                setCommand(cmdIndex++, "---", null, false, false, false, Keys.None);
+                    setCommand(cmdIndex++, "Show Method Info", ShowMethodInfo, "_ShowMethodInfo:F6");
+                setCommand(cmdIndex++, "Format Document", FormatDocument, "_FormatDocument:Ctrl+F8");
+                setCommand(cmdIndex++, "Go To Definition", GoToDefinition, "_GoToDefinition:F12");
+                setCommand(cmdIndex++, "Find All References", FindAllReferences, "_FindAllReferences:Shift+F12");
+                setCommand(cmdIndex++, "---", null, null);
+                setCommand(cmdIndex++, "Settings", ShowConfig, null);
+                setCommand(cmdIndex++, "Manage Code Snippets", Snippets.EditSnippetsConfig, null);
+                setCommand(cmdIndex++, "---", null, null);
 #if DEBUG
                 //setCommand(cmdIndex++, "Test", Test, true, false, true, Keys.L);
 #endif
                 if (standaloneSetup)
-                    setCommand(cmdIndex++, "About", ShowAboutBox, false, false, false, Keys.None);
+                    setCommand(cmdIndex++, "About", ShowAboutBox, null);
 
                 memberInfoPopup = new MemberInfoPopupManager(ShowQuickInfo);
 
                 //NPP already intercepts these shortcuts so we need to hook keyboard messages
+                IEnumerable<Keys> keysToIntercept = BindInteranalShortcuts();
+
+                foreach (var key in keysToIntercept)
+                    KeyInterceptor.Instance.Add(key);
                 KeyInterceptor.Instance.Add(Keys.Tab);
-                KeyInterceptor.Instance.Add(Keys.Return);
-                KeyInterceptor.Instance.Add(Keys.Escape);
-                KeyInterceptor.Instance.Add(Keys.Tab);
-                KeyInterceptor.Instance.Add(Keys.Space);
-                KeyInterceptor.Instance.Add(Keys.F12);
                 KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
             }
             else
@@ -162,31 +163,62 @@ namespace CSScriptIntellisense
             {
                 if (Npp.IsCurrentScriptFile())
                 {
-                    Modifiers modifiers = KeyInterceptor.GetModifiers();
+                    foreach (var shortcut in internalShortcuts.Keys)
+                        if ((byte)key == shortcut._key)
+                        {
+                            Modifiers modifiers = KeyInterceptor.GetModifiers();
 
-                    if (key == Keys.Space && modifiers.IsCtrl && !modifiers.IsAlt && modifiers.IsShift)
-                    {
-                        handled = true;
-                        Dispatcher.Shedule(10, () => Invoke(ShowSnippetsList));
-                    }
-                    else if (key == Keys.Space && modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
-                    {
-                        handled = true;
-                        Dispatcher.Shedule(10, () => Invoke(ShowSuggestionList));
-                    }
-                    else if (key == Keys.F12 && !modifiers.IsCtrl && modifiers.IsShift && !modifiers.IsAlt)
-                    {
-                        Dispatcher.Shedule(10, () => Invoke(FindAllReferences));
-                        handled = true;
-                    }
-                    else if (key == Keys.F12 && !modifiers.IsCtrl && !modifiers.IsShift && !modifiers.IsAlt)
-                    {
-                        Dispatcher.Shedule(10, () => Invoke(GoToDefinition));
-                        handled = true;
-                    }
+                            if (modifiers.IsCtrl == shortcut.IsCtrl && modifiers.IsShift == shortcut.IsShift && modifiers.IsAlt == shortcut.IsAlt)
+                            {
+
+                                handled = true;
+                                var handler = internalShortcuts[shortcut];
+                                Dispatcher.Shedule(10, () => Invoke(handler.Item2));
+
+                                break;
+                            }
+                        }
                 }
             }
+
         }
+
+
+        static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
+        {
+            ShortcutKey shortcut = Plugin.ParseAsShortcutKey(shortcutSpec);
+
+            internalShortcuts.Add(shortcut, new Tuple<string, Action>(displayName, handler));
+
+            var key = (Keys)shortcut._key;
+            if (!uniqueKeys.ContainsKey(key))
+                uniqueKeys.Add(key, 0);
+        }
+
+        static IEnumerable<Keys> BindInteranalShortcuts()
+        {
+            var uniqueKeys = new Dictionary<Keys, int>();
+
+            AddInternalShortcuts("_ShowAutoComplete:Ctrl+Space",
+                                 "Show auto-complete list",
+                                  ShowSuggestionList, uniqueKeys);
+
+            AddInternalShortcuts("_InsertCodeSnippet:Ctrl+Shift+Space",
+                                 "Insert Code Snippet",
+                                  ShowSnippetsList, uniqueKeys);
+
+            AddInternalShortcuts("_FindAllReferences:Shift+F12",
+                                 "Find All References",
+                                  FindAllReferences, uniqueKeys);
+
+            AddInternalShortcuts("_GoToDefinition:F12",
+                                 "Go To Definition",
+                                  GoToDefinition, uniqueKeys);
+
+            return uniqueKeys.Keys;
+        }
+
+        public static Dictionary<ShortcutKey, Tuple<string, Action>> internalShortcuts = new Dictionary<ShortcutKey, Tuple<string, Action>>();
 
         static bool invokeInProgress = false;
 

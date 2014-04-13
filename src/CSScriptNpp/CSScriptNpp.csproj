@@ -57,6 +57,7 @@
   -->
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CSScriptNpp\Shortcuts.cs" />
     <Compile Include="DebugPanel.cs">
       <SubType>Form</SubType>
     </Compile>

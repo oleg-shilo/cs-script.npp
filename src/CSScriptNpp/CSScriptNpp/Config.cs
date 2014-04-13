@@ -1,29 +1,31 @@
 using System;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace CSScriptNpp
 {
     /// <summary>
-    /// Of course XML based config is more natural, however ini file reading (just a few values) is faster. 
+    /// Of course XML based config is more natural, however ini file reading (just a few values) is faster.
     /// </summary>
     public class Config : IniFile
     {
-        static Config instance = new Config();
+        public static string Location = Plugin.ConfigDir;
 
-        public static Config Instance { get { return instance; } }
+        public static Shortcuts Shortcuts = new Shortcuts();
+        public static Config Instance { get { return instance ?? (instance = new Config()); } }
+        public static Config instance;
+
+        public string Section = "Generic";
 
         public Config()
         {
-            base.file = Path.Combine(Plugin.ConfigDir, "settings.ini");
-
-            CSScriptIntellisense.Config.Instance.SetFileName(base.file);
-            CSScriptIntellisense.Config.Instance.Section = "Intellisense";
-
+            base.file = Path.Combine(Location, "settings.ini");
             Open();
+        }
+
+        public string GetFileName()
+        {
+            return base.file;
         }
 
         public bool ClasslessScriptByDefault = false;
@@ -48,65 +50,67 @@ namespace CSScriptNpp
         public int OutputPanelCapacity = 10000; //num of characters
         public bool LocalDebug = true;
 
-        public string Section = "Generic";
-
-        public string GetFileName()
-        {
-            return base.file;
-        }
-
         public void Save()
         {
-            File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
+            lock (this)
+            {
+                File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
-            SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
-            SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
-            SetValue(Section, "DebugAsConsole", DebugAsConsole);
-            SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
-            SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
-            SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
-            SetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
-            SetValue(Section, "InterceptConsole", InterceptConsole);
-            SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
-            SetValue(Section, "SciptHistory", SciptHistory);
-            SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
-            SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
-            SetValue(Section, "LocalDebug", LocalDebug);
-            SetValue(Section, "BuildOnF7", BuildOnF7);
-            SetValue(Section, "BreakOnException", BreakOnException);
-            SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
-            SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
-            SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
-            SetValue(Section, "TargetVersion", TargetVersion);
-            SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
-            SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
+                SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
+                SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
+                SetValue(Section, "DebugAsConsole", DebugAsConsole);
+                SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
+                SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
+                SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
+                SetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
+                SetValue(Section, "InterceptConsole", InterceptConsole);
+                SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
+                SetValue(Section, "SciptHistory", SciptHistory);
+                SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+                SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
+                SetValue(Section, "LocalDebug", LocalDebug);
+                SetValue(Section, "BuildOnF7", BuildOnF7);
+                SetValue(Section, "BreakOnException", BreakOnException);
+                SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
+                SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
+                SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
+                SetValue(Section, "TargetVersion", TargetVersion);
+                SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
+                SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
 
-            CSScriptIntellisense.Config.Instance.Save();
+                CSScriptIntellisense.Config.Instance.Save();
+
+                Shortcuts.Save();
+            }
         }
 
         public void Open()
         {
-            ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
-            ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
-            DebugAsConsole = GetValue(Section, "DebugAsConsole", DebugAsConsole);
-            //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway. 
-            SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
-            SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
-            DebugPanelInitialTab = GetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
-            OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
-            NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
-            InterceptConsole = GetValue(Section, "InterceptConsole", InterceptConsole);
-            //QuickViewAutoRefreshAvailable = GetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
-            LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
-            TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
-            ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
-            BreakOnException = GetValue(Section, "BreakOnException", BreakOnException);
-            LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
-            CheckUpdatesOnStartup = GetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
-            FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
-            ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
-            DistributeScriptAsScriptByDefault = GetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
-            CSScriptIntellisense.Config.Instance.Open();
+            lock (this)
+            {
+                ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
+                ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
+                DebugAsConsole = GetValue(Section, "DebugAsConsole", DebugAsConsole);
+                //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
+                SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
+                SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+                DebugPanelInitialTab = GetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
+                OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
+                NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
+                InterceptConsole = GetValue(Section, "InterceptConsole", InterceptConsole);
+                //QuickViewAutoRefreshAvailable = GetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
+                LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
+                TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
+                ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
+                BreakOnException = GetValue(Section, "BreakOnException", BreakOnException);
+                LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
+                CheckUpdatesOnStartup = GetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
+                FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
+                ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
+                DistributeScriptAsScriptByDefault = GetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
+
+                CSScriptIntellisense.Config.Instance.Open();
+            }
         }
     }
 }

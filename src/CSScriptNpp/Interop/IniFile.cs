@@ -39,6 +39,7 @@ namespace CSScriptNpp
             try
             {
                 var retval = new StringBuilder(size);
+
                 GetPrivateProfileString(section, key, defaultValue.ToString(), retval, size, file);
                 return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFrom(retval.ToString());
             }

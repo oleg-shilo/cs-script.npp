@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -21,6 +22,17 @@ namespace CSScriptNpp
     public struct ShortcutKey
     {
         static public ShortcutKey None = new ShortcutKey();
+
+        public ShortcutKey(string data)
+        {
+            //Ctrl+Shift+Alt+Key
+            var parts = data.Split('+');
+            _key = Convert.ToByte(Enum.Parse(typeof(Keys), parts.Last()));
+            parts = parts.Take(parts.Length - 1).ToArray();
+            _isCtrl = Convert.ToByte(parts.Contains("Ctrl"));
+            _isShift = Convert.ToByte(parts.Contains("Shift"));
+            _isAlt = Convert.ToByte(parts.Contains("Alt"));
+        }
 
         public ShortcutKey(bool isCtrl, bool isAlt, bool isShift, Keys key)
         {
@@ -44,6 +56,7 @@ namespace CSScriptNpp
         {
             get { return _key != 0; }
         }
+
         public override string ToString()
         {
             var retval = new StringBuilder();
@@ -56,6 +69,7 @@ namespace CSScriptNpp
             retval.Append(((Keys)_key).ToString());
             return retval.ToString();
         }
+
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -69,8 +83,6 @@ namespace CSScriptNpp
         public bool _init2Check;
         public ShortcutKey _pShKey;
     }
-
-
 
     public class FuncItems : IDisposable
     {
@@ -2200,7 +2212,6 @@ namespace CSScriptNpp
             return IntPtr.Zero;
         }
 
-
         [DllImport("user32")]
         public static extern IntPtr SendMessage(IntPtr hWnd, SciMsg Msg, int wParam, IntPtr lParam);
 
@@ -2212,7 +2223,6 @@ namespace CSScriptNpp
 
         [DllImport("user32")]
         public static extern IntPtr SendMessage(IntPtr hWnd, SciMsg Msg, int wParam, int lParam);
-
 
         public static IntPtr SendMessage(IntPtr hWnd, SciMsg Msg, int wParam, out string lParam)
         {

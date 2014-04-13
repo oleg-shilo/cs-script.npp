@@ -88,6 +88,25 @@ namespace CSScriptNpp
             return string.Compare(text, textToCompare, ignoreCase) == 0;
         }
 
+        public static ShortcutKey ParseAsShortcutKey(this string shortcutSpec)
+        {
+            var parts = shortcutSpec.Split(':');
+
+            string shortcutName = parts[0];
+            string shortcutData = parts[1];
+
+            try
+            {
+                var actualData = Config.Shortcuts.GetValue(shortcutName, shortcutData);
+                return new ShortcutKey(actualData);
+            }
+            catch
+            {
+                Config.Shortcuts.SetValue(shortcutName, shortcutData);
+                return new ShortcutKey(shortcutData);
+            }
+        }
+
         public static bool ParseAsFileReference(this string text, out string file, out int line, out int column)
         {
             if (ParseAsErrorFileReference(text, out file, out line, out column))

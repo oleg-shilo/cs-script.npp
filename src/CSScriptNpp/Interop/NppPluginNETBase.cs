@@ -24,6 +24,18 @@ namespace CSScriptNpp
             SetCommand(index, commandName, functionPointer, shortcut, false);
         }
 
+        public static void SetCommand(int index, string commandName, Action functionPointer, string shortcutSpec)
+        {
+            ShortcutKey shortcutKey;
+
+            if (string.IsNullOrEmpty(shortcutSpec))
+                shortcutKey = new ShortcutKey(false, false, false, Keys.None);
+            else
+                shortcutKey = shortcutSpec.ParseAsShortcutKey();
+
+            SetCommand(index, commandName, functionPointer, shortcutKey, false);
+        }
+
         public static void SetCommand(int index, string commandName, Action functionPointer, bool checkOnInit)
         {
             SetCommand(index, commandName, functionPointer, new ShortcutKey(), checkOnInit);

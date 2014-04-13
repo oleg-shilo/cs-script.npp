@@ -32,6 +32,8 @@ namespace CSScriptNpp
             CSScriptIntellisense.Plugin.NppData._scintillaMainHandle = Plugin.NppData._scintillaMainHandle;
             CSScriptIntellisense.Plugin.NppData._scintillaSecondHandle = Plugin.NppData._scintillaSecondHandle;
 
+            Intellisense.EnsureIntellisenseIntegration();
+
             CSScriptNpp.Plugin.CommandMenuInit(); //this will also call CSScriptIntellisense.Plugin.CommandMenuInit
 
             foreach (var item in CSScriptIntellisense.Plugin.FuncItems.Items)

@@ -20,7 +20,7 @@ namespace CSScriptNpp
      *              - Watch panel
      *                  - Pining sub-values
      *                  - Setting the variable/expression value
-     *                  - Handle global (non varable based) expressions likes Environment.TickCount
+     *                  - Handle global (non variable based) expressions likes Environment.TickCount
      *                  - Handle method expressions like Console.WriteLine("test")
      *              - Debug Objects panel
      *                  - Refresh value on demand
@@ -28,6 +28,10 @@ namespace CSScriptNpp
      *          - make handling Debug.Assert user friendlier
      *          - when debugging auto-script plugin should set invisible breakpoint to the meaningful first line
      *      - configurable shortcuts
+     *          - ensure all tooltips reflect proper shortcut info
+     *          - handle missformatted shortcut info input
+     *          - auto-setup KeyInterseptor Keys to listen
+     *          - reflect with color the preserverd shortcuts
      *      
      * - Desirable but not essential features
      *      - Aollow disabling auto-update from config file
@@ -54,9 +58,10 @@ namespace CSScriptNpp
         {
             int index = 0;
 
-            SetCommand(projectPanelId = index++, "Build (validate)", Build, new ShortcutKey(true, false, true, Keys.B));
-            SetCommand(projectPanelId = index++, "Run", Run, new ShortcutKey(false, false, false, Keys.F5));
-            SetCommand(projectPanelId = index++, "Debug", Run, new ShortcutKey(false, true, false, Keys.F5));
+            //'_' preffix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"
+            SetCommand(projectPanelId = index++, "Build (validate)", Build, "_BuildFromMenu:Ctrl+Shift+B");
+            SetCommand(projectPanelId = index++, "Run", Run, "_Run:F5");
+            SetCommand(projectPanelId = index++, "Debug", Run, "_Debug:Alt+F5");
             SetCommand(index++, "---", null);
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
             SetCommand(outputPanelId = index++, "Output Panel", DoOutputPanel, Config.Instance.ShowOutputPanel);
@@ -65,17 +70,12 @@ namespace CSScriptNpp
             LoadIntellisenseCommands(ref index);
             SetCommand(index++, "About", ShowAbout);
 
-            BindInteranalShortcuts();
+            IEnumerable<Keys> keysToIntercept = BindInteranalShortcuts();
 
             KeyInterceptor.Instance.Install();
-            KeyInterceptor.Instance.Add(Keys.F5);
+            foreach (var key in keysToIntercept)
+                KeyInterceptor.Instance.Add(key);
             KeyInterceptor.Instance.Add(Keys.Tab);
-            KeyInterceptor.Instance.Add(Keys.F4);
-            KeyInterceptor.Instance.Add(Keys.F7);
-            KeyInterceptor.Instance.Add(Keys.F9);
-            KeyInterceptor.Instance.Add(Keys.F10);
-            KeyInterceptor.Instance.Add(Keys.F11);
-
             KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
 
             //setup dependency injection, which may be overwritten by other plugins (e.g. NppScripts)
@@ -92,92 +92,106 @@ namespace CSScriptNpp
         static void LoadIntellisenseCommands(ref int cmdIndex)
         {
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
-                 (index, name, handler, isCtrl, isAlt, isShift, key) =>
+                 (index, name, handler, shortcut) =>
                  {
                      if (name == "Settings")
-                         Plugin.SetCommand(index, name, ShowConfig, new ShortcutKey(isCtrl, isAlt, isShift, key));
+                         Plugin.SetCommand(index, name, ShowConfig, shortcut);
                      else
-                         Plugin.SetCommand(index, name, handler, new ShortcutKey(isCtrl, isAlt, isShift, key));
+                         Plugin.SetCommand(index, name, handler, shortcut);
                  });
         }
 
-        static void BindInteranalShortcuts()
+
+        static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
         {
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F7), new Tuple<string, Action>(
-                                  "Build (validate)",
-                                   Build
-                                   ));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F7), new Tuple<string, Action>(
+            ShortcutKey shortcut = shortcutSpec.ParseAsShortcutKey();
+
+            internalShortcuts.Add(shortcut, new Tuple<string, Action>(displayName, handler));
+
+            var key = (Keys)shortcut._key;
+            if (!uniqueKeys.ContainsKey(key))
+                uniqueKeys.Add(key, 0);
+        }
+
+        static IEnumerable<Keys> BindInteranalShortcuts()
+        {
+            var uniqueKeys = new Dictionary<Keys, int>();
+
+            AddInternalShortcuts("Build:F7",
+                                 "Build (validate)",
+                                  Build, uniqueKeys);
+
+            AddInternalShortcuts("LoadCurrentDocument:Ctrl+F7",
                                   "Load Current Document", () =>
                                   {
                                       DoProjectPanel();
                                       ShowProjectPanel();
                                       ProjectPanel.LoadCurrentDoc();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: true, key: Keys.F5), new Tuple<string, Action>(
+                                  }, uniqueKeys);
+
+            AddInternalShortcuts("Stop:Shift+F5",
                                   "Stop running script",
-                                  Stop
-                                  ));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F5), new Tuple<string, Action>(
-                                  "Run",
-                                  Run
-                                  ));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: true, isShift: false, key: Keys.F5), new Tuple<string, Action>(
-                                  "Debug", () =>
+                                  Stop, uniqueKeys);
+
+            AddInternalShortcuts("Run:F5",
+                                 "Run",
+                                  Run, uniqueKeys);
+
+            AddInternalShortcuts("Debug:Alt+F5",
+                                 "Debug", () =>
                                   {
                                       if (!Debugger.IsRunning)
                                           DebugScript();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F9), new Tuple<string, Action>(
-                                  "Toggle Breakpoint", () =>
-                                  {
-                                      Debugger.ToggleBreakpoint();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: true, key: Keys.F9), new Tuple<string, Action>(
-                                  "Show QuickWatch...",
-                                  QuickWatchPanel.PopupDialog
-                                  ));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F11), new Tuple<string, Action>(
-                                  "Step Into", () =>
-                                  {
-                                      Debugger.StepIn();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: true, key: Keys.F11), new Tuple<string, Action>(
-                                  "Step Out", () =>
-                                  {
-                                      Debugger.StepOut();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F10), new Tuple<string, Action>(
-                                  "Step Over", () =>
-                                  {
-                                      StepOver();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: true, key: Keys.F10), new Tuple<string, Action>(
-                                  "Set Next Statement", () =>
-                                  {
-                                      Debugger.SetInstructionPointer();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F10), new Tuple<string, Action>(
-                                  "Run To Cursor", () =>
-                                  {
-                                      Debugger.RunToCursor();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: true, isAlt: false, isShift: false, key: Keys.F5), new Tuple<string, Action>(
+                                  }, uniqueKeys);
+
+            AddInternalShortcuts("ToggleBreakpoint:F9",
+                                 "Toggle Breakpoint",
+                                 () => Debugger.ToggleBreakpoint(), uniqueKeys);
+
+            AddInternalShortcuts("QuickWatch:Shift+F9",
+                                 "Show QuickWatch...",
+                                  QuickWatchPanel.PopupDialog, uniqueKeys);
+
+            AddInternalShortcuts("StepInto:F11",
+                                 "Step Into",
+                                  Debugger.StepIn, uniqueKeys);
+
+            AddInternalShortcuts("StepOut:Shift+F11",
+                                 "Step Out",
+                                  Debugger.StepOut, uniqueKeys);
+
+            AddInternalShortcuts("StepOver:F10",
+                                 "Step Over",
+                                  StepOver, uniqueKeys);
+
+            AddInternalShortcuts("SetNextIP:Ctrl+Shift+F10",
+                                 "Set Next Statement",
+                                  Debugger.SetInstructionPointer, uniqueKeys);
+
+            AddInternalShortcuts("RunToCursor:Ctrl+F10",
+                                 "Run To Cursor",
+                                  Debugger.RunToCursor, uniqueKeys);
+
+            AddInternalShortcuts("RunAsExternal:Ctrl+F5",
                                   "Run As External Process", () =>
                                   {
                                       if (Npp.IsCurrentScriptFile())
                                           RunAsExternal();
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: false, key: Keys.F4), new Tuple<string, Action>(
-                                  "Next File Location in Output", () =>
+                                  }, uniqueKeys);
+
+            AddInternalShortcuts("ShowNextFileLocationFromOutput:F4",
+                                 "Next File Location in Output", () =>
                                   {
                                       OutputPanel.TryNavigateToFileReference(toNext: true);
-                                  }));
-            internalShortcuts.Add(new ShortcutKey(isCtrl: false, isAlt: false, isShift: true, key: Keys.F4), new Tuple<string, Action>(
+                                  }, uniqueKeys);
+
+            AddInternalShortcuts("ShowPrevFileLocationFromOutput:Shift+F4",
                                  "Previous File Location in Output", () =>
                                   {
                                       OutputPanel.TryNavigateToFileReference(toNext: false);
-                                  }));
+                                  }, uniqueKeys);
+
+            return uniqueKeys.Keys;
         }
 
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
@@ -407,8 +421,6 @@ namespace CSScriptNpp
 
             if (Config.Instance.ShowDebugPanel)
                 DoDebugPanel();
-
-            Intellisense.EnsureIntellisenseIntegration();
 
             StartCheckForUpdates();
         }

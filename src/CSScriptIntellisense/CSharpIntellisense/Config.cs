@@ -1,52 +1,32 @@
-using System;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace CSScriptIntellisense
 {
     /// <summary>
-    /// Of course XML based config is more natural, however ini file reading (just a few values) 
-    /// is faster. 
+    /// Of course XML based config is more natural, however ini file reading (just a few values)
+    /// is faster.
     /// </summary>
     public class Config : IniFile
     {
-        static Config instance;
+        public static string Location = Path.Combine(Npp.GetConfigDir(), "CSharpIntellisense");
 
-        public static Config Instance
+        public static Shortcuts Shortcuts = new Shortcuts();
+        public static Config Instance { get { return instance ?? (instance = new Config()); } }
+        public static Config instance;
+
+        public string Section = "Intellisense";
+        public bool HostedByOtherPlugin = false;
+
+        Config()
         {
-            get
-            {
-                if (instance == null)
-                    instance = new Config();
-                return instance;
-            }
-        }
+            HostedByOtherPlugin = !Location.EndsWith("CSharpIntellisense");
 
-        public Config(string file)
-            : base(file)
-        {
-            Open();
-        }
+            base.file = Path.Combine(Location, "settings.ini");
 
-        public Config()
-        {
-            var configDir = Path.Combine(Npp.GetConfigDir(), "CSharpIntellisense");
+            if (!Directory.Exists(Location))
+                Directory.CreateDirectory(Location);
 
-            //if (!Directory.Exists(configDir))
-            //    Directory.CreateDirectory(configDir);
-            string path = Path.Combine(configDir, "settings.ini");
-
-            base.file = path;
-            Open();
-        }
-
-        public void SetFileName(string path)
-        {
-            UsingExternalFile = true;
-            base.file = path;
             Open();
         }
 
@@ -57,39 +37,20 @@ namespace CSScriptIntellisense
 
         public bool UseArrowToAccept = true;
         public bool UseTabToAccept = true;
-
         public bool SnapshotsEnabled = false;
         public bool InterceptCtrlSpace = true;
         public bool ShowQuickInfoInStatusBar = false;
         public bool UseMethodBrackets = false;
-
-        bool disableMethodInfo;
-
-        public bool DisableMethodInfo
-        {
-            get { return disableMethodInfo; }
-            set { disableMethodInfo = value; }
-        }
-
-
+        public bool DisableMethodInfo = false;
         public bool FormatAsYouType = true;
-
-        public bool UsingExternalFile = false;
         public bool SmartIndenting = true;
         public bool IgnoreDocExceptions = false;
-
-        public string Section = "settings";
 
         public void Save()
         {
             lock (this)
             {
-                var configDir = Path.GetDirectoryName(this.file);
-
-                if (!Directory.Exists(configDir))
-                    Directory.CreateDirectory(configDir);
-
-                if (!UsingExternalFile)
+                if (!HostedByOtherPlugin)
                     File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
                 SetValue(Section, "UseArrowToAccept", UseArrowToAccept);

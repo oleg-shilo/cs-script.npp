@@ -65,6 +65,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="CSharpIntellisense\NRefactoryExtensions.cs" />
+    <Compile Include="CSharpIntellisense\Shortcuts.cs" />
     <Compile Include="Formatter\NppCodeFormatter.cs" />
     <Compile Include="Formatter\SourceCodeFormatter.cs" />
     <Compile Include="Formatter\StringExtesnions.cs" />
