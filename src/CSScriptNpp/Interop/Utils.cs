@@ -88,8 +88,18 @@ namespace CSScriptNpp
             return string.Compare(text, textToCompare, ignoreCase) == 0;
         }
 
-        public static ShortcutKey ParseAsShortcutKey(this string shortcutSpec)
+        //public static TKey FindKeyByValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value)
+        //{
+        //    foreach (KeyValuePair<TKey, TValue> pair in dictionary)
+        //        if (value.Equals(pair.Value)) return pair.Key;
+
+        //    return default(TKey);
+        //}
+
+        public static ShortcutKey ParseAsShortcutKey(this string shortcutSpec, string displayName)
         {
+            ShortcutKey retval;
+
             var parts = shortcutSpec.Split(':');
 
             string shortcutName = parts[0];
@@ -98,13 +108,17 @@ namespace CSScriptNpp
             try
             {
                 var actualData = Config.Shortcuts.GetValue(shortcutName, shortcutData);
-                return new ShortcutKey(actualData);
+                retval = new ShortcutKey(actualData);
             }
             catch
             {
                 Config.Shortcuts.SetValue(shortcutName, shortcutData);
-                return new ShortcutKey(shortcutData);
+                retval = new ShortcutKey(shortcutData);
             }
+
+            Config.Shortcuts.MapDisplayName(shortcutName, displayName);
+
+            return retval;
         }
 
         public static bool ParseAsFileReference(this string text, out string file, out int line, out int column)

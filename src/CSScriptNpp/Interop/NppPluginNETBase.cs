@@ -31,7 +31,7 @@ namespace CSScriptNpp
             if (string.IsNullOrEmpty(shortcutSpec))
                 shortcutKey = new ShortcutKey(false, false, false, Keys.None);
             else
-                shortcutKey = shortcutSpec.ParseAsShortcutKey();
+                shortcutKey = shortcutSpec.ParseAsShortcutKey(commandName);
 
             SetCommand(index, commandName, functionPointer, shortcutKey, false);
         }

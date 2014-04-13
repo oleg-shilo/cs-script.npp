@@ -29,7 +29,7 @@ namespace CSScriptNpp
         {
             try
             {
-                WritePrivateProfileString(section, key, value.ToString(), file);
+                WritePrivateProfileString(section, key.Trim(), value.ToString().Trim(), file);
             }
             catch { }
         }

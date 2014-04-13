@@ -29,8 +29,8 @@ namespace CSScriptNpp
      *          - when debugging auto-script plugin should set invisible breakpoint to the meaningful first line
      *      - configurable shortcuts
      *          - ensure all tooltips reflect proper shortcut info
-     *          - handle missformatted shortcut info input
-     *          - auto-setup KeyInterseptor Keys to listen
+     *          + handle missformatted shortcut info input
+     *          + auto-setup KeyInterseptor Keys to listen
      *          - reflect with color the preserverd shortcuts
      *      
      * - Desirable but not essential features
@@ -39,7 +39,7 @@ namespace CSScriptNpp
      *      - CodeMap should reflect all members with the indication of the type name (eventually)
      *      - Debug panel
      *          - Locals panel
-     *            - cached update (not recommended as it requires asynch funcevals)
+     *          - cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
      *              - reconstruct the tree branch by branch
      *            
@@ -104,7 +104,7 @@ namespace CSScriptNpp
 
         static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
         {
-            ShortcutKey shortcut = shortcutSpec.ParseAsShortcutKey();
+            ShortcutKey shortcut = shortcutSpec.ParseAsShortcutKey(displayName);
 
             internalShortcuts.Add(shortcut, new Tuple<string, Action>(displayName, handler));
 
@@ -133,11 +133,11 @@ namespace CSScriptNpp
                                   "Stop running script",
                                   Stop, uniqueKeys);
 
-            AddInternalShortcuts("Run:F5",
+            AddInternalShortcuts("_Run:F5",
                                  "Run",
                                   Run, uniqueKeys);
 
-            AddInternalShortcuts("Debug:Alt+F5",
+            AddInternalShortcuts("_Debug:Alt+F5",
                                  "Debug", () =>
                                   {
                                       if (!Debugger.IsRunning)
