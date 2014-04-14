@@ -187,7 +187,7 @@
             this.validateBtn.Name = "validateBtn";
             this.validateBtn.Size = new System.Drawing.Size(23, 28);
             this.validateBtn.Text = "validate";
-            this.validateBtn.ToolTipText = "Build (validate) current script\r\nShortcut: Ctrl+Shift+B";
+            this.validateBtn.ToolTipText = "Build (validate) current script";
             this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
             // 
             // testButton3
@@ -242,7 +242,7 @@
             this.runBtn.Name = "runBtn";
             this.runBtn.Size = new System.Drawing.Size(23, 28);
             this.runBtn.Text = "run";
-            this.runBtn.ToolTipText = "Run current script\r\nShortcut: F5";
+            this.runBtn.ToolTipText = "Run current script";
             this.runBtn.Click += new System.EventHandler(this.runBtn_Click);
             // 
             // debugBtn
@@ -269,7 +269,7 @@
             this.loadBtn.Name = "loadBtn";
             this.loadBtn.Size = new System.Drawing.Size(23, 28);
             this.loadBtn.Text = "load";
-            this.loadBtn.ToolTipText = "Load script from current document\r\nShortcut: Ctrl+F7";
+            this.loadBtn.ToolTipText = "Load script from current document";
             this.loadBtn.Click += new System.EventHandler(this.loadBtn_Click);
             // 
             // reloadBtn

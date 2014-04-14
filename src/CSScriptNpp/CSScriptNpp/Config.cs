@@ -33,7 +33,7 @@ namespace CSScriptNpp
         public bool InterceptConsole = false;
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
-        public bool BuildOnF7 = true;
+        //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
         public bool CheckUpdatesOnStartup = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
@@ -69,7 +69,6 @@ namespace CSScriptNpp
                 SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
                 SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
                 SetValue(Section, "LocalDebug", LocalDebug);
-                SetValue(Section, "BuildOnF7", BuildOnF7);
                 SetValue(Section, "BreakOnException", BreakOnException);
                 SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
                 SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);

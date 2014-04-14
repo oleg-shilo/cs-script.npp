@@ -1,10 +1,13 @@
-using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
@@ -29,6 +32,13 @@ namespace CSScriptNpp
             if (string.IsNullOrWhiteSpace(expression))
                 expression = CSScriptIntellisense.Npp.GetStatementAtPosition();
             return expression;
+        }
+
+        public static void EmbeddShortcutIntoTooltip(this ToolStripButton button, string shortcut) 
+        {
+            string[] tooltipLines = button.ToolTipText.Split('\n');
+            button.ToolTipText = string.Join(Environment.NewLine, tooltipLines.TakeWhile(x => !x.StartsWith("Shortcut: ")).ToArray());
+            button.ToolTipText += Environment.NewLine + "Shortcut: " + shortcut;
         }
 
         public static string ConvertToXPM(Bitmap bmp, string transparentColor)

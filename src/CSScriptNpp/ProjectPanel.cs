@@ -21,8 +21,7 @@ namespace CSScriptNpp
         {
             InitializeComponent();
 
-            if (Config.Instance.BuildOnF7)
-                validateBtn.ToolTipText += " or F7";
+            UpdateButtonsTooltips();
 
             Debugger.OnDebuggerStateChanged += RefreshControls;
 
@@ -32,6 +31,13 @@ namespace CSScriptNpp
             RefreshControls();
             ReloadScriptHistory();
             LoadReleaseNotes();
+        }
+
+        void UpdateButtonsTooltips()
+        {
+            validateBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("_BuildFromMenu", "Ctrl+Shift+B") + " or " + Config.Shortcuts.GetValue("Build", "F7"));
+            runBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("_Run", "F5"));
+            loadBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("LoadCurrentDocument", "Ctrl+F7"));
         }
 
         void LoadReleaseNotes()

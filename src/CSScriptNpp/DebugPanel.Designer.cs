@@ -39,8 +39,8 @@
             this.setNextBtn = new System.Windows.Forms.ToolStripButton();
             this.runToCursorBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.tobbleBpBtn = new System.Windows.Forms.ToolStripButton();
-            this.quickWatch = new System.Windows.Forms.ToolStripButton();
+            this.toggleBpBtn = new System.Windows.Forms.ToolStripButton();
+            this.quickWatchBtn = new System.Windows.Forms.ToolStripButton();
             this.appTypeCombo = new System.Windows.Forms.ToolStripComboBox();
             this.breakOnExceptionBtn = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -62,8 +62,8 @@
             this.setNextBtn,
             this.runToCursorBtn,
             this.toolStripSeparator2,
-            this.tobbleBpBtn,
-            this.quickWatch,
+            this.toggleBpBtn,
+            this.quickWatchBtn,
             this.appTypeCombo,
             this.breakOnExceptionBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -80,7 +80,7 @@
             this.goBtn.Name = "goBtn";
             this.goBtn.Size = new System.Drawing.Size(23, 22);
             this.goBtn.Text = "Start Debugging";
-            this.goBtn.ToolTipText = "Start Debugging (F5)";
+            this.goBtn.ToolTipText = "Start Debugging";
             this.goBtn.Click += new System.EventHandler(this.goBtn_Click);
             // 
             // breakBtn
@@ -101,7 +101,7 @@
             this.stopBtn.Name = "stopBtn";
             this.stopBtn.Size = new System.Drawing.Size(23, 22);
             this.stopBtn.Text = "Stop Debugging";
-            this.stopBtn.ToolTipText = "Stop Debugging (Shift+F5)";
+            this.stopBtn.ToolTipText = "Stop Debugging";
             this.stopBtn.Click += new System.EventHandler(this.stopBtn_Click);
             // 
             // toolStripSeparator1
@@ -117,7 +117,7 @@
             this.stepOverBtn.Name = "stepOverBtn";
             this.stepOverBtn.Size = new System.Drawing.Size(23, 22);
             this.stepOverBtn.Text = "toolStripButton4";
-            this.stepOverBtn.ToolTipText = "Step Over (F10)";
+            this.stepOverBtn.ToolTipText = "Step Over";
             this.stepOverBtn.Click += new System.EventHandler(this.stepOverBtn_Click);
             // 
             // stepIntoBtn
@@ -128,7 +128,7 @@
             this.stepIntoBtn.Name = "stepIntoBtn";
             this.stepIntoBtn.Size = new System.Drawing.Size(23, 22);
             this.stepIntoBtn.Text = "Step Into";
-            this.stepIntoBtn.ToolTipText = "Step Into (F11)";
+            this.stepIntoBtn.ToolTipText = "Step Into";
             this.stepIntoBtn.Click += new System.EventHandler(this.stepIntoBtn_Click);
             // 
             // stepOutBtn
@@ -149,7 +149,7 @@
             this.setNextBtn.Name = "setNextBtn";
             this.setNextBtn.Size = new System.Drawing.Size(23, 22);
             this.setNextBtn.Text = "Set Next Statement";
-            this.setNextBtn.ToolTipText = "Set Next Statement (Ctrl+Shift+F10)";
+            this.setNextBtn.ToolTipText = "Set Next Statement";
             this.setNextBtn.Click += new System.EventHandler(this.setNextBtn_Click);
             // 
             // runToCursorBtn
@@ -160,7 +160,7 @@
             this.runToCursorBtn.Name = "runToCursorBtn";
             this.runToCursorBtn.Size = new System.Drawing.Size(23, 22);
             this.runToCursorBtn.Text = "Run to cursor";
-            this.runToCursorBtn.ToolTipText = "Run to cursor (Ctrl+F10)";
+            this.runToCursorBtn.ToolTipText = "Run to cursor";
             this.runToCursorBtn.Click += new System.EventHandler(this.runToCursorBtn_Click);
             // 
             // toolStripSeparator2
@@ -170,23 +170,23 @@
             // 
             // tobbleBpBtn
             // 
-            this.tobbleBpBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tobbleBpBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_togglebp;
-            this.tobbleBpBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tobbleBpBtn.Name = "tobbleBpBtn";
-            this.tobbleBpBtn.Size = new System.Drawing.Size(23, 22);
-            this.tobbleBpBtn.Text = "Toggle Breakpoint";
-            this.tobbleBpBtn.Click += new System.EventHandler(this.tobbleBpBtn_Click);
+            this.toggleBpBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toggleBpBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_togglebp;
+            this.toggleBpBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toggleBpBtn.Name = "tobbleBpBtn";
+            this.toggleBpBtn.Size = new System.Drawing.Size(23, 22);
+            this.toggleBpBtn.Text = "Toggle Breakpoint";
+            this.toggleBpBtn.Click += new System.EventHandler(this.tobbleBpBtn_Click);
             // 
             // quickWatch
             // 
-            this.quickWatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.quickWatch.Image = global::CSScriptNpp.Resources.Resources.dbg_qwatch;
-            this.quickWatch.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.quickWatch.Name = "quickWatch";
-            this.quickWatch.Size = new System.Drawing.Size(23, 22);
-            this.quickWatch.Text = "QuickWatch";
-            this.quickWatch.Click += new System.EventHandler(this.quickWatch_Click);
+            this.quickWatchBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.quickWatchBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_qwatch;
+            this.quickWatchBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.quickWatchBtn.Name = "quickWatch";
+            this.quickWatchBtn.Size = new System.Drawing.Size(23, 22);
+            this.quickWatchBtn.Text = "QuickWatch";
+            this.quickWatchBtn.Click += new System.EventHandler(this.quickWatch_Click);
             // 
             // appTypeCombo
             // 
@@ -251,10 +251,10 @@
         private System.Windows.Forms.ToolStripButton stepOutBtn;
         private System.Windows.Forms.ToolStripButton setNextBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripButton tobbleBpBtn;
+        private System.Windows.Forms.ToolStripButton toggleBpBtn;
         private System.Windows.Forms.ToolStripComboBox appTypeCombo;
         private System.Windows.Forms.ToolStripButton runToCursorBtn;
-        private System.Windows.Forms.ToolStripButton quickWatch;
+        private System.Windows.Forms.ToolStripButton quickWatchBtn;
         private System.Windows.Forms.ToolStripButton breakOnExceptionBtn;
 
     }

@@ -28,18 +28,15 @@ namespace CSScriptNpp
      *          - make handling Debug.Assert user friendlier
      *          - when debugging auto-script plugin should set invisible breakpoint to the meaningful first line
      *      - configurable shortcuts
-     *          - ensure all tooltips reflect proper shortcut info
-     *          + handle missformatted shortcut info input
+     *          + ensure all tooltips reflect proper shortcut info
+     *          + handle miss formatted shortcut info input
      *          + auto-setup KeyInterseptor Keys to listen
-     *          - reflect with color the preserverd shortcuts
      *      
      * - Desirable but not essential features
-     *      - Aollow disabling auto-update from config file
      *      - F12 should work on constructors e.g. 'new Te|st();'
      *      - CodeMap should reflect all members with the indication of the type name (eventually)
      *      - Debug panel
-     *          - Locals panel
-     *          - cached update (not recommended as it requires asynch funcevals)
+     *          - Locals panel cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
      *              - reconstruct the tree branch by branch
      *            
@@ -122,7 +119,7 @@ namespace CSScriptNpp
                                   Build, uniqueKeys);
 
             AddInternalShortcuts("LoadCurrentDocument:Ctrl+F7",
-                                  "Load Current Document", () =>
+                                 "Load Current Document", () =>
                                   {
                                       DoProjectPanel();
                                       ShowProjectPanel();

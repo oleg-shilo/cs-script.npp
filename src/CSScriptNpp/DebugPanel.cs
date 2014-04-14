@@ -16,6 +16,8 @@ namespace CSScriptNpp
         {
             InitializeComponent();
 
+            UpdateButtonsTooltips();
+
             locals = new LocalsPanel();
             callstack = new CallStackPanel();
             watch = new WatchPanel();
@@ -54,6 +56,19 @@ namespace CSScriptNpp
             RefreshBreakOnException();
         }
 
+        void UpdateButtonsTooltips()
+        {
+            goBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("_Run", "F5"));
+            stopBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("Stop", "Shift+F5"));
+            stepOverBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("StepOver", "F10"));
+            stepOutBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("StepOut", "Shift+F11"));
+            stepIntoBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("StepInto", "F11"));
+            setNextBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("SetNextIP", "Ctrl+Shift+F10"));
+            runToCursorBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("RunToCursor", "Ctrl+F10"));
+            toggleBpBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("ToggleBreakpoint", "F9"));
+            quickWatchBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("QuickWatch", "Shift+F9"));
+        }
+
         void UpdateControlsState()
         {
             breakBtn.Enabled =
@@ -83,7 +98,7 @@ namespace CSScriptNpp
         {
             threads.UpdateThreads(data);
         }
-       
+
         public void UpdateModules(string data)
         {
             modules.Update(data);
