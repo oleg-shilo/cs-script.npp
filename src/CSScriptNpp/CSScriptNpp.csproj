@@ -71,6 +71,12 @@
     <Compile Include="Dialogs\AboutBox.designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\BreakpointsPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\BreakpointsPanel.Designer.cs">
+      <DependentUpon>BreakpointsPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\DbgObject.cs" />
     <Compile Include="Dialogs\ModulesPanel.cs">
       <SubType>Form</SubType>
@@ -204,6 +210,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\BreakpointsPanel.resx">
+      <DependentUpon>BreakpointsPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ModulesPanel.resx">
       <DependentUpon>ModulesPanel.cs</DependentUpon>

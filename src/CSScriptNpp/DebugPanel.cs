@@ -11,6 +11,7 @@ namespace CSScriptNpp
         WatchPanel watch;
         ThreadsPanel threads;
         ModulesPanel modules;
+        BreakpointsPanel breakpoints;
 
         public DebugPanel()
         {
@@ -23,12 +24,14 @@ namespace CSScriptNpp
             watch = new WatchPanel();
             threads = new ThreadsPanel();
             modules = new ModulesPanel();
+            breakpoints = new BreakpointsPanel();
 
             tabControl1.AddTab("Locals", locals);
             tabControl1.AddTab("Call Stack", callstack);
             tabControl1.AddTab("Watch", watch);
             tabControl1.AddTab("Threads", threads);
             tabControl1.AddTab("Modules", modules);
+            tabControl1.AddTab("Breakpoints", breakpoints);
 
             try
             {

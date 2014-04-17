@@ -24,8 +24,8 @@ namespace CSScriptNpp
      *                  - Handle method expressions like Console.WriteLine("test")
      *              - Debug Objects panel
      *                  - Refresh value on demand
-     *          - implement 'remove all breakpoints' 
-     *          - persist and read breakpoints only on CurrentScript change
+     *              - Breakpoints panel
+     *                  - implement 'remove all breakpoints' 
      *          - make handling Debug.Assert user friendlier
      *      
      * - Desirable but not essential features
