@@ -120,6 +120,9 @@ namespace CSScriptNpp
                     OnNextFileOpenComplete = null;
                 }
             }
+
+            if (OnBreakpointChanged != null)
+                OnBreakpointChanged();
         }
 
         static void HandleDebuggerStateChanged()
@@ -397,7 +400,7 @@ namespace CSScriptNpp
                     }
                     else
                     {
-                        NavigateToFileLocation(sourceLocation, showStep:true);
+                        NavigateToFileLocation(sourceLocation, showStep: true);
                     }
                 }
             });
@@ -622,56 +625,26 @@ namespace CSScriptNpp
                 OnBreakpointChanged();
         }
 
-        //static void SynchBreakpoints(string srcFile, string destFile)
-        //{
-        //    string[] destKeys = breakpoints.Keys.ToArray().Where(key => key.StartsWith(destFile)).ToArray();
-        //    string[] srcKeys = breakpoints.Keys.ToArray().Where(key => key.StartsWith(srcFile)).ToArray();
+        static public void RemoveAllBreakpoints()
+        {
+            foreach (var key in breakpoints.Keys)
+            {
+                Npp.DeleteMarker(breakpoints[key]);
+                if (IsRunning)
+                    DebuggerServer.RemoveBreakpoint(key);
+            }
+            breakpoints.Clear();
 
-        //    foreach (var key in destKeys)
-        //    {
-        //        Npp.DeleteMarker(breakpoints[key]);
-        //        breakpoints.Remove(key);
-        //        if (IsRunning)
-        //            DebuggerServer.RemoveBreakpoint(key);
-        //    }
+            foreach (string file in Npp.GetOpenFiles())
+            {
+                string dbgInfo = CSScriptHelper.GetDbgInfoFile(file, false);
+                if (File.Exists(dbgInfo))
+                    File.Delete(dbgInfo);
+            }
 
-        //    foreach (var key in destKeys)
-        //    {
-        //        Npp.DeleteMarker(breakpoints[key]);
-        //        breakpoints.Remove(key);
-        //        if (IsRunning)
-        //            DebuggerServer.RemoveBreakpoint(key);
-        //    }
-
-        //}
-
-        //static void SetLinkedBreakpoint(string file, int line, bool isEnabled)
-        //{
-        //    string key = BuildBreakpointKey(file, line);
-
-        //    if (isEnabled)
-        //    {
-        //        if (breakpoints.ContainsKey(key))
-        //            Npp.DeleteMarker(breakpoints[key]);
-
-        //        var handle = Npp.PlaceMarker(MARK_BREAKPOINT, line);
-        //        breakpoints[key] = handle;
-
-        //        if (IsRunning)
-        //            DebuggerServer.AddBreakpoint(key);
-        //    }
-        //    else
-        //    {
-        //        if (breakpoints.ContainsKey(key))
-        //        {
-        //            Npp.DeleteMarker(breakpoints[key]);
-        //            breakpoints.Remove(key);
-        //        }
-
-        //        if (IsRunning)
-        //            DebuggerServer.RemoveBreakpoint(key);
-        //    }
-        //}
+            if (OnBreakpointChanged != null)
+                OnBreakpointChanged();
+        }
 
         static void ToggleBreakpoint(string file, int line)
         {
