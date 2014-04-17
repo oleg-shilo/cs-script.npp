@@ -53,7 +53,7 @@ namespace CSScriptIntellisense
 
         static public bool NeedsAutoclassWrapper(string text)
         {
-            return Regex.Matches(text, @"\s?//css_args\s+/ac\s+").Count != 0;
+            return Regex.Matches(text, @"\s?//css_args\s+/ac(,|\s+)").Count != 0;
         }
 
         static public string GenerateAutoclassWrapper(string text, ref int position)

@@ -284,6 +284,8 @@ namespace CSScriptNpp
         static public event Action OnFrameChanged; //breakpoint, step advance, process exit
         static public event Action<string> OnNotification;
 
+        static int stepsCount = 0;
+
         static void HandleNotification(string message)
         {
             //process=>7924:STARTED
@@ -309,11 +311,24 @@ namespace CSScriptNpp
 
                     if (message.EndsWith(":STARTED"))
                     {
+                        stepsCount = 0;
+                        DecorationInfo = CSScriptHelper.GetDecorationInfo(Debugger.ScriptFile);
+
                         foreach (string info in breakpoints.Keys)
-                            DebuggerServer.AddBreakpoint(info);
+                            DebuggerServer.AddBreakpoint(TranslateSourceBreakpoint(info));
 
                         if (Debugger.EntryBreakpointFile != null)
-                            DebuggerServer.AddBreakpoint(BuildBreakpointKey(Debugger.EntryBreakpointFile, 0)); //line num is 0; debugger is smart enough to move the breakpoint to the very next appropriate line
+                        {
+                            //line num is 0; debugger is smart enough to move the breakpoint to the very next appropriate line
+                            string key = BuildBreakpointKey(Debugger.EntryBreakpointFile, 0);
+
+                            if (DecorationInfo != null && DecorationInfo.AutoGenFile == Debugger.EntryBreakpointFile)
+                            {
+                                key = BuildBreakpointKey(DecorationInfo.AutoGenFile, DecorationInfo.InjectedLineNumber + 1);
+                            }
+
+                            DebuggerServer.AddBreakpoint(key);
+                        }
 
                         Go();
                     }
@@ -372,20 +387,30 @@ namespace CSScriptNpp
                 }
                 else if (message.StartsWith(NppCategory.SourceCode))
                 {
+                    stepsCount++;
+
                     var sourceLocation = message.Substring(NppCategory.SourceCode.Length);
 
-                    string file = sourceLocation.Split('|').First();
-
-                    if (File.Exists(file))
+                    if (stepsCount == 1 && sourceLocation.Contains("css_dbg.cs|"))
                     {
-                        if (Npp.GetCurrentFile().IsSameAs(file, true))
+                        //ignore the first source code break as it is inside of the CSScript.Npp debug launcher
+                    }
+                    else
+                    {
+                        var location = FileLocation.Parse(sourceLocation);
+                        TranslateCompiledLocation(location);
+
+                        if (File.Exists(location.File))
                         {
-                            ProcessDebuggingStepChange(sourceLocation);
-                        }
-                        else
-                        {
-                            OnNextFileOpenComplete = () => ProcessDebuggingStepChange(sourceLocation);
-                            Npp.OpenFile(file); //needs to by asynchronous
+                            if (Npp.GetCurrentFile().IsSameAs(location.File, true))
+                            {
+                                ProcessDebuggingStepChange(location);
+                            }
+                            else
+                            {
+                                OnNextFileOpenComplete = () => ProcessDebuggingStepChange(location);
+                                Npp.OpenFile(location.File); //needs to by asynchronous
+                            }
                         }
                     }
                 }
@@ -431,9 +456,8 @@ namespace CSScriptNpp
             Win32.SetForegroundWindow(Npp.CurrentScintilla);
         }
 
-        static void ProcessDebuggingStepChange(string sourceLocation)
+        static void ProcessDebuggingStepChange(FileLocation location)
         {
-            var location = FileLocation.Parse(sourceLocation);
             ShowBreakpointSourceLocation(location);
         }
 
@@ -449,7 +473,7 @@ namespace CSScriptNpp
             public string File;
             public int Start;
             public int End;
-            public int Line { get { return Npp.GetLineFromPosition(Start); } }
+            public int Line;
 
             static public FileLocation Parse(string sourceLocation)
             {
@@ -461,18 +485,51 @@ namespace CSScriptNpp
                     var coordinates = x.Split(':');
                     var line = int.Parse(coordinates.First()) - 1;
                     var column = int.Parse(coordinates.Last()) - 1;
-                    return Npp.GetPosition(line, column);
+                    return new { Line = line - 1, Column = column, Position = GetPosition(file, line, column) }; //debugger offsets are 1-based; editor offsets are 0-based
                 });
 
-                return new FileLocation { File = file, Start = points.First(), End = points.Last() };
+                return new FileLocation { File = file, Line = points.First().Line, Start = points.First().Position, End = points.Last().Position };
+            }
+
+            //need to read text as we cannot ask NPP to calculate the position as the file may not be opened (e.g. auto-generated)
+            static int GetPosition(string file, int line, int column) //offsets are 1-based
+            {
+                using (var reader = new StreamReader(file))
+                {
+                    int lineCount = 0;
+                    int columnCount = 0;
+                    int pos = 0;
+
+                    while (reader.Peek() >= 0)
+                    {
+                        var c = (char)reader.Read();
+
+                        if (lineCount == line && columnCount == column)
+                            break;
+
+                        pos++;
+
+                        if (lineCount == line)
+                            columnCount++;
+
+                        if (c == '\n')
+                            lineCount++;
+                    }
+
+                    return pos;
+                }
             }
         }
+
+
 
         static FileLocation lastLocation;
 
         static List<string> watchExtressions = new List<string>();
         static Dictionary<string, IntPtr> breakpoints = new Dictionary<string, IntPtr>();
         static public string EntryBreakpointFile;
+        static public string ScriptFile;
+        static public CSScriptHelper.DecorationInfo DecorationInfo;
 
         static string BuildBreakpointKey(string file, int line)
         {
@@ -503,11 +560,12 @@ namespace CSScriptNpp
                 string file = Npp.GetCurrentFile();
                 int line = Npp.GetCaretLineNumber();
                 string key = BuildBreakpointKey(file, line);
-                DebuggerServer.AddBreakpoint(key);
+                string actualBreakpoint = TranslateSourceBreakpoint(key);
+                DebuggerServer.AddBreakpoint(actualBreakpoint);
                 DebuggerServer.Go();
                 DebuggerServer.OnBreak = () =>
                 {
-                    DebuggerServer.RemoveBreakpoint(key);
+                    DebuggerServer.RemoveBreakpoint(actualBreakpoint);
                 };
             }
         }
@@ -549,6 +607,80 @@ namespace CSScriptNpp
             else
                 line = Npp.GetCaretLineNumber();
 
+            bool isAutoGenerated = file.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase);
+
+            if (!isAutoGenerated)
+            {
+                //bool isEnabled = 
+                ToggleBreakpoint(file, line);
+
+                //string entryFile = CSScriptHelper.GetEntryFileName(file);
+
+                ////if (CSScriptHelper.GetAutogeneratedScriptsMapping(ref autoGenFile, ref line))
+                //if (file != entryFile)
+                //{
+                //    SynchBreakpoints(file, entryFile);
+                //}
+            }
+            //else
+            //{
+            //bool isEnabled = ToggleBreakpoint(file, line);
+            //}
+        }
+
+        //static void SynchBreakpoints(string srcFile, string destFile)
+        //{
+        //    string[] destKeys = breakpoints.Keys.ToArray().Where(key => key.StartsWith(destFile)).ToArray();
+        //    string[] srcKeys = breakpoints.Keys.ToArray().Where(key => key.StartsWith(srcFile)).ToArray();
+
+        //    foreach (var key in destKeys)
+        //    {
+        //        Npp.DeleteMarker(breakpoints[key]);
+        //        breakpoints.Remove(key);
+        //        if (IsRunning)
+        //            DebuggerServer.RemoveBreakpoint(key);
+        //    }
+
+        //    foreach (var key in destKeys)
+        //    {
+        //        Npp.DeleteMarker(breakpoints[key]);
+        //        breakpoints.Remove(key);
+        //        if (IsRunning)
+        //            DebuggerServer.RemoveBreakpoint(key);
+        //    }
+
+        //}
+
+        //static void SetLinkedBreakpoint(string file, int line, bool isEnabled)
+        //{
+        //    string key = BuildBreakpointKey(file, line);
+
+        //    if (isEnabled)
+        //    {
+        //        if (breakpoints.ContainsKey(key))
+        //            Npp.DeleteMarker(breakpoints[key]);
+
+        //        var handle = Npp.PlaceMarker(MARK_BREAKPOINT, line);
+        //        breakpoints[key] = handle;
+
+        //        if (IsRunning)
+        //            DebuggerServer.AddBreakpoint(key);
+        //    }
+        //    else
+        //    {
+        //        if (breakpoints.ContainsKey(key))
+        //        {
+        //            Npp.DeleteMarker(breakpoints[key]);
+        //            breakpoints.Remove(key);
+        //        }
+
+        //        if (IsRunning)
+        //            DebuggerServer.RemoveBreakpoint(key);
+        //    }
+        //}
+
+        static void ToggleBreakpoint(string file, int line)
+        {
             string key = BuildBreakpointKey(file, line);
 
             if (breakpoints.ContainsKey(key))
@@ -556,14 +688,90 @@ namespace CSScriptNpp
                 Npp.DeleteMarker(breakpoints[key]);
                 breakpoints.Remove(key);
                 if (IsRunning)
+                {
+                    string actualKey = TranslateSourceBreakpoint(key);
                     DebuggerServer.RemoveBreakpoint(key);
+                }
             }
             else
             {
                 var handle = Npp.PlaceMarker(MARK_BREAKPOINT, line);
                 breakpoints.Add(key, handle);
                 if (IsRunning)
-                    DebuggerServer.AddBreakpoint(key);
+                {
+                    string actualKey = TranslateSourceBreakpoint(key);
+                    DebuggerServer.AddBreakpoint(actualKey);
+                }
+            }
+        }
+
+        static void TranslateCompiledLocation(FileLocation location)
+        {
+            Debug.WriteLine("-----------------------------");
+            Debug.WriteLine("Before: {0} ({1},{2})", location.File, location.Start, location.End);
+            //return;
+            if (DecorationInfo != null)
+            {
+                try
+                {
+                    if (location.File.IsSameAs(DecorationInfo.AutoGenFile, true))
+                    {
+                        location.File = DecorationInfo.ScriptFile;
+                        if (location.Start > (DecorationInfo.IngecionStart + DecorationInfo.IngecionLength))
+                        {
+                            location.Start -= DecorationInfo.IngecionLength;
+                            location.End -= DecorationInfo.IngecionLength;
+                        }
+                        Debug.WriteLine("After: {0} ({1},{2})", location.File, location.Start, location.End);
+                    }
+                }
+                catch { }
+            }
+            Debug.WriteLine("-----------------------------");
+        }
+
+        static int TranslateSourceLineLocation(string file, int line)
+        {
+            if (DecorationInfo != null)
+            {
+                if (file.IsSameAs(DecorationInfo.ScriptFile, true))
+                {
+                    if (line >= DecorationInfo.InjectedLineNumber)
+                        line++;
+
+                    return line;
+                }
+            }
+            return line;
+        }
+
+        static string TranslateSourceBreakpoint(string key)
+        {
+            //return key;
+            if (DecorationInfo == null)
+            {
+                return key;
+            }
+            else
+            {
+                try
+                {
+                    //<file>|<line> //server debugger operates in '1-based' lines
+                    string[] parts = key.Split('|');
+
+                    string file = parts[0];
+                    int line = int.Parse(parts[1]) - 1;
+
+                    if (file.IsSameAs(DecorationInfo.ScriptFile, true))
+                    {
+                        if (line >= DecorationInfo.InjectedLineNumber)
+                            line++;
+
+                        return DecorationInfo.AutoGenFile + "|" + (line + 1);
+                    }
+                }
+                catch { }
+                return key;
             }
         }
 
@@ -660,7 +868,10 @@ namespace CSScriptNpp
             if (IsRunning && IsInBreak)
             {
                 ClearDebuggingMarkers();
-                DebuggerServer.SetInstructionPointer(Npp.GetCaretLineNumber() + 1); //debugger is 1-based
+
+                int line = TranslateSourceLineLocation(Npp.GetCurrentFile(), Npp.GetCaretLineNumber());
+
+                DebuggerServer.SetInstructionPointer(line + 1); //debugger is 1-based
                 DebuggerServer.Break(); //need to break to trigger reporting the current step
             }
         }

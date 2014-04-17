@@ -24,13 +24,9 @@ namespace CSScriptNpp
      *                  - Handle method expressions like Console.WriteLine("test")
      *              - Debug Objects panel
      *                  - Refresh value on demand
-     *          - handle breakpoints in auto-generated files
+     *          - implement 'remove all breakpoints' 
+     *          - persist and read breakpoints only on CurrentScript change
      *          - make handling Debug.Assert user friendlier
-     *          - when debugging auto-script plugin should set invisible breakpoint to the meaningful first line
-     *      - configurable shortcuts
-     *          + ensure all tooltips reflect proper shortcut info
-     *          + handle miss formatted shortcut info input
-     *          + auto-setup KeyInterseptor Keys to listen
      *      
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'

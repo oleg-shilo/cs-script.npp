@@ -41,7 +41,7 @@ namespace CSScriptNpp
 
             CSScriptIntellisense.Plugin.FuncItems.Items.Clear();
 
-            Debugger.OnFrameChanged += ()=> Npp.OnCalltipRequest(-1); //clear_all_cache
+            Debugger.OnFrameChanged += () => Npp.OnCalltipRequest(-1); //clear_all_cache
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
@@ -76,7 +76,6 @@ namespace CSScriptNpp
             try
             {
                 SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
-
                 if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
@@ -95,6 +94,7 @@ namespace CSScriptNpp
                 {
                     if (nc.margin == _SC_MARGE_SYBOLE && nc.modifiers == SCI_CTRL)
                     {
+
                         int lineClick = Npp.GetLineFromPosition(nc.position);
                         Debugger.ToggleBreakpoint(lineClick);
                     }

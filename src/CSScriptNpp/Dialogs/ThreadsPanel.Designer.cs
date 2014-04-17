@@ -35,7 +35,7 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
-            // threadsList
+            // modulesList
             // 
             this.threadsList.Activation = System.Windows.Forms.ItemActivation.TwoClick;
             this.threadsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {

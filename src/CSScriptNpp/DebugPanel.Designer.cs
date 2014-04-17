@@ -176,7 +176,7 @@
             this.toggleBpBtn.Name = "tobbleBpBtn";
             this.toggleBpBtn.Size = new System.Drawing.Size(23, 22);
             this.toggleBpBtn.Text = "Toggle Breakpoint";
-            this.toggleBpBtn.Click += new System.EventHandler(this.tobbleBpBtn_Click);
+            this.toggleBpBtn.Click += new System.EventHandler(this.toggleBpBtn_Click);
             // 
             // quickWatch
             // 

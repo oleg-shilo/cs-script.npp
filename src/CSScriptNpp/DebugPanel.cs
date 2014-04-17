@@ -154,7 +154,7 @@ namespace CSScriptNpp
             Debugger.SetInstructionPointer();
         }
 
-        private void tobbleBpBtn_Click(object sender, EventArgs e)
+        private void toggleBpBtn_Click(object sender, EventArgs e)
         {
             Debugger.ToggleBreakpoint();
         }

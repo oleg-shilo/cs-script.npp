@@ -39,7 +39,7 @@ namespace CSScriptNpp.Dialogs
 
         public void Update(string data)
         {
-            threadsList.Items.Clear();
+            modulesList.Items.Clear();
 
             var g = CreateGraphics();
             int maxWidth = 100;
@@ -50,11 +50,11 @@ namespace CSScriptNpp.Dialogs
                 li.SubItems.Add(item.Location);
                 li.Tag = item;
 
-                maxWidth = Math.Max(maxWidth, (int)g.MeasureString(item.Name, threadsList.Font).Width + 10);
-                this.threadsList.Items.Add(li);
+                maxWidth = Math.Max(maxWidth, (int)g.MeasureString(item.Name, modulesList.Font).Width + 10);
+                this.modulesList.Items.Add(li);
             }
 
-            this.threadsList.Columns[3].Width = maxWidth + 10;
+            this.modulesList.Columns[1].Width = maxWidth + 10;
         }
 
         private void stack_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
@@ -65,10 +65,10 @@ namespace CSScriptNpp.Dialogs
 
             e.DrawText();
 
-            SizeF size = e.Graphics.MeasureString(e.SubItem.Text, threadsList.Font);
+            SizeF size = e.Graphics.MeasureString(e.SubItem.Text, modulesList.Font);
             int requiredWidth = Math.Max(30, (int)size.Width + 20);
-            if (threadsList.Columns[e.ColumnIndex].Width < requiredWidth)
-                threadsList.Columns[e.ColumnIndex].Width = requiredWidth + 5;
+            if (modulesList.Columns[e.ColumnIndex].Width < requiredWidth)
+                modulesList.Columns[e.ColumnIndex].Width = requiredWidth + 5;
         }
 
         private void stack_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)

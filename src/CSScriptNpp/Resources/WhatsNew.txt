@@ -16,6 +16,7 @@ v1.0.19.0-v1.0.21.0
   - Optional breaking on user Exceptions
   - Showing fields/properties values on mouse rollover
   - Breakpoints persistence
+  - 'Transparent' handling of breakpoints in auto-generated files
 -----------
 To start using the debugger just create the script and press F10.
 The debugger implements major VS debugging features however it has various temporary limitations (read more on the Release Home page). 

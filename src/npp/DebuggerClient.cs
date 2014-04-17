@@ -5,6 +5,7 @@ using Microsoft.Samples.Tools.Mdbg;
 using npp.CSScriptNpp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -59,6 +60,7 @@ namespace npp
             //            });
             //    };
 
+            //Debug.Assert(false);
             this.shell = shell;
             channel.Trace = message => Console.WriteLine(message);
             channel.Start();
@@ -689,7 +691,7 @@ namespace npp
                 MessageQueue.AddNotification(NppCategory.Threads + "<threads>" + threadsInfo.ToString() + "</threads>");
             }
         }
-        
+
         void ReportModules()
         {
             if (IsInBreakMode)
@@ -779,12 +781,6 @@ namespace npp
 
         void OnPostDebugEvent(object sender, CustomPostCallbackEventArgs e)
         {
-            //if (test)
-            //{
-            //    test = false;
-            //    Debug.Assert(false);
-            //}
-
             if (e.CallbackType == ManagedCallbackType.OnProcessExit)
                 ReportDebugTermination();
 
@@ -792,11 +788,6 @@ namespace npp
             {
                 if (GetCurrentSourcePosition() == null)
                     MessageQueue.AddNotification(NppCategory.State + "NOSOURCEBREAK"); //can be caused by 'Debugger.Break();'
-
-                //ReportCurrentState();
-#if DEBUG
-                //ReportWatch();
-#endif
             }
 
             if (e.CallbackType == ManagedCallbackType.OnLogMessage)
