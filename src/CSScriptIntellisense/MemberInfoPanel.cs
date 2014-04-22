@@ -33,21 +33,21 @@ namespace CSScriptIntellisense
         int lastHintCount = -1;
         public void ProcessMethodOverloadHint(IEnumerable<string> hint)
         {
-            int hitCount = (hint == null ? 0 : hint.Count());
+            int hintCount = (hint == null ? 0 : hint.Count());
 
-            if (lastHintCount == hitCount)
+            if (lastHintCount == hintCount)
                 return; //nothing changed so no need to do anything
 
-            lastHintCount = hitCount;
+            lastHintCount = hintCount;
 
             string initaialSelection = (index == 0 ? null : items[index].Text);
 
             items.Clear();
 
-            if (hitCount == 0)
+            if (hintCount == 0)
                 items.AddRange(rawItems);
             else
-                items.AddRange(rawItems.Where(s => !s.ArgumentCount.HasValue || s.ArgumentCount.Value >= hitCount));
+                items.AddRange(rawItems.Where(s => !s.ArgumentCount.HasValue || s.ArgumentCount.Value == 0   || s.ArgumentCount.Value >= hintCount));
 
             index = 0;
             if (initaialSelection != null)
