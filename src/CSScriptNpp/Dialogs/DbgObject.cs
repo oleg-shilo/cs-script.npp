@@ -79,6 +79,14 @@ namespace CSScriptNpp.Dialogs
             }
         }
 
+        public bool IsVisualizable
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(Value) && Value != "<null>" && !IsUnresolved;
+            }
+        }
+
         public void CopyDbgDataFrom(DbgObject source)
         {
             this.DbgId = source.DbgId;

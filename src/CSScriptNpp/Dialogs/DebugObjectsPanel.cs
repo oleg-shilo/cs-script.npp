@@ -21,27 +21,34 @@ namespace CSScriptNpp.Dialogs
 
         private int selectedSubItem = 0;
 
-        void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        int GetColumnFromOffset(int xOffset)
         {
-            focucedItem = listView1.GetItemAt(e.X, e.Y);
-
-            // Check the subitem clicked .
             int spos = 0;
 
             for (int i = 0; i < listView1.Columns.Count; i++)
             {
                 int epos = spos + listView1.Columns[i].Width;
 
-                if (spos < e.X && e.X < epos)
-                {
-                    selectedSubItem = i;
-                    break;
-                }
+                if (spos < xOffset && xOffset < epos)
+                    return i;
 
                 spos = epos;
             }
 
-            StartEditing(focucedItem, selectedSubItem);
+            return -1;
+        }
+
+        void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            focucedItem = listView1.GetItemAt(e.X, e.Y);
+
+            // Check the subitem clicked .
+            int index = GetColumnFromOffset(e.X);
+            if (index != -1)
+            {
+                selectedSubItem = index;
+                StartEditing(focucedItem, selectedSubItem);
+            }
         }
 
         void StartEditing(ListViewItem item, int subItem)
@@ -281,6 +288,7 @@ namespace CSScriptNpp.Dialogs
 
         int triangleMargin = 8;
         int xMargin = 27; //fixed; to accommodate the icon
+        int visualizerIconSize = 16;
 
         Range GetItemExpenderClickableRange(ListViewItem item)
         {
@@ -394,8 +402,14 @@ namespace CSScriptNpp.Dialogs
                     e.Graphics.FillRectangle(Brushes.LightBlue, rect);
                 }
 
+                int visualizerOffset = visualizerIconSize;
+                if (e.ColumnIndex == 1 && dbgObject.IsVisualizable)
+                    e.Graphics.DrawImage(Resources.Resources.dbg_visualise, e.Bounds.X + e.Bounds.Width - visualizerIconSize, e.Bounds.Y);
+                else
+                    visualizerOffset = 0;
+
                 SizeF size = e.Graphics.MeasureString(e.SubItem.Text, listView1.Font);
-                int requiredWidth = Math.Max(30, (int)size.Width + 20);
+                int requiredWidth = Math.Max(30, (int)size.Width + 20 + visualizerIconSize);
                 if (listView1.Columns[e.ColumnIndex].Width < requiredWidth)
                 {
                     listView1.Columns[e.ColumnIndex].Width = requiredWidth + 5;
@@ -420,6 +434,14 @@ namespace CSScriptNpp.Dialogs
                 if (clickableRange.Contains(e.X))
                 {
                     OnExpandItem(info.Item);
+                }
+                else if (GetColumnFromOffset(e.X) == 1)
+                {
+                    var dbgObject = (DbgObject)info.Item.Tag;
+                    if (dbgObject != null && dbgObject.IsVisualizable)
+                    {
+                        MessageBox.Show(dbgObject.Value);
+                    }
                 }
             }
         }

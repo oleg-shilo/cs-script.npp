@@ -28,36 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.stack = new System.Windows.Forms.ListView();
+            this.breakPoints = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.removeAll = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
-            // stack
+            // breakPoints
             // 
-            this.stack.Activation = System.Windows.Forms.ItemActivation.TwoClick;
-            this.stack.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.breakPoints.Activation = System.Windows.Forms.ItemActivation.TwoClick;
+            this.breakPoints.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.stack.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.breakPoints.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
-            this.stack.FullRowSelect = true;
-            this.stack.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.stack.HideSelection = false;
-            this.stack.Location = new System.Drawing.Point(0, 23);
-            this.stack.MultiSelect = false;
-            this.stack.Name = "stack";
-            this.stack.ShowItemToolTips = true;
-            this.stack.Size = new System.Drawing.Size(284, 238);
-            this.stack.TabIndex = 1;
-            this.stack.UseCompatibleStateImageBehavior = false;
-            this.stack.View = System.Windows.Forms.View.Details;
-            this.stack.ItemMouseHover += new System.Windows.Forms.ListViewItemMouseHoverEventHandler(this.stack_ItemMouseHover);
-            this.stack.DoubleClick += new System.EventHandler(this.stack_DoubleClick);
+            this.breakPoints.FullRowSelect = true;
+            this.breakPoints.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.breakPoints.HideSelection = false;
+            this.breakPoints.Location = new System.Drawing.Point(0, 23);
+            this.breakPoints.MultiSelect = false;
+            this.breakPoints.Name = "stack";
+            this.breakPoints.ShowItemToolTips = true;
+            this.breakPoints.Size = new System.Drawing.Size(284, 238);
+            this.breakPoints.TabIndex = 1;
+            this.breakPoints.UseCompatibleStateImageBehavior = false;
+            this.breakPoints.View = System.Windows.Forms.View.Details;
+            this.breakPoints.ItemMouseHover += new System.Windows.Forms.ListViewItemMouseHoverEventHandler(this.stack_ItemMouseHover);
+            this.breakPoints.DoubleClick += new System.EventHandler(this.stack_DoubleClick);
             // 
             // columnHeader1
             // 
@@ -90,7 +90,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.removeAll);
-            this.Controls.Add(this.stack);
+            this.Controls.Add(this.breakPoints);
             this.Name = "BreakpointsPanel";
             this.Text = "BreakpointsPanel";
             this.ResumeLayout(false);
@@ -100,7 +100,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ListView stack;
+        private System.Windows.Forms.ListView breakPoints;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;

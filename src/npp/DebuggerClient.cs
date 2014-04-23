@@ -174,6 +174,7 @@ namespace npp
                     {
                         var frame = GetFrameByIndex(shell.Debugger.Processes.Active.Threads.Active, int.Parse(id));
                         shell.Debugger.Processes.Active.Threads.Active.CurrentFrame = frame;
+                        ReportCurrentState();
                     }
                     catch (InvalidOperationException)
                     {

@@ -400,13 +400,13 @@ namespace CSScriptNpp
                     }
                     else
                     {
-                        NavigateToFileLocation(sourceLocation, showStep: true);
+                        NavigateToFileLocation(sourceLocation);
                     }
                 }
             });
         }
 
-        static public void NavigateToFileLocation(string sourceLocation, bool showStep)
+        static public void NavigateToFileLocation(string sourceLocation)
         {
             var location = FileLocation.Parse(sourceLocation);
             TranslateCompiledLocation(location);
@@ -415,11 +415,11 @@ namespace CSScriptNpp
             {
                 if (Npp.GetCurrentFile().IsSameAs(location.File, true))
                 {
-                    ShowBreakpointSourceLocation(location, showStep);
+                    ShowBreakpointSourceLocation(location);
                 }
                 else
                 {
-                    OnNextFileOpenComplete = () => ShowBreakpointSourceLocation(location, showStep);
+                    OnNextFileOpenComplete = () => ShowBreakpointSourceLocation(location);
                     Npp.OpenFile(location.File); //needs to by asynchronous
                 }
             }
@@ -471,7 +471,7 @@ namespace CSScriptNpp
         const int MARK_BREAKPOINT = 7;
         const int INDICATOR_DEBUGSTEP = 9;
 
-        class FileLocation
+        internal class FileLocation
         {
             public string File;
             public int Start;
@@ -488,7 +488,7 @@ namespace CSScriptNpp
                     var coordinates = x.Split(':');
                     var line = int.Parse(coordinates.First()) - 1;
                     var column = int.Parse(coordinates.Last()) - 1;
-                    return new { Line = line - 1, Column = column, Position = GetPosition(file, line, column) }; //debugger offsets are 1-based; editor offsets are 0-based
+                    return new { Line = line, Column = column, Position = GetPosition(file, line, column) }; //debugger offsets are 1-based; editor offsets are 0-based
                 });
 
                 return new FileLocation { File = file, Line = points.First().Line, Start = points.First().Position, End = points.Last().Position };
@@ -672,10 +672,10 @@ namespace CSScriptNpp
             }
         }
 
-        static void TranslateCompiledLocation(FileLocation location)
+        static public void TranslateCompiledLocation(FileLocation location)
         {
-            Debug.WriteLine("-----------------------------");
-            Debug.WriteLine("Before: {0} ({1},{2})", location.File, location.Start, location.End);
+            //Debug.WriteLine("-----------------------------");
+            //Debug.WriteLine("Before: {0} ({1},{2})", location.File, location.Start, location.End);
             //return;
             if (DecorationInfo != null)
             {
@@ -689,7 +689,7 @@ namespace CSScriptNpp
                             location.Start -= DecorationInfo.IngecionLength;
                             location.End -= DecorationInfo.IngecionLength;
                         }
-                        Debug.WriteLine("After: {0} ({1},{2})", location.File, location.Start, location.End);
+                        //Debug.WriteLine("After: {0} ({1},{2})", location.File, location.Start, location.End);
                     }
                 }
                 catch { }
@@ -742,16 +742,13 @@ namespace CSScriptNpp
             }
         }
 
-        static void ShowBreakpointSourceLocation(FileLocation location, bool processStep)
+        static void ShowBreakpointSourceLocation(FileLocation location)
         {
-            if (processStep)
-            {
-                ClearDebuggingMarkers();
+            ClearDebuggingMarkers();
 
-                Npp.PlaceIndicator(INDICATOR_DEBUGSTEP, location.Start, location.End);
-                Npp.PlaceMarker(MARK_DEBUGSTEP, location.Line);
-                lastLocation = location;
-            }
+            Npp.PlaceIndicator(INDICATOR_DEBUGSTEP, location.Start, location.End);
+            Npp.PlaceMarker(MARK_DEBUGSTEP, location.Line);
+            lastLocation = location;
 
             int start = Npp.GetFirstVisibleLine();
             int end = start + Npp.GetLinesOnScreen();

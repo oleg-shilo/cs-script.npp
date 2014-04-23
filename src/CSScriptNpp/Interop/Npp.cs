@@ -42,6 +42,26 @@ namespace CSScriptNpp
             return buffer.ToString();
         }
 
+        /// <summary>
+        /// Open the file and navigate to the 0-based line and column position. 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="line"></param>
+        /// <param name="column"></param>
+        static public void NavigateToFileContent(string file, int line, int column)
+        {
+            try
+            {
+                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, file);
+                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, line, 0); //SCI lines are 0-based
+
+                //at this point the caret is at the most left position (col=0)
+                int currentPos = (int)Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOPOS, currentPos + column - 1, 0); //SCI columns are 0-based
+            }
+            catch { }
+        }
         static public void CancelCalltip()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -77,7 +97,7 @@ namespace CSScriptNpp
                             if (!string.IsNullOrEmpty(content))
                             {
                                 string tooltip;
-                                if (content == Calltip.LastExpression ) //if DBG frame is changed the LastExpression is cleared
+                                if (content == Calltip.LastExpression) //if DBG frame is changed the LastExpression is cleared
                                 {
                                     tooltip = Calltip.LastEval;
                                 }

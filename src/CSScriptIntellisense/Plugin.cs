@@ -68,7 +68,7 @@ namespace CSScriptIntellisense
 
                 Task.Factory.StartNew(SimpleCodeCompletion.Init);
 
-                //'_' preffix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"
+                //'_' prefix in the shortcutName means "plugin action shortcut" as opposite to "plugin key interceptor action"
                 setCommand(cmdIndex++, "Show auto-complete list", ShowSuggestionList, "_ShowAutoComplete:Ctrl+Space");
                 setCommand(cmdIndex++, "Insert Code Snippet", ShowSnippetsList, "_InsertCodeSnippet:Ctrl+Shift+Space");
                 setCommand(cmdIndex++, "Add missing 'using'", AddMissingUsings, "_AddMissingUsings:Ctrl+OemPeriod");

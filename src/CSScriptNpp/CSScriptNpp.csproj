@@ -476,6 +476,9 @@
   <ItemGroup>
     <None Include="Resources\dbg_addwatch_at_caret.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_visualise.png" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
