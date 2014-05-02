@@ -12,20 +12,24 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *      - Debugger
-     *          - Debug panel
-     *              - QuickWatch panel
-     *                  - auto update
-     *                  - Setting the variable/expression value
-     *              - Watch panel
-     *                  - Pining sub-values
-     *                  - Setting the variable/expression value
-     *                  - Handle global (non variable based) expressions likes Environment.TickCount
-     *                  - Handle method expressions like Console.WriteLine("test")
-     *              - Debug Objects panel
-     *                  - Refresh value on demand
-     *                  - value visualizers
-     *          - make handling Debug.Assert user friendlier
+     *     - Custom updater
+     *     - MemberInfo/MethodInfo 
+     *         - popup should be positioned properly to fit the screen
+     *         - method params should be word-wrapped
+     *     - Debugger
+     *         - Debug panel
+     *             - QuickWatch panel
+     *                 - auto update
+     *                 - Setting the variable/expression value
+     *             - Watch panel
+     *                 - Pining sub-values
+     *                 - Setting the variable/expression value
+     *                 - Handle global (non variable based) expressions likes Environment.TickCount
+     *                 - Handle method expressions like Console.WriteLine("test")
+     *             - Debug Objects panel
+     *                 - Refresh value on demand
+     *                 - value visualizers
+     *         - make handling Debug.Assert user friendlier
      *      
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
@@ -50,7 +54,7 @@ namespace CSScriptNpp
         {
             int index = 0;
 
-            //'_' preffix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"
+            //'_' prefix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"
             SetCommand(projectPanelId = index++, "Build (validate)", Build, "_BuildFromMenu:Ctrl+Shift+B");
             SetCommand(projectPanelId = index++, "Run", Run, "_Run:F5");
             SetCommand(projectPanelId = index++, "Debug", Run, "_Debug:Alt+F5");
@@ -398,9 +402,9 @@ namespace CSScriptNpp
         static void UpdateLocalDebugInfo()
         {
             if (runningScript == null)
-                Plugin.OutputPanel.localDebugPreffix = null;
+                Plugin.OutputPanel.localDebugPrefix = null;
             else
-                Plugin.OutputPanel.localDebugPreffix = runningScript.Id.ToString() + ": ";
+                Plugin.OutputPanel.localDebugPrefix = runningScript.Id.ToString() + ": ";
         }
 
         static internal void OnNppReady()
@@ -426,7 +430,7 @@ namespace CSScriptNpp
             OutputPanel.Clean();
         }
 
-        internal static string HomeUrl = "http://csscript.net/npp/csscript.html";
+        internal static string HomeUrl = "https://csscriptnpp.codeplex.com/";
 
         static void StartCheckForUpdates()
         {
@@ -459,44 +463,8 @@ namespace CSScriptNpp
 
                 if (nppVersion < latestVersion)
                 {
-                    string progFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles).ToLower();
-                    string progFiles86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86).ToLower();
-                    string pluginLocation = Assembly.GetExecutingAssembly().Location.ToLower();
-
-                    //if (!pluginLocation.StartsWith(progFiles) && pluginLocation.StartsWith(progFiles86))
-                    //{
-                    //    MessageBox.Show("The newer version v" + version + " is available.\nHowever because Notepad++ is not installed in the System 'Program Files' you need to download the plugin binaries and (.7z) install them manually.", "CS-Script");
-                    //    try
-                    //    {
-                    //        Process.Start(HomeUrl);
-                    //    }
-                    //    catch { }
-                    //}
-                    //else
-                    if (DialogResult.Yes == MessageBox.Show("The newer version v" + version + " is available.\nDo you want to download and install it?\n\nWARNING: If you choose 'Yes' Notepad++ will be closed and all unsaved data may be lost.", "CS-Script", MessageBoxButtons.YesNo))
-                    {
-                        string msiFile = CSScriptHelper.GetLatestAvailableMsi(version);
-                        if (msiFile != null)
-                        {
-                            try
-                            {
-                                Process.Start("msiexec.exe", "/i \"" + msiFile + "\" /qb");
-                            }
-                            catch
-                            {
-                                MessageBox.Show("Cannot execute setup file: " + msiFile, "CS-Script");
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Cannot download the binaries. The latest release Web page will be opened instead.", "CS-Script");
-                            try
-                            {
-                                Process.Start(HomeUrl);
-                            }
-                            catch { }
-                        }
-                    }
+                    using (var dialog = new UpdateOptionsPanel(version))
+                        dialog.ShowDialog();
                 }
             }
         }

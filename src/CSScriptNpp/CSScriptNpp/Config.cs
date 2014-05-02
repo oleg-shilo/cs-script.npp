@@ -35,6 +35,7 @@ namespace CSScriptNpp
         public bool NavigateToRawCodeOnDblClickInOutput = false;
         //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
+        public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
@@ -72,6 +73,7 @@ namespace CSScriptNpp
                 SetValue(Section, "BreakOnException", BreakOnException);
                 SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
                 SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
+                SetValue(Section, "UpdateMode", UpdateMode);
                 SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
                 SetValue(Section, "TargetVersion", TargetVersion);
                 SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
@@ -104,6 +106,7 @@ namespace CSScriptNpp
                 BreakOnException = GetValue(Section, "BreakOnException", BreakOnException);
                 LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
                 CheckUpdatesOnStartup = GetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
+                UpdateMode = GetValue(Section, "UpdateMode", UpdateMode);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
                 ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
                 DistributeScriptAsScriptByDefault = GetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);

@@ -5,17 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CSScriptNpp")]
+[assembly: AssemblyTitle("Updater")]
+[assembly: AssemblyDescription("Updater for CS-Script for Notepad++")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CS-Script")]
 [assembly: AssemblyProduct("CS-Script for Notepad++")]
 [assembly: AssemblyCopyright("Copyright © Oleg Shilo 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyDescription("Notepad++ plugin for CS-Script integration. \r\n" +
-                               "It implements a real C# intellisense solution based on CS-Script and ICSharpCode.NRefactory/Mono.Cecil. \r\n" +
-                               "It also allows loading, executing modifying and debugging C# scripts in a way very similar to the Visual Studio C# projects support.\r\n" +
-                               "This includes referencing assemblies and other scripts, code formatting, adding missing namespaces and intercepting Debug and Console output.")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -23,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("2f81343a-36a0-47ba-b3b5-23a5757f8d99")]
+[assembly: Guid("26cd8188-9955-409f-a0b0-27e62db67485")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +29,8 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.23.0")]
-[assembly: AssemblyFileVersion("1.0.23.0")]
+// You can specify all the values or you can default the Build and Revision Numbers 
+// by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

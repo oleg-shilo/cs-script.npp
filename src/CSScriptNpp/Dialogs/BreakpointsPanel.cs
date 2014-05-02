@@ -75,7 +75,7 @@ namespace CSScriptNpp.Dialogs
             catch { }
         }
 
-        private void stack_ItemMouseHover(object sender, ListViewItemMouseHoverEventArgs e)
+        private void breakpoints_ItemMouseHover(object sender, ListViewItemMouseHoverEventArgs e)
         {
             //toolTip.InitialDelay = 2000;
             var cursor = this.PointToClient(MousePosition);

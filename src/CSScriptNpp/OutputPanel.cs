@@ -261,7 +261,7 @@ namespace CSScriptNpp
         }
 
         static Process dbgMonitor;
-        public string localDebugPreffix = null;
+        public string localDebugPrefix = null;
         public string[] ignoreLocalDebug = new[] { "SHIMVIEW: ShimInfo(Complete)" }; //some system dll injection
 
         public static void Clean()
@@ -351,7 +351,7 @@ namespace CSScriptNpp
                         {
                             if (Config.Instance.LocalDebug)
                             {
-                                if (localDebugPreffix != null && line.StartsWith(localDebugPreffix))
+                                if (localDebugPrefix != null && line.StartsWith(localDebugPrefix))
                                 {
                                     bool ignore = false;
                                     foreach (var item in ignoreLocalDebug)
@@ -362,7 +362,7 @@ namespace CSScriptNpp
                                         }
 
                                     if (!ignore)
-                                        output.WriteLine(line.Substring(localDebugPreffix.Length));
+                                        output.WriteLine(line.Substring(localDebugPrefix.Length));
                                 }
                             }
                             else

@@ -13,6 +13,9 @@ copy "CSScriptNpp\bin\Debug\CSScriptNpp.dll" "%programfiles%\Notepad++\plugins\C
 copy "CSScriptNpp\bin\Debug\CSScriptNpp\*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp"
 copy "CSScriptNpp\bin\Debug\CSScriptNpp\*.pdb" "%programfiles%\Notepad++\plugins\CSScriptNpp"
 copy "CSScriptNpp\bin\Debug\CSScriptNpp\Mdbg\*.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
+copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Updater.exe"
+copy "CSScriptNpp\CSScriptNpp\7z.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\7z.exe"
+copy "CSScriptNpp\CSScriptNpp\7z.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp\7z.dll"
 copy "CSScriptNpp\CSScriptNpp\MDbg\*.pdb" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Debug\CSScriptNpp\Mdbg\*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 

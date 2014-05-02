@@ -56,7 +56,7 @@
             this.breakPoints.TabIndex = 1;
             this.breakPoints.UseCompatibleStateImageBehavior = false;
             this.breakPoints.View = System.Windows.Forms.View.Details;
-            this.breakPoints.ItemMouseHover += new System.Windows.Forms.ListViewItemMouseHoverEventHandler(this.stack_ItemMouseHover);
+            this.breakPoints.ItemMouseHover += new System.Windows.Forms.ListViewItemMouseHoverEventHandler(this.breakpoints_ItemMouseHover);
             this.breakPoints.DoubleClick += new System.EventHandler(this.stack_DoubleClick);
             // 
             // columnHeader1

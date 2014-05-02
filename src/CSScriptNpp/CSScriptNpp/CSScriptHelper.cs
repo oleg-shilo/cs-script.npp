@@ -447,12 +447,12 @@ namespace CSScriptNpp
         {
             try
             {
-                string excludeDirPreffix = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) + "-";
+                string excludeDirPrefix = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) + "-";
 
                 if (Directory.Exists(VsDir))
                     foreach (string projectDir in Directory.GetDirectories(VsDir))
                     {
-                        if (projectDir.StartsWith(excludeDirPreffix))
+                        if (projectDir.StartsWith(excludeDirPrefix))
                             continue;
 
                         //vshost.exe is the only file to be 100% times locked if VS has the project loaded
@@ -552,7 +552,11 @@ namespace CSScriptNpp
         {
             try
             {
-                return DownloadText("http://csscript.net/npp/latest_version.txt");
+                string url = "http://csscript.net/npp/latest_version.txt";
+#if DEBUG
+                url = "http://csscript.net/npp/latest_version_dbg.txt";
+#endif
+                return DownloadText(url);
             }
             catch
             {
@@ -560,19 +564,19 @@ namespace CSScriptNpp
             }
         }
 
-        static public string GetLatestAvailableMsi(string version)
+        static public string GetLatestAvailableDistro(string version, string distroExtension, Action<long, long> onProgress)
         {
             try
             {
                 string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-                string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + ".msi");
+                string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + distroExtension);
 
-                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp." + version + "*.msi").Count();
+                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp." + version + "*" + distroExtension).Count();
                 if (numOfAlreadyDownloaded > 0)
-                    destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + " (" + (numOfAlreadyDownloaded + 1) + ").msi");
+                    destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + " (" + (numOfAlreadyDownloaded + 1) + ")" + distroExtension);
 
-                DownloadBinary("http://csscript.net/npp/CSScriptNpp." + version + ".msi", destFile);
+                DownloadBinary("http://csscript.net/npp/CSScriptNpp." + version + distroExtension, destFile, onProgress);
 
                 return destFile;
             }
@@ -582,7 +586,7 @@ namespace CSScriptNpp
             }
         }
 
-        static void DownloadBinary(string url, string destinationPath, string proxyUser = null, string proxyPw = null)
+        static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
         {
             var sb = new StringBuilder();
             byte[] buf = new byte[1024 * 4];
@@ -593,13 +597,22 @@ namespace CSScriptNpp
             var request = WebRequest.Create(url);
             var response = (HttpWebResponse)request.GetResponse();
 
+            if (File.Exists(destinationPath))
+                File.Delete(destinationPath);
+
             using (var destStream = new FileStream(destinationPath, FileMode.CreateNew))
             using (var resStream = response.GetResponseStream())
             {
+                int totalCount = 0;
                 int count = 0;
+
                 while (0 < (count = resStream.Read(buf, 0, buf.Length)))
                 {
                     destStream.Write(buf, 0, count);
+
+                    totalCount += count;
+                    if (onProgress != null)
+                        onProgress(totalCount, response.ContentLength);
                 }
             }
         }

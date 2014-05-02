@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSScriptNpp.Dialogs;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -180,50 +181,8 @@ namespace CSScriptNpp
                 }
                 else if (nppVersion < latestVersion)
                 {
-                    //if (DialogResult.Yes == MessageBox.Show("The newer version v" + version + " is available.\nDo you want to download and install it?\n\nWARNING: If you coose 'Yes' Notepad++ will be closed and all unsaved data may be lost.", "CS-Script", MessageBoxButtons.YesNo))
-                    {
-                        Invoke((Action)delegate
-                        {
-                            SetUpdateStatus("Downloading");
-                        });
-
-                        downloadingMsi = true;
-                        string msiFile = CSScriptHelper.GetLatestAvailableMsi(version);
-                        downloadingMsi = false;
-
-                        if (msiFile != null)
-                        {
-                            try
-                            {
-                                Process.Start("msiexec.exe", "/i \"" + msiFile + "\" /qb");
-
-                                //close notepad++
-                                //Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
-                                //string file;
-                                //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
-
-                            }
-                            catch
-                            {
-                                MessageBox.Show("Cannot execute setup file: " + msiFile, "CS-Script");
-                            }
-
-                        }
-                        else
-                        {
-                            MessageBox.Show("Cannot download the binaries. The latest release Web page will be opened instead.", "CS-Script");
-                            try
-                            {
-                                Process.Start(Plugin.HomeUrl);
-                            }
-                            catch { }
-                        }
-
-                        Invoke((Action)delegate
-                        {
-                            SetUpdateStatus();
-                        });
-                    }
+                    using (var dialog = new UpdateOptionsPanel(version))
+                        dialog.ShowDialog();
                 }
             }
         }

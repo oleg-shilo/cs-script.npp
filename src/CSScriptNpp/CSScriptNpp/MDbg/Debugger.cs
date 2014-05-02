@@ -33,8 +33,8 @@ namespace CSScriptNpp
 
         static public void LoadBreakPointsFor(string file)
         {
-            string expectedkeyPreffix = file + "|";
-            string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPreffix, StringComparison.OrdinalIgnoreCase)).ToArray();
+            string expectedkeyPrefix = file + "|";
+            string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPrefix, StringComparison.OrdinalIgnoreCase)).ToArray();
 
             foreach (var key in fileBreakpoints)
                 breakpoints.Remove(key); //clear old if any
@@ -51,8 +51,8 @@ namespace CSScriptNpp
 
         static public void SaveBreakPointsFor(string file)
         {
-            string expectedkeyPreffix = file + "|";
-            string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPreffix, StringComparison.OrdinalIgnoreCase)).ToArray();
+            string expectedkeyPrefix = file + "|";
+            string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPrefix, StringComparison.OrdinalIgnoreCase)).ToArray();
 
             if (fileBreakpoints.Any())
             {
@@ -82,8 +82,8 @@ namespace CSScriptNpp
             {
                 string file = Npp.GetCurrentFile();
 
-                string expectedkeyPreffix = file + "|";
-                string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPreffix, StringComparison.OrdinalIgnoreCase)).ToArray();
+                string expectedkeyPrefix = file + "|";
+                string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPrefix, StringComparison.OrdinalIgnoreCase)).ToArray();
 
                 foreach (var key in fileBreakpoints)
                 {

@@ -102,6 +102,12 @@
     <Compile Include="Dialogs\QuickWatchPanel.Designer.cs">
       <DependentUpon>QuickWatchPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\UpdateOptionsPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\UpdateOptionsPanel.Designer.cs">
+      <DependentUpon>UpdateOptionsPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\WatchPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -243,6 +249,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\QuickWatchPanel.resx">
       <DependentUpon>QuickWatchPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\UpdateOptionsPanel.resx">
+      <DependentUpon>UpdateOptionsPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\WatchPanel.resx">
       <DependentUpon>WatchPanel.cs</DependentUpon>
