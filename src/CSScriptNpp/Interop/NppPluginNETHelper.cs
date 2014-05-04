@@ -51,6 +51,7 @@ namespace CSScriptNpp
         public bool IsCtrl { get { return _isCtrl != 0; } }
         public bool IsShift { get { return _isShift != 0; } }
         public bool IsAlt { get { return _isAlt != 0; } }
+        public Keys Key { get { return (Keys)_key; } }
 
         public bool IsSet
         {

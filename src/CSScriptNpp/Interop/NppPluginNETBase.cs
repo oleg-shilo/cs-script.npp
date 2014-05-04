@@ -1,6 +1,6 @@
-﻿using CSScriptNpp.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -163,5 +163,26 @@ namespace CSScriptNpp
         }
 
         static Dictionary<int, Form> dockedManagedPanels = new Dictionary<int, Form>();
+
+        static public void RestartNpp()
+        {
+            Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
+
+            string file;
+            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
+
+            if (string.IsNullOrEmpty(file)) //the Exit request has been processed and user did not cancel it
+            {
+                Application.DoEvents();
+
+                int processIdToWaitForExit = Process.GetCurrentProcess().Id;
+                string appToStart = Process.GetCurrentProcess().MainModule.FileName;
+
+                string restarter = Path.Combine(Plugin.PluginDir, "Updater.exe");
+
+                //the re-starter will also wait for this process to exit
+                Process.Start(restarter, string.Format("/restart {0} \"{1}\"", processIdToWaitForExit, appToStart));
+            }
+        }
     }
 }

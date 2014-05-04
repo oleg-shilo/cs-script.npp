@@ -10,35 +10,49 @@ namespace CSScriptNpp.Deployment
 {
     class Program
     {
-        const string elevationArg = "/elevated";
+        const string elevationIndicatorArg = "/elevated";
 
         static void Main(string[] args)
         {
             try
             {
-                if (IsAdmin())
+                if (args[0] == "/restart") //restart
                 {
-                    if (args.Contains(elevationArg))
-                        args = args.Where(a => a != elevationArg).ToArray();
+                    // /restart <prevInstanceProcId> <appPath>
+                    int id = int.Parse(args[1]);
+                    string appPath = args[2];
 
-                    Debug.Assert(args.Length == 2);
+                    var proc = Process.GetProcesses().Where(x => x.Id == id).FirstOrDefault();
+                    if (proc != null && !proc.HasExited)
+                        proc.WaitForExit();
 
-                    if (EnsureNppNotRunning())
-                    {
-                        string zipFile = args[0];
-                        string pluginDir = args[1];
-                        string nppExe = Path.Combine(pluginDir, @"..\\notepad++.exe");
-                        Updater.Deploy(zipFile, pluginDir);
-                        if (File.Exists(nppExe))
-                            Process.Start(nppExe);
-                        else
-                            MessageBox.Show("The update has been successfully installed.", "CS-Script Update");
-                    }
+                    Process.Start(appPath);
                 }
-                else
+                else  //update
                 {
-                    if (!args.Contains(elevationArg)) //has not been attempted to elevate yet
-                        RestartElevated(args);
+                    if (IsAdmin())
+                    {
+                        if (args.Contains(elevationIndicatorArg))
+                            args = args.Where(a => a != elevationIndicatorArg).ToArray();
+
+                        if (EnsureNppNotRunning())
+                        {
+                            // <zipFile> <pluginDir>
+                            string zipFile = args[0];
+                            string pluginDir = args[1];
+                            string nppExe = Path.Combine(pluginDir, @"..\\notepad++.exe");
+                            Updater.Deploy(zipFile, pluginDir);
+                            if (File.Exists(nppExe))
+                                Process.Start(nppExe);
+                            else
+                                MessageBox.Show("The update has been successfully installed.", "CS-Script Update");
+                        }
+                    }
+                    else
+                    {
+                        if (!args.Contains(elevationIndicatorArg)) //has not been attempted to elevate yet
+                            RestartElevated(args);
+                    }
                 }
             }
             catch (Exception e)
@@ -56,7 +70,7 @@ namespace CSScriptNpp.Deployment
 
         static bool RestartElevated(string[] arguments)
         {
-            string args = elevationArg;
+            string args = elevationIndicatorArg;
             for (int i = 0; i < arguments.Length; i++)
                 args += " \"" + arguments[i] + "\"";
 
@@ -79,7 +93,7 @@ namespace CSScriptNpp.Deployment
             while (Process.GetProcessesByName("notepad++").Any())
             {
                 count++;
-                
+
                 var buttons = MessageBoxButtons.OKCancel;
                 var prompt = "Please close any running instance of Notepad++ and press OK to proceed.";
 
@@ -88,7 +102,7 @@ namespace CSScriptNpp.Deployment
                     prompt = "Please close any running instance of Notepad++ and try again.";
                     buttons = MessageBoxButtons.RetryCancel;
                 }
-                
+
                 if (MessageBox.Show(prompt, "CS-Script Update", buttons) == DialogResult.Cancel)
                     return false;
             }

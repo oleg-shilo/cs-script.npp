@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CSScriptNpp.Dialogs;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -58,11 +58,65 @@ namespace CSScriptNpp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: \n" + ex.ToString(), "Notepad++");
+                    MessageBox.Show("Error: \n" + ex.ToString(), "CS-Script");
                 }
             });
 
             Close();
+        }
+
+        bool modified = false;
+
+        void PluginShortcuts_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (modified)
+            {
+                Visible = false;
+                //Application.DoEvents();
+                if (MessageBox.Show("The shortcut mapping changes will take affect only after Notepad++ is restarted.\n\n" +
+                                    "Do you want to restartNotepad++ now?\n\n" +
+                                    "Note: You may need to remap some of the native Notepad++ shortcuts (Settings->Shortcut Mapper...) " +
+                                    "if they conflict with the current CS-Script shortcut configuration.",
+                                    "CS-Script", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    Plugin.RestartNpp();
+                }
+            }
+        }
+
+        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            Modify();
+        }
+
+        private void modifyBtn_Click(object sender, EventArgs e)
+        {
+            Modify();
+        }
+
+        void Modify()
+        {
+            foreach (ListViewItem item in this.listView1.SelectedItems)
+            {
+                var info = (Shortcuts.ConfigInfo)item.Tag;
+                using (var dlg = new ShortcutBuilder())
+                {
+                    dlg.Name = info.DisplayName;
+                    dlg.Shortcut = info.Shortcut;
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        info.Shortcut = dlg.Shortcut;
+
+                        Config.Shortcuts.SetValue(info.Name, info.Shortcut);
+                        Config.Shortcuts.Save();
+
+                        item.SubItems[1].Text = info.Shortcut;
+
+                        modified = true;
+                    }
+                }
+                break;
+            }
         }
     }
 }

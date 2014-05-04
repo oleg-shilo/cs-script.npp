@@ -84,6 +84,12 @@
     <Compile Include="Dialogs\ModulesPanel.Designer.cs">
       <DependentUpon>ModulesPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ShortcutBuilder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ShortcutBuilder.Designer.cs">
+      <DependentUpon>ShortcutBuilder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ThreadsPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -222,6 +228,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ModulesPanel.resx">
       <DependentUpon>ModulesPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ShortcutBuilder.resx">
+      <DependentUpon>ShortcutBuilder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ThreadsPanel.resx">
       <DependentUpon>ThreadsPanel.cs</DependentUpon>

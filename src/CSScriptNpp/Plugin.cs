@@ -12,7 +12,10 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *     - Custom updater
+     *     - Custom updater should drop support for MSI as MSI is unreliable when invoked from NPP 
+     *     - ShortcutMapping
+     *         - allow input wizard
+     *         + show warning about colisions and reboot
      *     - MemberInfo/MethodInfo 
      *         - popup should be positioned properly to fit the screen
      *         - method params should be word-wrapped
@@ -20,10 +23,13 @@ namespace CSScriptNpp
      *         - Debug panel
      *             - QuickWatch panel
      *                 - auto update
-     *                 - Setting the variable/expression value
      *             - Watch panel
      *                 - Pining sub-values
      *                 - Setting the variable/expression value
+     *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'   
+     *                   
+     *                             lsMVar = Debugger.Processes.Active.ResolveVariable(varName,
+                                               Debugger.Processes.Active.Threads.Active.CurrentFrame); )
      *                 - Handle global (non variable based) expressions likes Environment.TickCount
      *                 - Handle method expressions like Console.WriteLine("test")
      *             - Debug Objects panel
