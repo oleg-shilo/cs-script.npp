@@ -12,10 +12,6 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *     - Custom updater should drop support for MSI as MSI is unreliable when invoked from NPP 
-     *     - ShortcutMapping
-     *         - allow input wizard
-     *         + show warning about colisions and reboot
      *     - MemberInfo/MethodInfo 
      *         - popup should be positioned properly to fit the screen
      *         - method params should be word-wrapped

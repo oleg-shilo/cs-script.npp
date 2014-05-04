@@ -356,8 +356,7 @@ namespace CSScriptIntellisense
 
         static void ShowMethodInfo()
         {
-            MessageBox.Show("ShowMethodInfo");
-            //ShowInfo(false);
+            ShowInfo(false);
         }
 
         static void ShowQuickInfo()

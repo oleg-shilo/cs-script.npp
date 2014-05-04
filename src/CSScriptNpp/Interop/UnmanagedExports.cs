@@ -94,7 +94,6 @@ namespace CSScriptNpp
                 {
                     if (nc.margin == _SC_MARGE_SYBOLE && nc.modifiers == SCI_CTRL)
                     {
-
                         int lineClick = Npp.GetLineFromPosition(nc.position);
                         Debugger.ToggleBreakpoint(lineClick);
                     }

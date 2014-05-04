@@ -121,8 +121,11 @@ namespace CSScriptNpp
             }
         }
 
+        public const int MemberInfoPanelMaxWidth = 20; 
+
         static public void ShowCalltip(int position, string text)
         {
+            //text = text.WordWrap(MemberInfoPanelMaxWidth);
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSHOW, position, text);
