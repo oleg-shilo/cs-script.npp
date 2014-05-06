@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Testpad
 {
@@ -23,6 +24,8 @@ namespace Testpad
             //var panel = new AutoWatchPanel();
             //panel.Test();
 
+            //Screen.FromPoint();
+
             var dlg = new ShortcutBuilder();
             dlg.Name = "test gtdrfgfds";
             dlg.Shortcut = "Ctrl+Shift+Alt+F7";
@@ -34,5 +37,7 @@ namespace Testpad
 
             //Application.Run(new Form1());
         }
+
+
     }
 }

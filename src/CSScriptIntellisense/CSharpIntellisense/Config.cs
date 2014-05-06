@@ -43,6 +43,7 @@ namespace CSScriptIntellisense
         public bool UseMethodBrackets = false;
         public bool DisableMethodInfo = false;
         public bool FormatAsYouType = true;
+        public int MemberInfoMaxCharWidth = 100;
         public bool SmartIndenting = true;
         public bool IgnoreDocExceptions = false;
 
@@ -62,6 +63,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 SetValue(Section, "SmartIndenting", SmartIndenting);
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
+                SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 SetValue(Section, "FormatAsYouType", FormatAsYouType);
             }
         }
@@ -79,6 +81,7 @@ namespace CSScriptIntellisense
                 FormatAsYouType = GetValue(Section, "FormatAsYouType", FormatAsYouType);
                 ShowQuickInfoInStatusBar = GetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
+                MemberInfoMaxCharWidth = GetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
             }
         }

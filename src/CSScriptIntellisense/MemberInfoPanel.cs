@@ -47,7 +47,7 @@ namespace CSScriptIntellisense
             if (hintCount == 0)
                 items.AddRange(rawItems);
             else
-                items.AddRange(rawItems.Where(s => !s.ArgumentCount.HasValue || s.ArgumentCount.Value == 0   || s.ArgumentCount.Value >= hintCount));
+                items.AddRange(rawItems.Where(s => !s.ArgumentCount.HasValue || s.ArgumentCount.Value == 0 || s.ArgumentCount.Value >= hintCount));
 
             index = 0;
             if (initaialSelection != null)
@@ -79,18 +79,19 @@ namespace CSScriptIntellisense
 
         string ReformatSignatureInfo(string signarure)
         {
+            int pos = signarure.IndexOf(Environment.NewLine);
+            if (pos != -1)
+                signarure = signarure.Insert(pos, Environment.NewLine); //separate signature from the documentation with extra line break
+
             string[] lines = signarure.GetLines();
-            if (lines.Length > 1)
-            {
-                int maxLength = Math.Max(lines[0].Length, 100);
 
-                int longestDocumentationLine = lines.Max(x => x.Length);
+            int maxLength = Config.Instance.MemberInfoMaxCharWidth;
 
-                if (longestDocumentationLine > maxLength)
-                {
-                    signarure = signarure.WordWrap(maxLength);
-                }
-            }
+            int longestDocumentationLine = lines.Max(x => x.Length);
+
+            if (longestDocumentationLine > maxLength)
+                signarure = signarure.WordWrap(maxLength);
+
             return signarure;
         }
 
@@ -106,6 +107,13 @@ namespace CSScriptIntellisense
             this.Height = (int)size.Height;
             this.Left = LeftBottomCorner.X;
             this.Top = LeftBottomCorner.Y - (int)size.Height - 10;
+
+            Rectangle screen = Screen.FromControl(this).Bounds;
+            int screenRightX = screen.Left + screen.Width;
+            int formRightX = this.Left + this.Width;
+
+            if (formRightX > (screenRightX - 20)) //too close to the right edge of the screen so shift it to left
+                this.Left -= formRightX - (screenRightX - 20);
 
             Invalidate();
         }
@@ -191,7 +199,6 @@ namespace CSScriptIntellisense
         static int docSeparatorHeight = 7;
         float controlButtonsPadding = 3;
 
-        SizeF? resolution;
         SizeF MeasureDisplayArea()
         {
             string info = items[index].Text;
@@ -208,16 +215,13 @@ namespace CSScriptIntellisense
                 size.Width = size.Width + statsSize.Width + controlButtonSize * 2 + controlButtonsPadding * 2 + 5;
             }
 
-            if (!resolution.HasValue)
-                resolution = g.MeasureString("Method", this.Font);
-
             int extraHight = 0;
             if (info.GetLines(2).Length > 1) //has API documentation
             {
                 extraHight = docSeparatorHeight;
             }
 
-            return new SizeF(size.Width + 10, size.Height + 20 + extraHight);
+            return new SizeF(size.Width + 10, size.Height + 10 + extraHight);
         }
 
         RectangleF upButtonArea = new RectangleF(0, 0, controlButtonSize, controlButtonSize);
@@ -275,11 +279,16 @@ namespace CSScriptIntellisense
 
             //e.Graphics.DrawString(RemoveTypeCategory(items[index].Text), this.Font, Brushes.Black, xOffset, yOffset);
 
-            string[] parts = infoText.GetLines(2);
+            string[] parts = infoText.Split(new[] { Environment.NewLine + Environment.NewLine }, 2, StringSplitOptions.None);
 
             e.Graphics.DrawString(parts.First(), this.Font, Brushes.Black, xOffset, yOffset);
+
             if (parts.Length > 1)
-                e.Graphics.DrawString(parts.Last(), this.DocFont, Brushes.Black, xOffset, yOffset + resolution.Value.Height + docSeparatorHeight);
+            {
+                SizeF size = e.Graphics.MeasureString(parts.First(), this.Font);
+
+                e.Graphics.DrawString(parts.Last(), this.DocFont, Brushes.Black, xOffset, yOffset + size.Height + docSeparatorHeight);
+            }
         }
 
         string GetOverloadingStats()

@@ -1,8 +1,7 @@
+using CSScriptIntellisense;
 using System;
 using System.Drawing;
 using System.Text;
-using CSScriptIntellisense;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CSScriptNpp
@@ -43,7 +42,7 @@ namespace CSScriptNpp
         }
 
         /// <summary>
-        /// Open the file and navigate to the 0-based line and column position. 
+        /// Open the file and navigate to the 0-based line and column position.
         /// </summary>
         /// <param name="file"></param>
         /// <param name="line"></param>
@@ -62,6 +61,7 @@ namespace CSScriptNpp
             }
             catch { }
         }
+
         static public void CancelCalltip()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -89,9 +89,9 @@ namespace CSScriptNpp
 
                 Calltip.IsShowing = true;
 
-                Task.Factory.StartNew(() =>  //must be asynch to allow processing other Debugger notifications 
+                Task.Factory.StartNew(() =>  //must be asynch to allow processing other Debugger notifications
                     {
-                        if (Debugger.IsInBreak)
+                        if (Debugger.IsInBreak) //The calltips are used to show the values of the variables only. For everything else (e.g. MemberInfo) modal borderless forms are used
                         {
                             string content = CSScriptIntellisense.Npp.GetStatementAtPosition(position);
                             if (!string.IsNullOrEmpty(content))
@@ -121,11 +121,10 @@ namespace CSScriptNpp
             }
         }
 
-        public const int MemberInfoPanelMaxWidth = 20; 
+        public const int MemberInfoPanelMaxWidth = 20;
 
         static public void ShowCalltip(int position, string text)
         {
-            //text = text.WordWrap(MemberInfoPanelMaxWidth);
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSHOW, position, text);
@@ -186,6 +185,7 @@ namespace CSScriptNpp
                     return new string[0];
             }
         }
+
         static public int GetLineStart(int line)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -334,6 +334,7 @@ namespace CSScriptNpp
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_MARKERDELETEALL, markerId, 0);
         }
+
         static public void DeleteMarker(IntPtr handle)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
