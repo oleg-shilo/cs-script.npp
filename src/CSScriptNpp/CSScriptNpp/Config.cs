@@ -37,6 +37,7 @@ namespace CSScriptNpp
         public bool BreakOnException = false;
         public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
+        public bool WordWrapInVisualizer = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
         public string ReleaseNotesViewedFor = "";
@@ -61,6 +62,7 @@ namespace CSScriptNpp
                 SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
                 SetValue(Section, "DebugAsConsole", DebugAsConsole);
                 SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
+                SetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
                 SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
                 SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
                 SetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
@@ -92,6 +94,7 @@ namespace CSScriptNpp
                 ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
                 ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
                 DebugAsConsole = GetValue(Section, "DebugAsConsole", DebugAsConsole);
+                WordWrapInVisualizer = GetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
                 //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
                 SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
                 SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);

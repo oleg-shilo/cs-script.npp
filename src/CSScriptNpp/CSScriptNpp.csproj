@@ -114,6 +114,12 @@
     <Compile Include="Dialogs\UpdateOptionsPanel.Designer.cs">
       <DependentUpon>UpdateOptionsPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\TextVisualizer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\TextVisualizer.Designer.cs">
+      <DependentUpon>TextVisualizer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\WatchPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -261,6 +267,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\UpdateOptionsPanel.resx">
       <DependentUpon>UpdateOptionsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\TextVisualizer.resx">
+      <DependentUpon>TextVisualizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\WatchPanel.resx">
       <DependentUpon>WatchPanel.cs</DependentUpon>

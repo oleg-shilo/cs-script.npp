@@ -440,7 +440,8 @@ namespace CSScriptNpp.Dialogs
                     var dbgObject = (DbgObject)info.Item.Tag;
                     if (dbgObject != null && dbgObject.IsVisualizable)
                     {
-                        MessageBox.Show(dbgObject.Value);
+                        using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value))
+                            panel.ShowDialog();
                     }
                 }
             }

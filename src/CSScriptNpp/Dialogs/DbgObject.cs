@@ -83,7 +83,7 @@ namespace CSScriptNpp.Dialogs
         {
             get
             {
-                return !string.IsNullOrEmpty(Value) && Value != "<null>" && !IsUnresolved;
+                return !string.IsNullOrEmpty(Value) && Value != "<null>" && !IsUnresolved && _value.StartsWith("\""); //non empty text value
             }
         }
 

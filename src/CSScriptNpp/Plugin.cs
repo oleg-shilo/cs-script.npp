@@ -12,9 +12,9 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *     - MemberInfo/MethodInfo 
-     *         - popup should be positioned properly to fit the screen
-     *         - method params should be word-wrapped
+     *     + MemberInfo/MethodInfo 
+     *         + popup should be positioned properly to fit the screen
+     *         + method params should be word-wrapped
      *     - Debugger
      *         - Debug panel
      *             - QuickWatch panel

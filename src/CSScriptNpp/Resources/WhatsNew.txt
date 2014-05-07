@@ -1,3 +1,4 @@
 v1.0.24.0+
 * MemberInfo/MethodInfo popup is now positioned properly to fit the screen
 * In MethodInfo popup method signatures are word-wrapped 
+* Implemented Debug text value visualizer    
