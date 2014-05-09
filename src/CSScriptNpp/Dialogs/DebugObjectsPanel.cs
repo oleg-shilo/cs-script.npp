@@ -38,6 +38,20 @@ namespace CSScriptNpp.Dialogs
             return -1;
         }
 
+        Dictionary<int, int> columnsStartOffset = new Dictionary<int, int>();
+        int GetColumnStartOffset(int index)
+        {
+            if (columnsStartOffset.ContainsKey(index))
+                return columnsStartOffset[index];
+            return -1;
+            //int retval = 0;
+
+            //for (int i = 0; i < index; i++)
+            //    retval += listView1.Columns[i].Width;
+
+            //return retval;
+        }
+
         void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             focucedItem = listView1.GetItemAt(e.X, e.Y);
@@ -162,6 +176,7 @@ namespace CSScriptNpp.Dialogs
         public void SetData(string data)
         {
             ResetWatchObjects(ToWatchObjects(data));
+            ResizeValueColumn();
         }
 
         public void UpdateData(string data)
@@ -202,8 +217,57 @@ namespace CSScriptNpp.Dialogs
                listView1.Items.Remove(x));
 
             if (updated)
+            {
                 listView1.Invalidate();
+            }
+            ResizeValueColumn();
         }
+
+        void ResizeValueColumn()
+        {
+            var g = CreateGraphics();
+
+            var newWidth = 0;
+
+            foreach (ListViewItem item in listView1.Items)
+            {
+                int visualizerOffset = visualizerIconSize;
+                if (item.SubItems[1].Text.StartsWith("\""))
+                    visualizerOffset = 0;
+
+                SizeF size = g.MeasureString(item.SubItems[1].Text, listView1.Font);
+
+                int requiredWidth = Math.Max(30, (int)size.Width + visualizerIconSize);
+                if (newWidth < requiredWidth)
+                {
+                    newWidth = requiredWidth + 5;
+                }
+            }
+
+            if (listView1.Columns[1].Width < newWidth)
+                listView1.Columns[1].Width = newWidth;
+        }
+
+        //void ResizeTypeColumn()
+        //{
+        //    var g = CreateGraphics();
+
+        //    var newWidth = 0;
+
+        //    foreach (ListViewItem item in listView1.Items)
+        //    {
+        //        SizeF size = g.MeasureString(item.SubItems[2].Text, listView1.Font);
+
+        //        int requiredWidth = Math.Max(30, (int)size.Width + 20);
+        //        if (newWidth < requiredWidth)
+        //        {
+        //            newWidth = requiredWidth + 5;
+        //        }
+        //    }
+
+        //    if (listView1.Columns[2].Width < newWidth)
+        //        listView1.Columns[2].Width = newWidth;
+        //}
 
         DbgObject[] ToWatchObjects(string data)
         {
@@ -294,8 +358,32 @@ namespace CSScriptNpp.Dialogs
         {
             var dbgObject = (DbgObject)item.Tag;
 
-            int xOffset = 10 * (dbgObject.IndentationLevel); //depends on the indentation
-            return new Range { Start = xOffset, End = xOffset + triangleMargin };
+            int typeColumnStartX = GetColumnStartOffset(0);
+            if (typeColumnStartX == -1)
+                return new Range { Start = -1, End = -1 };
+            else
+            {
+                int xOffset = 10 * (dbgObject.IndentationLevel); //depends on the indentation
+                return new Range { Start = typeColumnStartX + xOffset, End = typeColumnStartX + xOffset + triangleMargin };
+            }
+        }
+
+        Range GetItemVisualizerClickableRange()
+        {
+            int typeColumnStartX = GetColumnStartOffset(2);
+            if (typeColumnStartX == -1)
+                return new Range { Start = -1, End = -1 };
+            else
+                return new Range { Start = typeColumnStartX - visualizerIconSize, End = typeColumnStartX };
+        }
+
+        Range GetItemPinClickableRange()
+        {
+            int valueColumnStartX = GetColumnStartOffset(1);
+            if (valueColumnStartX == -1)
+                return new Range { Start = -1, End = -1 };
+            else
+                return new Range { Start = valueColumnStartX - visualizerIconSize, End = valueColumnStartX };
         }
 
         private void listView1_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
@@ -315,14 +403,29 @@ namespace CSScriptNpp.Dialogs
             if (!Debugger.IsInBreak)
                 textBrush = Brushes.DarkGray;
 
+            columnsStartOffset[e.ColumnIndex] = e.Bounds.X;
+
             if (e.ColumnIndex == 0)
             {
-                var clickableRange = GetItemExpenderClickableRange(e.Item);
+                var range = GetItemExpenderClickableRange(e.Item);
 
-                int X = e.Bounds.X + clickableRange.Start;
+                int X = e.Bounds.X + range.Start;
                 int Y = e.Bounds.Y;
 
-                var range = GetItemExpenderClickableRange(e.Item);
+                int textStartX = X + triangleMargin + xMargin;
+
+                SizeF size = e.Graphics.MeasureString(e.Item.Text, listView1.Font);
+
+                int pinOffset = visualizerIconSize + 3;
+                if (!dbgObject.HasChildren)
+                    pinOffset = 0;
+
+                int requiredWidth = textStartX + (int)size.Width + pinOffset;
+                if (e.Bounds.Width < requiredWidth)
+                {
+                    listView1.Columns[0].Width = requiredWidth + 5;
+                    return;
+                }
 
                 Image icon;
 
@@ -374,8 +477,6 @@ namespace CSScriptNpp.Dialogs
                     }
                 }
 
-                int textStartX = X + triangleMargin + xMargin;
-
                 if (e.Item.Selected)
                 {
                     var rect = e.Bounds;
@@ -385,16 +486,30 @@ namespace CSScriptNpp.Dialogs
                 }
 
                 e.Graphics.DrawString(e.Item.Text, listView1.Font, textBrush, textStartX, Y);
-                SizeF size = e.Graphics.MeasureString(e.Item.Text, listView1.Font);
 
-                int requiredWidth = textStartX + (int)size.Width;
-                if (e.Bounds.Width < requiredWidth)
+                if (IsPinnable && !dbgObject.HasChildren && dbgObject.IndentationLevel > 0)
                 {
-                    listView1.Columns[0].Width = requiredWidth + 5;
+                    int x = e.Bounds.X + e.Bounds.Width - Resources.Resources.dbg_pin.Width;
+                    int y = e.Bounds.Y;
+                    e.Graphics.DrawImage(Resources.Resources.dbg_pin, x, Y);
                 }
             }
             else
             {
+                SizeF size = e.Graphics.MeasureString(e.SubItem.Text, listView1.Font);
+
+                int visualizerOffset = visualizerIconSize;
+                if (e.ColumnIndex != 1 || !dbgObject.IsVisualizable)
+                    visualizerOffset = 0;
+
+                int requiredWidth = Math.Max(30, (int)size.Width + 20 + visualizerOffset);
+
+                if (e.ColumnIndex != 1 && listView1.Columns[e.ColumnIndex].Width < requiredWidth)
+                {
+                    listView1.Columns[e.ColumnIndex].Width = requiredWidth + 5;
+                    return;
+                }
+
                 if (e.Item.Selected)
                 {
                     var rect = e.Bounds;
@@ -402,21 +517,21 @@ namespace CSScriptNpp.Dialogs
                     e.Graphics.FillRectangle(Brushes.LightBlue, rect);
                 }
 
-                int visualizerOffset = visualizerIconSize;
-                if (e.ColumnIndex == 1 && dbgObject.IsVisualizable)
-                    e.Graphics.DrawImage(Resources.Resources.dbg_visualise, e.Bounds.X + e.Bounds.Width - visualizerIconSize, e.Bounds.Y);
-                else
-                    visualizerOffset = 0;
-
-                SizeF size = e.Graphics.MeasureString(e.SubItem.Text, listView1.Font);
-                int requiredWidth = Math.Max(30, (int)size.Width + 20 + visualizerIconSize);
-                if (listView1.Columns[e.ColumnIndex].Width < requiredWidth)
+                if (!dbgObject.IsUnresolved)
                 {
-                    listView1.Columns[e.ColumnIndex].Width = requiredWidth + 5;
+                    Rectangle rect = e.Bounds;
+                    rect.Width -= visualizerOffset;
+                    var format = new StringFormat();
+                    format.FormatFlags = StringFormatFlags.NoWrap;
+                    e.Graphics.DrawString(e.SubItem.Text, listView1.Font, textBrush, rect, format);
                 }
 
-                if (!dbgObject.IsUnresolved)
-                    e.Graphics.DrawString(e.SubItem.Text, listView1.Font, textBrush, e.Bounds);
+                if (e.ColumnIndex == 1 && dbgObject.IsVisualizable)
+                {
+                    int x = e.Bounds.X + e.Bounds.Width - visualizerOffset;
+                    int y = e.Bounds.Y;
+                    e.Graphics.DrawImage(Resources.Resources.dbg_visualise, x, y);
+                }
             }
         }
 
@@ -425,23 +540,37 @@ namespace CSScriptNpp.Dialogs
             e.DrawDefault = true;
         }
 
+        public event Action<DbgObject> OnPinClicked;
+
         private void listView1_MouseDown(object sender, MouseEventArgs e)
         {
             ListViewHitTestInfo info = listView1.HitTest(e.X, e.Y);
             if (info.Item != null)
             {
-                Range clickableRange = GetItemExpenderClickableRange(info.Item);
-                if (clickableRange.Contains(e.X))
+                int colIndex = GetColumnFromOffset(e.X);
+                if (colIndex == 0)
                 {
-                    OnExpandItem(info.Item);
+                    if (GetItemExpenderClickableRange(info.Item).Contains(e.X))
+                    {
+                        OnExpandItem(info.Item);
+                    }
+
+                    var dbgObject = (DbgObject)info.Item.Tag;
+                    if (dbgObject != null && dbgObject.IsPinable)
+                    {
+                        if (GetItemPinClickableRange().Contains(e.X))
+                            if (OnPinClicked != null)
+                                OnPinClicked(dbgObject);
+                    }
                 }
-                else if (GetColumnFromOffset(e.X) == 1)
+                else if (colIndex == 1)
                 {
                     var dbgObject = (DbgObject)info.Item.Tag;
                     if (dbgObject != null && dbgObject.IsVisualizable)
                     {
-                        using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value))
-                            panel.ShowDialog();
+                        if (GetItemVisualizerClickableRange().Contains(e.X))
+                            using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value.StripQuotation()))
+                                panel.ShowDialog();
                     }
                 }
             }
@@ -479,6 +608,7 @@ namespace CSScriptNpp.Dialogs
                     }
                 }
                 dbgObject.IsExpanded = !dbgObject.IsExpanded;
+
                 listView1.Invalidate();
             }
         }
@@ -492,6 +622,7 @@ namespace CSScriptNpp.Dialogs
         }
 
         public bool IsReadOnly = true;
+        public bool IsPinnable = false;
 
         private void listView1_DragEnter(object sender, DragEventArgs e)
         {
@@ -579,9 +710,17 @@ namespace CSScriptNpp.Dialogs
 
         private void listView1_ItemMouseHover(object sender, ListViewItemMouseHoverEventArgs e)
         {
-            var cursor = this.PointToClient(MousePosition);
-            cursor.Offset(15, 15);
-            toolTip.Show(e.Item.ToolTipText, this, cursor.X, cursor.Y, 1000);
+            var cursor = listView1.PointToClient(MousePosition);
+
+            var dbgObject = (DbgObject)e.Item.Tag;
+
+            string toolTipText = e.Item.ToolTipText;
+            if (this.IsPinnable && dbgObject.IsPinable && GetItemPinClickableRange().Contains(cursor.X))
+                toolTipText = "Click to pin this expression.";
+            else if (dbgObject.IsVisualizable && GetItemVisualizerClickableRange().Contains(cursor.X))
+                toolTipText = "Click to visualize this value.";
+
+            toolTip.Show(toolTipText, this, cursor.X, cursor.Y - 30, 1000);
         }
     }
 
@@ -631,7 +770,7 @@ namespace CSScriptNpp.Dialogs
             string name = item.Name;
 
             var li = new ListViewItem(name);
-            li.SubItems.Add(item.Value);
+            li.SubItems.Add(item.DispayValue);
             li.SubItems.Add(item.Type);
             li.Tag = item;
             if (item.IsEditPlaceholder)

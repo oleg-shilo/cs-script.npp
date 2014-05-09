@@ -46,6 +46,21 @@ namespace CSScriptNpp.Dialogs
         public string Name { get; set; }
         public string Type { get; set; }
 
+        public string Path
+        {
+            get
+            {
+                string retval = Name;
+                var obj = this;
+                while (obj.Parent != null)
+                {
+                    retval = obj.Parent.Name + "." + retval;
+                    obj = obj.Parent;
+                }
+                return retval;
+            }
+        }
+
         string _value;
 
         public string Value
@@ -69,7 +84,7 @@ namespace CSScriptNpp.Dialogs
         public string Tooltip { get; set; }
         public string DispayValue { get; set; }
 
-        public const int TrancationSize = 40;
+        public const int TrancationSize = 400;
 
         public bool IsUnresolved
         {
@@ -84,6 +99,14 @@ namespace CSScriptNpp.Dialogs
             get
             {
                 return !string.IsNullOrEmpty(Value) && Value != "<null>" && !IsUnresolved && _value.StartsWith("\""); //non empty text value
+            }
+        }
+
+        public bool IsPinable
+        {
+            get
+            {
+                return !HasChildren && Parent != null;
             }
         }
 

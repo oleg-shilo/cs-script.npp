@@ -34,7 +34,7 @@ namespace CSScriptNpp
             return expression;
         }
 
-        public static void EmbeddShortcutIntoTooltip(this ToolStripButton button, string shortcut) 
+        public static void EmbeddShortcutIntoTooltip(this ToolStripButton button, string shortcut)
         {
             string[] tooltipLines = button.ToolTipText.Split('\n');
             button.ToolTipText = string.Join(Environment.NewLine, tooltipLines.TakeWhile(x => !x.StartsWith("Shortcut: ")).ToArray());
@@ -96,6 +96,14 @@ namespace CSScriptNpp
         public static bool IsSameAs(this string text, string textToCompare, bool ignoreCase)
         {
             return string.Compare(text, textToCompare, ignoreCase) == 0;
+        }
+
+        public static string StripQuotation(this string text)
+        {
+            if (text.StartsWith("\"") && text.EndsWith("\""))
+                return text.Substring(1, text.Length - 2);
+            else
+                return text;
         }
 
         //public static TKey FindKeyByValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value)

@@ -506,6 +506,9 @@
   <ItemGroup>
     <None Include="Resources\dbg_visualise.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dbg_pin.png" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

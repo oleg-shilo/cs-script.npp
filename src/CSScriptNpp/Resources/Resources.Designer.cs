@@ -193,6 +193,16 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dbg_pin {
+            get {
+                object obj = ResourceManager.GetObject("dbg_pin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dbg_qwatch {
             get {
                 object obj = ResourceManager.GetObject("dbg_qwatch", resourceCulture);
@@ -558,26 +568,10 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to v1.0.19.0-v1.0.22.0
-        ///* All plugin shortcuts are made configurable from &quot;Shortcuts Dialog&quot;.
-        ///* Implemented Integrated Debugger.
-        ///  - Step Over
-        ///  - Step In
-        ///  - Step Out
-        ///  - Set Next Statement
-        ///  - Run to cursor
-        ///  - Toggle breakpoint
-        ///  - &apos;Call Stack&apos; Panel
-        ///  - &apos;Locals&apos; Panel
-        ///  - QuickWatch panel
-        ///  - Threads panel
-        ///  - Modules panel
-        ///  - Watch panel
-        ///  - Optional breaking on user Exceptions
-        ///  - Showing fields/properties values on mouse rollover
-        ///  - Breakpoints persistence
-        ///  v1.0.22.0
-        ///  - &apos;Transparen [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to v1.0.24.0+
+        ///* MemberInfo/MethodInfo popup is now positioned properly to fit the screen
+        ///* In MethodInfo popup method signatures are word-wrapped 
+        ///* Implemented Debug text value visualizer    .
         /// </summary>
         internal static string WhatsNew {
             get {

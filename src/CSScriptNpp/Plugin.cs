@@ -30,7 +30,9 @@ namespace CSScriptNpp
      *                 - Handle method expressions like Console.WriteLine("test")
      *             - Debug Objects panel
      *                 - Refresh value on demand
-     *                 - value visualizers
+     *                 - Dictionary<int,int> property names contain type information
+     *                 - implement visualiser and pin specific tooltip on mouse hover
+     *                 + text value visualizers
      *         - make handling Debug.Assert user friendlier
      *      
      * - Desirable but not essential features
