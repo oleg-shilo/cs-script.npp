@@ -41,7 +41,7 @@ class Script
                             new File(@"Plugins\CSScriptNpp\Mdbg\npp.dll"),
                             new File(@"Plugins\CSScriptNpp\Mdbg\raw.dll")))));
 
-        project.Actions = new WixSharp.Action[] 
+        project.Actions = new WixSharp.Action[]
         {
             new PathFileAction("%ProgramFiles%\\Notepad++\\notepad++.exe", "", "INSTALLDIR", Return.asyncNoWait, When.After, Step.InstallInitialize, Condition.NOT_Installed)
             {
@@ -72,7 +72,9 @@ public class CustonActions
             string installDir = GetNppDir();
             if (installDir == null)
             {
-                MessageBox.Show("Cannot find Notepad++ installation", "CS-Script.Npp Update");
+                MessageBox.Show("Cannot find Notepad++ installation.\n"+
+                "If it is a portable Notepad++ installation then you need to install the plugin manually from the About Box 'Check for Updates...'",
+                "CS-Script.Npp Update");
                 return ActionResult.Failure;
             }
             else

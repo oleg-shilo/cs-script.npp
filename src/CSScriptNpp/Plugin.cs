@@ -12,15 +12,11 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *     + MemberInfo/MethodInfo 
-     *         + popup should be positioned properly to fit the screen
-     *         + method params should be word-wrapped
      *     - Debugger
      *         - Debug panel
      *             - QuickWatch panel
      *                 - auto update
      *             - Watch panel
-     *                 - Pining sub-values
      *                 - Setting the variable/expression value
      *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'   
      *                   
@@ -32,7 +28,6 @@ namespace CSScriptNpp
      *                 - Refresh value on demand
      *                 - Dictionary<int,int> property names contain type information
      *                 - implement visualiser and pin specific tooltip on mouse hover
-     *                 + text value visualizers
      *         - make handling Debug.Assert user friendlier
      *      
      * - Desirable but not essential features
