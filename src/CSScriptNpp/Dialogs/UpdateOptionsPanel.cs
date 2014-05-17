@@ -37,7 +37,7 @@ namespace CSScriptNpp.Dialogs
                 catch { }
         }
 
-        bool Closed = false;
+        new bool Closed = false;
 
         private void okBtn_Click(object sender, EventArgs e)
         {

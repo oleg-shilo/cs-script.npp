@@ -36,6 +36,9 @@ namespace CSScriptNpp.Dialogs
         public bool IsExpanded { get; set; }
         public bool IsStatic { get; set; }
         public bool IsArray { get; set; }
+        public bool IsList { get; set; }
+        public bool IsDictionary { get; set; } 
+        public bool IsCollection { get { return IsArray || IsList || IsDictionary; } }
         public bool IsField { get; set; }
         public bool IsEditPlaceholder { get; set; }
         public string DbgId { get; set; }
@@ -106,7 +109,7 @@ namespace CSScriptNpp.Dialogs
         {
             get
             {
-                return !HasChildren && Parent != null;
+                return !HasChildren && Parent != null && !Parent.IsCollection;
             }
         }
 
@@ -118,6 +121,8 @@ namespace CSScriptNpp.Dialogs
             this.Type = source.Type;
             this.IsStatic = source.IsStatic;
             this.IsArray = source.IsArray;
+            this.IsList = source.IsList;
+            this.IsDictionary = source.IsDictionary;
             this.IsField = source.IsField;
             this.IsPublic = source.IsPublic;
             this.Tooltip = source.Tooltip;

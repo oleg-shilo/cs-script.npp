@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using CSScriptLibrary;
 using csscript;
 using ICSharpCode.NRefactory.Editor;
+using System.Xml;
 
 namespace CSScriptIntellisense
 {
@@ -26,12 +27,35 @@ namespace CSScriptIntellisense
             }
         }
 
+        static string[] GetGlobalSearchDirs()
+        {
+            var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
+            if (csscriptDir != null)
+            {
+                try
+                {
+                    var configFile = Path.Combine(csscriptDir, "css_config.xml");
+
+                    if (File.Exists(configFile))
+                    {
+                        var doc = new XmlDocument();
+                        doc.Load(configFile);
+
+                        return doc.FirstChild.SelectSingleNode("searchDirs").InnerText.Split(';');
+                    }
+                }
+                catch { }
+            }
+            return new string[0];
+        }
+
         static public Tuple<string[], string[]> GetProjectFiles(string script)
         {
             var searchDirs = new List<string> { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ScriptsDir, };
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
+            searchDirs.AddRange(GetGlobalSearchDirs());
 
             IList<string> sourceFiles = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
             sourceFiles.Add(script);

@@ -17,6 +17,7 @@ namespace CSScriptNpp
      *             - QuickWatch panel
      *                 - auto update
      *             - Watch panel
+     *                 + expend item does not work reliable (e.g. MethodInfo instance)
      *                 - Setting the variable/expression value
      *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'   
      *                   
@@ -26,8 +27,17 @@ namespace CSScriptNpp
      *                 - Handle method expressions like Console.WriteLine("test")
      *             - Debug Objects panel
      *                 - Refresh value on demand
-     *                 - Dictionary<int,int> property names contain type information
-     *                 - implement visualiser and pin specific tooltip on mouse hover
+     *                 - generic types display names are distorted: System.Collections.Generic.List`1<string>
+     *                 - dedicated support for collections
+     *                   - remove pins from items
+     *                   - dedicated (array-like) view for List and Map
+     *                   - Truncate when too many items
+     *                   - truncation warning
+     *                   - group actual properties into raw view
+     *                   - visualizer for the collection
+     *                 + displaying properties doesn't work with generic types (e.g. List<int>.Count)
+     *                 + Filtering out explicit interface implementation properties as impractical
+     *                 + implement visualiser and pin specific tooltip on mouse hover
      *         - make handling Debug.Assert user friendlier
      *      
      * - Desirable but not essential features
@@ -274,29 +284,29 @@ namespace CSScriptNpp
             SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, true);
         }
 
-        static int toggleScondaryPanelsCount = 0;
+        //static int toggleScondaryPanelsCount = 0;
         static public void ToggleScondaryPanels()
         {
             Plugin.ShowSecondaryPanels();
-            return;
+            //return;
 
-            if (toggleScondaryPanelsCount == 0 && (Plugin.OutputPanel == null || !Plugin.OutputPanel.Visible))
-            {
-                Plugin.DoOutputPanel();
-            }
-            else if (toggleScondaryPanelsCount == 3 && (Plugin.DebugPanel == null || !Plugin.DebugPanel.Visible))
-            {
-                Plugin.DoDebugPanel();
-            }
-            else if (toggleScondaryPanelsCount == 4)
-            {
-                Plugin.DoOutputPanel();
-                Plugin.DoDebugPanel();
-            }
+            //if (toggleScondaryPanelsCount == 0 && (Plugin.OutputPanel == null || !Plugin.OutputPanel.Visible))
+            //{
+            //    Plugin.DoOutputPanel();
+            //}
+            //else if (toggleScondaryPanelsCount == 3 && (Plugin.DebugPanel == null || !Plugin.DebugPanel.Visible))
+            //{
+            //    Plugin.DoDebugPanel();
+            //}
+            //else if (toggleScondaryPanelsCount == 4)
+            //{
+            //    Plugin.DoOutputPanel();
+            //    Plugin.DoDebugPanel();
+            //}
 
-            toggleScondaryPanelsCount++;
-            if (toggleScondaryPanelsCount > 4)
-                toggleScondaryPanelsCount = 0;
+            //toggleScondaryPanelsCount++;
+            //if (toggleScondaryPanelsCount > 4)
+            //    toggleScondaryPanelsCount = 0;
         }
 
         static public void Build()

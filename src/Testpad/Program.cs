@@ -18,6 +18,15 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
+            var args = "dsfsd,df".Split(',');
+            var list = new List<string>(args);
+            var map = new Dictionary<int, int>()
+            {
+                {1,3},
+                {2,7}
+            };
+
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

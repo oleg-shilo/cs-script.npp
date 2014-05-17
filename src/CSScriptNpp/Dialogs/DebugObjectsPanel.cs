@@ -192,6 +192,8 @@ namespace CSScriptNpp.Dialogs
                 var itemObject = item.Tag as DbgObject;
                 if (itemObject != null)
                 {
+                    itemObject.IsExpanded = false; //if is to be maintained then children need to be required immediately 
+                    itemObject.Children = null;
                     itemObject.IsModified = false;
                     if (itemObject.Parent != null)
                     {
@@ -283,13 +285,19 @@ namespace CSScriptNpp.Dialogs
                 if (valName.EndsWith("__BackingField")) //ignore auto-property backing fields
                     return null;
 
-                Func<string, bool> getBoolAttribute = attrName => dbgValue.Attribute(attrName).Value == "true";
+                Func<string, bool> getBoolAttribute = attrName =>
+                    {
+                        var attr = dbgValue.Attributes(attrName).FirstOrDefault();
+                        return attr != null && attr.Value == "true";
+                    };
 
                 var dbgObject = new DbgObject();
                 dbgObject.DbgId = dbgValue.Attribute("id").Value;
                 dbgObject.Name = valName;
                 dbgObject.Type = dbgValue.Attribute("typeName").Value.ReplaceClrAliaces();
                 dbgObject.IsArray = getBoolAttribute("isArray");
+                dbgObject.IsList = getBoolAttribute("isList");
+                dbgObject.IsDictionary = getBoolAttribute("isDictionary");
                 dbgObject.HasChildren = getBoolAttribute("isComplex");
                 dbgObject.IsField = !getBoolAttribute("isProperty");
                 dbgObject.IsStatic = getBoolAttribute("isStatic");

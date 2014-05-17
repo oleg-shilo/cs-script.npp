@@ -25,7 +25,7 @@ namespace CSScriptNpp.Dialogs
             set { nameLabel.Text = value; }
         }
 
-        public new string Shortcut
+        public string Shortcut
         {
             get
             {

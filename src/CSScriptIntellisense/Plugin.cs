@@ -96,6 +96,8 @@ namespace CSScriptIntellisense
                 foreach (var key in keysToIntercept)
                     KeyInterceptor.Instance.Add(key);
                 KeyInterceptor.Instance.Add(Keys.Tab);
+                KeyInterceptor.Instance.Add(Keys.Return);
+                KeyInterceptor.Instance.Add(Keys.Escape);
                 KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
             }
             else
@@ -104,6 +106,9 @@ namespace CSScriptIntellisense
 
         static bool TriggerCodeSnippetInsertion()
         {
+            if (!Config.Instance.CodeSnippetsEnabled) 
+                return false;
+
             Debug.WriteLine("------------------ TRIGGER called");
 
             Point point;
@@ -120,7 +125,7 @@ namespace CSScriptIntellisense
 
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
-            if (Config.Instance.SnapshotsEnabled)
+            if (Config.Instance.CodeSnippetsEnabled)
             {
                 if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && Npp.IsCurrentScriptFile())
                 {
