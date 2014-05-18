@@ -14,10 +14,7 @@ namespace CSScriptNpp
      * - Outstanding features
      *     - Debugger
      *         - Debug panel
-     *             - QuickWatch panel
-     *                 - auto update
      *             - Watch panel
-     *                 + expend item does not work reliable (e.g. MethodInfo instance)
      *                 - Setting the variable/expression value
      *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'   
      *                   
@@ -26,18 +23,9 @@ namespace CSScriptNpp
      *                 - Handle global (non variable based) expressions likes Environment.TickCount
      *                 - Handle method expressions like Console.WriteLine("test")
      *             - Debug Objects panel
-     *                 - Refresh value on demand
-     *                 - generic types display names are distorted: System.Collections.Generic.List`1<string>
      *                 - dedicated support for collections
-     *                   - remove pins from items
-     *                   - dedicated (array-like) view for List and Map
-     *                   - Truncate when too many items
      *                   - truncation warning
-     *                   - group actual properties into raw view
      *                   - visualizer for the collection
-     *                 + displaying properties doesn't work with generic types (e.g. List<int>.Count)
-     *                 + Filtering out explicit interface implementation properties as impractical
-     *                 + implement visualiser and pin specific tooltip on mouse hover
      *         - make handling Debug.Assert user friendlier
      *      
      * - Desirable but not essential features
@@ -47,6 +35,10 @@ namespace CSScriptNpp
      *          - Locals panel cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
      *              - reconstruct the tree branch by branch
+     *          - QuickWatch panel
+     *              - auto update
+     *          - Debug Objects panel
+     *              - Refresh value on demand
      *            
      */
 

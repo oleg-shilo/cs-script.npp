@@ -31,7 +31,7 @@ namespace CSScriptNpp.Dialogs
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listView1 = new BufferedListView();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -116,7 +116,6 @@ namespace CSScriptNpp.Dialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(514, 356);
             this.Controls.Add(this.listView1);
-            this.DoubleBuffered = true;
             this.Name = "DebugObjectsPanel";
             this.ShowInTaskbar = false;
             this.Text = "AutoWatchView";
@@ -150,5 +149,15 @@ namespace CSScriptNpp.Dialogs
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private ToolStripMenuItem copyValuessToolStripMenuItem;
+    }
+
+    public class BufferedListView : ListView
+    {
+        public BufferedListView()
+            : base()
+        {
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+        }
     }
 }

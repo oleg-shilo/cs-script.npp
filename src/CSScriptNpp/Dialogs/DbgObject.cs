@@ -37,7 +37,8 @@ namespace CSScriptNpp.Dialogs
         public bool IsStatic { get; set; }
         public bool IsArray { get; set; }
         public bool IsList { get; set; }
-        public bool IsDictionary { get; set; } 
+        public bool IsFake { get; set; }
+        public bool IsDictionary { get; set; }
         public bool IsCollection { get { return IsArray || IsList || IsDictionary; } }
         public bool IsField { get; set; }
         public bool IsEditPlaceholder { get; set; }
@@ -57,7 +58,8 @@ namespace CSScriptNpp.Dialogs
                 var obj = this;
                 while (obj.Parent != null)
                 {
-                    retval = obj.Parent.Name + "." + retval;
+                    if (!obj.Parent.IsSeparator)
+                        retval = obj.Parent.Name + "." + retval;
                     obj = obj.Parent;
                 }
                 return retval;
@@ -109,7 +111,7 @@ namespace CSScriptNpp.Dialogs
         {
             get
             {
-                return !HasChildren && Parent != null && !Parent.IsCollection;
+                return !HasChildren && Parent != null && !Name.StartsWith("[") && IndentationLevel > 0;
             }
         }
 
@@ -123,6 +125,7 @@ namespace CSScriptNpp.Dialogs
             this.IsArray = source.IsArray;
             this.IsList = source.IsList;
             this.IsDictionary = source.IsDictionary;
+            this.IsFake = source.IsFake;
             this.IsField = source.IsField;
             this.IsPublic = source.IsPublic;
             this.Tooltip = source.Tooltip;

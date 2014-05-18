@@ -1,5 +1,6 @@
-v1.0.25.0
-* MemberInfo/MethodInfo popup is now positioned properly to fit the screen
-* In MethodInfo popup method signatures are word-wrapped 
-* Implemented Debug text value visualizer    
-* Pining sub-values from Watch Panel
+v1.0.26.0
+* Debug Objects panel
+  - Added support for generic types members
+  - Implemented dedicated (array-like) view
+    for Lists and Dictionaries
+  - Members are grouped into 'raw view' and 'non public' categories

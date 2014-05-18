@@ -1,5 +1,8 @@
+using Microsoft.Samples.Debugging.CorDebug;
 using Microsoft.Samples.Debugging.CorDebug.NativeApi;
 using Microsoft.Samples.Debugging.MdbgEngine;
+using Microsoft.Samples.Tools.Mdbg;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -47,9 +50,48 @@ namespace npp
             return Regex.Replace(text, @"\b(" + pattern + @")\b", replacement);
         }
 
+        public static string Join(this IEnumerable<string> items, string delimiter = "")
+        {
+            return string.Join(delimiter, items.ToArray());
+        }
+
+        public static CorValue CreateCorValue(this MDbgProcess process, string value)
+        {
+            CorEval eval = process.Threads.Active.CorThread.CreateEval();
+            eval.NewString(value);
+            process.Go().WaitOne();
+            return (process.StopReason as EvalCompleteStopReason).Eval.Result;
+        }
+
+        //    return value.TypeName.StartsWith("System.Collections.Generic.List<");
+        //}
+
+        public static MDbgValue[] GenerateListItems(this MDbgValue value)
+        {
+            try
+            {
+                return value.GetListItems();
+            }
+            catch
+            {
+                return new[] { new MDbgValue(value.Process, "{items}", value.Process.CreateCorValue("Cannot retrieve items")) };
+            }
+        }
+
+        public static MDbgValue[] GenerateDictionaryItems(this MDbgValue value)
+        {
+            try
+            {
+                return value.GetDictionaryItems();
+            }
+            catch
+            {
+                return new[] { new MDbgValue(value.Process, "{items}", value.Process.CreateCorValue("Cannot retrieve items")) };
+            }
+        }
 
         //the following class is for reference only as it is moved to the Microsoft.Samples.Debugging.MdbgEngine.Extensions class 
-        internal static class Extensions 
+        internal static class Extensions
         {
             public static bool IsSet(CorDebugUserState value, CorDebugUserState bitValue)
             {

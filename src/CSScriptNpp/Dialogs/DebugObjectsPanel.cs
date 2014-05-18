@@ -250,27 +250,6 @@ namespace CSScriptNpp.Dialogs
                 listView1.Columns[1].Width = newWidth;
         }
 
-        //void ResizeTypeColumn()
-        //{
-        //    var g = CreateGraphics();
-
-        //    var newWidth = 0;
-
-        //    foreach (ListViewItem item in listView1.Items)
-        //    {
-        //        SizeF size = g.MeasureString(item.SubItems[2].Text, listView1.Font);
-
-        //        int requiredWidth = Math.Max(30, (int)size.Width + 20);
-        //        if (newWidth < requiredWidth)
-        //        {
-        //            newWidth = requiredWidth + 5;
-        //        }
-        //    }
-
-        //    if (listView1.Columns[2].Width < newWidth)
-        //        listView1.Columns[2].Width = newWidth;
-        //}
-
         DbgObject[] ToWatchObjects(string data)
         {
             if (string.IsNullOrEmpty(data))
@@ -297,6 +276,8 @@ namespace CSScriptNpp.Dialogs
                 dbgObject.Type = dbgValue.Attribute("typeName").Value.ReplaceClrAliaces();
                 dbgObject.IsArray = getBoolAttribute("isArray");
                 dbgObject.IsList = getBoolAttribute("isList");
+                dbgObject.IsFake = getBoolAttribute("isFake");
+                dbgObject.IsPublic = getBoolAttribute("isPublic");
                 dbgObject.IsDictionary = getBoolAttribute("isDictionary");
                 dbgObject.HasChildren = getBoolAttribute("isComplex");
                 dbgObject.IsField = !getBoolAttribute("isProperty");
@@ -308,12 +289,20 @@ namespace CSScriptNpp.Dialogs
                     string stValue = dbgValue.Attribute("value").Value;
                     dbgObject.Value = stValue;
                 }
-
+                else
+                {
+                    XAttribute displayValue = dbgValue.Attribute("rawDisplayValue");
+                    if (displayValue != null)
+                        dbgObject.Value = displayValue.Value;
+                }
                 return dbgObject;
             }).Where(x => x != null);
 
             var staticMembers = values.Where(x => x.IsStatic);
-            var instanceMembers = values.Where(x => !x.IsStatic);
+            var fakeMembers = values.Where(x => x.IsFake);
+            var privateMembers = values.Where(x => !x.IsPublic);
+
+            var instanceMembers = values.Where(x => !x.IsStatic && !x.IsFake && x.IsPublic);
             var result = new List<DbgObject>(instanceMembers);
             if (staticMembers.Any())
                 result.Add(
@@ -322,9 +311,34 @@ namespace CSScriptNpp.Dialogs
                         Name = "Static members",
                         HasChildren = true,
                         IsSeparator = true,
+                        IsStatic = true,
                         Children = staticMembers.ToArray()
                     });
-            return result.ToArray();
+
+            if (privateMembers.Any())
+                result.Add(
+                    new DbgObject
+                    {
+                        Name = "Non-Public members",
+                        HasChildren = true,
+                        IsSeparator = true,
+                        Children = privateMembers.ToArray()
+                    });
+
+            if (fakeMembers.Any())
+            {
+                var decoratedResult = new List<DbgObject>(fakeMembers);
+                decoratedResult.Add(new DbgObject
+                                        {
+                                            Name = "Raw View",
+                                            HasChildren = true,
+                                            IsSeparator = true,
+                                            Children = result.ToArray()
+                                        });
+                return decoratedResult.ToArray();
+            }
+            else
+                return result.ToArray();
         }
 
         protected void AddWatchObject(DbgObject item)
@@ -440,7 +454,12 @@ namespace CSScriptNpp.Dialogs
                 if (dbgObject.IsUnresolved)
                     icon = Resources.Resources.unresolved_value;
                 else if (dbgObject.IsSeparator)
-                    icon = Resources.Resources.dbg_container;
+                {
+                    if (dbgObject.IsStatic)
+                        icon = Resources.Resources.dbg_container;
+                    else
+                        icon = Resources.Resources.field;
+                }
                 else if (dbgObject.IsField)
                     icon = Resources.Resources.field;
                 else
@@ -495,7 +514,8 @@ namespace CSScriptNpp.Dialogs
 
                 e.Graphics.DrawString(e.Item.Text, listView1.Font, textBrush, textStartX, Y);
 
-                if (IsPinnable && !dbgObject.HasChildren && dbgObject.IndentationLevel > 0)
+                //if (IsPinnable && !dbgObject.HasChildren && dbgObject.IndentationLevel > 0)
+                if (IsPinnable && dbgObject.IsPinable)
                 {
                     int x = e.Bounds.X + e.Bounds.Width - Resources.Resources.dbg_pin.Width;
                     int y = e.Bounds.Y;
@@ -564,7 +584,7 @@ namespace CSScriptNpp.Dialogs
                     }
 
                     var dbgObject = (DbgObject)info.Item.Tag;
-                    if (dbgObject != null && dbgObject.IsPinable)
+                    if (dbgObject != null && dbgObject.IsPinable && IsPinnable)
                     {
                         if (GetItemPinClickableRange().Contains(e.X))
                             if (OnPinClicked != null)
@@ -591,8 +611,17 @@ namespace CSScriptNpp.Dialogs
             {
                 if (dbgObject.IsExpanded)
                 {
-                    foreach (var c in listView1.LootupListViewItems(dbgObject.Children))
+                    var allChildren = listView1.GetAllObjects()
+                                               .Where(x => x.IsDescendantOfAny(dbgObject))
+                                               .ToArray();
+
+                    foreach (var cObj in allChildren)
+                        cObj.IsExpanded = false; //so the items are not expended when/if they are visible again
+
+                    foreach (var c in listView1.LootupListViewItems(allChildren))
+                    {
                         listView1.Items.Remove(c);
+                    }
                 }
                 else
                 {
@@ -601,12 +630,6 @@ namespace CSScriptNpp.Dialogs
                         string data = Debugger.Invoke("locals", dbgObject.DbgId);
                         dbgObject.Children = ToWatchObjects(data);
                         dbgObject.HasChildren = dbgObject.Children.Any(); //readjust as complex type (e.g. array) may not have children after the deep inspection
-                        if (dbgObject.IsArray)
-                        {
-                            dbgObject.Value = string.Format("[{0} items]", dbgObject.Children.Count());
-                            item.SubItems[1].Text = dbgObject.DispayValue;
-                            item.ToolTipText = dbgObject.Tooltip;
-                        }
                     }
 
                     int index = listView1.IndexOfObject(dbgObject);
@@ -746,6 +769,11 @@ namespace CSScriptNpp.Dialogs
 
     static class Extensions
     {
+        //public static ListViewItem GetTopParent(this ListViewItem item)
+        //{
+        //    ListViewItem retva = item.Par
+        //}
+
         public static T[] AllNestedItems<T>(this T item, Func<T, IEnumerable<T>> getChildren)
         {
             int iterator = 0;
@@ -797,6 +825,11 @@ namespace CSScriptNpp.Dialogs
         public static IEnumerable<ListViewItem> LootupListViewItems(this ListView listView, IEnumerable<DbgObject> items)
         {
             return listView.Items.Cast<ListViewItem>().Where(x => items.Contains(x.Tag as DbgObject));
+        }
+
+        public static IEnumerable<DbgObject> GetAllObjects(this ListView listView)
+        {
+            return listView.Items.Cast<ListViewItem>().Select(x => x.Tag as DbgObject);
         }
 
         public static int IndexOfObject(this ListView listView, DbgObject item)

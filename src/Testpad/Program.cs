@@ -18,6 +18,8 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
+            var tt = typeof(List<int>).GetProperties();
+
             var args = "dsfsd,df".Split(',');
             var list = new List<string>(args);
             var map = new Dictionary<int, int>()

@@ -1,11 +1,5 @@
-using Microsoft.Samples.Debugging.CorDebug;
-using Microsoft.Samples.Debugging.CorDebug.NativeApi;
-using Microsoft.Samples.Debugging.MdbgEngine;
-using Microsoft.Samples.Tools.Mdbg;
-using npp.CSScriptNpp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,6 +8,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Microsoft.Samples.Debugging.CorDebug;
+using Microsoft.Samples.Debugging.CorDebug.NativeApi;
+using Microsoft.Samples.Debugging.MdbgEngine;
+using Microsoft.Samples.Tools.Mdbg;
+using npp.CSScriptNpp;
 
 namespace npp
 {
@@ -274,12 +273,6 @@ namespace npp
 
         public void ProcessInvoke(string command)
         {
-            if (test)
-            {
-                //test = false;
-                //Debug.Assert(false);
-            }
-
             //<invokeId>:<action>:<args>
             string[] parts = command.Split(new[] { ':' }, 3);
             string id = parts[0];
@@ -297,21 +290,47 @@ namespace npp
                         {
                             MDbgValue value = reportedValues[args];
                             MDbgValue[] items = null;
+                            MDbgValue[] diaplayItems = null; //decorated (fake) display items
 
                             if (value.IsArrayType)
                             {
                                 items = value.GetArrayItems();
                             }
-                            else if (value.IsComplexType)
+                            else if (value.IsListType)
+                            {
+                                diaplayItems = value.GenerateListItems();
+                            }
+                            else if (value.IsDictionaryType)
+                            {
+                                diaplayItems = value.GenerateDictionaryItems();
+                            }
+
+                            if (value.IsComplexType)
                             {
                                 items = value.GetFields().Concat(
                                         value.GetProperties()).ToArray();
                             }
 
                             if (items != null)
-                                result = "<items>" + string.Join("", items.Where(x => !x.Name.Contains("$")) //ignore any internal vars
+                            {
+                                string logicalItems = "";
+
+                                if (diaplayItems != null)
+                                    logicalItems = diaplayItems.Select(x =>
+                                                                        {
+                                                                            x.IsFake = true;
+                                                                            return Serialize(x);
+                                                                        }).Join();
+
+                                bool hasIndexer = value.IsListType || value.IsDictionaryType;
+
+                                string rawItems = items.Where(x => !x.Name.Contains("$")) //ignore any internal vars
+                                                                          .Where(x => !hasIndexer || x.Name != "Item")
                                                                           .Select(x => Serialize(x))
-                                                                          .ToArray()) + "</items>";
+                                                                          .Join();
+
+                                result = "<items>" + logicalItems + rawItems + "</items>";
+                            }
                         }
                     }
                     else if (action == "resolve_primitive")
@@ -370,6 +389,7 @@ namespace npp
                                         new XAttribute("id", valueId),
                                         new XAttribute("isProperty", false),
                                         new XAttribute("isStatic", false),
+                                        new XAttribute("isFake", false),
                                         new XAttribute("isComplex", false),
                                         new XAttribute("isArray", false),
                                         new XAttribute("value", "<N/A>"),
@@ -383,6 +403,9 @@ namespace npp
                                                new XAttribute("name", displayName ?? name),
                                                new XAttribute("id", valueId),
                                                new XAttribute("isProperty", val.IsProperty),
+                                               new XAttribute("isFake", val.IsFake),
+                                               new XAttribute("rawDisplayValue", val.DisplayValue ?? ""),
+                                               new XAttribute("isPublic", !val.IsPrivate),
                                                new XAttribute("isStatic", val.IsStatic),
                                                new XAttribute("typeName", val.TypeName));
 
