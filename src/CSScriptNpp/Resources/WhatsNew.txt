@@ -3,4 +3,5 @@ v1.0.26.0
   - Added support for generic types members
   - Implemented dedicated (array-like) view
     for Lists and Dictionaries
-  - Members are grouped into 'raw view' and 'non public' categories
+  - Members are grouped into 'raw view' and
+   'non public' categories
