@@ -32,4 +32,8 @@ void main(string[] args)
     var html = File.ReadAllText(@"E:\cs-script\cs-scriptWEB\npp\csscript.html");
     html = html.Replace("https://dl.dropboxusercontent.com/u/2192462/CS-S_NPP/CSScriptNpp.zip", "https://dl.dropboxusercontent.com/u/2192462/CS-S_NPP/CSScriptNpp."+version+".zip");
     File.WriteAllText(@"E:\cs-script\cs-scriptWEB\npp\csscript.html", html);
+
+    File.Copy(@"E:\Galos\Projects\CS-Script.Npp\CSScriptNpp\src\CSScriptNpp\Resources\WhatsNew.txt",
+              @".\CSScriptNpp."+version+".ReleaseNotes.txt",
+              true);
 }

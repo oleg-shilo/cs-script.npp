@@ -3,6 +3,7 @@ echo off
 del CSScriptNpp*.msi
 del CSScriptNpp*.zip
 del CSScriptNpp*.7z
+del CSScriptNpp*.txt
 
 move package.txt package.txt_
 move latest_version.txt latest_version.txt_
