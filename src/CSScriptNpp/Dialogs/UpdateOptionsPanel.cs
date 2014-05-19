@@ -133,5 +133,10 @@ namespace CSScriptNpp.Dialogs
         {
             Closed = true;
         }
+
+        private void releaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://csscript.net/npp/CSScriptNpp." + version + ".ReleaseNotes.txt");
+        }
     }
 }

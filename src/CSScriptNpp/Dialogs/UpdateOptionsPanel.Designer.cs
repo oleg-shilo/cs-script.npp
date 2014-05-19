@@ -38,6 +38,7 @@
             this.versionLbl = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.progressLbl = new System.Windows.Forms.Label();
+            this.releaseNotes = new System.Windows.Forms.LinkLabel();
             this.optionsGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,7 +76,7 @@
             this.optionsGroup.Controls.Add(this.customDeployment);
             this.optionsGroup.Controls.Add(this.manualDeployment);
             this.optionsGroup.Controls.Add(this.msiDeployment);
-            this.optionsGroup.Location = new System.Drawing.Point(12, 35);
+            this.optionsGroup.Location = new System.Drawing.Point(12, 31);
             this.optionsGroup.Name = "optionsGroup";
             this.optionsGroup.Size = new System.Drawing.Size(316, 164);
             this.optionsGroup.TabIndex = 2;
@@ -97,7 +98,7 @@
             // 
             this.okBtn.Location = new System.Drawing.Point(336, 6);
             this.okBtn.Name = "okBtn";
-            this.okBtn.Size = new System.Drawing.Size(75, 23);
+            this.okBtn.Size = new System.Drawing.Size(101, 23);
             this.okBtn.TabIndex = 3;
             this.okBtn.Text = "&Proceed";
             this.okBtn.UseVisualStyleBackColor = true;
@@ -108,7 +109,7 @@
             this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelBtn.Location = new System.Drawing.Point(336, 35);
             this.cancelBtn.Name = "cancelBtn";
-            this.cancelBtn.Size = new System.Drawing.Size(75, 23);
+            this.cancelBtn.Size = new System.Drawing.Size(101, 23);
             this.cancelBtn.TabIndex = 3;
             this.cancelBtn.Text = "&Cancel";
             this.cancelBtn.UseVisualStyleBackColor = true;
@@ -116,7 +117,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 13);
+            this.label1.Location = new System.Drawing.Point(11, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 13);
             this.label1.TabIndex = 4;
@@ -125,7 +126,7 @@
             // versionLbl
             // 
             this.versionLbl.AutoSize = true;
-            this.versionLbl.Location = new System.Drawing.Point(101, 13);
+            this.versionLbl.Location = new System.Drawing.Point(101, 9);
             this.versionLbl.Name = "versionLbl";
             this.versionLbl.Size = new System.Drawing.Size(53, 13);
             this.versionLbl.TabIndex = 4;
@@ -133,7 +134,7 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(12, 29);
+            this.progressBar.Location = new System.Drawing.Point(12, 25);
             this.progressBar.MarqueeAnimationSpeed = 50;
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(316, 10);
@@ -144,7 +145,7 @@
             // progressLbl
             // 
             this.progressLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.progressLbl.Location = new System.Drawing.Point(228, 13);
+            this.progressLbl.Location = new System.Drawing.Point(228, 9);
             this.progressLbl.Name = "progressLbl";
             this.progressLbl.Size = new System.Drawing.Size(97, 13);
             this.progressLbl.TabIndex = 4;
@@ -153,13 +154,25 @@
             this.progressLbl.UseMnemonic = false;
             this.progressLbl.Visible = false;
             // 
+            // releaseNotes
+            // 
+            this.releaseNotes.AutoSize = true;
+            this.releaseNotes.Location = new System.Drawing.Point(334, 71);
+            this.releaseNotes.Name = "releaseNotes";
+            this.releaseNotes.Size = new System.Drawing.Size(103, 13);
+            this.releaseNotes.TabIndex = 6;
+            this.releaseNotes.TabStop = true;
+            this.releaseNotes.Text = "View Release Notes";
+            this.releaseNotes.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.releaseNotes_LinkClicked);
+            // 
             // UpdateOptionsPanel
             // 
             this.AcceptButton = this.okBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelBtn;
-            this.ClientSize = new System.Drawing.Size(418, 212);
+            this.ClientSize = new System.Drawing.Size(442, 202);
+            this.Controls.Add(this.releaseNotes);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.progressLbl);
             this.Controls.Add(this.versionLbl);
@@ -191,5 +204,6 @@
         private System.Windows.Forms.Label versionLbl;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label progressLbl;
+        private System.Windows.Forms.LinkLabel releaseNotes;
     }
 }

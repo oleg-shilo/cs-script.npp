@@ -1,7 +1,9 @@
 v1.0.26.0
-* Debug Objects panel
+* Added access to the Release Notes 
+  during 'Check for Updates...''
+* Debug panels
   - Added support for generic types members
   - Implemented dedicated (array-like) view
     for Lists and Dictionaries
-  - Members are grouped into 'raw view' and
-   'non public' categories
+  - Members are grouped into 'Raw View' and
+   'Non-Public members' categories
