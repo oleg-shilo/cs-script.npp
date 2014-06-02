@@ -114,7 +114,11 @@ namespace CSScriptNpp
         public void Remove(params Keys[] keys)
         {
             foreach (int key in keys)
-                KeysToIntercept.RemoveAll(k => k == key);
+            {
+                //ignore for now as anyway the extra invoke will not do any harm 
+                //but eventually it needs to be ref counting based
+                //KeysToIntercept.RemoveAll(k => k == key);
+            }
         }
 
         public const int KF_UP = 0x8000;

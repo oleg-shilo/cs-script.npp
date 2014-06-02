@@ -75,6 +75,8 @@ namespace CSScriptNpp
         {
             try
             {
+                CSScriptIntellisense.Interop.NppUI.OnNppTick();
+
                 SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
                 if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
                 {

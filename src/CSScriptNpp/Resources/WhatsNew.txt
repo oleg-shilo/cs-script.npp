@@ -1,9 +1,10 @@
-v1.0.26.0
-* Added access to the Release Notes 
-  during 'Check for Updates...''
-* Debug panels
-  - Added support for generic types members
-  - Implemented dedicated (array-like) view
-    for Lists and Dictionaries
-  - Members are grouped into 'Raw View' and
-   'Non-Public members' categories
+v1.0.26.0+
+* Implemented running scripts 'as administrator'
+  Just add '//css_npp asadmin' to the script
+  and run it as usual.
+
+* Various improvements in CodeSnipptet, Autcompletion and 
+  MethodInfo interactions with each other.
+
+* Added printing line number for the entries in CodeMap
+  (subject of configuration value)

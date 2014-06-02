@@ -1,10 +1,9 @@
+using CSScriptIntellisense.Interop;
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptIntellisense.Interop;
 
 namespace CSScriptIntellisense
 {
@@ -58,6 +57,7 @@ namespace CSScriptIntellisense
                             form.KeyPress += (sender, e) =>
                             {
                                 NppEditor.ProcessKeyPress(e.KeyChar);
+                                Plugin.OnCharTyped(e.KeyChar);
                                 CheckIfNeedsClosing();
                             };
 
@@ -101,7 +101,6 @@ namespace CSScriptIntellisense
                     {
                         if (!simple)
                         {
-                            KeyInterceptor.Instance.Remove(Keys.Down, Keys.Up, Keys.Escape, Keys.Enter, Keys.Delete, Keys.Back);
                             KeyInterceptor.Instance.KeyDown -= Instance_KeyDown;
                         }
                     });
@@ -221,40 +220,30 @@ namespace CSScriptIntellisense
 
         public void Popup(Action<T> init, Action<T> end)
         {
-            if (IsShowing)
+            if (popupForm != null)
             {
                 Close();
+                return;
             }
 
             popupForm = new T();
-            popupForm.FormClosed +=
-                (sender, e) =>
-                {
-                    end(popupForm);
-                    if (popupForm != null)
-                    {
-                        popupForm.Dispose();
-                        popupForm = null;
-                    }
-                };
-
+            popupForm.FormClosed += (sender, e) =>
+                                    {
+                                        end(popupForm);
+                                        popupForm = null;
+                                    };
             init(popupForm);
 
-            //popupForm.Show(owner: Npp.NppHandle);//better but still crashes NPP; 
-            //popupForm.Show(owner: Plugin.GetCurrentScintilla()); //does not work well on Win7-x64; after 3-4 popups just hangs the whole NPP  
+            //popupForm.Show(owner: Npp.NppHandle);//better but still crashes NPP;
+            //popupForm.Show(owner: Plugin.GetCurrentScintilla()); //does not work well on Win7-x64; after 3-4 popups just hangs the whole NPP
             popupForm.ShowDialog();
-            //SetForegroundWindow(Npp.NppHandle); //may need it in the future if there focus management problems
-
         }
-
-        //[DllImport("user32.dll")]
-        //static extern bool SetForegroundWindow(IntPtr hWnd);
 
         public bool IsShowing
         {
             get
             {
-                return popupForm != null && popupForm.Visible;
+                return popupForm != null;
             }
         }
     }
@@ -275,5 +264,4 @@ namespace CSScriptIntellisense
             }
         }
     }
-
 }

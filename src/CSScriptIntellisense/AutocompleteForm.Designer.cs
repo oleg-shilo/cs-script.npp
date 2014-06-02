@@ -55,8 +55,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "AutocompleteForm";
             this.Deactivate += new System.EventHandler(this.AutocompleteForm_Deactivate);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AutocompleteForm_FormClosed);
             this.Load += new System.EventHandler(this.AutocompleteForm_Load);
-            this.FormClosing += AutocompleteForm_FormClosing;
             this.ResumeLayout(false);
 
         }

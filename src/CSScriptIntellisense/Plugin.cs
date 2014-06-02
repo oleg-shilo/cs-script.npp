@@ -51,7 +51,6 @@ namespace CSScriptIntellisense
                 });
         }
 
-
         //this method will also be called from the parent plugin
         static public void CommandMenuInit(ref int cmdIndex, CSScriptNpp.SetMenuCommand setCommand)
         {
@@ -106,7 +105,7 @@ namespace CSScriptIntellisense
 
         static bool TriggerCodeSnippetInsertion()
         {
-            if (!Config.Instance.CodeSnippetsEnabled) 
+            if (!Config.Instance.CodeSnippetsEnabled)
                 return false;
 
             Debug.WriteLine("------------------ TRIGGER called");
@@ -125,7 +124,7 @@ namespace CSScriptIntellisense
 
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
-            if (Config.Instance.CodeSnippetsEnabled)
+            if (Config.Instance.CodeSnippetsEnabled && !IsShowingInteractivePopup)
             {
                 if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && Npp.IsCurrentScriptFile())
                 {
@@ -175,19 +174,16 @@ namespace CSScriptIntellisense
 
                             if (modifiers.IsCtrl == shortcut.IsCtrl && modifiers.IsShift == shortcut.IsShift && modifiers.IsAlt == shortcut.IsAlt)
                             {
-
                                 handled = true;
                                 var handler = internalShortcuts[shortcut];
-                                Dispatcher.Shedule(10, () => Invoke(handler.Item2));
+                                Dispatcher.Shedule(10, () => InvokeShortcutHandler(handler.Item2));
 
                                 break;
                             }
                         }
                 }
             }
-
         }
-
 
         static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
         {
@@ -227,7 +223,7 @@ namespace CSScriptIntellisense
 
         static bool invokeInProgress = false;
 
-        static void Invoke(Action action)
+        static void InvokeShortcutHandler(Action action)
         {
             //notepad++ plugins invoked with Keyboard interceptor are reentrant !!!!!
             if (!invokeInProgress)
@@ -253,20 +249,6 @@ namespace CSScriptIntellisense
 #else
             catch { }
 #endif
-        }
-
-        //static bool toStyle = false;
-        static void Test()
-        {
-            //toStyle = !toStyle;
-            //if (toStyle)
-            //{
-            //    Style();
-            //}
-            //else
-            //{
-            //    Unstyle();
-            //}
         }
 
         static SnippetContext currentSnippetContext = null;
@@ -369,6 +351,26 @@ namespace CSScriptIntellisense
             ShowInfo(true);
         }
 
+        public static bool IsShowingMemberInfo
+        {
+            get { return memberInfoPopup != null && memberInfoPopup.IsShowing; }
+        }
+
+        public static bool IsShowingAutocompletion
+        {
+            get { return form != null && form.Visible; }
+        }
+
+        public static bool IsShowingNamespaceMenu
+        {
+            get { return namespaceMenu != null && namespaceMenu.Visible; }
+        }
+
+        public static bool IsShowingInteractivePopup
+        {
+            get { return IsShowingMemberInfo || IsShowingAutocompletion || IsShowingNamespaceMenu; }
+        }
+
         static void ShowInfo(bool simple)
         {
             if (!Config.Instance.DisableMethodInfo)
@@ -438,7 +440,9 @@ namespace CSScriptIntellisense
                         Point point = Npp.GetCaretScreenLocation();
 
                         if (namespaceMenu != null && namespaceMenu.Visible)
+                        {
                             namespaceMenu.Close();
+                        }
 
                         namespaceMenu = new CustomContextMenu();
                         namespaceMenu.Left = point.X;
@@ -495,6 +499,7 @@ namespace CSScriptIntellisense
                 }
             });
         }
+
         static void ShowSuggestionList()
         {
             HandleErrors(() =>
@@ -510,7 +515,7 @@ namespace CSScriptIntellisense
             });
         }
 
-        static void ShowSuggestionList(bool snippetsOnly)
+        static void ShowSuggestionList(bool snippetsOnly, bool memberInfoWasShowing = false)
         {
             IEnumerable<ICompletionData> items;
 
@@ -528,14 +533,19 @@ namespace CSScriptIntellisense
 
             if (items.Count() > 0)
             {
-                bool memberInfoWasShowing = memberInfoPopup.IsShowing;
-                if (memberInfoWasShowing)
+                if (memberInfoPopup.IsShowing)
+                {
                     memberInfoPopup.Close();
+                    NppUI.Marshal(() => ShowSuggestionList(snippetsOnly, true));
+                    return;
+                }
 
                 Point point = Npp.GetCaretScreenLocation();
 
                 if (form != null && form.Visible)
+                {
                     form.Close();
+                }
 
                 Action<ICompletionData> OnAccepted = data => OnAutocompletionAccepted(data, snippetsOnly);
 
@@ -545,7 +555,7 @@ namespace CSScriptIntellisense
                 form.FormClosed += (sender, e) =>
                 {
                     if (memberInfoWasShowing)
-                        ShowMethodInfo();
+                        NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
                 };
                 form.KeyPress += (sender, e) =>
                 {

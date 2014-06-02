@@ -10,7 +10,7 @@ using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
-    /*TODO:
+	/*TODO:
      * - Outstanding features
      *     - Debugger
      *         - Debug panel
@@ -19,7 +19,7 @@ namespace CSScriptNpp
      *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'   
      *                   
      *                             lsMVar = Debugger.Processes.Active.ResolveVariable(varName,
-                                               Debugger.Processes.Active.Threads.Active.CurrentFrame); )
+     *                                         Debugger.Processes.Active.Threads.Active.CurrentFrame); )
      *                 - Handle global (non variable based) expressions likes Environment.TickCount
      *                 - Handle method expressions like Console.WriteLine("test")
      *             - Debug Objects panel
@@ -70,6 +70,7 @@ namespace CSScriptNpp
             IEnumerable<Keys> keysToIntercept = BindInteranalShortcuts();
 
             KeyInterceptor.Instance.Install();
+
             foreach (var key in keysToIntercept)
                 KeyInterceptor.Instance.Add(key);
             KeyInterceptor.Instance.Add(Keys.Tab);

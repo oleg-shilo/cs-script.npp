@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace CSScriptIntellisense.Interop
@@ -15,6 +11,7 @@ namespace CSScriptIntellisense.Interop
         {
             instance = new Dispatcher();
         }
+
         static public void Shedule(int interval, Action action)
         {
             instance.SheduleImpl(interval, action);
@@ -40,13 +37,49 @@ namespace CSScriptIntellisense.Interop
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            timer1.Enabled = false;
             if (action != null)
             {
                 action();
                 action = null;
             }
+        }
+    }
 
-            timer1.Enabled = false;
+    public partial class NppUI
+    {
+        static Dictionary<int, List<Action>> handlers = new Dictionary<int, List<Action>>();
+
+        static public void Marshal(Action action)
+        {
+            Marshal(0, action);
+        }
+
+        static public void Marshal(int interval, Action action)
+        {
+            if (handlers.Any()) return;
+
+            int key = Environment.TickCount + interval;
+
+            if (!handlers.ContainsKey(key))
+                handlers.Add(key, new List<Action>());
+
+            handlers[key].Add(action);
+        }
+
+        static public void OnNppTick()
+        {
+            var signaledHandlers = handlers.Where(x => x.Key < Environment.TickCount).ToArray();
+            foreach (KeyValuePair<int, List<Action>> item in signaledHandlers)
+            {
+                foreach (Action action in item.Value)
+                    try
+                    {
+                        action();
+                    }
+                    catch { }
+                handlers.Remove(item.Key);
+            }
         }
     }
 }

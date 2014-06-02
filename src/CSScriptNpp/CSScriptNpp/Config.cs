@@ -45,6 +45,7 @@ namespace CSScriptNpp
         public string SciptHistory = "";
         public int SciptHistoryMaxCount = 10;
         public int DebugPanelInitialTab = 0;
+        public bool ShowLineNuberInCodeMap = false;
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
         public bool DebugAsConsole = true;
@@ -61,6 +62,7 @@ namespace CSScriptNpp
                 SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
                 SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
                 SetValue(Section, "DebugAsConsole", DebugAsConsole);
+                SetValue(Section, "ShowLineNuberInCodeMap", ShowLineNuberInCodeMap);
                 SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
                 SetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
                 SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
@@ -91,6 +93,7 @@ namespace CSScriptNpp
         {
             lock (this)
             {
+                ShowLineNuberInCodeMap = GetValue(Section, "ShowLineNuberInCodeMap", ShowLineNuberInCodeMap);
                 ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
                 ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
                 DebugAsConsole = GetValue(Section, "DebugAsConsole", DebugAsConsole);

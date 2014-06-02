@@ -1,8 +1,8 @@
-﻿using ICSharpCode.NRefactory.Completion;
+﻿using CSScriptIntellisense.Interop;
+using ICSharpCode.NRefactory.Completion;
 using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -71,7 +71,7 @@ namespace CSScriptIntellisense
             listBox1.Items.AddRange(items.ToArray());
             listBox1.SelectedItem = items.FirstOrDefault();
 
-            int extra = 6;
+            int extra = 10;
 
             var g = listBox1.CreateGraphics();
             var wideItem = items.Select(x => (int)g.MeasureString(x.DisplayText, listBox1.Font).Width).Max(x => x);
@@ -111,6 +111,7 @@ namespace CSScriptIntellisense
 
             SizeF size = e.Graphics.MeasureString(item.DisplayText, listBox1.Font);
             e.ItemHeight = (int)size.Height + verticalSpacing;
+
             e.ItemWidth = (int)size.Width + 16 + 10 + 10; //ensure enough space for the icon and the scrollbar
             listBox1.HorizontalExtent = e.ItemWidth;
         }
@@ -226,16 +227,28 @@ namespace CSScriptIntellisense
 
         private void AutocompleteForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape)
-                Close();
+            OnKeyDown(e.KeyCode);
+        }
 
-            if (e.KeyCode == Keys.Enter ||
-               (e.KeyCode == Keys.Right && Config.Instance.UseArrowToAccept) ||
-               (e.KeyCode == Keys.Tab && Config.Instance.UseTabToAccept))
+        public void OnKeyDown(Keys key)
+        {
+            if (!Visible)
             {
                 ListenToKeyStroks(false);
-                Close();
-                OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+            }
+            else
+            {
+                if (key == Keys.Escape)
+                    Close();
+
+                if (key == Keys.Enter ||
+                   (key == Keys.Right && Config.Instance.UseArrowToAccept) ||
+                   (key == Keys.Tab && Config.Instance.UseTabToAccept))
+                {
+                    ListenToKeyStroks(false);
+                    OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+                    Dispatcher.Shedule(10, Close);
+                }
             }
         }
 
@@ -265,6 +278,12 @@ namespace CSScriptIntellisense
 
             FilterFor(initialPartialName);
             ListenToKeyStroks(true);
+        }
+
+        private void AutocompleteForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            //MessageBox.Show("AutocompleteForm_FormClosed");
+            //Debug.WriteLine("Loaded xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         }
     }
 

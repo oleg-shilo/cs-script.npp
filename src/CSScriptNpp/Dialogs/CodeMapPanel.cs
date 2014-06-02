@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CSScriptIntellisense;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using CSScriptIntellisense;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -12,6 +12,7 @@ namespace CSScriptNpp
     public partial class CodeMapPanel : Form
     {
         static public CodeMapPanel Instance;
+
         public CodeMapPanel()
         {
             InitializeComponent();
@@ -30,6 +31,7 @@ namespace CSScriptNpp
                 mapTxt.SelectionLength = 0;
                 if (currentMapping.ContainsKey(lineNum))
                 {
+                    Npp.GrabFocus();
                     int currentLineNum = Npp.GetCaretLineNumber();
                     int prevLineEnd = Npp.GetLineStart(currentLineNum) - Environment.NewLine.Length;
                     int topScrollOffset = currentLineNum - Npp.GetFirstVisibleLine();
@@ -45,6 +47,7 @@ namespace CSScriptNpp
 
         string currentFile;
         Dictionary<int, int> currentMapping = new Dictionary<int, int>();
+
         public void RefreshContent()
         {
             string file = Npp.GetCurrentFile();
@@ -90,9 +93,13 @@ namespace CSScriptNpp
 
                     foreach (Reflector.CodeMapItem item in Reflector.GetMapOf(code))
                     {
-                        //eventually coordinates should go to the attached objet instead 
+                        //eventually coordinates should go to the attached objet instead
                         //of being embedded into text
-                        builder.AppendLine(item.DisplayName);
+
+                        if (Config.Instance.ShowLineNuberInCodeMap)
+                            builder.AppendLine(item.DisplayName + ": Line " + item.Line);
+                        else
+                            builder.AppendLine(item.DisplayName);
                         currentMapping.Add(lineNumber, item.Line);
                         lineNumber++;
                     }

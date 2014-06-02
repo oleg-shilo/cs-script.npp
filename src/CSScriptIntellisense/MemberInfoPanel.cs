@@ -31,6 +31,7 @@ namespace CSScriptIntellisense
         }
 
         int lastHintCount = -1;
+
         public void ProcessMethodOverloadHint(IEnumerable<string> hint)
         {
             int hintCount = (hint == null ? 0 : hint.Count());
@@ -102,20 +103,24 @@ namespace CSScriptIntellisense
 
         void ResetActiveText()
         {
-            SizeF size = MeasureDisplayArea();
-            this.Width = (int)size.Width;
-            this.Height = (int)size.Height;
-            this.Left = LeftBottomCorner.X;
-            this.Top = LeftBottomCorner.Y - (int)size.Height - 10;
+            try
+            {
+                SizeF size = MeasureDisplayArea();
+                this.Width = (int)size.Width;
+                this.Height = (int)size.Height;
+                this.Left = LeftBottomCorner.X;
+                this.Top = LeftBottomCorner.Y - (int)size.Height - 10;
 
-            Rectangle screen = Screen.FromControl(this).Bounds;
-            int screenRightX = screen.Left + screen.Width;
-            int formRightX = this.Left + this.Width;
+                Rectangle screen = Screen.FromControl(this).Bounds;
+                int screenRightX = screen.Left + screen.Width;
+                int formRightX = this.Left + this.Width;
 
-            if (formRightX > (screenRightX - 20)) //too close to the right edge of the screen so shift it to left
-                this.Left -= formRightX - (screenRightX - 20);
+                if (formRightX > (screenRightX - 20)) //too close to the right edge of the screen so shift it to left
+                    this.Left -= formRightX - (screenRightX - 20);
 
-            Invalidate();
+                Invalidate();
+            }
+            catch { }
         }
 
         public bool Simple = false;
@@ -228,6 +233,7 @@ namespace CSScriptIntellisense
         RectangleF downButtonArea = new RectangleF(0, 0, controlButtonSize, controlButtonSize);
 
         Font docFont;
+
         Font DocFont
         {
             get
@@ -330,6 +336,7 @@ namespace CSScriptIntellisense
         {
             try
             {
+                Visible = false;
                 Close();
             }
             catch { } //form can be already disposed
@@ -340,6 +347,8 @@ namespace CSScriptIntellisense
             if (!Simple)
                 ResetIdleTimer(); //prevent closing if the mouse is over the form in !Simple mode
         }
+
+        static int count = 0;
 
         private void MemberInfoPanel_Load(object sender, EventArgs e)
         {

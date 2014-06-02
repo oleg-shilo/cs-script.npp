@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -77,40 +78,89 @@ namespace CSScriptNpp
             return FileVersionInfo.GetVersionInfo(Path.Combine(Plugin.PluginDir, "cscs.exe")).FileVersion.ToString();
         }
 
-        static public void Execute(string scriptFileCmd, Action<Process> onStart = null, Action<string> onStdOut = null)
+        static public void Execute(string scriptFile, Action<Process> onStart = null, Action<string> onStdOut = null)
         {
-            var p = new Process();
-            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
-
-            //p.StartInfo.WorkingDirectory = Path.GetDirectoryName(scriptFileCmd);
-
-            if (onStdOut != null)
+            string outputFile = null;
+            try
             {
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
+                var p = new Process();
+                p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+                p.StartInfo.Arguments = "/nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFile + "\"";
+
+                bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
+                bool useFileRedirection = false;
+
+                if (needsElevation)
+                {
+                    p.StartInfo.Verb = "runas";
+                    useFileRedirection = (onStdOut != null);
+
+                    if (useFileRedirection)
+                        onStdOut("WARNING: StdOut interception is impossible for elevated scripts. The whole output will be displayed at the end of the execution instead. Alternatively you can elevate Notepad++ process.");
+                }
+
+                if (onStdOut != null)
+                {
+                    if (useFileRedirection)
+                    {
+                        outputFile = Path.GetTempFileName();
+
+                        string cmdText = string.Format("\"{0}\" {1} > \"{2}\"", p.StartInfo.FileName, p.StartInfo.Arguments, outputFile);
+
+                        p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                        p.StartInfo.FileName = "cmd.exe";
+                        p.StartInfo.Arguments = string.Format("/C \"{0}\"", cmdText);
+                    }
+                    else
+                    {
+                        p.StartInfo.UseShellExecute = false;
+                        p.StartInfo.CreateNoWindow = true;
+                        p.StartInfo.RedirectStandardOutput = true;
+                        p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                    }
+                }
+
+                p.Start();
+
+                if (onStart != null)
+                    onStart(p);
+
+                var output = new StringBuilder();
+
+                if (onStdOut != null && !useFileRedirection)
+                {
+                    string line = null;
+                    while (null != (line = p.StandardOutput.ReadLine()))
+                    {
+                        output.AppendLine(line);
+                        onStdOut(line);
+                    }
+                }
+                p.WaitForExit();
+
+                if (onStdOut != null && useFileRedirection)
+                {
+                    try
+                    {
+                        string outputText = File.ReadAllText(outputFile);
+                        output.Append(outputText);
+                        onStdOut(outputText);
+                    }
+                    catch { }
+                }
+
+                if (output.Length > 0 && output.ToString().StartsWith("Error: Specified file could not be compiled."))
+                    throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
             }
-
-            p.Start();
-
-            if (onStart != null)
-                onStart(p);
-
-            var output = new StringBuilder();
-
-            string line = null;
-            while (onStdOut != null && null != (line = p.StandardOutput.ReadLine()))
+            finally
             {
-                output.AppendLine(line);
-                onStdOut(line);
+                try
+                {
+                    if (outputFile != null && File.Exists(outputFile))
+                        File.Delete(outputFile);
+                }
+                catch { }
             }
-            p.WaitForExit();
-
-            if (output.Length > 0 && output.ToString().StartsWith("Error: Specified file could not be compiled."))
-                throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
         }
 
         public class DecorationInfo
@@ -221,7 +271,6 @@ namespace CSScriptNpp
             }
         }
 
-
         static public bool Verify(string scriptFile)
         {
             var p = new Process();
@@ -252,14 +301,49 @@ namespace CSScriptNpp
 
         static public bool IsAutoclassScript(string text)
         {
-            return Regex.Matches(text, @"\s?//css_args\s+/ac(,|\s+)").Count != 0;
+            return Regex.Matches(text, @"^\s*//css_args\s+/ac(,|\s+)", RegexOptions.Multiline).Count > 0;
+        }
+
+        static public bool IsAsAdminScript(string text)
+        {
+            return Regex.Matches(text, @"^\s*//css_npp\s+asadmin(,|\s+|;)", RegexOptions.Multiline).Count > 0;
+        }
+
+        static public bool IsAsAdminScriptFile(string file)
+        {
+            return IsAsAdminScript(File.ReadAllText(file));
+        }
+
+        static internal bool RunningAsAdmin
+        {
+            get
+            {
+                var p = new WindowsPrincipal(WindowsIdentity.GetCurrent());
+                return p.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+        }
+
+        static void EnsureCleanDirectory(string dir)
+        {
+            if (Directory.Exists(dir))
+            {
+                foreach (var file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
+                {
+                    File.Delete(file);
+                }
+
+                try { Directory.Delete(dir, true); }
+                catch { } //OK if cannot delete as it is already empty.
+            }
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
         }
 
         static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion)
         {
             string dir = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile));
-            if (Directory.Exists(dir))
-                Directory.Delete(dir, true);
+
+            EnsureCleanDirectory(dir); ;
 
             string engineFileName;
             if (targerRuntimeVersion == "v4.0.30319")
@@ -279,8 +363,6 @@ namespace CSScriptNpp
 
                 var files = proj.Assemblies.Where(a => !a.Contains("GAC_MSIL"))
                                 .Concat(proj.SourceFiles);
-
-                Directory.CreateDirectory(dir);
 
                 Action<string, string> copy = (file, directory) => File.Copy(file, Path.Combine(directory, Path.GetFileName(file)), true);
 
@@ -313,8 +395,6 @@ namespace CSScriptNpp
 
                 if (File.Exists(srcExe))
                 {
-                    Directory.CreateDirectory(dir);
-
                     File.Copy(srcExe, destExe, true);
                     File.Delete(srcExe);
                     return dir;
@@ -391,12 +471,28 @@ namespace CSScriptNpp
             string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
             string script = "\"" + scriptFile + "\"";
             string args = string.Format("{0} /nl /l {1} {2}", cscs, GenerateProbingDirArg(), script);
-            Process.Start(ConsoleHostPath, args);
+
+            if (!RunningAsAdmin)
+                ProcessStart(ConsoleHostPath, args, IsAsAdminScriptFile(scriptFile));
+            else
+                ProcessStart(ConsoleHostPath, args);
         }
 
         static public void ExecuteDebug(string scriptFileCmd)
         {
-            Process.Start("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\" //x\"");
+            ProcessStart("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\" //x\"");
+        }
+
+        static Process ProcessStart(string app, string args, bool elevated = false)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = app;
+            startInfo.Arguments = args;
+
+            if (elevated && !RunningAsAdmin)
+                startInfo.Verb = "runas";
+
+            return Process.Start(startInfo);
         }
 
         static public void OpenAsVSProjectFor(string script)

@@ -45,6 +45,8 @@ namespace CSScriptIntellisense
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
+            Debug.WriteLine("-------------------------------");
+
             SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
             if (Plugin.Enabled && nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
             {
