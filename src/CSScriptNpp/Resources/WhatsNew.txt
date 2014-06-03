@@ -8,3 +8,7 @@ v1.0.26.0+
 
 * Added printing line number for the entries in CodeMap
   (subject of configuration value)
+
+* Improved debugging step indication  
+  - for classless scripts
+  - for Unicode content

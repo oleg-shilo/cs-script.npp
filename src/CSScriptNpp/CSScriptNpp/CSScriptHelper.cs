@@ -13,18 +13,72 @@ using System.Xml;
 
 namespace CSScriptNpp
 {
-    public class Project
-    {
-        public string[] Assemblies;
-        public string[] SourceFiles;
-        public string PrimaryScript;
-    }
-
     public class CSScriptHelper
     {
-        static string nppScriptsDir;
+        private static string consoleHostPath;
+        private static string nppScriptsDir;
 
-        static string NppScriptsDir
+        private static string scriptDir;
+
+        private static string vsDir;
+
+        public static string ScriptsDir
+        {
+            get
+            {
+                if (scriptDir == null)
+                {
+                    string rootDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    scriptDir = Path.Combine(rootDir, "NppScripts");
+                }
+                return scriptDir;
+            }
+        }
+
+        public static string VsDir
+        {
+            get
+            {
+                if (vsDir == null)
+                    vsDir = Path.Combine(CSScript.GetScriptTempDir(), "NppScripts");
+                return vsDir;
+            }
+        }
+
+        static internal bool RunningAsAdmin
+        {
+            get
+            {
+                var p = new WindowsPrincipal(WindowsIdentity.GetCurrent());
+                return p.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+        }
+
+        private static string ConsoleHostPath
+        {
+            get
+            {
+                //if (consoleHostPath == null || !File.Exists(consoleHostPath) || !Utils.IsSameTimestamp(Assembly.GetExecutingAssembly().Location, consoleHostPath))
+                if (consoleHostPath == null || !File.Exists(consoleHostPath))
+                {
+                    consoleHostPath = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\ConsoleHost.exe");
+                    try
+                    {
+                        var dir = Path.GetDirectoryName(consoleHostPath);
+
+                        if (!Directory.Exists(dir))
+                            Directory.CreateDirectory(dir);
+
+                        File.WriteAllBytes(consoleHostPath, Resources.Resources.ConsoleHost); //always try to override existing to ensure the latest version
+                        //Utils.SetSameTimestamp(Assembly.GetExecutingAssembly().Location, consoleHostPath);
+                    }
+                    catch { } //it can be already locked (running)
+                }
+                return consoleHostPath;
+            }
+        }
+
+        private static string NppScriptsDir
         {
             get
             {
@@ -37,45 +91,68 @@ namespace CSScriptNpp
             }
         }
 
-        static string GenerateProbingDirArg()
+        static public void Build(string scriptFileCmd)
         {
-            string probingDirArg = "";
+            var p = new Process();
+            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+            p.StartInfo.Arguments = "/nl /ca " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
 
-            if (NppScriptsDir != null)
-                probingDirArg = "\"/dir:" + NppScriptsDir + "\"";
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
 
-            return probingDirArg;
+            p.Start();
+
+            var output = new StringBuilder();
+
+            bool error = false;
+            string line = null;
+            while (null != (line = p.StandardOutput.ReadLine()))
+            {
+                if (line.ToString().StartsWith("Error: Specified file could not be compiled."))
+                {
+                    error = true;
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(line) && !line.Contains("at csscript.CSExecutor."))
+                    output.AppendLine(line);
+            }
+            p.WaitForExit();
+
+            if (error)
+                throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", "")); //for a better appearance remove CS-Script related stuff
         }
 
-        static public Project GenerateProjectFor(string script)
+        static public void ClearVSDir()
         {
-            var retval = new Project { PrimaryScript = script };
+            try
+            {
+                string excludeDirPrefix = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) + "-";
 
-            var searchDirs = new List<string> { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
+                if (Directory.Exists(VsDir))
+                    foreach (string projectDir in Directory.GetDirectories(VsDir))
+                    {
+                        if (projectDir.StartsWith(excludeDirPrefix))
+                            continue;
 
-            var parser = new ScriptParser(script, searchDirs.ToArray(), false);
-            searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
-            searchDirs.AddRange(GetGlobalSearchDirs());
+                        //vshost.exe is the only file to be 100% times locked if VS has the project loaded
+                        string hostFile = Directory.GetFiles(projectDir, "*.vshost.exe", SearchOption.AllDirectories).FirstOrDefault();
 
-            var sources = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
-            sources.Insert(0, script);
+                        try
+                        {
+                            if (hostFile != null)
+                                File.Delete(hostFile);
 
-            retval.SourceFiles = sources.ToArray();
-
-            //some assemblies are referenced from code and some will need to be resolved from the namespaces
-            retval.Assemblies = parser.ReferencedNamespaces
-                                      .Where(name => !parser.IgnoreNamespaces.Contains(name))
-                                      .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
-                                      .Union(parser.ReferencedAssemblies
-                                                   .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
-                                      .Distinct()
-                                      .ToArray();
-            return retval;
-        }
-
-        static public string ScriptEngineVersion()
-        {
-            return FileVersionInfo.GetVersionInfo(Path.Combine(Plugin.PluginDir, "cscs.exe")).FileVersion.ToString();
+                            foreach (string file in Directory.GetFiles(projectDir, "*", SearchOption.AllDirectories))
+                                File.Delete(file);
+                            Directory.Delete(projectDir, true);
+                        }
+                        catch { }
+                    }
+            }
+            catch { }
         }
 
         static public void Execute(string scriptFile, Action<Process> onStart = null, Action<string> onStdOut = null)
@@ -163,13 +240,68 @@ namespace CSScriptNpp
             }
         }
 
-        public class DecorationInfo
+        static public void ExecuteAsynch(string scriptFile)
         {
-            public string ScriptFile;
-            public string AutoGenFile;
-            public int IngecionStart;
-            public int IngecionLength;
-            public int InjectedLineNumber;
+            string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
+            string script = "\"" + scriptFile + "\"";
+            string args = string.Format("{0} /nl /l {1} {2}", cscs, GenerateProbingDirArg(), script);
+
+            if (!RunningAsAdmin)
+                ProcessStart(ConsoleHostPath, args, IsAsAdminScriptFile(scriptFile));
+            else
+                ProcessStart(ConsoleHostPath, args);
+        }
+
+        static public void ExecuteDebug(string scriptFileCmd)
+        {
+            ProcessStart("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\" //x\"");
+        }
+
+        static public Project GenerateProjectFor(string script)
+        {
+            var retval = new Project { PrimaryScript = script };
+
+            var searchDirs = new List<string> { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
+
+            var parser = new ScriptParser(script, searchDirs.ToArray(), false);
+            searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
+            searchDirs.AddRange(GetGlobalSearchDirs());
+
+            var sources = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
+            sources.Insert(0, script);
+            retval.SourceFiles = sources.ToArray();
+
+            //some assemblies are referenced from code and some will need to be resolved from the namespaces
+            retval.Assemblies = parser.ReferencedNamespaces
+                                      .Where(name => !parser.IgnoreNamespaces.Contains(name))
+                                      .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
+                                      .Union(parser.ReferencedAssemblies
+                                                   .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
+                                      .Distinct()
+                                      .ToArray();
+            return retval;
+        }
+
+        static public string GetDbgInfoFile(string script, bool create = false)
+        {
+            string uniqueScriptHash = Path.GetFullPath(script).ToLower() //Win is not case-sensitive
+                                                              .GetHashCode()
+                                                              .ToString();
+
+            var file = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\" + uniqueScriptHash + "\\" + Path.GetFileName(script) + ".dbg");
+
+            if (create)
+            {
+                var dir = Path.GetDirectoryName(file);
+
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                if (!File.Exists(file))
+                    File.WriteAllText(file, "");
+            }
+
+            return file;
         }
 
         public static DecorationInfo GetDecorationInfo(string file)
@@ -213,31 +345,54 @@ namespace CSScriptNpp
             return retval;
         }
 
-        static bool IsAutoGenFile(string file)
+        static public string GetEntryFileName(string scriptFile)
         {
-            //auto-generated file in cache directory
-            return file.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase) && file.IndexOf(@"\CSSCRIPT\Cache\") != -1;
+            if (IsAutoClassScriptFile(scriptFile))
+            {
+                string cacheDir = Path.GetDirectoryName(CSScript.GetCachedScriptPath(scriptFile));
+                return Path.Combine(cacheDir, Path.GetFileNameWithoutExtension(scriptFile) + ".g" + Path.GetExtension(scriptFile));
+            }
+
+            return scriptFile;
         }
 
-        //public static bool GetAutogeneratedScriptsMapping(ref string file, ref int line)
-        //{
-        //    string entryFile = CSScriptHelper.GetEntryFileName(file);
+        static public string GetLatestAvailableDistro(string version, string distroExtension, Action<long, long> onProgress)
+        {
+            try
+            {
+                string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-        //    if (entryFile != file)
-        //    {
-        //        file = entryFile;
-        //        string code = File.ReadAllText(file);
-        //        int injectedLineOffset = CSScriptIntellisense.CSScriptHelper.GetDecorationInfo(code).Item1;
-        //        if (injectedLineOffset != -1)
-        //        {
-        //            int injectedLineNumber = code.Substring(0, injectedLineOffset).Split('\n').Count();
-        //            if (line >= injectedLineNumber)
-        //                line = line + 1;
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
+                string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + distroExtension);
+
+                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp." + version + "*" + distroExtension).Count();
+                if (numOfAlreadyDownloaded > 0)
+                    destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + " (" + (numOfAlreadyDownloaded + 1) + ")" + distroExtension);
+
+                DownloadBinary("http://csscript.net/npp/CSScriptNpp." + version + distroExtension, destFile, onProgress);
+
+                return destFile;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        static public string GetLatestAvailableVersion()
+        {
+            try
+            {
+                string url = "http://csscript.net/npp/latest_version.txt";
+#if DEBUG
+                url = "http://csscript.net/npp/latest_version_dbg.txt";
+#endif
+                return DownloadText(url);
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         static public string GetOriginalFileName(string autogenFile)
         {
@@ -252,92 +407,43 @@ namespace CSScriptNpp
             return null;
         }
 
-        static public string GetEntryFileName(string scriptFile)
+        static public bool IsAsAdminScriptFile(string file)
+        {
+            return HasDirective(file, IsAsAdminScriptDirective);
+        }
+
+        static public bool IsAutoClassScriptFile(string file)
+        {
+            return HasDirective(file, IsAutoclassScriptDirective);
+        }
+
+        static public bool HasDirective(string scriptFile, Predicate<string> lineChecker)
         {
             using (var file = new StreamReader(scriptFile))
             {
                 string line = null;
                 int count = 0;
                 while ((line = file.ReadLine()) != null && count++ < 5) //5 lines should be enough
-                {
-                    if (IsAutoclassScript(line))
-                    {
-                        string cacheDir = Path.GetDirectoryName(CSScript.GetCachedScriptPath(scriptFile));
-                        return Path.Combine(cacheDir, Path.GetFileNameWithoutExtension(scriptFile) + ".g" + Path.GetExtension(scriptFile));
-                    }
-                }
-
-                return scriptFile;
-            }
-        }
-
-        static public bool Verify(string scriptFile)
-        {
-            var p = new Process();
-            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /l /ca " + GenerateProbingDirArg() + " \"" + scriptFile + "\"";
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-            p.Start();
-
-            var output = new StringBuilder();
-
-            string line = null;
-            while (null != (line = p.StandardOutput.ReadLine()))
-            {
-                output.AppendLine(line);
-            }
-            p.WaitForExit();
-
-            string stdOutput = output.ToString();
-
-            if (stdOutput.Contains("Error: Specified file could not be compiled."))
+                    if (lineChecker(line))
+                        return true;
                 return false;
-            else
-                return true;
-        }
-
-        static public bool IsAutoclassScript(string text)
-        {
-            return Regex.Matches(text, @"^\s*//css_args\s+/ac(,|\s+)", RegexOptions.Multiline).Count > 0;
-        }
-
-        static public bool IsAsAdminScript(string text)
-        {
-            return Regex.Matches(text, @"^\s*//css_npp\s+asadmin(,|\s+|;)", RegexOptions.Multiline).Count > 0;
-        }
-
-        static public bool IsAsAdminScriptFile(string file)
-        {
-            return IsAsAdminScript(File.ReadAllText(file));
-        }
-
-        static internal bool RunningAsAdmin
-        {
-            get
-            {
-                var p = new WindowsPrincipal(WindowsIdentity.GetCurrent());
-                return p.IsInRole(WindowsBuiltInRole.Administrator);
             }
         }
 
-        static void EnsureCleanDirectory(string dir)
-        {
-            if (Directory.Exists(dir))
-            {
-                foreach (var file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
-                {
-                    File.Delete(file);
-                }
+        static char[] lineWordDelimiters = new[] { ' ', '\t' }; //for singleLine
 
-                try { Directory.Delete(dir, true); }
-                catch { } //OK if cannot delete as it is already empty.
-            }
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
+        static bool IsAutoclassScriptDirective(string text)
+        {
+            string[] words = text.Split(lineWordDelimiters, StringSplitOptions.RemoveEmptyEntries);
+            return words.Any() && words.First() == "//css_args" && (words.Contains("/ac") || words.Contains("/ac,") || words.Contains("/ac;"));
         }
+
+        static bool IsAsAdminScriptDirective(string text)
+        {
+            string[] words = text.Split(lineWordDelimiters, StringSplitOptions.RemoveEmptyEntries);
+            return words.Any() && words.First() == "//css_npp" && (words.Contains("asadmin") || words.Contains("asadmin,") || words.Contains("asadmin;"));
+        }
+
 
         static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion)
         {
@@ -410,91 +516,6 @@ namespace CSScriptNpp
             }
         }
 
-        static string[] GetGlobalSearchDirs()
-        {
-            var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
-            if (csscriptDir != null)
-            {
-                try
-                {
-                    var configFile = Path.Combine(csscriptDir, "css_config.xml");
-
-                    if (File.Exists(configFile))
-                    {
-                        var doc = new XmlDocument();
-                        doc.Load(configFile);
-
-                        return doc.FirstChild.SelectSingleNode("searchDirs").InnerText.Split(';');
-                    }
-                }
-                catch { }
-            }
-            return new string[0];
-        }
-
-        static public void Build(string scriptFileCmd)
-        {
-            var p = new Process();
-            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /ca " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
-
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-
-            p.Start();
-
-            var output = new StringBuilder();
-
-            bool error = false;
-            string line = null;
-            while (null != (line = p.StandardOutput.ReadLine()))
-            {
-                if (line.ToString().StartsWith("Error: Specified file could not be compiled."))
-                {
-                    error = true;
-                    continue;
-                }
-
-                if (!string.IsNullOrEmpty(line) && !line.Contains("at csscript.CSExecutor."))
-                    output.AppendLine(line);
-            }
-            p.WaitForExit();
-
-            if (error)
-                throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", "")); //for a better appearance remove CS-Script related stuff
-        }
-
-        static public void ExecuteAsynch(string scriptFile)
-        {
-            string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
-            string script = "\"" + scriptFile + "\"";
-            string args = string.Format("{0} /nl /l {1} {2}", cscs, GenerateProbingDirArg(), script);
-
-            if (!RunningAsAdmin)
-                ProcessStart(ConsoleHostPath, args, IsAsAdminScriptFile(scriptFile));
-            else
-                ProcessStart(ConsoleHostPath, args);
-        }
-
-        static public void ExecuteDebug(string scriptFileCmd)
-        {
-            ProcessStart("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\" //x\"");
-        }
-
-        static Process ProcessStart(string app, string args, bool elevated = false)
-        {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = app;
-            startInfo.Arguments = args;
-
-            if (elevated && !RunningAsAdmin)
-                startInfo.Verb = "runas";
-
-            return Process.Start(startInfo);
-        }
-
         static public void OpenAsVSProjectFor(string script)
         {
             var searchDirs = new List<string> { ScriptsDir, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
@@ -539,150 +560,40 @@ namespace CSScriptNpp
             Process.Start(projectFile);
         }
 
-        static public void ClearVSDir()
+        static public string ScriptEngineVersion()
         {
-            try
-            {
-                string excludeDirPrefix = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) + "-";
-
-                if (Directory.Exists(VsDir))
-                    foreach (string projectDir in Directory.GetDirectories(VsDir))
-                    {
-                        if (projectDir.StartsWith(excludeDirPrefix))
-                            continue;
-
-                        //vshost.exe is the only file to be 100% times locked if VS has the project loaded
-                        string hostFile = Directory.GetFiles(projectDir, "*.vshost.exe", SearchOption.AllDirectories).FirstOrDefault();
-
-                        try
-                        {
-                            if (hostFile != null)
-                                File.Delete(hostFile);
-
-                            foreach (string file in Directory.GetFiles(projectDir, "*", SearchOption.AllDirectories))
-                                File.Delete(file);
-                            Directory.Delete(projectDir, true);
-                        }
-                        catch { }
-                    }
-            }
-            catch { }
+            return FileVersionInfo.GetVersionInfo(Path.Combine(Plugin.PluginDir, "cscs.exe")).FileVersion.ToString();
         }
 
-        static string vsDir;
-
-        public static string VsDir
+        static public bool Verify(string scriptFile)
         {
-            get
+            var p = new Process();
+            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+            p.StartInfo.Arguments = "/nl /l /ca " + GenerateProbingDirArg() + " \"" + scriptFile + "\"";
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            p.Start();
+
+            var output = new StringBuilder();
+
+            string line = null;
+            while (null != (line = p.StandardOutput.ReadLine()))
             {
-                if (vsDir == null)
-                    vsDir = Path.Combine(CSScript.GetScriptTempDir(), "NppScripts");
-                return vsDir;
+                output.AppendLine(line);
             }
+            p.WaitForExit();
+
+            string stdOutput = output.ToString();
+
+            if (stdOutput.Contains("Error: Specified file could not be compiled."))
+                return false;
+            else
+                return true;
         }
 
-        static string scriptDir;
-
-        public static string ScriptsDir
-        {
-            get
-            {
-                if (scriptDir == null)
-                {
-                    string rootDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    scriptDir = Path.Combine(rootDir, "NppScripts");
-                }
-                return scriptDir;
-            }
-        }
-
-        static string consoleHostPath;
-
-        static string ConsoleHostPath
-        {
-            get
-            {
-                //if (consoleHostPath == null || !File.Exists(consoleHostPath) || !Utils.IsSameTimestamp(Assembly.GetExecutingAssembly().Location, consoleHostPath))
-                if (consoleHostPath == null || !File.Exists(consoleHostPath))
-                {
-                    consoleHostPath = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\ConsoleHost.exe");
-                    try
-                    {
-                        var dir = Path.GetDirectoryName(consoleHostPath);
-
-                        if (!Directory.Exists(dir))
-                            Directory.CreateDirectory(dir);
-
-                        File.WriteAllBytes(consoleHostPath, Resources.Resources.ConsoleHost); //always try to override existing to ensure the latest version
-                        //Utils.SetSameTimestamp(Assembly.GetExecutingAssembly().Location, consoleHostPath);
-                    }
-                    catch { } //it can be already locked (running)
-                }
-                return consoleHostPath;
-            }
-        }
-
-        static public string GetDbgInfoFile(string script, bool create = false)
-        {
-            string uniqueScriptHash = Path.GetFullPath(script).ToLower() //Win is not case-sensitive
-                                                              .GetHashCode()
-                                                              .ToString();
-
-            var file = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\" + uniqueScriptHash + "\\" + Path.GetFileName(script) + ".dbg");
-
-            if (create)
-            {
-                var dir = Path.GetDirectoryName(file);
-
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-
-                if (!File.Exists(file))
-                    File.WriteAllText(file, "");
-            }
-
-            return file;
-        }
-
-        static public string GetLatestAvailableVersion()
-        {
-            try
-            {
-                string url = "http://csscript.net/npp/latest_version.txt";
-#if DEBUG
-                url = "http://csscript.net/npp/latest_version_dbg.txt";
-#endif
-                return DownloadText(url);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        static public string GetLatestAvailableDistro(string version, string distroExtension, Action<long, long> onProgress)
-        {
-            try
-            {
-                string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-
-                string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + distroExtension);
-
-                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp." + version + "*" + distroExtension).Count();
-                if (numOfAlreadyDownloaded > 0)
-                    destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + " (" + (numOfAlreadyDownloaded + 1) + ")" + distroExtension);
-
-                DownloadBinary("http://csscript.net/npp/CSScriptNpp." + version + distroExtension, destFile, onProgress);
-
-                return destFile;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
+        private static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
         {
             var sb = new StringBuilder();
             byte[] buf = new byte[1024 * 4];
@@ -713,7 +624,7 @@ namespace CSScriptNpp
             }
         }
 
-        static string DownloadText(string url, string proxyUser = null, string proxyPw = null)
+        private static string DownloadText(string url, string proxyUser = null, string proxyPw = null)
         {
             var sb = new StringBuilder();
             byte[] buf = new byte[1024 * 4];
@@ -737,5 +648,90 @@ namespace CSScriptNpp
                 return sb.ToString();
             }
         }
+
+        //public static bool GetAutogeneratedScriptsMapping(ref string file, ref int line)
+        //{
+        //    string entryFile = CSScriptHelper.GetEntryFileName(file);
+        private static void EnsureCleanDirectory(string dir)
+        {
+            if (Directory.Exists(dir))
+            {
+                foreach (var file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
+                {
+                    File.Delete(file);
+                }
+
+                try { Directory.Delete(dir, true); }
+                catch { } //OK if cannot delete as it is already empty.
+            }
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+        }
+
+        private static string GenerateProbingDirArg()
+        {
+            string probingDirArg = "";
+
+            if (NppScriptsDir != null)
+                probingDirArg = "\"/dir:" + NppScriptsDir + "\"";
+
+            return probingDirArg;
+        }
+
+        private static string[] GetGlobalSearchDirs()
+        {
+            var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
+            if (csscriptDir != null)
+            {
+                try
+                {
+                    var configFile = Path.Combine(csscriptDir, "css_config.xml");
+
+                    if (File.Exists(configFile))
+                    {
+                        var doc = new XmlDocument();
+                        doc.Load(configFile);
+
+                        return doc.FirstChild.SelectSingleNode("searchDirs").InnerText.Split(';');
+                    }
+                }
+                catch { }
+            }
+            return new string[0];
+        }
+
+        private static bool IsAutoGenFile(string file)
+        {
+            //auto-generated file in cache directory
+            return file.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase) && file.IndexOf(@"\CSSCRIPT\Cache\") != -1;
+        }
+
+        private static Process ProcessStart(string app, string args, bool elevated = false)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = app;
+            startInfo.Arguments = args;
+
+            if (elevated && !RunningAsAdmin)
+                startInfo.Verb = "runas";
+
+            return Process.Start(startInfo);
+        }
+
+        public class DecorationInfo
+        {
+            public string AutoGenFile;
+            public int IngecionLength;
+            public int IngecionStart;
+            public int InjectedLineNumber;
+            public string ScriptFile;
+        }
+    }
+
+    public class Project
+    {
+        public string[] Assemblies;
+        public string PrimaryScript;
+        public string[] SourceFiles;
     }
 }

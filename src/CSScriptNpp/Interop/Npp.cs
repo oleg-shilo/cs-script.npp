@@ -1,6 +1,7 @@
-using CSScriptIntellisense;
+﻿using CSScriptIntellisense;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -196,6 +197,45 @@ namespace CSScriptNpp
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETCURRENTPOS, pos, 0);
+        }
+
+
+        //Shocking!!! 
+        //For selection, ranges, text length, navigation
+        //Scintilla operates in units, which are not characters but bytes.
+        //thus if for the document content "test" you execute selection(start:0,end:3)
+        //it will select the whole word [test]
+        //However the same for the Cyrillic content "тест" will
+        //select only two characters [те]ст because they compose
+        //4 bytes.
+        //
+        //Basically in Scintilla language "position" is not a character offset
+        //but a byte offset.
+        //
+        //This is a hard to believe Scintilla flaw!!!
+        //
+        //The problem is discussed here: https://scintillanet.codeplex.com/discussions/218036
+        //And here: https://scintillanet.codeplex.com/discussions/455082
+
+        public static int CharOffsetToPosition(int offset, string file)
+        {
+            using (var reader = new StreamReader(file))
+            {
+                var buffer = new char[offset];
+                reader.Read(buffer, 0, offset);
+                return Encoding.UTF8.GetByteCount(buffer);
+            }
+            //return Encoding.UTF8.GetByteCount(File.ReadAllText(file).Remove(offset));
+        }
+
+        public static int PositionToCharOffset(int position, string file)
+        {
+            using (var reader = File.OpenRead(file))
+            {
+                var buffer = new byte[position];
+                reader.Read(buffer, 0, position);
+                return Encoding.UTF8.GetCharCount(buffer);
+            }
         }
 
         public static void ClearSelection()

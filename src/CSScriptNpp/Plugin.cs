@@ -10,7 +10,7 @@ using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
-	/*TODO:
+    /*TODO:
      * - Outstanding features
      *     - Debugger
      *         - Debug panel

@@ -1,4 +1,4 @@
-using CSScriptNpp.Dialogs;
+﻿using CSScriptNpp.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -409,6 +409,9 @@ namespace CSScriptNpp
         static public void NavigateToFileLocation(string sourceLocation)
         {
             var location = FileLocation.Parse(sourceLocation);
+            location.Start = Npp.CharOffsetToPosition(location.Start, location.File);
+            location.End = Npp.CharOffsetToPosition(location.End, location.File);
+
             TranslateCompiledLocation(location);
 
             if (File.Exists(location.File))
@@ -674,6 +677,22 @@ namespace CSScriptNpp
 
         static public void TranslateCompiledLocation(FileLocation location)
         {
+            //Shocking!!! 
+            //For selection, ranges, text length, navigation
+            //Scintilla operates in units, which are not characters but bytes.
+            //thus if for the document content "test" you execute selection(start:0,end:3)
+            //it will select the whole word [test]
+            //However the same for the Cyrillic content "тест" will
+            //select only two characters [те]ст because they compose
+            //4 bytes.
+            //
+            //Basically in Scintilla language "position" is not a character offset
+            //but a byte offset.
+            //
+            //This is a hard to believe Scintilla flaw!!!
+            //The problem is discussed here: https://scintillanet.codeplex.com/discussions/218036
+            //And here: https://scintillanet.codeplex.com/discussions/455082
+
             //Debug.WriteLine("-----------------------------");
             //Debug.WriteLine("Before: {0} ({1},{2})", location.File, location.Start, location.End);
             //return;
@@ -688,6 +707,7 @@ namespace CSScriptNpp
                         {
                             location.Start -= DecorationInfo.IngecionLength;
                             location.End -= DecorationInfo.IngecionLength;
+                            location.Line--;
                         }
                         //Debug.WriteLine("After: {0} ({1},{2})", location.File, location.Start, location.End);
                     }
