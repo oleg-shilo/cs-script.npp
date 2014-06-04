@@ -30,6 +30,7 @@
         {
             this.mapTxt = new System.Windows.Forms.TextBox();
             this.refreshLabel = new System.Windows.Forms.LinkLabel();
+            this.error = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // mapTxt
@@ -58,12 +59,29 @@
             this.refreshLabel.Text = "Refresh";
             this.refreshLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.refreshLabel_LinkClicked);
             // 
+            // error
+            // 
+            this.error.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.error.BackColor = System.Drawing.Color.White;
+            this.error.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.error.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.error.ForeColor = System.Drawing.Color.Red;
+            this.error.Location = new System.Drawing.Point(12, 12);
+            this.error.Multiline = true;
+            this.error.Name = "error";
+            this.error.ReadOnly = true;
+            this.error.Size = new System.Drawing.Size(195, 64);
+            this.error.TabIndex = 3;
+            // 
             // CodeMapPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.error);
             this.Controls.Add(this.refreshLabel);
             this.Controls.Add(this.mapTxt);
             this.Name = "CodeMapPanel";
@@ -78,5 +96,6 @@
 
         private System.Windows.Forms.TextBox mapTxt;
         private System.Windows.Forms.LinkLabel refreshLabel;
+        private System.Windows.Forms.TextBox error;
     }
 }

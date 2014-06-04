@@ -726,10 +726,7 @@ namespace CSScriptIntellisense
 
                 foreach (var subNode in node.Children)
                 {
-                    if (selector(subNode))
-                        result.Add(subNode);
-                    else
-                        queue.Enqueue(subNode);
+                    queue.Enqueue(subNode);
                 }
             }
 

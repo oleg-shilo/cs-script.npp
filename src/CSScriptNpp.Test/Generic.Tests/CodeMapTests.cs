@@ -60,19 +60,20 @@ namespace CSScriptIntellisense.Test
         [Fact]
         public void AutoClassClass()
         {
-            string code = @"//css_args /ac
-                            //css_inc test.cs
-                            using System;
-                            using System.Linq;
-                            using System.Data;
+            string code = 
+@"//css_inc test.cs
+//css_args /ac
+using System;
+using System.Linq;
+using System.Data;
 
-                            void main (string[] args)
-                            {
-                                Console.WriteLine(""Hello World!"");
-                            }
-                            int Count;
-                            int TestProp { get; set; }
-                            void TestMethod() {}";
+void main (string[] args)
+{
+    Console.WriteLine(""Hello World!"");
+}
+int Count;
+int TestProp { get; set; }
+void TestMethod() {}";
 
             var map = Reflector.GetMapOf(code);
 
@@ -87,5 +88,69 @@ namespace CSScriptIntellisense.Test
             Assert.Equal(13, map[2].Line);
             Assert.Equal("TestMethod()", map[2].DisplayName);
         }
+
+        [Fact]
+        public void NestedClasses()
+        {
+string code = @"using System;
+
+
+//test
+[Description(""Test"")]                            
+class ScriptA
+{
+    int Count;
+    int fieldI;
+    int prop {get;set;}
+    void main0() {}
+    void main1(int test) {}
+    void main2(int test, int test2) {}
+    
+    class Printer
+    {
+        void Print(int test) {}
+        string Name {get;set;}
+        
+        class Settings
+        {
+            void Print(int test) {}
+            string Name {get;set;}
+        }
+    }
+
+}
+
+class ScriptB
+{
+    int CountB;
+    int fieldIB;
+    int propB {get;set;}
+    void main0() {}
+    void main1B(int test) {}
+    void main2B(int test, int test2) {}
+
+}";
+
+            var map = Reflector.GetMapOf(code).OrderBy(x=>x.ParentDisplayName)
+                               .Select(x=>string.Format("{0}.{1}: Line {2}", x.ParentDisplayName, x.DisplayName, x.Line))
+                               .ToArray();
+
+            string tttt = string.Join(Environment.NewLine, map);
+            //Assert.Equal(4, map.Count());
+
+            //Assert.Equal(7, map[0].Line);
+            //Assert.Equal("prop", map[0].DisplayName);
+            //Assert.Equal("Script", map[0].ParentDisplayName);
+
+            //Assert.Equal(8, map[1].Line);
+            //Assert.Equal("main0()", map[1].DisplayName);
+
+            //Assert.Equal(9, map[2].Line);
+            //Assert.Equal("main1()", map[2].DisplayName);
+
+            //Assert.Equal(10, map[3].Line);
+            //Assert.Equal("main2(,)", map[3].DisplayName);
+        }
+
     }
 }

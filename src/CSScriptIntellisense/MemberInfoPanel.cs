@@ -48,7 +48,11 @@ namespace CSScriptIntellisense
             if (hintCount == 0)
                 items.AddRange(rawItems);
             else
-                items.AddRange(rawItems.Where(s => !s.ArgumentCount.HasValue || s.ArgumentCount.Value == 0 || s.ArgumentCount.Value >= hintCount));
+                items.AddRange(rawItems.Where(s => s.ArgumentCount.HasValue && s.ArgumentCount.Value >= hintCount));
+                //items.AddRange(rawItems.Where(s => !s.ArgumentCount.HasValue || s.ArgumentCount.Value == 0 || s.ArgumentCount.Value >= hintCount));
+            
+            if(!items.Any())
+                items.AddRange(rawItems);
 
             index = 0;
             if (initaialSelection != null)

@@ -1,14 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
 using CSScriptIntellisense;
+using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
-using ICSharpCode.NRefactory.CSharp;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 //The same as UltraSharp.Reflector but based on Cecil
 namespace UltraSharp.Cecil
@@ -34,6 +33,14 @@ namespace UltraSharp.Cecil
 
     public class Reflector
     {
+        public class SyntaxErrorException : ApplicationException
+        {
+            public SyntaxErrorException(string message)
+                : base(message)
+            {
+            }
+        }
+
         public class Result
         {
             public string Code;
@@ -45,9 +52,9 @@ namespace UltraSharp.Cecil
             usedNamespaces = namespacesToHide;
         }
 
-        string[] usedNamespaces = new string[0];
-        StringBuilder classDefinition = new StringBuilder();
-        int intend = 0;
+        private string[] usedNamespaces = new string[0];
+        private StringBuilder classDefinition = new StringBuilder();
+        private int intend = 0;
 
         static public string OutputDir;
 
@@ -93,8 +100,8 @@ namespace UltraSharp.Cecil
             return Process(null, type, member);
         }
 
-        IMember lookupMember;
-        int lookupMemberPosition = -1;
+        private IMember lookupMember;
+        private int lookupMemberPosition = -1;
 
         public Result Process(IAssembly assembly, IType type, IMember member = null)
         {
@@ -166,12 +173,12 @@ namespace UltraSharp.Cecil
             return this;
         }
 
-        string GetInheritanceChain(IType type)
+        private string GetInheritanceChain(IType type)
         {
             return type.GetInheritanceChain(usedNamespaces);
         }
 
-        List<string> classTypeParamsList = new List<string>();
+        private List<string> classTypeParamsList = new List<string>();
 
         public Reflector ProcessClass(IType type)
         {
@@ -232,12 +239,12 @@ namespace UltraSharp.Cecil
             return this;
         }
 
-        string GetTypeName(IField field)
+        private string GetTypeName(IField field)
         {
             return field.GetTypeName(usedNamespaces);
         }
 
-        void ReconstructNestedType(IType type)
+        private void ReconstructNestedType(IType type)
         {
             //NoteMemberPosition(type);
 
@@ -261,7 +268,7 @@ namespace UltraSharp.Cecil
             CloseLine("partial " + type.Kind.ToString().ToLower() + " " + type.Name + " { }");
         }
 
-        void ReconstructField(IField item)
+        private void ReconstructField(IField item)
         {
             var field = (item as DefaultResolvedField);
             if (field != null)
@@ -285,7 +292,7 @@ namespace UltraSharp.Cecil
             CloseLine();
         }
 
-        void NoteMemberPosition(IMember item)
+        private void NoteMemberPosition(IMember item)
         {
             if (item == lookupMember)
             {
@@ -293,12 +300,12 @@ namespace UltraSharp.Cecil
             }
         }
 
-        void NoteLookupPosition()
+        private void NoteLookupPosition()
         {
             lookupMemberPosition = classDefinition.Length;
         }
 
-        void ReconstructMethod(IMethod item)
+        private void ReconstructMethod(IMethod item)
         {
             if (item.Name == "Finalize") //item.IsDestructor is always false
                 return;
@@ -325,7 +332,7 @@ namespace UltraSharp.Cecil
             CloseLine();
         }
 
-        string BuildMethodDeclaration(IMethod item, string forceMethodName = null)
+        private string BuildMethodDeclaration(IMethod item, string forceMethodName = null)
         {
             var methodSignature = new StringBuilder();
 
@@ -366,7 +373,7 @@ namespace UltraSharp.Cecil
             return methodText;
         }
 
-        void ReconstructEvent(IEvent item)
+        private void ReconstructEvent(IEvent item)
         {
             var field = (item as DefaultResolvedEvent);
             if (field != null)
@@ -386,12 +393,12 @@ namespace UltraSharp.Cecil
             CloseLine();
         }
 
-        string GetTypeName(IEvent field)
+        private string GetTypeName(IEvent field)
         {
             return field.GetTypeName(usedNamespaces);
         }
 
-        void ReconstructProperty(IProperty item) //done
+        private void ReconstructProperty(IProperty item) //done
         {
             var property = (DefaultResolvedProperty)item;
             var uProperty = (DefaultUnresolvedProperty)item.UnresolvedMember;
@@ -427,12 +434,12 @@ namespace UltraSharp.Cecil
             CloseLine();
         }
 
-        string GetTypeName(DefaultResolvedProperty field)
+        private string GetTypeName(DefaultResolvedProperty field)
         {
             return field.GetTypeName(usedNamespaces);
         }
 
-        void ReconstructEnumValue(IField item) //done
+        private void ReconstructEnumValue(IField item) //done
         {
             var field = (item as DefaultResolvedField);
             if (field != null)
@@ -462,20 +469,20 @@ namespace UltraSharp.Cecil
             return this;
         }
 
-        void NoteUsedNamespace(string name)
+        private void NoteUsedNamespace(string name)
         {
             if (!name.IsNullOrEmpty() && !usedNamespaces.Contains(name))
                 usedNamespaces = usedNamespaces.Concat(new[] { name }).ToArray();
         }
 
-        void WriteLine(string text = null)
+        private void WriteLine(string text = null)
         {
             for (int i = 0; i < intend; i++)
                 classDefinition.Append("    ");
             classDefinition.AppendLine(text ?? "");
         }
 
-        void WriteLines(params string[] lines)
+        private void WriteLines(params string[] lines)
         {
             foreach (string line in lines)
             {
@@ -485,45 +492,45 @@ namespace UltraSharp.Cecil
             }
         }
 
-        void Write(string text)
+        private void Write(string text)
         {
             for (int i = 0; i < intend; i++)
                 classDefinition.Append("    ");
             classDefinition.Append(text);
         }
 
-        void Append(string text)
+        private void Append(string text)
         {
             classDefinition.Append(text);
         }
 
-        void TrimEnd(int count)
+        private void TrimEnd(int count)
         {
             classDefinition.Length = classDefinition.Length - count;
         }
 
-        void AppendIf(bool condition, string text)
+        private void AppendIf(bool condition, string text)
         {
             if (condition)
                 classDefinition.Append(text);
         }
 
-        void CloseLine(string text = "")
+        private void CloseLine(string text = "")
         {
             classDefinition.AppendLine(text);
         }
 
-        string GetTypeName(IMember member)
+        private string GetTypeName(IMember member)
         {
             return member.GetTypeName(usedNamespaces);
         }
 
-        string GetTypeName(IUnresolvedParameter param)
+        private string GetTypeName(IUnresolvedParameter param)
         {
             return param.Type.GetTypeName(usedNamespaces);
         }
 
-        string GetTypeName(DefaultParameter param)
+        private string GetTypeName(DefaultParameter param)
         {
             return (param.Type as DefaultResolvedTypeDefinition).GetTypeName(usedNamespaces);
         }
@@ -531,7 +538,7 @@ namespace UltraSharp.Cecil
         public static CodeMapItem[] GetMapOf(string code)
         {
             bool injected = CSScriptHelper.DecorateIfRequired(ref code);
-            var map = GetMapOfImpl(code);
+            var map = GetMapOfImpl(code, injected);
 
             if (injected)
             {
@@ -549,15 +556,18 @@ namespace UltraSharp.Cecil
             return map;
         }
 
-
-
-        static CodeMapItem[] GetMapOfImpl(string code)
+        private static CodeMapItem[] GetMapOfImpl(string code, bool decorated)
         {
             var syntaxTree = new CSharpParser().Parse(code, "demo.cs");
 
+            if (syntaxTree.Errors.Any())
+                throw new SyntaxErrorException("The document contains error(s)...");
+
             var map = new List<CodeMapItem>();
 
-            var types = syntaxTree.Children.DeepAll(x => x.NodeType == NodeType.TypeDeclaration);
+            var types = syntaxTree.Children.DeepAll(x => x.NodeType == NodeType.TypeDeclaration)
+                                           .Cast<TypeDeclaration>()
+                                           .ToArray();
 
             foreach (var element in types)
             {
@@ -574,7 +584,7 @@ namespace UltraSharp.Cecil
                                 Line = method.StartLocation.Line,
                                 Column = method.StartLocation.Column,
                                 DisplayName = method.Name + "(" + new string(',', Math.Max(method.Parameters.Count - 1, 0)) + ")",
-                                ParentDisplayName = type.Name,
+                                ParentDisplayName = type.GetFullName(),
                                 MemberType = "Method"
                             });
                         }
@@ -587,13 +597,26 @@ namespace UltraSharp.Cecil
                                 Line = property.StartLocation.Line,
                                 Column = property.StartLocation.Column,
                                 DisplayName = property.Name,
-                                ParentDisplayName = type.Name,
+                                ParentDisplayName = type.GetFullName(),
                                 MemberType = "Property"
                             });
                         }
                     }
                 }
             }
+
+            if (decorated && map.Any())
+            {
+                string rootClassName = map.First().ParentDisplayName;
+                foreach (var item in map.Skip(1))
+                {
+                    if (item.ParentDisplayName == rootClassName)
+                        item.ParentDisplayName = "<Global>";
+                    else if (item.ParentDisplayName.StartsWith(rootClassName + "."))
+                        item.ParentDisplayName = item.ParentDisplayName.Substring(rootClassName.Length + 1);
+                }
+            }
+
             return map.ToArray();
         }
 
@@ -604,15 +627,19 @@ namespace UltraSharp.Cecil
             public string DisplayName;
             public string ParentDisplayName;
             public string MemberType;
+
+            public override string ToString()
+            {
+                return ParentDisplayName + "." + DisplayName;
+            }
         }
     }
-
 
     public static class ReflectorExtensions
     {
         public static bool IgnoreDocumentationExceptions = false;
 
-        static Dictionary<string, string> operatorsTranslation = new Dictionary<string, string>()
+        private static Dictionary<string, string> operatorsTranslation = new Dictionary<string, string>()
         {
             { "op_Equality", "==" },
             { "op_Inequality", "!=" },
@@ -635,6 +662,23 @@ namespace UltraSharp.Cecil
             { "op_OnesComplem", "~" }
         };
 
+        public static string GetFullName(this TypeDeclaration type)
+        {
+            var result = new StringBuilder();
+
+            var parent = type;
+            do
+            {
+                if (result.Length > 0)
+                    result.Insert(0, ".");
+                result.Insert(0, parent.Name);
+                parent = parent.Parent as TypeDeclaration;
+            }
+            while (parent != null);
+
+            return result.ToString();
+        }
+
         public static string[] GetDocumentationLines(this IEntity entity)
         {
             if (entity.Documentation != null)
@@ -646,7 +690,7 @@ namespace UltraSharp.Cecil
                 return EmptyStringArray;
         }
 
-        static string[] EmptyStringArray = new string[0];
+        private static string[] EmptyStringArray = new string[0];
 
         public static string GetInheritanceChain(this IType type, string[] usedNamespaces)
         {
@@ -778,7 +822,7 @@ namespace UltraSharp.Cecil
                 return new Tuple<string, string>("", "");
         }
 
-        static Tuple<string, string> ProcessTypeParameters(this IEnumerable<IUnresolvedTypeParameter> parameters, string[] usedNamespaces, List<string> typeParamsList = null)
+        private static Tuple<string, string> ProcessTypeParameters(this IEnumerable<IUnresolvedTypeParameter> parameters, string[] usedNamespaces, List<string> typeParamsList = null)
         {
             var constraints = new List<string>();
 

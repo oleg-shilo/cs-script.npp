@@ -21,6 +21,8 @@ namespace CSScriptNpp
             watcher.NotifyFilter = NotifyFilters.LastWrite;
             watcher.Changed += watcher_Changed;
             watcher.EnableRaisingEvents = false;
+
+            ErrorMessage = null;
         }
 
         void mapTxt_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -36,10 +38,13 @@ namespace CSScriptNpp
                     int prevLineEnd = Npp.GetLineStart(currentLineNum) - Environment.NewLine.Length;
                     int topScrollOffset = currentLineNum - Npp.GetFirstVisibleLine();
 
-                    int newCaretLine = currentMapping[lineNum] - 1; //SCI lines are 0-based
-                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, newCaretLine, 0);
-
-                    Npp.SetFirstVisibleLine(newCaretLine - topScrollOffset);
+                    int location = currentMapping[lineNum];
+                    if (location != -1)
+                    {
+                        int newCaretLine = location - 1; //SCI lines are 0-based
+                        Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, newCaretLine, 0);
+                        Npp.SetFirstVisibleLine(newCaretLine - topScrollOffset);
+                    }
                 }
             }
             catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
@@ -61,10 +66,10 @@ namespace CSScriptNpp
 
                         watcher.Path = Path.GetDirectoryName(currentFile);
                         watcher.Filter = Path.GetFileName(currentFile);
-
-                        mapTxt.Text = "";
-                        GenerateContent();
                     }
+
+                    mapTxt.Text = "";
+                    GenerateContent(Npp.GetTextBetween(0));
                 }
                 else
                     mapTxt.Visible = false;
@@ -78,37 +83,84 @@ namespace CSScriptNpp
 
         FileSystemWatcher watcher;
 
-        public void GenerateContent()
+        public void GenerateContent(string codeToAnalyse = null)
         {
             try
             {
                 if (currentFile.IsScriptFile())
                 {
-                    string code = File.ReadAllText(currentFile);
+                    string code;
+                    if (codeToAnalyse != null)
+                        code = codeToAnalyse;
+                    else
+                        code = File.ReadAllText(currentFile);
+                    var members = Reflector.GetMapOf(code).OrderBy(x => x.ParentDisplayName).ToArray();
 
                     var builder = new StringBuilder();
 
                     currentMapping.Clear();
                     int lineNumber = 0;
 
-                    foreach (Reflector.CodeMapItem item in Reflector.GetMapOf(code))
+                    string currentType = null;
+
+                    foreach (Reflector.CodeMapItem item in members)
                     {
-                        //eventually coordinates should go to the attached objet instead
+                        //eventually coordinates should go to the attached object instead
                         //of being embedded into text
 
+                        if (currentType != item.ParentDisplayName)
+                        {
+                            currentType = item.ParentDisplayName;
+
+                            if (builder.Length != 0)
+                            {
+                                builder.AppendLine(); //separator
+                                currentMapping.Add(lineNumber, -1);
+                                lineNumber++;
+                            }
+
+                            builder.AppendLine(item.ParentDisplayName);
+                            currentMapping.Add(lineNumber, -1);
+                            lineNumber++;
+                        }
+
+                        string entry = "    " + item.DisplayName;
                         if (Config.Instance.ShowLineNuberInCodeMap)
-                            builder.AppendLine(item.DisplayName + ": Line " + item.Line);
-                        else
-                            builder.AppendLine(item.DisplayName);
+                            entry += ": Line " + item.Line;
+
+                        builder.AppendLine(entry);
                         currentMapping.Add(lineNumber, item.Line);
                         lineNumber++;
+
                     }
 
                     mapTxt.Text = builder.ToString();
+                    ErrorMessage = null;
                 }
             }
-            catch (Exception)
+            catch (Reflector.SyntaxErrorException e)
             {
+                mapTxt.Text = "";
+                ErrorMessage = e.Message;
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+
+
+        public string ErrorMessage
+        {
+            get
+            {
+                return error.Text;
+            }
+
+            set
+            {
+                error.Text = value;
+                error.Visible = (!string.IsNullOrEmpty(error.Text));
             }
         }
 
