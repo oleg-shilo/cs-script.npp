@@ -112,7 +112,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)CSScriptNpp\CSScriptNpp\MDbg\$(TargetFileName)"
-copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)CSScriptNpp\CSScriptNpp\MDbg\$(TargetName).pdb"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "$(ProjectDir)..\CSScriptNpp\CSScriptNpp\MDbg\$(TargetFileName)"
+if $(ConfigurationName) == Debug copy "$(TargetDir)$(TargetName).pdb" "$(ProjectDir)..\CSScriptNpp\CSScriptNpp\MDbg\$(TargetName).pdb"</PostBuildEvent>
   </PropertyGroup>
 </Project>

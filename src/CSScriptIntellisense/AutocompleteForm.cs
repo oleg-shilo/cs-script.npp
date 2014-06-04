@@ -71,12 +71,17 @@ namespace CSScriptIntellisense
             listBox1.Items.AddRange(items.ToArray());
             listBox1.SelectedItem = items.FirstOrDefault();
 
-            int extra = 10;
+            //extras are for the better appearance and they are discovered via experiment
+            int extraHeight = 10;
+            int extraWidth = 20;
 
             var g = listBox1.CreateGraphics();
             var wideItem = items.Select(x => (int)g.MeasureString(x.DisplayText, listBox1.Font).Width).Max(x => x);
-            this.Width = Math.Min(wideItem + 40 + extra, 250);//40 = 20 for icon on left and 20 for scrollbar on right
-            this.Height = ((itemHeight + verticalSpacing) * Math.Min(listBox1.Items.Count, 10)) + extra;
+            this.Width = Math.Min(wideItem + 40 + extraWidth, 250);//40 = 20 for icon on left and 20 for scrollbar on right
+
+            this.Height = ((itemHeight + verticalSpacing) * Math.Min(listBox1.Items.Count, 10)) + extraHeight;
+
+            //this.Width = 120;
         }
 
         public IEnumerable<ICompletionData> ProcessSuggestionHint(string partialName, IEnumerable<ICompletionData> inputItems)

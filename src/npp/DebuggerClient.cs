@@ -563,11 +563,14 @@ namespace npp
         {
             if (shell.Debugger.Processes.HaveActive)
             {
+                MDbgBreakpoint itemToRemove = null;
+
                 foreach (MDbgBreakpoint item in shell.Debugger.Processes.Active.Breakpoints)
                 {
                     var location = (BreakpointLineNumberLocation)item.Location;
                     if (location.FileName == file && location.LineNumber == line)
                     {
+                        itemToRemove = item;
                         item.Delete();
                         return true;
                     }

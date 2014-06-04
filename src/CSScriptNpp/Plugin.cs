@@ -27,6 +27,15 @@ namespace CSScriptNpp
      *                   - truncation warning
      *                   - visualizer for the collection
      *         - make handling Debug.Assert user friendlier
+     *         
+     *     - Prepare self-sufficient executable fails if invoked immediately after the first time
+     *     - Prepare self-sufficient executable does not distribute dependency assemblies
+     *     + cannot remove breakpoint during debugging
+     *     - Autocompletion substitutes delimityers (e.g. '=' in "+=fileNa") 
+     *     - Autocompletion does not pick correctly if talken is not separated by space:    
+     *          string fileName = "sdsa";
+     *          string statsFile = Path.Combine(dirName, fileName //works
+     *          string statsFile = Path.Combine(dirName,fileName //does not 
      *      
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
