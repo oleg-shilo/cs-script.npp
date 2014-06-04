@@ -135,21 +135,20 @@ class ScriptB
                                .Select(x=>string.Format("{0}.{1}: Line {2}", x.ParentDisplayName, x.DisplayName, x.Line))
                                .ToArray();
 
-            string tttt = string.Join(Environment.NewLine, map);
-            //Assert.Equal(4, map.Count());
-
-            //Assert.Equal(7, map[0].Line);
-            //Assert.Equal("prop", map[0].DisplayName);
-            //Assert.Equal("Script", map[0].ParentDisplayName);
-
-            //Assert.Equal(8, map[1].Line);
-            //Assert.Equal("main0()", map[1].DisplayName);
-
-            //Assert.Equal(9, map[2].Line);
-            //Assert.Equal("main1()", map[2].DisplayName);
-
-            //Assert.Equal(10, map[3].Line);
-            //Assert.Equal("main2(,)", map[3].DisplayName);
+            string mapDisplay = string.Join(Environment.NewLine, map);
+            Assert.Equal(mapDisplay,
+@"ScriptA.prop: Line 10
+ScriptA.main0(): Line 11
+ScriptA.main1(): Line 12
+ScriptA.main2(,): Line 13
+ScriptA.Printer.Print(): Line 17
+ScriptA.Printer.Name: Line 18
+ScriptA.Printer.Settings.Print(): Line 22
+ScriptA.Printer.Settings.Name: Line 23
+ScriptB.propB: Line 33
+ScriptB.main0(): Line 34
+ScriptB.main1B(): Line 35
+ScriptB.main2B(,): Line 36");
         }
 
     }

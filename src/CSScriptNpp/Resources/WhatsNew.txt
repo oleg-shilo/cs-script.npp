@@ -1,4 +1,6 @@
 v1.0.26.0+
+* CodeMap now indicates the type name for all members
+
 * Implemented running scripts 'as administrator'
   Just add '//css_npp asadmin' to the script
   and run it as usual.
@@ -12,3 +14,4 @@ v1.0.26.0+
 * Improved debugging step indication  
   - for classless scripts
   - for Unicode content
+

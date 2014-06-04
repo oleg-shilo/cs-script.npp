@@ -31,15 +31,15 @@ namespace CSScriptNpp
      *     - Prepare self-sufficient executable fails if invoked immediately after the first time
      *     - Prepare self-sufficient executable does not distribute dependency assemblies
      *     + cannot remove breakpoint during debugging
-     *     - Autocompletion substitutes delimityers (e.g. '=' in "+=fileNa") 
-     *     - Autocompletion does not pick correctly if talken is not separated by space:    
+     *     + CodeMap now indicates the type name for all members
+     *     - Autocompletion substitutes delimiters (e.g. '=' in "+=fileNa") 
+     *     - Autocompletion does not pick correctly if token is not separated by space:    
      *          string fileName = "sdsa";
      *          string statsFile = Path.Combine(dirName, fileName //works
      *          string statsFile = Path.Combine(dirName,fileName //does not 
      *      
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
-     *      - CodeMap should reflect all members with the indication of the type name (eventually)
      *      - Debug panel
      *          - Locals panel cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
