@@ -10,7 +10,7 @@ void main(string[] args)
 
     Console.WriteLine("Injecting version into file names: " + version);
 
-    var zipFile = Directory.GetFiles(".", "CSScriptNpp.*.zip").FirstOrDefault();
+    var zipFile = Directory.GetFiles(".", "CSScriptNpp.zip").FirstOrDefault();
     if(zipFile != null)
     {
         string distro = Path.Combine(Path.GetDirectoryName(zipFile), Path.GetFileNameWithoutExtension(zipFile)+"."+version+".zip");
@@ -20,7 +20,7 @@ void main(string[] args)
         File.Copy(distro, @"E:\cs-script\cs-scriptWEB\npp\" + Path.GetFileName(distro), true);
     }
 
-    var sevenZFile = Directory.GetFiles(".", "CSScriptNpp.*.7z").FirstOrDefault();
+    var sevenZFile = Directory.GetFiles(".", "CSScriptNpp.7z").FirstOrDefault();
     if(sevenZFile != null)
     {
         string distro = Path.Combine(Path.GetDirectoryName(sevenZFile), Path.GetFileNameWithoutExtension(sevenZFile)+"."+version+".7z");
@@ -31,16 +31,9 @@ void main(string[] args)
 
     File.WriteAllText(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", version);
 
-    var html = File.ReadAllText(@"E:\cs-script\cs-scriptWEB\npp\csscript.html");
-    html = html.Replace("https://dl.dropboxusercontent.com/u/2192462/CS-S_NPP/CSScriptNpp.zip", "https://dl.dropboxusercontent.com/u/2192462/CS-S_NPP/CSScriptNpp."+version+".zip");
-    File.WriteAllText(@"E:\cs-script\cs-scriptWEB\npp\csscript.html", html);
-
     File.Copy(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", @".\latest_version.txt");
     File.Copy(@".\latest_version.txt", @".\latest_version_dbg.txt");
-    
-    File.Copy(@"E:\cs-script\cs-scriptWEB\npp\csscript.html",
-              @".\csscript.html", true);
-              
+                  
     File.Copy(@"..\src\CSScriptNpp\Resources\WhatsNew.txt",
               @".\CSScriptNpp."+version+".ReleaseNotes.txt", true);
 }
