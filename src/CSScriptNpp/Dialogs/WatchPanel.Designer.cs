@@ -30,10 +30,10 @@
         {
             this.contentPanel = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.addAtCaretBtn = new System.Windows.Forms.ToolStripButton();
             this.addExpressionBtn = new System.Windows.Forms.ToolStripButton();
             this.deleteExpressionBtn = new System.Windows.Forms.ToolStripButton();
             this.deleteAllExpressionsBtn = new System.Windows.Forms.ToolStripButton();
-            this.addAtCaretBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,6 +60,17 @@
             this.toolStrip1.Size = new System.Drawing.Size(284, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // addAtCaretBtn
+            // 
+            this.addAtCaretBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.addAtCaretBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_addwatch_at_caret;
+            this.addAtCaretBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addAtCaretBtn.Name = "addAtCaretBtn";
+            this.addAtCaretBtn.Size = new System.Drawing.Size(23, 22);
+            this.addAtCaretBtn.Text = "toolStripButton2";
+            this.addAtCaretBtn.ToolTipText = "Add Expression from the caret position";
+            this.addAtCaretBtn.Click += new System.EventHandler(this.addAtCaretBtn_Click);
             // 
             // addExpressionBtn
             // 
@@ -93,17 +104,6 @@
             this.deleteAllExpressionsBtn.ToolTipText = "Delete All Expressions";
             this.deleteAllExpressionsBtn.Click += new System.EventHandler(this.deleteAllExpressionsBtn_Click);
             // 
-            // addAtCaretBtn
-            // 
-            this.addAtCaretBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addAtCaretBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_addwatch_at_caret;
-            this.addAtCaretBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.addAtCaretBtn.Name = "addAtCaretBtn";
-            this.addAtCaretBtn.Size = new System.Drawing.Size(23, 22);
-            this.addAtCaretBtn.Text = "toolStripButton2";
-            this.addAtCaretBtn.ToolTipText = "Add Expression from the caret position";
-            this.addAtCaretBtn.Click += new System.EventHandler(this.addAtCaretBtn_Click);
-            // 
             // WatchPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -112,7 +112,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.contentPanel);
             this.Name = "WatchPanel";
-            this.Text = "WatchPanel";
+            this.Text = "CS-Script Watch";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);

@@ -168,22 +168,22 @@
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // tobbleBpBtn
+            // toggleBpBtn
             // 
             this.toggleBpBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toggleBpBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_togglebp;
             this.toggleBpBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toggleBpBtn.Name = "tobbleBpBtn";
+            this.toggleBpBtn.Name = "toggleBpBtn";
             this.toggleBpBtn.Size = new System.Drawing.Size(23, 22);
             this.toggleBpBtn.Text = "Toggle Breakpoint";
             this.toggleBpBtn.Click += new System.EventHandler(this.toggleBpBtn_Click);
             // 
-            // quickWatch
+            // quickWatchBtn
             // 
             this.quickWatchBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.quickWatchBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_qwatch;
             this.quickWatchBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.quickWatchBtn.Name = "quickWatch";
+            this.quickWatchBtn.Name = "quickWatchBtn";
             this.quickWatchBtn.Size = new System.Drawing.Size(23, 22);
             this.quickWatchBtn.Text = "QuickWatch";
             this.quickWatchBtn.Click += new System.EventHandler(this.quickWatch_Click);
@@ -231,7 +231,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.tabControl1);
             this.Name = "DebugPanel";
-            this.Text = "DebugPanel";
+            this.Text = "CS-Script Debug View";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);

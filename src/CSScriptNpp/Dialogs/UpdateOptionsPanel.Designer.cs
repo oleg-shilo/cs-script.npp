@@ -39,6 +39,7 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.progressLbl = new System.Windows.Forms.Label();
             this.releaseNotes = new System.Windows.Forms.LinkLabel();
+            this.showOptions = new System.Windows.Forms.CheckBox();
             this.optionsGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,9 +77,9 @@
             this.optionsGroup.Controls.Add(this.customDeployment);
             this.optionsGroup.Controls.Add(this.manualDeployment);
             this.optionsGroup.Controls.Add(this.msiDeployment);
-            this.optionsGroup.Location = new System.Drawing.Point(12, 31);
+            this.optionsGroup.Location = new System.Drawing.Point(12, 61);
             this.optionsGroup.Name = "optionsGroup";
-            this.optionsGroup.Size = new System.Drawing.Size(316, 164);
+            this.optionsGroup.Size = new System.Drawing.Size(425, 164);
             this.optionsGroup.TabIndex = 2;
             this.optionsGroup.TabStop = false;
             // 
@@ -140,7 +141,6 @@
             this.progressBar.Size = new System.Drawing.Size(316, 10);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.TabIndex = 5;
-            this.progressBar.Visible = false;
             // 
             // progressLbl
             // 
@@ -157,7 +157,7 @@
             // releaseNotes
             // 
             this.releaseNotes.AutoSize = true;
-            this.releaseNotes.Location = new System.Drawing.Point(334, 71);
+            this.releaseNotes.Location = new System.Drawing.Point(227, 45);
             this.releaseNotes.Name = "releaseNotes";
             this.releaseNotes.Size = new System.Drawing.Size(103, 13);
             this.releaseNotes.TabIndex = 6;
@@ -165,13 +165,25 @@
             this.releaseNotes.Text = "View Release Notes";
             this.releaseNotes.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.releaseNotes_LinkClicked);
             // 
+            // showOptions
+            // 
+            this.showOptions.AutoSize = true;
+            this.showOptions.Location = new System.Drawing.Point(12, 41);
+            this.showOptions.Name = "showOptions";
+            this.showOptions.Size = new System.Drawing.Size(138, 17);
+            this.showOptions.TabIndex = 7;
+            this.showOptions.Text = "Show Updating Options";
+            this.showOptions.UseVisualStyleBackColor = true;
+            this.showOptions.CheckedChanged += new System.EventHandler(this.showOptions_CheckedChanged);
+            // 
             // UpdateOptionsPanel
             // 
             this.AcceptButton = this.okBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelBtn;
-            this.ClientSize = new System.Drawing.Size(442, 202);
+            this.ClientSize = new System.Drawing.Size(442, 238);
+            this.Controls.Add(this.showOptions);
             this.Controls.Add(this.releaseNotes);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.progressLbl);
@@ -205,5 +217,6 @@
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label progressLbl;
         private System.Windows.Forms.LinkLabel releaseNotes;
+        private System.Windows.Forms.CheckBox showOptions;
     }
 }

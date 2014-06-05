@@ -96,7 +96,7 @@
             this.Controls.Add(this.textBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "QuickWatchPanel";
-            this.Text = "QuickWatch";
+            this.Text = "CS-Script Quick Watch";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.QuickWatchPanel_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();

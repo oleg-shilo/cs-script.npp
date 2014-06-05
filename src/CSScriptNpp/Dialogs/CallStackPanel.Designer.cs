@@ -72,7 +72,7 @@
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.stack);
             this.Name = "CallStackPanel";
-            this.Text = "CallStackPanel";
+            this.Text = "CS-Script Call Stack";
             this.ResumeLayout(false);
 
         }

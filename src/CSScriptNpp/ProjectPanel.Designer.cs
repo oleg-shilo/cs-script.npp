@@ -500,7 +500,7 @@
             this.Controls.Add(this.tabControl1);
             this.KeyPreview = true;
             this.Name = "ProjectPanel";
-            this.Text = "ManageScripts";
+            this.Text = "CS-Script Scrips Manager";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

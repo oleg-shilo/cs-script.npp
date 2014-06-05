@@ -31,7 +31,7 @@ namespace CSScriptNpp.Dialogs
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listView1 = new BufferedListView();
+            this.listView1 = new CSScriptNpp.Dialogs.BufferedListView();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -118,7 +118,7 @@ namespace CSScriptNpp.Dialogs
             this.Controls.Add(this.listView1);
             this.Name = "DebugObjectsPanel";
             this.ShowInTaskbar = false;
-            this.Text = "AutoWatchView";
+            this.Text = "CS-Script  Auto-Watch";
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -141,14 +141,13 @@ namespace CSScriptNpp.Dialogs
             listView1.Controls.AddRange(new Control[] { this.editBox });
             editBox.Hide();
         }
-
-        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private ToolStripMenuItem copyValuessToolStripMenuItem;
+        private BufferedListView listView1;
     }
 
     public class BufferedListView : ListView

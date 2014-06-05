@@ -85,7 +85,7 @@
             this.Controls.Add(this.refreshLabel);
             this.Controls.Add(this.mapTxt);
             this.Name = "CodeMapPanel";
-            this.Text = "CodeMapPanel";
+            this.Text = "CS-Script Code Map";
             this.VisibleChanged += new System.EventHandler(this.CodeMapPanel_VisibleChanged);
             this.ResumeLayout(false);
             this.PerformLayout();

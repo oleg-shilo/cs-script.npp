@@ -50,7 +50,7 @@
             this.breakPoints.HideSelection = false;
             this.breakPoints.Location = new System.Drawing.Point(0, 23);
             this.breakPoints.MultiSelect = false;
-            this.breakPoints.Name = "stack";
+            this.breakPoints.Name = "breakPoints";
             this.breakPoints.ShowItemToolTips = true;
             this.breakPoints.Size = new System.Drawing.Size(284, 238);
             this.breakPoints.TabIndex = 1;
@@ -92,7 +92,7 @@
             this.Controls.Add(this.removeAll);
             this.Controls.Add(this.breakPoints);
             this.Name = "BreakpointsPanel";
-            this.Text = "BreakpointsPanel";
+            this.Text = "CS-Script Breakpoints";
             this.ResumeLayout(false);
             this.PerformLayout();
 

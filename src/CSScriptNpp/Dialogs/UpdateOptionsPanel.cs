@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -10,20 +9,23 @@ namespace CSScriptNpp.Dialogs
 {
     public partial class UpdateOptionsPanel : Form
     {
-        string version;
+        private string version;
+
         public UpdateOptionsPanel(string version)
         {
             InitializeComponent();
+            
+            DoLayout();
+
             this.version = version;
             versionLbl.Text = version;
 
             customDeployment.Checked = (Config.Instance.UpdateMode == (string)customDeployment.Tag);
             msiDeployment.Checked = (Config.Instance.UpdateMode == (string)msiDeployment.Tag);
             manualDeployment.Checked = (Config.Instance.UpdateMode == (string)manualDeployment.Tag);
-
         }
 
-        void UpdateProgress(long currentStep, long totalSteps)
+        private void UpdateProgress(long currentStep, long totalSteps)
         {
             if (!Closed)
                 try
@@ -37,15 +39,15 @@ namespace CSScriptNpp.Dialogs
                 catch { }
         }
 
-        new bool Closed = false;
+        private new bool Closed = false;
 
         private void okBtn_Click(object sender, EventArgs e)
         {
             okBtn.Enabled =
             optionsGroup.Enabled = false;
 
-            progressLbl.Visible =
-            progressBar.Visible = true;
+            //progressBar.Visible = 
+            progressLbl.Visible = true;
             progressBar.Style = ProgressBarStyle.Continuous;
 
             Task.Factory.StartNew(() =>
@@ -112,7 +114,7 @@ namespace CSScriptNpp.Dialogs
                 });
         }
 
-        string DeployUpdater(string pluginDir, string tempDir)
+        private string DeployUpdater(string pluginDir, string tempDir)
         {
             string srcDir = Path.Combine(pluginDir, "CSScriptNpp");
             string deploymentDir = Path.Combine(tempDir, "CSScriptNpp.Updater");
@@ -137,6 +139,20 @@ namespace CSScriptNpp.Dialogs
         private void releaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("http://csscript.net/npp/CSScriptNpp." + version + ".ReleaseNotes.txt");
+        }
+
+        private void showOptions_CheckedChanged(object sender, EventArgs e)
+        {
+            DoLayout();
+        }
+
+        void DoLayout()
+        {
+            optionsGroup.Visible = showOptions.Checked;
+            if (showOptions.Checked)
+                this.Height = 277;
+            else
+                this.Height = 106;
         }
     }
 }

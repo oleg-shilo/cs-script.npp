@@ -93,7 +93,7 @@
             this.Name = "TextVisualizer";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Text Visualizer";
+            this.Text = "CS-Script Text Visualizer";
             this.ResumeLayout(false);
             this.PerformLayout();
 

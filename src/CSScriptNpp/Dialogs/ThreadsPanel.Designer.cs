@@ -30,12 +30,12 @@
         {
             this.threadsList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
-            // modulesList
+            // threadsList
             // 
             this.threadsList.Activation = System.Windows.Forms.ItemActivation.TwoClick;
             this.threadsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -64,15 +64,15 @@
             this.columnHeader1.Text = "";
             this.columnHeader1.Width = 20;
             // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "ID";
-            this.columnHeader3.Width = 40;
-            // 
             // columnHeader4
             // 
             this.columnHeader4.Text = "#";
             this.columnHeader4.Width = 20;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "ID";
+            this.columnHeader3.Width = 40;
             // 
             // columnHeader2
             // 
@@ -86,7 +86,7 @@
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.threadsList);
             this.Name = "ThreadsPanel";
-            this.Text = "CallStackPanel";
+            this.Text = "CS-Script Threeads";
             this.ResumeLayout(false);
 
         }

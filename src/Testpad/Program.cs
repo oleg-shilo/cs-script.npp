@@ -18,6 +18,8 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
+            new UpdateOptionsPanel("1.0.1.1").ShowDialog(); return;
+
             var tt = typeof(List<int>).GetProperties();
 
             var args = "dsfsd,df".Split(',');

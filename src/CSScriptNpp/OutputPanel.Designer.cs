@@ -143,7 +143,7 @@
             this.Controls.Add(this.designTimeTextBox);
             this.Controls.Add(this.toolStrip1);
             this.Name = "OutputPanel";
-            this.Text = "CS-Script.Npp-Output";
+            this.Text = "CS-Script Output";
             this.VisibleChanged += new System.EventHandler(this.OutputPanel_VisibleChanged);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

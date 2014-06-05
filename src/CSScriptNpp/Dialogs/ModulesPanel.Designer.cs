@@ -47,7 +47,7 @@
             this.modulesList.HideSelection = false;
             this.modulesList.Location = new System.Drawing.Point(0, 0);
             this.modulesList.MultiSelect = false;
-            this.modulesList.Name = "threadsList";
+            this.modulesList.Name = "modulesList";
             this.modulesList.OwnerDraw = true;
             this.modulesList.Size = new System.Drawing.Size(284, 261);
             this.modulesList.TabIndex = 1;
@@ -78,7 +78,7 @@
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.modulesList);
             this.Name = "ModulesPanel";
-            this.Text = "CallStackPanel";
+            this.Text = "CS-Script Modules";
             this.ResumeLayout(false);
 
         }

@@ -132,7 +132,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "ShortcutBuilder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Shortcut";
+            this.Text = "CS-Script Shortcut";
             this.ResumeLayout(false);
             this.PerformLayout();
 

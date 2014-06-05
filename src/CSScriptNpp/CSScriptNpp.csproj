@@ -232,6 +232,9 @@
     <EmbeddedResource Include="Dialogs\BreakpointsPanel.resx">
       <DependentUpon>BreakpointsPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\LocalsPanel.resx">
+      <DependentUpon>LocalsPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ModulesPanel.resx">
       <DependentUpon>ModulesPanel.cs</DependentUpon>
     </EmbeddedResource>

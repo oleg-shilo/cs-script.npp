@@ -27,9 +27,10 @@ namespace CSScriptNpp
      *                   - truncation warning
      *                   - visualizer for the collection
      *         - make handling Debug.Assert user friendlier
+     *     - allow script manager buttons to be rearranged
+     *     - auto-add usings
+     *     - alow N++ reboot from CS-Script toolbar
      *         
-     *     - Prepare self-sufficient executable does not distribute dependency assemblies
-     *      
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
      *      - Debug panel
