@@ -5,6 +5,8 @@ v1.0.26.0+
   Just add '//css_npp asadmin' to the script
   and run it as usual.
 
+* 'Prepare script for distribution' now aggregates script dependency assemblies.
+
 * Various improvements in CodeSnipptet, Autcompletion and 
   MethodInfo interactions with each other.
 

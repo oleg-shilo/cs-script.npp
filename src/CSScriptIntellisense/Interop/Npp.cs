@@ -310,7 +310,8 @@ namespace CSScriptIntellisense
             string leftText = Npp.TextBeforePosition(currentPos, 512);
             string rightText = Npp.TextAfterPosition(currentPos, 512);
 
-            var delimiters = "\t\n\r .,:;'\"[]{}()".ToCharArray();
+            //if updating do not forger to update SimpleCodeCompletion.Delimiters
+            var delimiters = "\\·\t\n\r .,:;'\"[]{}()-/!?@$%^&*«»><#|~`".ToCharArray();
 
             if (wordDelimiters != null)
                 delimiters = wordDelimiters;

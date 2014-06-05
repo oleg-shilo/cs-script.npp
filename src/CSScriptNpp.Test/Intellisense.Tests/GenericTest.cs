@@ -14,18 +14,18 @@ using System.Windows.Forms;
 
 class Script
 {
-	[STAThread]
-	static public void Main(string[] args)
-	{
-		MessageBox.Show(""Just a test!"");
+    [STAThread]
+    static public void Main(string[] args)
+    {
+        MessageBox.Show(""Just a test!"");
 
         File.
 
-		for (int i = 0; i < args.Length; i++)
-		{
-			Console.WriteLine(args[i]);
-		}
-	}
+        for (int i = 0; i < args.Length; i++)
+        {
+            Console.WriteLine(args[i]);
+        }
+    }
 }
 
 namespace NSTest
@@ -70,7 +70,32 @@ namespace NSTest
 
             Assert.True(data.Where(x => x.DisplayText == "MessageBox").Any());
         }
-        
+
+        [Fact]
+        public void CompleteMethodArguments()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            //fileNam|
+            var data = SimpleCodeCompletion.GetCompletionData(@"using System.IO;
+using System;
+
+class Script
+{
+    [STAThread]
+    static public void Main(string[] args)
+    {
+        string dirName = ""111"";
+        string fileName = ""222"";
+        string statsFile = Path.Combine(dirName, fileNam
+    }
+}", 242, "test.cs", true);
+            Assert.True(data.Where(x => x.DisplayText == "fileName").Any());
+
+            //Note the test will fail if "dirName, fileNam" replaced with "dirName,fileNam"
+            //It is a CSharpCompletionEngine flaw.
+        }
+
         [Fact]
         public void SuggestMissingUsings()
         {
@@ -143,6 +168,7 @@ class Script
             Assert.Equal(1, info.Count());
             Assert.Equal("Method: void Console.WriteLine() (+ 18 overload(s))", info.First().GetLines(2).First());
         }
+        
 
         [Fact]
         public void GenerateMemeberFullInfo()

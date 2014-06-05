@@ -13,10 +13,6 @@ using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
-    /*
-     TODO:
-     */
-
     static public partial class Plugin
     {
         public static string PluginName
