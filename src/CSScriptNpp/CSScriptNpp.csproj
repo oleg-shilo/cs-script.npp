@@ -195,6 +195,7 @@
     <Compile Include="Dialogs\PluginShortcuts.Designer.cs">
       <DependentUpon>PluginShortcuts.cs</DependentUpon>
     </Compile>
+    <Compile Include="ToolStripPersistance.cs" />
     <None Include="Interop\DllExport\CheckILDasmPath.cs" />
     <Compile Include="Interop\DllExport\DllExportAttribute.cs" />
     <Compile Include="Interop\NppPluginNETBase.cs" />

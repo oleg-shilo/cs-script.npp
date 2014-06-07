@@ -35,13 +35,12 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolbarContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.organizeButtonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newBtn = new System.Windows.Forms.ToolStripButton();
-            this.histotyBtn = new System.Windows.Forms.ToolStripDropDownButton();
+            this.historyBtn = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.validateBtn = new System.Windows.Forms.ToolStripButton();
-            this.testButton3 = new System.Windows.Forms.ToolStripButton();
-            this.testButton2 = new System.Windows.Forms.ToolStripButton();
-            this.testButton1 = new System.Windows.Forms.ToolStripButton();
             this.stopBtn = new System.Windows.Forms.ToolStripButton();
             this.runBtn = new System.Windows.Forms.ToolStripButton();
             this.debugBtn = new System.Windows.Forms.ToolStripButton();
@@ -70,6 +69,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.toolStrip1.SuspendLayout();
+            this.toolbarContextMenuStrip.SuspendLayout();
             this.solutionContextMenu.SuspendLayout();
             this.itemContextMenu.SuspendLayout();
             this.whatsNewPanel.SuspendLayout();
@@ -81,7 +81,7 @@
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(920, -1);
+            this.pictureBox1.Location = new System.Drawing.Point(859, -1);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 21);
             this.pictureBox1.TabIndex = 11;
@@ -121,14 +121,12 @@
             // 
             // toolStrip1
             // 
+            this.toolStrip1.ContextMenuStrip = this.toolbarContextMenuStrip;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newBtn,
-            this.histotyBtn,
+            this.historyBtn,
             this.validateBtn,
-            this.testButton3,
-            this.testButton2,
-            this.testButton1,
             this.stopBtn,
             this.runBtn,
             this.debugBtn,
@@ -151,6 +149,20 @@
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // toolbarContextMenuStrip
+            // 
+            this.toolbarContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.organizeButtonsToolStripMenuItem});
+            this.toolbarContextMenuStrip.Name = "toolbarContextMenuStrip";
+            this.toolbarContextMenuStrip.Size = new System.Drawing.Size(166, 26);
+            // 
+            // organizeButtonsToolStripMenuItem
+            // 
+            this.organizeButtonsToolStripMenuItem.Name = "organizeButtonsToolStripMenuItem";
+            this.organizeButtonsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.organizeButtonsToolStripMenuItem.Text = "Organize buttons";
+            this.organizeButtonsToolStripMenuItem.Click += new System.EventHandler(this.organizeButtonsToolStripMenuItem_Click);
+            // 
             // newBtn
             // 
             this.newBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -158,21 +170,22 @@
             this.newBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newBtn.Name = "newBtn";
             this.newBtn.Size = new System.Drawing.Size(23, 28);
-            this.newBtn.Text = "new";
+            this.newBtn.Text = "New";
             this.newBtn.ToolTipText = "Create new script";
             this.newBtn.Click += new System.EventHandler(this.newBtn_Click);
             // 
-            // histotyBtn
+            // historyBtn
             // 
-            this.histotyBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.histotyBtn.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.historyBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.historyBtn.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator3});
-            this.histotyBtn.Image = global::CSScriptNpp.Resources.Resources.history;
-            this.histotyBtn.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.histotyBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.histotyBtn.Name = "histotyBtn";
-            this.histotyBtn.Size = new System.Drawing.Size(37, 28);
-            this.histotyBtn.ToolTipText = "Recent Scripts";
+            this.historyBtn.Image = global::CSScriptNpp.Resources.Resources.history;
+            this.historyBtn.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.historyBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.historyBtn.Name = "historyBtn";
+            this.historyBtn.Size = new System.Drawing.Size(37, 28);
+            this.historyBtn.Text = "Recent";
+            this.historyBtn.ToolTipText = "Recent Scripts";
             // 
             // toolStripSeparator3
             // 
@@ -186,42 +199,9 @@
             this.validateBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.validateBtn.Name = "validateBtn";
             this.validateBtn.Size = new System.Drawing.Size(23, 28);
-            this.validateBtn.Text = "validate";
+            this.validateBtn.Text = "Validate";
             this.validateBtn.ToolTipText = "Build (validate) current script";
             this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
-            // 
-            // testButton3
-            // 
-            this.testButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.testButton3.Image = ((System.Drawing.Image)(resources.GetObject("testButton3.Image")));
-            this.testButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.testButton3.Name = "testButton3";
-            this.testButton3.Size = new System.Drawing.Size(40, 28);
-            this.testButton3.Text = "Break";
-            this.testButton3.Visible = false;
-            this.testButton3.Click += new System.EventHandler(this.testButton3_Click);
-            // 
-            // testButton2
-            // 
-            this.testButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.testButton2.Image = ((System.Drawing.Image)(resources.GetObject("testButton2.Image")));
-            this.testButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.testButton2.Name = "testButton2";
-            this.testButton2.Size = new System.Drawing.Size(44, 28);
-            this.testButton2.Text = "StepIn";
-            this.testButton2.ToolTipText = "StepIn";
-            this.testButton2.Visible = false;
-            this.testButton2.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
-            // testButton1
-            // 
-            this.testButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.testButton1.Image = ((System.Drawing.Image)(resources.GetObject("testButton1.Image")));
-            this.testButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.testButton1.Name = "testButton1";
-            this.testButton1.Size = new System.Drawing.Size(54, 28);
-            this.testButton1.Text = "StepOut";
-            this.testButton1.Visible = false;
             // 
             // stopBtn
             // 
@@ -230,7 +210,7 @@
             this.stopBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stopBtn.Name = "stopBtn";
             this.stopBtn.Size = new System.Drawing.Size(23, 28);
-            this.stopBtn.Text = "stop";
+            this.stopBtn.Text = "Stop";
             this.stopBtn.ToolTipText = "Stop running script";
             this.stopBtn.Click += new System.EventHandler(this.stopBtn_Click);
             // 
@@ -241,7 +221,7 @@
             this.runBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.runBtn.Name = "runBtn";
             this.runBtn.Size = new System.Drawing.Size(23, 28);
-            this.runBtn.Text = "run";
+            this.runBtn.Text = "Run";
             this.runBtn.ToolTipText = "Run current script";
             this.runBtn.Click += new System.EventHandler(this.runBtn_Click);
             // 
@@ -436,7 +416,7 @@
             this.whatsNewTxt.Name = "whatsNewTxt";
             this.whatsNewTxt.ReadOnly = true;
             this.whatsNewTxt.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.whatsNewTxt.Size = new System.Drawing.Size(942, 426);
+            this.whatsNewTxt.Size = new System.Drawing.Size(881, 426);
             this.whatsNewTxt.TabIndex = 5;
             // 
             // whatsNewPanel
@@ -451,7 +431,7 @@
             this.whatsNewPanel.Controls.Add(this.whatsNewTxt);
             this.whatsNewPanel.Location = new System.Drawing.Point(12, 23);
             this.whatsNewPanel.Name = "whatsNewPanel";
-            this.whatsNewPanel.Size = new System.Drawing.Size(953, 455);
+            this.whatsNewPanel.Size = new System.Drawing.Size(892, 455);
             this.whatsNewPanel.TabIndex = 10;
             // 
             // label1
@@ -504,6 +484,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.toolbarContextMenuStrip.ResumeLayout(false);
             this.solutionContextMenu.ResumeLayout(false);
             this.itemContextMenu.ResumeLayout(false);
             this.whatsNewPanel.ResumeLayout(false);
@@ -544,16 +525,15 @@
         private System.Windows.Forms.ToolStripButton configBtn;
         private System.Windows.Forms.ToolStripButton deployBtn;
         private System.Windows.Forms.ToolStripButton shortcutsBtn;
-        private System.Windows.Forms.ToolStripDropDownButton histotyBtn;
+        private System.Windows.Forms.ToolStripDropDownButton historyBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.TextBox whatsNewTxt;
         private System.Windows.Forms.Panel whatsNewPanel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.ToolStripButton testButton1;
-        private System.Windows.Forms.ToolStripButton testButton2;
-        private System.Windows.Forms.ToolStripButton testButton3;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.ContextMenuStrip toolbarContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem organizeButtonsToolStripMenuItem;
     }
 }

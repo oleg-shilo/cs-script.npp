@@ -1,21 +1,21 @@
-﻿using System;
+﻿using CSScriptIntellisense;
+using CSScriptLibrary;
+using CSScriptNpp.Dialogs;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptIntellisense;
-using CSScriptLibrary;
-using CSScriptNpp.Dialogs;
 
 namespace CSScriptNpp
 {
     public partial class ProjectPanel : Form
     {
         static internal string currentScript;
-        CodeMapPanel mapPanel;
+        private CodeMapPanel mapPanel;
 
         public ProjectPanel()
         {
@@ -31,16 +31,54 @@ namespace CSScriptNpp
             RefreshControls();
             ReloadScriptHistory();
             LoadReleaseNotes();
+
+            toolStripPersistance = new ToolStripPersistance(toolStrip1, settingsFile);
+            toolStripPersistance.Load();
+
+            //buttons = toolStrip1.Items.Cast<ToolStripItem>().ToArray();
+            //ButtonsDefaultLayout = buttons.Select(x => x.Name.StartsWith("toolStripSeparator") ? "---" : x.Name).ToArray();
+
+            //OrrangeToolstripButtons();
+
+            //watcher = new FileSystemWatcher(Plugin.ConfigDir, "toolbar_buttons.txt");
+            //watcher.NotifyFilter = NotifyFilters.LastWrite;
+            //watcher.Changed += watcher_Changed;
+            //watcher.EnableRaisingEvents = true;
         }
 
-        void UpdateButtonsTooltips()
+        ToolStripPersistance toolStripPersistance;
+
+        //void watcher_Changed(object sender, FileSystemEventArgs e)
+        //{
+        //    Invoke((Action)delegate { OrrangeToolstripButtons(); });
+        //}
+
+        //FileSystemWatcher watcher = new FileSystemWatcher();
+
+        private string settingsFile = Path.Combine(Plugin.ConfigDir, "toolbar_buttons.txt");
+
+        //private ToolStripItem[] buttons;
+
+        //string[] SerializeButtons(IEnumerable<ToolStripItem> items)
+        //{
+        //    return items.Select(x =>
+        //        {
+        //            string visibility = x.Visible ? "" : "-";
+        //            return x.Name.StartsWith("toolStripSeparator") ? "---" : visibility + x.Name;
+        //        }).ToArray();
+        //}
+
+        //string[] ButtonsDefaultLayout;
+
+
+        private void UpdateButtonsTooltips()
         {
             validateBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("_BuildFromMenu", "Ctrl+Shift+B") + " or " + Config.Shortcuts.GetValue("Build", "F7"));
             runBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("_Run", "F5"));
             loadBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("LoadCurrentDocument", "Ctrl+F7"));
         }
 
-        void LoadReleaseNotes()
+        private void LoadReleaseNotes()
         {
             //System.Diagnostics.Debug.Assert(false);
             whatsNewPanel.Visible = false;
@@ -54,13 +92,13 @@ namespace CSScriptNpp
             }
         }
 
-        void ReloadScriptHistory()
+        private void ReloadScriptHistory()
         {
-            this.histotyBtn.DropDownItems.Clear();
+            this.historyBtn.DropDownItems.Clear();
             string[] files = Config.Instance.SciptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
             if (files.Count() == 0)
             {
-                this.histotyBtn.DropDownItems.Add(new ToolStripMenuItem("empty") { Enabled = false });
+                this.historyBtn.DropDownItems.Add(new ToolStripMenuItem("empty") { Enabled = false });
             }
             else
             {
@@ -76,7 +114,7 @@ namespace CSScriptNpp
                             }
                             else if (DialogResult.Yes == MessageBox.Show("File '" + script + "' cannot be found.\nDo you want to remove it from the Recent Scripts List?", "CS-Script", MessageBoxButtons.YesNo))
                             {
-                                this.histotyBtn.DropDownItems.Remove(item);
+                                this.historyBtn.DropDownItems.Remove(item);
 
                                 var scripts = Config.Instance.SciptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
                                                                           .Distinct()
@@ -87,38 +125,38 @@ namespace CSScriptNpp
                                 Config.Instance.Save();
                             }
                         };
-                    this.histotyBtn.DropDownItems.Add(item);
+                    this.historyBtn.DropDownItems.Add(item);
                 }
 
                 {
-                    this.histotyBtn.DropDownItems.Add(new ToolStripSeparator());
+                    this.historyBtn.DropDownItems.Add(new ToolStripSeparator());
                     var item = new ToolStripMenuItem("Clear Recent Scripts List");
                     item.Click += (s, e) =>
                         {
-                            this.histotyBtn.DropDownItems.Clear();
+                            this.historyBtn.DropDownItems.Clear();
                             Config.Instance.SciptHistory = "";
                             Config.Instance.Save();
                             ReloadScriptHistory();
                         };
-                    this.histotyBtn.DropDownItems.Add(item);
+                    this.historyBtn.DropDownItems.Add(item);
                 }
             }
         }
 
-        void runBtn_Click(object sender, EventArgs e)
+        private void runBtn_Click(object sender, EventArgs e)
         {
             Plugin.RunScript();  //important not to call Run directly but run the injected Plugin.RunScript
         }
 
-        void EditItem(string scriptFile)
+        private void EditItem(string scriptFile)
         {
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, scriptFile);
             Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
         }
 
-        string scriptsDirectory;
+        private string scriptsDirectory;
 
-        string ScriptsDirectory
+        private string ScriptsDirectory
         {
             get
             {
@@ -128,7 +166,7 @@ namespace CSScriptNpp
             }
         }
 
-        void newBtn_Click(object sender, EventArgs e)
+        private void newBtn_Click(object sender, EventArgs e)
         {
             using (var input = new ScripNameInput())
             {
@@ -182,7 +220,7 @@ namespace CSScriptNpp
             }
         }
 
-        string NormalizeScriptName(string text)
+        private string NormalizeScriptName(string text)
         {
             string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars()) + "_";
 
@@ -194,7 +232,7 @@ namespace CSScriptNpp
             return text;
         }
 
-        void SelectScript(string scriptFile)
+        private void SelectScript(string scriptFile)
         {
             if (treeView1.Nodes.Count > 0)
                 foreach (TreeNode item in treeView1.Nodes[0].Nodes)
@@ -206,7 +244,7 @@ namespace CSScriptNpp
                     }
         }
 
-        bool CurrentDocumentBelongsToProject()
+        private bool CurrentDocumentBelongsToProject()
         {
             string file;
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
@@ -219,7 +257,7 @@ namespace CSScriptNpp
             return false;
         }
 
-        const string defaultScriptCode =
+        private const string defaultScriptCode =
 @"using System;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -234,7 +272,7 @@ class Script
     }
 }";
 
-        const string defaultClasslessScriptCode =
+        private const string defaultClasslessScriptCode =
 @"//css_args /ac
 using System;
 using System.Diagnostics;
@@ -245,19 +283,19 @@ void main(string[] args)
     Debug.WriteLine(""Hello World!"");
 }";
 
-        void synchBtn_Click(object sender, EventArgs e)
+        private void synchBtn_Click(object sender, EventArgs e)
         {
             string path;
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out path);
             SelectScript(path);
         }
 
-        void validateBtn_Click(object sender, EventArgs e)
+        private void validateBtn_Click(object sender, EventArgs e)
         {
             Build();
         }
 
-        void debugBtn_Click(object sender, EventArgs e)
+        private void debugBtn_Click(object sender, EventArgs e)
         {
             Plugin.DebugScript();  //important not to call Debug directly but run the injected Plugin.DebugScript
         }
@@ -275,7 +313,7 @@ void main(string[] args)
                 Run(false);
         }
 
-        void Run(bool asExternal)
+        private void Run(bool asExternal)
         {
             if (currentScript == null)
                 loadBtn.PerformClick();
@@ -392,7 +430,7 @@ void main(string[] args)
 
                             string targetType = Debugger.DebugAsConsole ? "cscs.exe" : "csws.exe";
                             string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
-                            
+
                             Debugger.ScriptFile = currentScript;
                             Debugger.Start(debuggingHost, string.Format("{0} /dbg /l \"{1}\"", targetType, currentScript));
 
@@ -434,13 +472,13 @@ void main(string[] args)
             Cursor = Cursors.Default;
         }
 
-        void OnRunStart(Process proc)
+        private void OnRunStart(Process proc)
         {
             Plugin.RunningScript = proc;
             this.Invoke((Action)RefreshControls);
         }
 
-        void OnConsoleOut(string line)
+        private void OnConsoleOut(string line)
         {
             if (Plugin.OutputPanel.ConsoleOutput.IsEmpty)
                 Plugin.OutputPanel.ShowConsoleOutput();
@@ -448,7 +486,7 @@ void main(string[] args)
             Plugin.OutputPanel.ConsoleOutput.WriteLine(line);
         }
 
-        void Job()
+        private void Job()
         {
             try
             {
@@ -504,12 +542,12 @@ void main(string[] args)
             }
         }
 
-        void reloadBtn_Click(object sender, EventArgs e)
+        private void reloadBtn_Click(object sender, EventArgs e)
         {
             LoadScript(currentScript);
         }
 
-        void RefreshControls()
+        private void RefreshControls()
         {
             openInVsBtn.Visible = Utils.IsVS2010PlusAvailable;
 
@@ -539,7 +577,7 @@ void main(string[] args)
                 loadBtn.Enabled = true;
         }
 
-        ProjectItem SelectedItem
+        private ProjectItem SelectedItem
         {
             get
             {
@@ -550,17 +588,17 @@ void main(string[] args)
             }
         }
 
-        void openInVsBtn_Click(object sender, EventArgs e)
+        private void openInVsBtn_Click(object sender, EventArgs e)
         {
             OpenInVS();
         }
 
-        void aboutBtn_Click(object sender, EventArgs e)
+        private void aboutBtn_Click(object sender, EventArgs e)
         {
             Plugin.ShowAbout();
         }
 
-        void hlpBtn_Click(object sender, EventArgs e)
+        private void hlpBtn_Click(object sender, EventArgs e)
         {
             try
             {
@@ -570,7 +608,7 @@ void main(string[] args)
             catch { }
         }
 
-        void loadBtn_Click(object sender, EventArgs e)
+        private void loadBtn_Click(object sender, EventArgs e)
         {
             LoadCurrentDoc();
         }
@@ -591,12 +629,12 @@ void main(string[] args)
             Task.Factory.StartNew(CSScriptHelper.ClearVSDir);
         }
 
-        const int scriptImage = 1;
-        const int folderImage = 0;
-        const int assemblyImage = 2;
-        const int includeImage = 3;
+        private const int scriptImage = 1;
+        private const int folderImage = 0;
+        private const int assemblyImage = 2;
+        private const int includeImage = 3;
 
-        void UnloadScript()
+        private void UnloadScript()
         {
             currentScript = null;
             treeView1.Nodes.Clear();
@@ -678,12 +716,12 @@ void main(string[] args)
             RefreshControls();
         }
 
-        void outputBtn_Click(object sender, EventArgs e)
+        private void outputBtn_Click(object sender, EventArgs e)
         {
             Plugin.ToggleScondaryPanels();
         }
 
-        void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (SelectedItem != null && !SelectedItem.IsAssembly)
             {
@@ -692,17 +730,17 @@ void main(string[] args)
             }
         }
 
-        void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             RefreshControls();
         }
 
-        void stopBtn_Click(object sender, EventArgs e)
+        private void stopBtn_Click(object sender, EventArgs e)
         {
             Plugin.Stop();
         }
 
-        void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
+        private void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
         {
             if (e.Node == treeView1.Nodes[0].Nodes[0])
             {
@@ -710,7 +748,7 @@ void main(string[] args)
             }
         }
 
-        void treeView1_AfterCollapse(object sender, TreeViewEventArgs e)
+        private void treeView1_AfterCollapse(object sender, TreeViewEventArgs e)
         {
             if (e.Node == treeView1.Nodes[0].Nodes[0])
             {
@@ -718,12 +756,12 @@ void main(string[] args)
             }
         }
 
-        void unloadScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        private void unloadScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
             UnloadScript();
         }
 
-        void openCommandPromptToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openCommandPromptToolStripMenuItem_Click(object sender, EventArgs e)
         {
             WithSelectedNodeProjectItem(item =>
             {
@@ -744,7 +782,7 @@ void main(string[] args)
             });
         }
 
-        void openContainingFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openContainingFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             WithSelectedNodeProjectItem(item =>
             {
@@ -759,7 +797,7 @@ void main(string[] args)
             });
         }
 
-        void WithSelectedNodeProjectItem(Action<ProjectItem> action)
+        private void WithSelectedNodeProjectItem(Action<ProjectItem> action)
         {
             if (treeView1.SelectedNode != null)
             {
@@ -774,7 +812,7 @@ void main(string[] args)
             }
         }
 
-        void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -846,19 +884,18 @@ void main(string[] args)
             whatsNewPanel.Visible = false;
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            Debugger.StepIn();
-        }
-
-        private void testButton3_Click(object sender, EventArgs e)
-        {
-            Debugger.Break();
-        }
-
         private void treeView1_SizeChanged(object sender, EventArgs e)
         {
             treeView1.Invalidate(); //WinForm TreeView has nasty rendering artifact on window maximize
+        }
+
+        private void organizeButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start(settingsFile);
+            }
+            catch { }
         }
     }
 }

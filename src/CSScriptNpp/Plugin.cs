@@ -27,8 +27,8 @@ namespace CSScriptNpp
      *                   - truncation warning
      *                   - visualizer for the collection
      *         - make handling Debug.Assert user friendlier
-     *     - allow script manager buttons to be rearranged
      *     - auto-add usings
+     *     + allow script manager buttons to be rearranged
      *     - alow N++ reboot from CS-Script toolbar
      *         
      * - Desirable but not essential features

@@ -49,28 +49,5 @@ namespace CSScriptNpp.Dialogs
             DialogResult = DialogResult.OK;
         }
 
-        //public bool Ctrl
-        //{
-        //    get { return ctrlCheckBox.Checked; } 
-        //    set { ctrlCheckBox.Checked = value;  }
-        //}
-
-        //public bool Alt
-        //{
-        //    get { return altCheckBox.Checked; }
-        //    set { altCheckBox.Checked = value; }
-        //}
-
-        //public bool Shift
-        //{
-        //    get { return shiftCheckBox.Checked; }
-        //    set { shiftCheckBox.Checked = value; }
-        //}
-
-        //public Keys Key
-        //{
-        //    get { return (Keys)keysComboBox.SelectedItem; }
-        //    set { keysComboBox.SelectedItem = value; }
-        //}
     }
 }
