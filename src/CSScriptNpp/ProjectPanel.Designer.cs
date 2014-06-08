@@ -57,6 +57,7 @@
             this.configBtn = new System.Windows.Forms.ToolStripButton();
             this.deployBtn = new System.Windows.Forms.ToolStripButton();
             this.shortcutsBtn = new System.Windows.Forms.ToolStripButton();
+            this.restartNppBtn = new System.Windows.Forms.ToolStripButton();
             this.solutionContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.unloadScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCommandPromptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -142,7 +143,8 @@
             this.openScriptsFolderBtn,
             this.configBtn,
             this.deployBtn,
-            this.shortcutsBtn});
+            this.shortcutsBtn,
+            this.restartNppBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(989, 31);
@@ -367,6 +369,17 @@
             this.shortcutsBtn.ToolTipText = "Show Plugin Shortcuts";
             this.shortcutsBtn.Click += new System.EventHandler(this.shortcutsBtn_Click);
             // 
+            // restartNppBtn
+            // 
+            this.restartNppBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.restartNppBtn.Image = global::CSScriptNpp.Resources.Resources.restart_npp;
+            this.restartNppBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.restartNppBtn.Name = "restartNppBtn";
+            this.restartNppBtn.Size = new System.Drawing.Size(23, 28);
+            this.restartNppBtn.Text = "retartNppBtn";
+            this.restartNppBtn.ToolTipText = "Restart Notepad++ (Elevated)";
+            this.restartNppBtn.Click += new System.EventHandler(this.restartNppBtn_Click);
+            // 
             // solutionContextMenu
             // 
             this.solutionContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -535,5 +548,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ContextMenuStrip toolbarContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem organizeButtonsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton restartNppBtn;
     }
 }

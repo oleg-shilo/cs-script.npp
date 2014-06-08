@@ -18,15 +18,39 @@ namespace CSScriptNpp.Deployment
             {
                 if (args[0] == "/restart") //restart
                 {
-                    // /restart <prevInstanceProcId> <appPath>
-                    int id = int.Parse(args[1]);
-                    string appPath = args[2];
+                    // /restart [/asadmin] <prevInstanceProcId> <appPath>
+
+                    int id;
+                    string appPath;
+                    bool asAdmin = false;
+
+                    if (args[1] == "/asadmin")
+                    {
+                        asAdmin = true;
+                        id = int.Parse(args[2]);
+                        appPath = args[3];
+                    }
+                    else
+                    {
+                        id = int.Parse(args[1]);
+                        appPath = args[2];
+                    }
 
                     var proc = Process.GetProcesses().Where(x => x.Id == id).FirstOrDefault();
                     if (proc != null && !proc.HasExited)
                         proc.WaitForExit();
 
-                    Process.Start(appPath);
+                    if (asAdmin)
+                    {
+                        var p = new Process();
+                        p.StartInfo.FileName = appPath;
+                        p.StartInfo.Verb = "runas";
+                        p.Start();
+                    }
+                    else
+                    {
+                        Process.Start(appPath);
+                    }
                 }
                 else  //update
                 {

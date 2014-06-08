@@ -29,7 +29,7 @@ namespace CSScriptNpp
      *         - make handling Debug.Assert user friendlier
      *     - auto-add usings
      *     + allow script manager buttons to be rearranged
-     *     - alow N++ reboot from CS-Script toolbar
+     *     + allow N++ reboot from CS-Script toolbar
      *         
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'

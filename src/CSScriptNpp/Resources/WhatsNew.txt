@@ -1,20 +1,6 @@
-v1.0.27.0
+v1.0.27.0+
 
-* CodeMap now indicates the type name for all members
+* Added "Restart Notepad++ (Elevated)" button
 
-* Implemented running scripts 'as administrator'
-  Just add '//css_npp asadmin' to the script
-  and run it as usual.
-
-* 'Prepare script for distribution' now aggregates script dependency assemblies.
-
-* Various improvements in CodeSnipptet, Autcompletion and 
-  MethodInfo interactions with each other.
-
-* Added printing line number for the entries in CodeMap
-  (subject of configuration value)
-
-* Improved debugging step indication  
-  - for classless scripts
-  - for Unicode content
+* Implemented script manager buttons customization.
 

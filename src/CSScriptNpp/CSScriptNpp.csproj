@@ -184,16 +184,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="CSScriptNpp\ReflectionExtensions.cs" />
-    <Compile Include="Resources\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\PluginShortcuts.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\PluginShortcuts.Designer.cs">
       <DependentUpon>PluginShortcuts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ToolStripPersistance.cs" />
     <None Include="Interop\DllExport\CheckILDasmPath.cs" />
@@ -512,6 +512,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dbg_pin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\restart_npp.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

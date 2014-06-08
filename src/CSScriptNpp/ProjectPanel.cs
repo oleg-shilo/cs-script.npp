@@ -897,5 +897,10 @@ void main(string[] args)
             }
             catch { }
         }
+
+        private void restartNppBtn_Click(object sender, EventArgs e)
+        {
+            Utils.RestartNpp();
+        }
     }
 }

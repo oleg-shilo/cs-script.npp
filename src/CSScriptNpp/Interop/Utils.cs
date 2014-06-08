@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Win32;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace CSScriptNpp
 {
@@ -106,14 +107,6 @@ namespace CSScriptNpp
                 return text;
         }
 
-        //public static TKey FindKeyByValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value)
-        //{
-        //    foreach (KeyValuePair<TKey, TValue> pair in dictionary)
-        //        if (value.Equals(pair.Value)) return pair.Key;
-
-        //    return default(TKey);
-        //}
-
         public static ShortcutKey ParseAsShortcutKey(this string shortcutSpec, string displayName)
         {
             ShortcutKey retval;
@@ -154,7 +147,7 @@ namespace CSScriptNpp
             line = -1;
             column = -1;
             file = "";
-            //@"c:\Users\osh\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\New Script2.g.cs(11,1): error";
+            //@"c:\Users\user\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\New Script2.g.cs(11,1): error";
             var match = Regex.Match(text, @"\(\d+,\d+\):\s+");
             if (match.Success)
             {
@@ -232,6 +225,41 @@ namespace CSScriptNpp
                 //g.DrawImage(new Bitmap(@"E:\Dev\Notepad++.Plugins\NppScripts\css_logo_16x16.png"), new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
                 g.DrawImage(bitmap, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
                 return Icon.FromHandle(newBmp.GetHicon());
+            }
+        }
+
+        static public void RestartNpp()
+        {
+            Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
+
+            string file;
+            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
+
+            if (string.IsNullOrEmpty(file)) //the Exit request has been processed and user did not cancel it
+            {
+                Application.DoEvents();
+
+                int processIdToWaitForExit = Process.GetCurrentProcess().Id;
+                string appToStart = Process.GetCurrentProcess().MainModule.FileName;
+
+                bool lessReliableButLessIntrusive = true;
+
+                if (lessReliableButLessIntrusive)
+                {
+                    var proc = new Process();
+                    proc.StartInfo.FileName = appToStart;
+                    proc.StartInfo.UseShellExecute = true;
+                    proc.StartInfo.Verb = "runas";
+                    proc.StartInfo.CreateNoWindow = true;
+                    proc.Start();
+                }
+                else
+                {
+                    string restarter = Path.Combine(Plugin.PluginDir, "Updater.exe");
+
+                    //the restarter will also wait for this process to exit
+                    Process.Start(restarter, string.Format("/restart /asadmin {0} \"{1}\"", processIdToWaitForExit, appToStart));
+                }
             }
         }
     }
