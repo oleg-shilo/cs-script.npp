@@ -9,12 +9,14 @@
     <RootNamespace>gui</RootNamespace>
     <AssemblyName>gui</AssemblyName>
     <WarningLevel>4</WarningLevel>
-    <StartupObject></StartupObject>
+    <StartupObject>
+    </StartupObject>
     <AssemblyOriginatorKeyFile>..\..\mdbg.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
     <SignAssembly>true</SignAssembly>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -153,6 +155,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AttachProcess.resx">
+      <DependentUpon>AttachProcess.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CurrentLineArrow.bmp" />
   </ItemGroup>
   <ItemGroup>

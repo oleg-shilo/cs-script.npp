@@ -46,6 +46,8 @@
             this.start = new System.Windows.Forms.Button();
             this.appName = new System.Windows.Forms.ComboBox();
             this.appArgs = new System.Windows.Forms.ComboBox();
+            this.attach = new System.Windows.Forms.Button();
+            this.procId = new System.Windows.Forms.TextBox();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lineNumber)).BeginInit();
             this.SuspendLayout();
@@ -64,7 +66,7 @@
             "out",
             "step",
             "suspend"});
-            this.comboBox1.Location = new System.Drawing.Point(12, 55);
+            this.comboBox1.Location = new System.Drawing.Point(12, 96);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(728, 21);
             this.comboBox1.TabIndex = 1;
@@ -75,11 +77,11 @@
             this.output.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.output.Location = new System.Drawing.Point(12, 112);
+            this.output.Location = new System.Drawing.Point(12, 154);
             this.output.Multiline = true;
             this.output.Name = "output";
             this.output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.output.Size = new System.Drawing.Size(847, 109);
+            this.output.Size = new System.Drawing.Size(847, 142);
             this.output.TabIndex = 2;
             // 
             // toolStrip1
@@ -166,7 +168,7 @@
             // execute
             // 
             this.execute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.execute.Location = new System.Drawing.Point(746, 53);
+            this.execute.Location = new System.Drawing.Point(746, 94);
             this.execute.Name = "execute";
             this.execute.Size = new System.Drawing.Size(113, 23);
             this.execute.TabIndex = 4;
@@ -177,7 +179,7 @@
             // lineNumber
             // 
             this.lineNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lineNumber.Location = new System.Drawing.Point(661, 83);
+            this.lineNumber.Location = new System.Drawing.Point(661, 124);
             this.lineNumber.Name = "lineNumber";
             this.lineNumber.Size = new System.Drawing.Size(79, 20);
             this.lineNumber.TabIndex = 7;
@@ -196,7 +198,7 @@
             "E:\\Galos\\Projects\\MDbg\\Version_4\\MDbg Sample\\bin\\Debug\\test\\Script.cs",
             "c:\\Users\\osh\\Documents\\Visual Studio 2012\\Projects\\ConsoleApplication12\\ConsoleAp" +
                 "plication12\\Program.cs"});
-            this.source.Location = new System.Drawing.Point(12, 82);
+            this.source.Location = new System.Drawing.Point(12, 123);
             this.source.Name = "source";
             this.source.Size = new System.Drawing.Size(643, 21);
             this.source.TabIndex = 6;
@@ -205,7 +207,7 @@
             // 
             this.insertBreakPoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.insertBreakPoint.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.insertBreakPoint.Location = new System.Drawing.Point(746, 79);
+            this.insertBreakPoint.Location = new System.Drawing.Point(746, 120);
             this.insertBreakPoint.Name = "insertBreakPoint";
             this.insertBreakPoint.Size = new System.Drawing.Size(113, 25);
             this.insertBreakPoint.TabIndex = 5;
@@ -254,11 +256,31 @@
             this.appArgs.TabIndex = 1;
             this.appArgs.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
+            // attach
+            // 
+            this.attach.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.attach.Location = new System.Drawing.Point(746, 55);
+            this.attach.Name = "attach";
+            this.attach.Size = new System.Drawing.Size(113, 23);
+            this.attach.TabIndex = 8;
+            this.attach.Text = "Attach";
+            this.attach.UseVisualStyleBackColor = true;
+            this.attach.Click += new System.EventHandler(this.attach_Click);
+            // 
+            // procId
+            // 
+            this.procId.Location = new System.Drawing.Point(640, 55);
+            this.procId.Name = "procId";
+            this.procId.Size = new System.Drawing.Size(100, 20);
+            this.procId.TabIndex = 9;
+            // 
             // IDE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(871, 233);
+            this.ClientSize = new System.Drawing.Size(871, 308);
+            this.Controls.Add(this.procId);
+            this.Controls.Add(this.attach);
             this.Controls.Add(this.start);
             this.Controls.Add(this.lineNumber);
             this.Controls.Add(this.source);
@@ -299,5 +321,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ComboBox appName;
         private System.Windows.Forms.ComboBox appArgs;
+        private System.Windows.Forms.Button attach;
+        private System.Windows.Forms.TextBox procId;
     }
 }

@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace CSScriptNpp
 {
-    class Debugger : DebuggerServer
+    internal class Debugger : DebuggerServer
     {
         static Debugger()
         {
@@ -76,7 +76,7 @@ namespace CSScriptNpp
             }
         }
 
-        static void RefreshBreakPointsForCurrentTab()
+        private static void RefreshBreakPointsForCurrentTab()
         {
             try
             {
@@ -125,14 +125,15 @@ namespace CSScriptNpp
                 OnBreakpointChanged();
         }
 
-        static void HandleDebuggerStateChanged()
+        private static void HandleDebuggerStateChanged()
         {
             ClearDebuggingMarkers();
         }
 
-        static Dictionary<string, Action<string>> invokeCompleteHandlers = new Dictionary<string, Action<string>>();
-        static int invokeId = 0;
-        static string GetNextInvokeId()
+        private static Dictionary<string, Action<string>> invokeCompleteHandlers = new Dictionary<string, Action<string>>();
+        private static int invokeId = 0;
+
+        private static string GetNextInvokeId()
         {
             lock (typeof(Debugger))
             {
@@ -249,13 +250,13 @@ namespace CSScriptNpp
             }
         }
 
-        static void OnWatchData(string notification)
+        private static void OnWatchData(string notification)
         {
             if (OnWatchUpdate != null)
                 OnWatchUpdate(notification);
         }
 
-        static void OnInvokeComplete(string notification)
+        private static void OnInvokeComplete(string notification)
         {
             //<id>:<result>
             string[] parts = notification.Split(new[] { ':' }, 2);
@@ -281,18 +282,22 @@ namespace CSScriptNpp
                 handler(result);
         }
 
-        static int lastNOSOURCEBREAK = 0;
+        private static int lastNOSOURCEBREAK = 0;
 
         static public event Action<string> OnWatchUpdate;
+
         static public event Action OnFrameChanged; //breakpoint, step advance, process exit
+
         static public event Action<string> OnNotification;
 
-        static int stepsCount = 0;
+        private static int stepsCount = 0;
 
-        static void HandleNotification(string message)
+        private static void HandleNotification(string notification)
         {
             //process=>7924:STARTED
             //source=>c:\Users\osh\Documents\Visual Studio 2012\Projects\ConsoleApplication12\ConsoleApplication12\Program.cs|12:9|12:10
+
+            string message = notification;
 
             Debug.WriteLine("Received: " + message);
 
@@ -306,104 +311,108 @@ namespace CSScriptNpp
                 catch { }
             });
 
-            HandleErrors(() =>
-            {
-                if (message.StartsWith(NppCategory.Process))
-                {
-                    ClearDebuggingMarkers();
-
-                    if (message.EndsWith(":STARTED"))
-                    {
-                        stepsCount = 0;
-                        DecorationInfo = CSScriptHelper.GetDecorationInfo(Debugger.ScriptFile);
-
-                        foreach (string info in breakpoints.Keys)
-                            DebuggerServer.AddBreakpoint(TranslateSourceBreakpoint(info));
-
-                        if (Debugger.EntryBreakpointFile != null)
+            CSScriptIntellisense.Interop.NppUI.Marshal(() =>
                         {
-                            //line num is 0; debugger is smart enough to move the breakpoint to the very next appropriate line
-                            string key = BuildBreakpointKey(Debugger.EntryBreakpointFile, 0);
-
-                            if (DecorationInfo != null && DecorationInfo.AutoGenFile == Debugger.EntryBreakpointFile)
+                            HandleErrors(() =>
                             {
-                                key = BuildBreakpointKey(DecorationInfo.AutoGenFile, DecorationInfo.InjectedLineNumber + 1);
-                            }
+                                if (message.StartsWith(NppCategory.Process))
+                                {
+                                    ClearDebuggingMarkers();
 
-                            DebuggerServer.AddBreakpoint(key);
+                                    if (message.EndsWith(":STARTED"))
+                                    {
+                                        stepsCount = 0;
+                                        DecorationInfo = CSScriptHelper.GetDecorationInfo(Debugger.ScriptFile);
+
+                                        foreach (string info in breakpoints.Keys)
+                                            DebuggerServer.AddBreakpoint(TranslateSourceBreakpoint(info));
+
+                                        if (Debugger.EntryBreakpointFile != null)
+                                        {
+                                            //line num is 0; debugger is smart enough to move the breakpoint to the very next appropriate line
+                                            string key = BuildBreakpointKey(Debugger.EntryBreakpointFile, 0);
+
+                                            if (DecorationInfo != null && DecorationInfo.AutoGenFile == Debugger.EntryBreakpointFile)
+                                            {
+                                                key = BuildBreakpointKey(DecorationInfo.AutoGenFile, DecorationInfo.InjectedLineNumber + 1);
+                                            }
+
+                                            DebuggerServer.AddBreakpoint(key);
+                                        }
+
+                                        Go();
+                                    }
+                                    else if (message.EndsWith(":ENDED"))
+                                    {
+                                        NotifyOnDebugStepChanges();
+                                    }
+                                }
+                                else if (message.StartsWith(NppCategory.Exception))
+                                {
+                                    OnException(message.Substring(NppCategory.Exception.Length));
+                                }
+                                else if (message.StartsWith(NppCategory.Invoke))
+                                {
+                                    OnInvokeComplete(message.Substring(NppCategory.Invoke.Length));
+                                }
+                                else if (message.StartsWith(NppCategory.Watch))
+                                {
+                                    OnWatchData(message.Substring(NppCategory.Watch.Length));
+                                }
+                                else if (message.StartsWith(NppCategory.Trace))
+                                {
+                                    Plugin.OutputPanel.DebugOutput.Write(message.Substring(NppCategory.Trace.Length));
+                                }
+                                else if (message.StartsWith(NppCategory.State))
+                                {
+                                    if (message.Substring(NppCategory.State.Length) == "NOSOURCEBREAK")
+                                        Task.Factory.StartNew(() =>
+                                        {
+                                            //The break can be caused by 'Debugger.Break();'
+                                            //Trigger user break to force source code entry if available as a small usability improvement.
+                                            if ((Environment.TickCount - lastNOSOURCEBREAK) > 1500) //Just in case, prevent infinite loop.
+                                            {
+                                                lastNOSOURCEBREAK = Environment.TickCount;
+                                                Thread.Sleep(200); //even 80 is enough
+                                                Debugger.Break();
+                                            }
+                                        });
+                                }
+                                else if (message.StartsWith(NppCategory.CallStack))
+                                {
+                                    Plugin.GetDebugPanel().UpdateCallstack(message.Substring(NppCategory.CallStack.Length));
+                                }
+                                else if (message.StartsWith(NppCategory.Threads))
+                                {
+                                    Plugin.GetDebugPanel().UpdateThreads(message.Substring(NppCategory.Threads.Length));
+                                }
+                                else if (message.StartsWith(NppCategory.Modules))
+                                {
+                                    Plugin.GetDebugPanel().UpdateModules(message.Substring(NppCategory.Modules.Length));
+                                }
+                                else if (message.StartsWith(NppCategory.Locals))
+                                {
+                                    Plugin.GetDebugPanel().UpdateLocals(message.Substring(NppCategory.Locals.Length));
+                                    NotifyOnDebugStepChanges(); //zos remove
+                                }
+                                else if (message.StartsWith(NppCategory.SourceCode))
+                                {
+                                    stepsCount++;
+
+                                    var sourceLocation = message.Substring(NppCategory.SourceCode.Length);
+
+                                    if (stepsCount == 1 && sourceLocation.Contains("css_dbg.cs|"))
+                                    {
+                                        //ignore the first source code break as it is inside of the CSScript.Npp debug launcher
+                                    }
+                                    else
+                                    {
+                                        NavigateToFileLocation(sourceLocation);
+                                    }
+                                }
+                            });
                         }
-
-                        Go();
-                    }
-                    else if (message.EndsWith(":ENDED"))
-                    {
-                        NotifyOnDebugStepChanges();
-                    }
-                }
-                else if (message.StartsWith(NppCategory.Exception))
-                {
-                    OnException(message.Substring(NppCategory.Exception.Length));
-                }
-                else if (message.StartsWith(NppCategory.Invoke))
-                {
-                    OnInvokeComplete(message.Substring(NppCategory.Invoke.Length));
-                }
-                else if (message.StartsWith(NppCategory.Watch))
-                {
-                    OnWatchData(message.Substring(NppCategory.Watch.Length));
-                }
-                else if (message.StartsWith(NppCategory.Trace))
-                {
-                    Plugin.OutputPanel.DebugOutput.Write(message.Substring(NppCategory.Trace.Length));
-                }
-                else if (message.StartsWith(NppCategory.State))
-                {
-                    if (message.Substring(NppCategory.State.Length) == "NOSOURCEBREAK")
-                        Task.Factory.StartNew(() =>
-                        {
-                            //The break can be caused by 'Debugger.Break();'
-                            //Trigger user break to force source code entry if available as a small usability improvement.
-                            if ((Environment.TickCount - lastNOSOURCEBREAK) > 1500) //Just in case, prevent infinite loop.
-                            {
-                                lastNOSOURCEBREAK = Environment.TickCount;
-                                Thread.Sleep(200); //even 80 is enough
-                                Debugger.Break();
-                            }
-                        });
-                }
-                else if (message.StartsWith(NppCategory.CallStack))
-                {
-                    Plugin.GetDebugPanel().UpdateCallstack(message.Substring(NppCategory.CallStack.Length));
-                }
-                else if (message.StartsWith(NppCategory.Threads))
-                {
-                    Plugin.GetDebugPanel().UpdateThreads(message.Substring(NppCategory.Threads.Length));
-                }
-                else if (message.StartsWith(NppCategory.Modules))
-                {
-                    Plugin.GetDebugPanel().UpdateModules(message.Substring(NppCategory.Modules.Length));
-                }
-                else if (message.StartsWith(NppCategory.Locals))
-                {
-                    Plugin.GetDebugPanel().UpdateLocals(message.Substring(NppCategory.Locals.Length));
-                    NotifyOnDebugStepChanges(); //zos remove
-                }
-                else if (message.StartsWith(NppCategory.SourceCode))
-                {
-                    stepsCount++;
-
-                    var sourceLocation = message.Substring(NppCategory.SourceCode.Length);
-
-                    if (stepsCount == 1 && sourceLocation.Contains("css_dbg.cs|"))
-                    {
-                        //ignore the first source code break as it is inside of the CSScript.Npp debug launcher
-                    }
-                    else
-                    {
-                        NavigateToFileLocation(sourceLocation);
-                    }
-                }
-            });
+                            );
         }
 
         static public void NavigateToFileLocation(string sourceLocation)
@@ -428,7 +437,7 @@ namespace CSScriptNpp
             }
         }
 
-        static void NotifyOnDebugStepChanges()
+        private static void NotifyOnDebugStepChanges()
         {
             Task.Factory.StartNew(() =>
             {
@@ -437,10 +446,10 @@ namespace CSScriptNpp
             });
         }
 
-        static char[] delimiter = new[] { '|' };
-        static char[] nlDelimiter = new[] { '\n' };
+        private static char[] delimiter = new[] { '|' };
+        private static char[] nlDelimiter = new[] { '\n' };
 
-        static Action OnNextFileOpenComplete;
+        private static Action OnNextFileOpenComplete;
 
         public static void OpenStackLocation(string sourceLocation)
         {
@@ -449,7 +458,7 @@ namespace CSScriptNpp
             Npp.OpenFile(file); //needs to by asynchronous
         }
 
-        static void ProcessOpenStackLocation(string sourceLocation)
+        private static void ProcessOpenStackLocation(string sourceLocation)
         {
             var location = Debugger.FileLocation.Parse(sourceLocation);
 
@@ -461,18 +470,18 @@ namespace CSScriptNpp
             }
 
             Npp.SetCaretPosition(location.Start);
-            Npp.ClearSelection(); //need this one as otherwise parasitic selection can be triggered 
+            Npp.ClearSelection(); //need this one as otherwise parasitic selection can be triggered
 
             Win32.SetForegroundWindow(Npp.NppHandle);
             Win32.SetForegroundWindow(Npp.CurrentScintilla);
         }
 
-        const int MARK_BOOKMARK = 24;
-        const int MARK_HIDELINESBEGIN = 23;
-        const int MARK_HIDELINESEND = 22;
-        const int MARK_DEBUGSTEP = 8;
-        const int MARK_BREAKPOINT = 7;
-        const int INDICATOR_DEBUGSTEP = 9;
+        private const int MARK_BOOKMARK = 24;
+        private const int MARK_HIDELINESBEGIN = 23;
+        private const int MARK_HIDELINESEND = 22;
+        private const int MARK_DEBUGSTEP = 8;
+        private const int MARK_BREAKPOINT = 7;
+        private const int INDICATOR_DEBUGSTEP = 9;
 
         internal class FileLocation
         {
@@ -498,7 +507,7 @@ namespace CSScriptNpp
             }
 
             //need to read text as we cannot ask NPP to calculate the position as the file may not be opened (e.g. auto-generated)
-            static int GetPosition(string file, int line, int column) //offsets are 1-based
+            private static int GetPosition(string file, int line, int column) //offsets are 1-based
             {
                 using (var reader = new StreamReader(file))
                 {
@@ -527,12 +536,10 @@ namespace CSScriptNpp
             }
         }
 
+        private static FileLocation lastLocation;
 
-
-        static FileLocation lastLocation;
-
-        static List<string> watchExtressions = new List<string>();
-        static Dictionary<string, IntPtr> breakpoints = new Dictionary<string, IntPtr>();
+        private static List<string> watchExtressions = new List<string>();
+        private static Dictionary<string, IntPtr> breakpoints = new Dictionary<string, IntPtr>();
         static public string EntryBreakpointFile;
         static public string ScriptFile;
         static public CSScriptHelper.DecorationInfo DecorationInfo;
@@ -543,12 +550,12 @@ namespace CSScriptNpp
             return breakpoints.Keys.ToArray();
         }
 
-        static string BuildBreakpointKey(string file, int line)
+        private static string BuildBreakpointKey(string file, int line)
         {
             return file + "|" + (line + 1); //server debugger operates in '1-based' lines
         }
 
-        static bool breakOnException = false;
+        private static bool breakOnException = false;
 
         static public bool BreakOnException
         {
@@ -649,7 +656,7 @@ namespace CSScriptNpp
                 OnBreakpointChanged();
         }
 
-        static void ToggleBreakpoint(string file, int line)
+        private static void ToggleBreakpoint(string file, int line)
         {
             string key = BuildBreakpointKey(file, line);
 
@@ -677,7 +684,7 @@ namespace CSScriptNpp
 
         static public void TranslateCompiledLocation(FileLocation location)
         {
-            //Shocking!!! 
+            //Shocking!!!
             //For selection, ranges, text length, navigation
             //Scintilla operates in units, which are not characters but bytes.
             //thus if for the document content "test" you execute selection(start:0,end:3)
@@ -717,7 +724,7 @@ namespace CSScriptNpp
             Debug.WriteLine("-----------------------------");
         }
 
-        static int TranslateSourceLineLocation(string file, int line)
+        private static int TranslateSourceLineLocation(string file, int line)
         {
             if (DecorationInfo != null)
             {
@@ -732,7 +739,7 @@ namespace CSScriptNpp
             return line;
         }
 
-        static string TranslateSourceBreakpoint(string key)
+        private static string TranslateSourceBreakpoint(string key)
         {
             //return key;
             if (DecorationInfo == null)
@@ -762,7 +769,7 @@ namespace CSScriptNpp
             }
         }
 
-        static void ShowBreakpointSourceLocation(FileLocation location)
+        private static void ShowBreakpointSourceLocation(FileLocation location)
         {
             ClearDebuggingMarkers();
 
@@ -778,12 +785,12 @@ namespace CSScriptNpp
             }
 
             Npp.SetCaretPosition(location.Start);
-            Npp.ClearSelection(); //need this one as otherwise parasitic selection can be triggered 
+            Npp.ClearSelection(); //need this one as otherwise parasitic selection can be triggered
 
             Win32.SetForegroundWindow(Npp.NppHandle);
         }
 
-        static void ClearDebuggingMarkers()
+        private static void ClearDebuggingMarkers()
         {
             if (lastLocation != null)
             {
@@ -860,6 +867,25 @@ namespace CSScriptNpp
 
                 DebuggerServer.SetInstructionPointer(line + 1); //debugger is 1-based
                 DebuggerServer.Break(); //need to break to trigger reporting the current step
+            }
+        }
+
+        public enum CpuType
+        {
+            x86,
+            x64,
+            Any
+        }
+
+        static public void Attach(int process, CpuType cpu)
+        {
+            if (!IsRunning)
+            {
+                Start(cpu);
+                SendSettings(BreakOnException);
+                watchExtressions.ForEach(x => DebuggerServer.AddWatchExpression(x));
+                Attach(process);
+                EntryBreakpointFile = null;
             }
         }
 

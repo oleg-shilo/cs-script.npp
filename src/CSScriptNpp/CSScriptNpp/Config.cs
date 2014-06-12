@@ -40,6 +40,7 @@ namespace CSScriptNpp
         public bool WordWrapInVisualizer = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
+        public string LastExternalProcess = "";
         public string ReleaseNotesViewedFor = "";
         public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
         public string SciptHistory = "";
@@ -79,6 +80,7 @@ namespace CSScriptNpp
                 SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
                 SetValue(Section, "UpdateMode", UpdateMode);
                 SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
+                SetValue(Section, "LastExternalProcess", LastExternalProcess);
                 SetValue(Section, "TargetVersion", TargetVersion);
                 SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
                 SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
@@ -108,6 +110,7 @@ namespace CSScriptNpp
                 //QuickViewAutoRefreshAvailable = GetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
                 LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
                 TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
+                LastExternalProcess = GetValue(Section, "LastExternalProcess", LastExternalProcess);
                 ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
                 BreakOnException = GetValue(Section, "BreakOnException", BreakOnException);
                 LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);

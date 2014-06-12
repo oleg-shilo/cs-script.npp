@@ -309,34 +309,37 @@ namespace CSScriptNpp
 
             try
             {
-                if (IsAutoGenFile(file))
+                if (file != null)
                 {
-                    string originalScript = CSScriptHelper.GetOriginalFileName(file);
-                    if (File.Exists(originalScript))
-                        retval = new DecorationInfo
-                        {
-                            ScriptFile = originalScript,
-                            AutoGenFile = file
-                        };
-                }
-                else
-                {
-                    string entryFile = CSScriptHelper.GetEntryFileName(file);
-                    if (IsAutoGenFile(entryFile))
-                        retval = new DecorationInfo
-                        {
-                            ScriptFile = file,
-                            AutoGenFile = entryFile
-                        };
-                }
+                    if (IsAutoGenFile(file))
+                    {
+                        string originalScript = CSScriptHelper.GetOriginalFileName(file);
+                        if (File.Exists(originalScript))
+                            retval = new DecorationInfo
+                            {
+                                ScriptFile = originalScript,
+                                AutoGenFile = file
+                            };
+                    }
+                    else
+                    {
+                        string entryFile = CSScriptHelper.GetEntryFileName(file);
+                        if (IsAutoGenFile(entryFile))
+                            retval = new DecorationInfo
+                            {
+                                ScriptFile = file,
+                                AutoGenFile = entryFile
+                            };
+                    }
 
-                if (retval != null)
-                {
-                    string code = File.ReadAllText(retval.AutoGenFile);
-                    Tuple<int, int> info = CSScriptIntellisense.CSScriptHelper.GetDecorationInfo(code);
-                    retval.IngecionStart = info.Item1;
-                    retval.IngecionLength = info.Item2;
-                    retval.InjectedLineNumber = code.Substring(0, retval.IngecionStart).Split('\n').Count(); ;
+                    if (retval != null)
+                    {
+                        string code = File.ReadAllText(retval.AutoGenFile);
+                        Tuple<int, int> info = CSScriptIntellisense.CSScriptHelper.GetDecorationInfo(code);
+                        retval.IngecionStart = info.Item1;
+                        retval.IngecionLength = info.Item2;
+                        retval.InjectedLineNumber = code.Substring(0, retval.IngecionStart).Split('\n').Count(); ;
+                    }
                 }
             }
             catch { retval = null; }

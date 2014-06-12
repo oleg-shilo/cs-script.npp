@@ -56,6 +56,7 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
         private MenuItem menuItemViewIlOrSource;
         private MenuItem menuItem8;
         private MenuItem menuItem9;
+        private MenuItem menuItem10;
         private System.Windows.Forms.MenuItem breakCmd;
 
         public MainForm(IMDbgShell ui)
@@ -129,6 +130,7 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
             this.menuItemViewClose = new System.Windows.Forms.MenuItem();
             this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.menuItem8 = new System.Windows.Forms.MenuItem();
+            this.menuItem9 = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.windowsTileCmd = new System.Windows.Forms.MenuItem();
             this.windowCascadeCmd = new System.Windows.Forms.MenuItem();
@@ -141,7 +143,7 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
             this.cmdInput = new System.Windows.Forms.TextBox();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.menuItem9 = new System.Windows.Forms.MenuItem();
+            this.menuItem10 = new System.Windows.Forms.MenuItem();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -242,7 +244,8 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
             this.menuItemViewClose,
             this.menuItem7,
             this.menuItem8,
-            this.menuItem9});
+            this.menuItem9,
+            this.menuItem10});
             this.menuItemView.Text = "Tools";
             this.menuItemView.Click += new System.EventHandler(this.menuItemView_Click);
             // 
@@ -268,6 +271,12 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
             this.menuItem8.Index = 3;
             this.menuItem8.Text = "AutoWatch";
             this.menuItem8.Click += new System.EventHandler(this.menuItem8_Click_1);
+            // 
+            // menuItem9
+            // 
+            this.menuItem9.Index = 4;
+            this.menuItem9.Text = "QuickWatch";
+            this.menuItem9.Click += new System.EventHandler(this.menuItem9_Click);
             // 
             // menuItem5
             // 
@@ -363,11 +372,11 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
             this.splitter1.TabIndex = 0;
             this.splitter1.TabStop = false;
             // 
-            // menuItem9
+            // menuItem10
             // 
-            this.menuItem9.Index = 4;
-            this.menuItem9.Text = "QuickWatch";
-            this.menuItem9.Click += new System.EventHandler(this.menuItem9_Click);
+            this.menuItem10.Index = 5;
+            this.menuItem10.Text = "CallStack";
+            this.menuItem10.Click += new System.EventHandler(this.menuItem10_Click);
             // 
             // MainForm
             // 
@@ -1580,6 +1589,11 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
         private void menuItem9_Click(object sender, EventArgs e)
         {
             this.m_HelperWindows[4].Show();
+        }
+
+        private void menuItem10_Click(object sender, EventArgs e)
+        {
+            this.m_HelperWindows[0].Show();
         }
 
     } // end MainForm

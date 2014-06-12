@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Testpad</RootNamespace>
     <AssemblyName>Testpad</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -99,6 +99,11 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>md "$(TargetDir)CSScriptNpp\MDbg"
+copy "$(ProjectDir)..\CSScriptNpp\CSScriptNpp\MDbg\mdbghost_32.exe" "$(TargetDir)CSScriptNpp\MDbg\mdbghost_32.exe"
+copy "$(ProjectDir)..\CSScriptNpp\CSScriptNpp\MDbg\mdbghost_64.exe" "$(TargetDir)CSScriptNpp\MDbg\mdbghost_64.exe"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

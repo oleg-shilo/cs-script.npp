@@ -70,7 +70,7 @@ namespace gui
                 int count = 0;
 
                 cp = new CorPublish();
-                {                   
+                {
                     foreach (CorPublishProcess cpp in cp.EnumProcesses())
                     {
                         if (curPid != cpp.ProcessId)  // let's hide our process
@@ -88,8 +88,8 @@ namespace gui
                 {
                     this.listBoxProcesses.Items.Add(new Item(0, "(No active processes)"));
                 }
-            }            
-            catch(Exception)
+            }
+            catch (Exception)
             {
                 if (cp == null)
                 {
@@ -115,12 +115,23 @@ namespace gui
 
         private void buttonAttach_Click(object sender, EventArgs e)
         {
-            object o = this.listBoxProcesses.SelectedItem;
-            Item x = (Item)o;
-            m_pid = x.Pid;
+            if (this.listBoxProcesses.SelectedItem != null)
+            {
+                object o = this.listBoxProcesses.SelectedItem;
+                Item x = (Item)o;
+                m_pid = x.Pid;
 
-            this.Close();
-
+                this.Close();
+            }
+            else if (!string.IsNullOrWhiteSpace(textBox1.Text))
+            {
+                try
+                {
+                    m_pid = int.Parse(textBox1.Text);
+                    this.Close();
+                }
+                catch { }
+            }
         } // end refresh
     }
 }

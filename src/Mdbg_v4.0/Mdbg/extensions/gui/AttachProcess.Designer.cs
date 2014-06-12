@@ -32,39 +32,41 @@
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.buttonAttach = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-// 
-// listBoxProcesses
-// 
-            this.listBoxProcesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // listBoxProcesses
+            // 
+            this.listBoxProcesses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxProcesses.FormattingEnabled = true;
             this.listBoxProcesses.Location = new System.Drawing.Point(2, 55);
             this.listBoxProcesses.Name = "listBoxProcesses";
-            this.listBoxProcesses.Size = new System.Drawing.Size(296, 173);
+            this.listBoxProcesses.Size = new System.Drawing.Size(296, 147);
             this.listBoxProcesses.TabIndex = 0;
-// 
-// label1
-// 
+            // 
+            // label1
+            // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(3, 7);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(140, 14);
+            this.label1.Size = new System.Drawing.Size(137, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Select process to attach to:";
-// 
-// buttonRefresh
-// 
+            // 
+            // buttonRefresh
+            // 
             this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonRefresh.Location = new System.Drawing.Point(212, 13);
             this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(75, 23);
             this.buttonRefresh.TabIndex = 2;
             this.buttonRefresh.Text = "Refresh";
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
-// 
-// buttonAttach
-// 
+            // 
+            // buttonAttach
+            // 
             this.buttonAttach.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAttach.Location = new System.Drawing.Point(170, 246);
             this.buttonAttach.Name = "buttonAttach";
@@ -72,9 +74,9 @@
             this.buttonAttach.TabIndex = 3;
             this.buttonAttach.Text = "Attach!";
             this.buttonAttach.Click += new System.EventHandler(this.buttonAttach_Click);
-// 
-// buttonCancel
-// 
+            // 
+            // buttonCancel
+            // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonCancel.Location = new System.Drawing.Point(12, 248);
             this.buttonCancel.Name = "buttonCancel";
@@ -82,11 +84,19 @@
             this.buttonCancel.TabIndex = 4;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
-// 
-// AttachProcess
-// 
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(6, 209);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 5;
+            // 
+            // AttachProcess
+            // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(299, 290);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonAttach);
             this.Controls.Add(this.buttonRefresh);
@@ -106,5 +116,6 @@
         private System.Windows.Forms.Button buttonRefresh;
         private System.Windows.Forms.Button buttonAttach;
         private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

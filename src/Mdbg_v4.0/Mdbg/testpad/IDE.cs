@@ -132,5 +132,23 @@ namespace testpad
         {
             DebuggerServer.Exit();
         }
+
+        private void attach_Click(object sender, EventArgs e)
+        {
+            if (DebuggerServer.IsRunning)
+            {
+                DebuggerServer.Exit();
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(procId.Text))
+                {
+                    DebuggerServer.Start();
+                    DebuggerServer.Attach(procId.Text);
+                }
+            }
+
+            RefreshDebuggingState();
+        }
     }
 }

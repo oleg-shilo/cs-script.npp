@@ -1,14 +1,13 @@
-﻿using System;
+﻿using CSScriptIntellisense.Interop;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CSScriptNpp
 {
-    class NppCategory
+    internal class NppCategory
     {
         public static string SourceCode = "source=>";
         public static string Process = "process=>";
@@ -26,7 +25,7 @@ namespace CSScriptNpp
         public static string Diagnostics = "debugger=>";
     }
 
-    class DebuggerServer
+    internal class DebuggerServer
     {
         static DebuggerServer()
         {
@@ -134,7 +133,12 @@ namespace CSScriptNpp
                 MessageQueue.AddCommand(string.Format("mo nc on\nrun \"{0}\" {1}", application, args));
         }
 
-        static bool debugAsConsole;
+        static public void Attach(int proccess)
+        {
+            MessageQueue.AddCommand("attach " + proccess);
+        }
+
+        private static bool debugAsConsole;
 
         static public bool DebugAsConsole
         {
@@ -159,7 +163,7 @@ namespace CSScriptNpp
             }
         }
 
-        static bool isInBreak;
+        private static bool isInBreak;
 
         static public bool IsInBreak
         {
@@ -175,7 +179,6 @@ namespace CSScriptNpp
 
                 if (OnDebuggerStateChanged != null)
                     OnDebuggerStateChanged();
-
             }
         }
 
@@ -188,12 +191,13 @@ namespace CSScriptNpp
         }
 
         static protected Action<string> OnNotificationReceived; //debugger notification received
+
         static public event Action OnDebuggerStateChanged; //breakpoint, step advance, process exit
 
         static protected Action OnBreak; //breakpoint hit
         static protected Action<string> OnDebuggeeProcessNotification; //debugger process state change
 
-        static void Init()
+        private static void Init()
         {
             initialized = true;
             Task.Factory.StartNew(() =>
@@ -223,7 +227,7 @@ namespace CSScriptNpp
 
                         if (OnNotificationReceived != null)
                         {
-                            //NOTE: do not start any communication with the debugger from any OnNotificationReceived handler as 
+                            //NOTE: do not start any communication with the debugger from any OnNotificationReceived handler as
                             //the communication channel is blocked until all handlers return
                             OnNotificationReceived(message);
                         }
@@ -231,7 +235,7 @@ namespace CSScriptNpp
                 });
         }
 
-        static string WaitForNotification()
+        private static string WaitForNotification()
         {
             string message = MessageQueue.WaitForNotification();
 
@@ -261,7 +265,8 @@ namespace CSScriptNpp
 
                             IsInBreak = false;
 
-                            Plugin.GetDebugPanel().Clear();
+                            //NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
+                            NppUI.Marshal(() => Plugin.GetDebugPanel().Clear());
                         });
             }
             return message;
@@ -290,10 +295,11 @@ namespace CSScriptNpp
         public static int debuggerProcessId = 0;
         public static int debuggeeProcessId = 0;
 
-        static RemoteChannelServer channel;
+        private static RemoteChannelServer channel;
 
-        static bool initialized;
-        static public bool Start()
+        private static bool initialized;
+
+        static public bool Start(Debugger.CpuType cpu = Debugger.CpuType.Any)
         {
             if (!initialized)
                 Init();
@@ -303,18 +309,22 @@ namespace CSScriptNpp
 
             MessageQueue.Clear();
 
-            string debuggerApp = Environment.ExpandEnvironmentVariables("%MDBG_EXE%");
+            string debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbg.exe");
 
-            debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbg.exe");
+            if(cpu == Debugger.CpuType.x86)
+                debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbghost_32.exe");
+            else if(cpu == Debugger.CpuType.x64)
+                debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbghost_64.exe");
+
 
             var debugger = Process.Start(new ProcessStartInfo
                             {
                                 FileName = debuggerApp,
                                 Arguments = "!load npp.dll",
-//#if !DEBUG 
+                                //#if !DEBUG
                                 CreateNoWindow = true,
                                 UseShellExecute = false
-//#endif
+                                //#endif
                             });
 
             MessageQueue.AddNotification(NppCategory.Diagnostics + debugger.Id + ":STARTED");
@@ -329,7 +339,7 @@ namespace CSScriptNpp
             return true;
         }
 
-        static void WaitForExit(Process debugger)
+        private static void WaitForExit(Process debugger)
         {
             debugger.WaitForExit();
 
@@ -344,11 +354,10 @@ namespace CSScriptNpp
             MessageQueue.AddNotification(NppCategory.Diagnostics + debugger.Id + ":STOPPED");
         }
 
-        static void Notify(string message)
+        private static void Notify(string message)
         {
             if (OnNotificationReceived != null)
                 OnNotificationReceived(message);
         }
     }
 }
-

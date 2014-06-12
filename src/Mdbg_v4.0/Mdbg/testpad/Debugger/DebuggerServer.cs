@@ -43,6 +43,11 @@ namespace testpad
         {
             MessageQueue.AddCommand("step");
         }
+        
+        static public void Attach(string procId)
+        {
+            MessageQueue.AddCommand("attach "+procId);
+        }
 
         static public void StepOut()
         {
@@ -167,10 +172,12 @@ namespace testpad
             MessageQueue.Clear();
 
             string debuggerDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
+            string debuggerApp = Path.Combine(debuggerDir, "mdbghost_64.exe");
             var debugger = Process.Start(new ProcessStartInfo
                             {
-                                FileName = Path.Combine(debuggerDir, "mdbg.exe"),
+                                //FileName = debuggerApp,
+                                //FileName = Path.Combine(debuggerDir, "mdbg.exe"),
+                                FileName = @"c:\program files (x86)\notepad++\plugins\csscriptnpp\mdbg\mdbghost_64.exe",
                                 Arguments = "!load npp.dll",
                                 //CreateNoWindow = true,
                                 //UseShellExecute = false

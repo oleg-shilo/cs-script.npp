@@ -13,6 +13,7 @@ using Microsoft.Samples.Debugging.CorDebug.NativeApi;
 using Microsoft.Samples.Debugging.MdbgEngine;
 using Microsoft.Samples.Tools.Mdbg;
 using npp.CSScriptNpp;
+using System.Diagnostics;
 
 namespace npp
 {
@@ -117,6 +118,11 @@ namespace npp
                 return;
 
             Console.WriteLine("Received command: " + command.Substring(0, Math.Min(50, command.Length)));
+                        
+            //if (command.StartsWith("attach"))
+            //{
+            //    Debug.Assert(false);
+            //}
 
             if (command == "break") //not native Mdbg command
             {

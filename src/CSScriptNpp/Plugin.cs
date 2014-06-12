@@ -16,8 +16,8 @@ namespace CSScriptNpp
      *         - Debug panel
      *             - Watch panel
      *                 - Setting the variable/expression value
-     *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'   
-     *                   
+     *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'
+     *
      *                             lsMVar = Debugger.Processes.Active.ResolveVariable(varName,
      *                                         Debugger.Processes.Active.Threads.Active.CurrentFrame); )
      *                 - Handle global (non variable based) expressions likes Environment.TickCount
@@ -28,9 +28,11 @@ namespace CSScriptNpp
      *                   - visualizer for the collection
      *         - make handling Debug.Assert user friendlier
      *     - auto-add usings
+     *     - Debugger start process
+     *     - Debugger attach to process
      *     + allow script manager buttons to be rearranged
      *     + allow N++ reboot from CS-Script toolbar
-     *         
+     *
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
      *      - Debug panel
@@ -41,7 +43,7 @@ namespace CSScriptNpp
      *              - auto update
      *          - Debug Objects panel
      *              - Refresh value on demand
-     *            
+     *
      */
 
     public partial class Plugin
@@ -61,6 +63,7 @@ namespace CSScriptNpp
             SetCommand(projectPanelId = index++, "Build (validate)", Build, "_BuildFromMenu:Ctrl+Shift+B");
             SetCommand(projectPanelId = index++, "Run", Run, "_Run:F5");
             SetCommand(projectPanelId = index++, "Debug", Run, "_Debug:Alt+F5");
+            SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
             SetCommand(index++, "---", null);
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
             SetCommand(outputPanelId = index++, "Output Panel", DoOutputPanel, Config.Instance.ShowOutputPanel);
@@ -89,7 +92,7 @@ namespace CSScriptNpp
         static public Action DebugScript;
 
         //must be in a separate method to allow proper assembly probing
-        static void LoadIntellisenseCommands(ref int cmdIndex)
+        private static void LoadIntellisenseCommands(ref int cmdIndex)
         {
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
                  (index, name, handler, shortcut) =>
@@ -101,8 +104,7 @@ namespace CSScriptNpp
                  });
         }
 
-
-        static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
+        private static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
         {
             ShortcutKey shortcut = shortcutSpec.ParseAsShortcutKey(displayName);
 
@@ -113,7 +115,7 @@ namespace CSScriptNpp
                 uniqueKeys.Add(key, 0);
         }
 
-        static IEnumerable<Keys> BindInteranalShortcuts()
+        private static IEnumerable<Keys> BindInteranalShortcuts()
         {
             var uniqueKeys = new Dictionary<Keys, int>();
 
@@ -194,7 +196,7 @@ namespace CSScriptNpp
             return uniqueKeys.Keys;
         }
 
-        static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
+        private static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
             foreach (var shortcut in internalShortcuts.Keys)
                 if ((byte)key == shortcut._key)
@@ -233,6 +235,8 @@ namespace CSScriptNpp
 
         static public DebugPanel GetDebugPanel()
         {
+            //NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
+
             if (Plugin.DebugPanel == null)
                 Plugin.DoDebugPanel();
             return Plugin.DebugPanel;
@@ -259,7 +263,6 @@ namespace CSScriptNpp
         {
             if (Plugin.OutputPanel == null)
                 DoOutputPanel();
-
 
             if (Plugin.DebugPanel == null)
                 DoDebugPanel();
@@ -336,6 +339,16 @@ namespace CSScriptNpp
             }
         }
 
+        static public void DebugEx()
+        {
+            if (!Debugger.IsRunning)
+            {
+                if (Plugin.ProjectPanel == null)
+                    DoProjectPanel();
+                DebugExternal.ShowModal();
+            }
+        }
+
         static public void Debug()
         {
             if (!Debugger.IsRunning)
@@ -388,7 +401,7 @@ namespace CSScriptNpp
             return Plugin.OutputPanel;
         }
 
-        static Process runningScript;
+        private static Process runningScript;
 
         public static Process RunningScript
         {
@@ -403,7 +416,7 @@ namespace CSScriptNpp
             }
         }
 
-        static void UpdateLocalDebugInfo()
+        private static void UpdateLocalDebugInfo()
         {
             if (runningScript == null)
                 Plugin.OutputPanel.localDebugPrefix = null;
@@ -436,7 +449,7 @@ namespace CSScriptNpp
 
         internal static string HomeUrl = "https://csscriptnpp.codeplex.com/";
 
-        static void StartCheckForUpdates()
+        private static void StartCheckForUpdates()
         {
             lock (typeof(Plugin))
             {
@@ -454,7 +467,7 @@ namespace CSScriptNpp
             }
         }
 
-        static void CheckForUpdates()
+        private static void CheckForUpdates()
         {
             Thread.Sleep(2000); //let Notepad++ to complete all initialization
 

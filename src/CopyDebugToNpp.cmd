@@ -18,6 +18,7 @@ copy "CSScriptNpp\CSScriptNpp\7z.exe" "%programfiles%\Notepad++\plugins\CSScript
 copy "CSScriptNpp\CSScriptNpp\7z.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp\7z.dll"
 copy "CSScriptNpp\CSScriptNpp\MDbg\*.pdb" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Debug\CSScriptNpp\Mdbg\*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
+copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 
 
 pause

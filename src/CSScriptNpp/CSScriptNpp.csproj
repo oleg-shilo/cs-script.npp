@@ -78,6 +78,12 @@
       <DependentUpon>BreakpointsPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\DbgObject.cs" />
+    <Compile Include="Dialogs\DebugExternal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\DebugExternal.Designer.cs">
+      <DependentUpon>DebugExternal.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ModulesPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -232,6 +238,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\BreakpointsPanel.resx">
       <DependentUpon>BreakpointsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\DebugExternal.resx">
+      <DependentUpon>DebugExternal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\LocalsPanel.resx">
       <DependentUpon>LocalsPanel.cs</DependentUpon>
