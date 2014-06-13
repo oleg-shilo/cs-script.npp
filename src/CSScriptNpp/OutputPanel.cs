@@ -31,6 +31,14 @@ namespace CSScriptNpp
             }
         }
 
+        public OutputPanel ClearAllDefaultOutputs()
+        {
+            ConsoleOutput.Clear();
+            BuildOutput.Clear();
+            DebugOutput.Clear();
+            return this;
+        }
+
         public void TryNavigateToFileReference(bool toNext)
         {
             int line;

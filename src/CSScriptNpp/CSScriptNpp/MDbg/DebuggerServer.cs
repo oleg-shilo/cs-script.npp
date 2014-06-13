@@ -17,6 +17,7 @@ namespace CSScriptNpp
         public static string CallStack = "callstack=>";
         public static string Invoke = "invoke=>";
         public static string Exception = "exception=>";
+        public static string DbgCommandError = "dbg_error=>";
         public static string Locals = "locals=>";
         public static string State = "state=>";
         public static string Watch = "watch=>";

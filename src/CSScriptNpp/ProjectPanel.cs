@@ -350,9 +350,7 @@ void main(string[] args)
                         OutputPanel outputPanel = Plugin.ShowOutputPanel();
 
                         outputPanel.AttachDebuger();
-                        outputPanel.ConsoleOutput.Clear();
-                        outputPanel.BuildOutput.Clear();
-                        outputPanel.DebugOutput.Clear();
+                        outputPanel.ClearAllDefaultOutputs();
 
                         Task.Factory.StartNew(() =>
                         {

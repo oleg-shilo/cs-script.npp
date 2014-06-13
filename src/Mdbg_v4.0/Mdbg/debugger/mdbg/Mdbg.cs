@@ -150,6 +150,7 @@ namespace Microsoft.Samples.Tools.Mdbg
         }
 
         public event CommandExecutedEventHandler OnCommandExecuted;
+        public event CommandExecuteException OnCommandError;
 
         public int Start(string[] commandLineArguments)
         {
@@ -536,7 +537,18 @@ namespace Microsoft.Samples.Tools.Mdbg
                     {
                         Commands.ParseCommand(input, out cmd, out cmdArgs);
                     }
-                    cmd.Execute(cmdArgs);
+
+                    try
+                    {
+                        cmd.Execute(cmdArgs);
+                    }
+                    catch(Exception e)
+                    {
+                        if (OnCommandError != null)
+                            OnCommandError(e, cmd.CommandName);
+
+                        throw;
+                    }
 
                     int newStopCount = Debugger.Processes.HaveActive ? Debugger.Processes.Active.StopCounter : Int32.MaxValue;
                     bool movementCommand = newStopCount > stopCount;

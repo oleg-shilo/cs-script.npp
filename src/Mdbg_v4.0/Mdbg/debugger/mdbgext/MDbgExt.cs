@@ -103,6 +103,8 @@ namespace Microsoft.Samples.Tools.Mdbg
     /// <param name="e">CommandExecutedEventArgs for the event.</param>
     public delegate void CommandExecutedEventHandler(Object sender, CommandExecutedEventArgs e);
 
+    public delegate void CommandExecuteException(Exception e, string command);
+
 
     /// <summary>
     /// Pluggable parser object to parse breakpoint location strings.
@@ -223,6 +225,8 @@ namespace Microsoft.Samples.Tools.Mdbg
         /// Called when command is executed and prompt is going to be displayed.
         /// </summary>
         event CommandExecutedEventHandler OnCommandExecuted;
+
+        event CommandExecuteException OnCommandError;
 
         /// <summary>
         /// Displays current location.

@@ -3002,6 +3002,9 @@ namespace Microsoft.Samples.Tools.Mdbg
                 }
             }
 
+            if(System.Diagnostics.Process.GetProcessById(pid) == null)
+                throw new MDbgShellException("Can't attach to process " + pid + " because it's not running");
+            
             // Get the OS handle if there was one
             SafeWin32Handle osEventHandle = null;
             if (ap.OptionPassed(continuationEventArg))
@@ -3010,20 +3013,25 @@ namespace Microsoft.Samples.Tools.Mdbg
             }
 
             // determine the version to attach to
+            
             string version = null;
-            if (ap.OptionPassed(versionArg))
+            try
             {
-                version = ap.GetOption(versionArg).AsString;
+                if (ap.OptionPassed(versionArg))
+                {
+                    version = ap.GetOption(versionArg).AsString;
+                }
+                else
+                {
+                    version = MdbgVersionPolicy.GetDefaultAttachVersion(pid);
+                }
             }
-            else
+            catch
             {
-                version = MdbgVersionPolicy.GetDefaultAttachVersion(pid);
             }
-            if (version == null)
-            {
-                throw new MDbgShellException("Can't determine what version of the CLR to attach to in process " +
-                    pid + ". Use -ver to specify a version");
-            }
+
+            if(version == null)
+                throw new MDbgShellException("Can't determine what version of the CLR to attach to in process. It may be because the process (" + pid + ") is not a managed application.");
 
             // attach
             MDbgProcess p;

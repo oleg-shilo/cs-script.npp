@@ -351,6 +351,20 @@ namespace CSScriptNpp
                                 {
                                     OnException(message.Substring(NppCategory.Exception.Length));
                                 }
+                                else if (message.StartsWith(NppCategory.DbgCommandError))
+                                {
+                                    //<command>:<error>
+                                    string[] parts = message.Split(new[] { ':' }, 2);
+                                    if (parts[0] == "attach") //critical failure
+                                    {
+                                        if (IsRunning)
+                                            Stop();
+
+                                        //it is important not to display msgbox in this thread as it would release message pump 
+                                        //while we are handling the current Windows message. We are in 'NppUI.Marshal'
+                                        ThreadPool.QueueUserWorkItem(x => MessageBox.Show(string.Format("Debugger failed to execute '{0}' command.\n{1} ", parts[0], parts[1]), "CS-Script"));
+                                    }
+                                }
                                 else if (message.StartsWith(NppCategory.Invoke))
                                 {
                                     OnInvokeComplete(message.Substring(NppCategory.Invoke.Length));

@@ -29,7 +29,9 @@ namespace CSScriptNpp
      *         - make handling Debug.Assert user friendlier
      *     - auto-add usings
      *     - Debugger start process
+     *       - add process arguments
      *     - Debugger attach to process
+     *       - check presense of dbg info     
      *     + allow script manager buttons to be rearranged
      *     + allow N++ reboot from CS-Script toolbar
      *

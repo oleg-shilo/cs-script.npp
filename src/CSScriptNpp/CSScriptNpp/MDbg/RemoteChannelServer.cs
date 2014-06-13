@@ -169,6 +169,7 @@ namespace CSScriptNpp
                         if (message == NppCommand.Exit || message == null)
                             break;
 
+                        Debug.WriteLine(message);
                         MessageQueue.AddNotification(message);
                     }
                 }

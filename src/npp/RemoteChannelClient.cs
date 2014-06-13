@@ -52,6 +52,7 @@ namespace npp.CSScriptNpp
         public static string Watch = "watch=>";
         public static string Invoke = "invoke=>";
         public static string Exception = "exception=>";
+        public static string DbgError = "dbg_error=>";
         public static string Process = "process=>";
         public static string Settings = "settings=>";
         public static string Breakpoints = "breakpoints=>";

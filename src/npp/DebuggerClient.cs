@@ -62,6 +62,7 @@ namespace npp
 
             //Debug.Assert(false);
             this.shell = shell;
+            this.shell.OnCommandError += shell_OnCommandError;
             channel.Trace = message => Console.WriteLine(message);
             channel.Start();
 
@@ -73,6 +74,11 @@ namespace npp
                         ExecuteCommand(command);
                     }
                 });
+        }
+
+        void shell_OnCommandError(Exception e, string command)
+        {
+            MessageQueue.AddNotification(NppCategory.DbgError + command+":"+e.GetBaseException().Message);
         }
 
         void BreakAndReport()
@@ -119,10 +125,10 @@ namespace npp
 
             Console.WriteLine("Received command: " + command.Substring(0, Math.Min(50, command.Length)));
                         
-            //if (command.StartsWith("attach"))
-            //{
-            //    Debug.Assert(false);
-            //}
+            if (command.StartsWith("attach"))
+            {
+                //Debug.Assert(false);
+            }
 
             if (command == "break") //not native Mdbg command
             {

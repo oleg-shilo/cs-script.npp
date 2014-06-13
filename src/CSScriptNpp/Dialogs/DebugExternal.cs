@@ -41,10 +41,15 @@ namespace CSScriptNpp
             {
                 Close();
 
+                Plugin.ShowOutputPanel()
+                      .ClearAllDefaultOutputs()
+                      .ShowDebugOutput();
+
                 int procId = (int)item.Tag;
                 var cpu = (Debugger.CpuType)Enum.Parse(typeof(Debugger.CpuType), item.SubItems[2].Text);
 
                 Debugger.Attach(procId, cpu);
+
 
                 return; //do only the first selection
             }

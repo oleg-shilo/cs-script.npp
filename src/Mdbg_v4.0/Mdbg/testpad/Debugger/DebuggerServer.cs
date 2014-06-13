@@ -176,8 +176,8 @@ namespace testpad
             var debugger = Process.Start(new ProcessStartInfo
                             {
                                 //FileName = debuggerApp,
-                                //FileName = Path.Combine(debuggerDir, "mdbg.exe"),
-                                FileName = @"c:\program files (x86)\notepad++\plugins\csscriptnpp\mdbg\mdbghost_64.exe",
+                                FileName = Path.Combine(debuggerDir, "mdbg.exe"),
+                                //FileName = @"c:\program files (x86)\notepad++\plugins\csscriptnpp\mdbg\mdbghost_64.exe",
                                 Arguments = "!load npp.dll",
                                 //CreateNoWindow = true,
                                 //UseShellExecute = false
