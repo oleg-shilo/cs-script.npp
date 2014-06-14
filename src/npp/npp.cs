@@ -25,6 +25,8 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
         [CommandDescription(CommandName = "npp", ShortHelp = "npp [close] - starts/closes a npp interface", LongHelp = "Usage: npp [close]")]
         public static void Gui(string args)
         {
+            //System.Diagnostics.Debug.Assert(false);
+
             if (nppDebugger == null)
                 nppDebugger = new DebuggerClient(Shell);
 

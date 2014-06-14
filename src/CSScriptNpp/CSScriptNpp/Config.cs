@@ -38,6 +38,8 @@ namespace CSScriptNpp
         public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
         public bool WordWrapInVisualizer = true;
+        public bool ListManagedProcessesOnly = true;
+        public bool RunExternalInDebugMode = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
         public string LastExternalProcess = "";
@@ -66,6 +68,8 @@ namespace CSScriptNpp
                 SetValue(Section, "ShowLineNuberInCodeMap", ShowLineNuberInCodeMap);
                 SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
                 SetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
+                SetValue(Section, "ListManagedProcessesOnly", ListManagedProcessesOnly);
+                SetValue(Section, "RunExternalInDebugMode", RunExternalInDebugMode);
                 SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
                 SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
                 SetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
@@ -100,6 +104,8 @@ namespace CSScriptNpp
                 ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
                 DebugAsConsole = GetValue(Section, "DebugAsConsole", DebugAsConsole);
                 WordWrapInVisualizer = GetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
+                ListManagedProcessesOnly = GetValue(Section, "ListManagedProcessesOnly", ListManagedProcessesOnly);
+                RunExternalInDebugMode = GetValue(Section, "RunExternalInDebugMode", RunExternalInDebugMode);
                 //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
                 SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
                 SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);

@@ -3102,14 +3102,17 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                     return;
 
                 e.Continue = false;
-                InternalSignalRuntimeIsStopped(null, new DebuggerErrorStopReason(e.HResult));
-                Debug.Assert(false, "Critical failures -- received DebuggerError callback.");
+                Console.WriteLine("Critical failures -- received DebuggerError callback."); //zos
+                InternalSignalRuntimeIsStopped(null, (LastStopReason = new DebuggerErrorStopReason(e.HResult)));
+                //Debug.Assert(false, "Critical failures -- received DebuggerError callback."); //zos
             }
             finally
             {
                 EndManagedDebugEvent(e);
             }
         }
+
+        static public BuiltInStopReason LastStopReason = null;
 
         private void MDAEventHandler(Object sender, CorMDAEventArgs e)
         {

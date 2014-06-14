@@ -31,7 +31,8 @@ namespace CSScriptNpp
      *     - Debugger start process
      *       - add process arguments
      *     - Debugger attach to process
-     *       - check presense of dbg info     
+     *       - check presence of dbg info
+     *       - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
      *     + allow script manager buttons to be rearranged
      *     + allow N++ reboot from CS-Script toolbar
      *
@@ -237,8 +238,6 @@ namespace CSScriptNpp
 
         static public DebugPanel GetDebugPanel()
         {
-            //NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
-
             if (Plugin.DebugPanel == null)
                 Plugin.DoDebugPanel();
             return Plugin.DebugPanel;
@@ -438,6 +437,8 @@ namespace CSScriptNpp
                 DoDebugPanel();
 
             StartCheckForUpdates();
+
+            OpenAutomationChannel();
         }
 
         static internal void CleanUp()
@@ -447,6 +448,7 @@ namespace CSScriptNpp
             Config.Instance.ShowDebugPanel = (dockedManagedPanels.ContainsKey(debugPanelId) && dockedManagedPanels[debugPanelId].Visible);
             Config.Instance.Save();
             OutputPanel.Clean();
+            CloseAutomationChannel();
         }
 
         internal static string HomeUrl = "https://csscriptnpp.codeplex.com/";
@@ -502,6 +504,35 @@ namespace CSScriptNpp
         {
             Plugin.FuncItems.RefreshItems();
             SetToolbarImage(Resources.Resources.css_logo_16x16_tb, projectPanelId);
+        }
+
+        static void CloseAutomationChannel()
+        {
+            MessageQueue.AddAutomationCommand("automation.exit");
+        }
+
+        static void OpenAutomationChannel()
+        {
+            Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        while(true)
+                        {
+                            string message = MessageQueue.WaitForAutomationCommand();
+                            if (message == "automation.exit")
+                                break;
+
+                            MessageBox.Show(message);
+                        }
+                    }
+                    catch { };
+                });
+        }
+
+        static public void ProcessCommandArgs(string args)
+        {
+            MessageBox.Show(args, "Command Arguments");
         }
     }
 }

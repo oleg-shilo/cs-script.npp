@@ -78,7 +78,12 @@ namespace npp
 
         void shell_OnCommandError(Exception e, string command)
         {
-            MessageQueue.AddNotification(NppCategory.DbgError + command+":"+e.GetBaseException().Message);
+            //if (string.IsNullOrWhiteSpace(command))
+            //    command = "unknown";
+            
+            string error = e.GetBaseException().Message;
+            string notifyMessage = (NppCategory.DbgError + command + ":" + error).Replace("\n", "{$NL}");
+            MessageQueue.AddNotification(notifyMessage);
         }
 
         void BreakAndReport()
@@ -809,8 +814,16 @@ namespace npp
                     lastActiveprocess = shell.Debugger.Processes.Active;
                 }
 
-                ReportCurrentState();
-                ReportWatch();
+                try
+                {
+                    ReportCurrentState();
+                    ReportWatch();
+                }
+                catch (Exception e)
+                {
+                    //if (this.shell.OnCommandError != null)
+                     //   this.shell.OnCommandError(e, cmd.CommandName);
+                }
             }
         }
 

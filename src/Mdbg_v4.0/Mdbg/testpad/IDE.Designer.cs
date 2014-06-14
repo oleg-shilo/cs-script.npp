@@ -232,6 +232,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.appName.FormattingEnabled = true;
             this.appName.Items.AddRange(new object[] {
+            "E:\\Galos\\Projects\\CS-Script.Npp\\CSScript.Npp\\src\\CSScriptNpp\\bin\\DebugTest\\bin\\De" +
+                "bug\\DebugTest.exe",
             "E:\\Galos\\Projects\\MDbg\\Version_4\\MDbg Sample\\bin\\Debug\\test\\css_dbg.exe",
             "E:\\Galos\\Projects\\MDbg\\Version_4\\MDbg Sample\\bin\\Debug\\test\\ConsoleApplication12." +
                 "exe",

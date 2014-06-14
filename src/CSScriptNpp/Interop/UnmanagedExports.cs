@@ -1,9 +1,9 @@
 ﻿using NppPlugin.DllExport;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
@@ -114,9 +114,27 @@ namespace CSScriptNpp
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
-                    CSScriptIntellisense.Plugin.OnCurrentFileChanegd();
-                    CSScriptNpp.Plugin.OnCurrentFileChanged();
-                    Debugger.OnCurrentFileChanged();
+                    string file = Npp.GetCurrentFile();
+
+                    if (file.EndsWith("npp.args"))
+                    {
+                        Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_CLOSE);
+                        Task.Factory.StartNew(() =>
+                            {
+                                string args = File.ReadAllText(file);
+                                
+                                Plugin.ProcessCommandArgs(args);
+
+                                try { File.Delete(file); }
+                                catch { }
+                            });
+                    }
+                    else
+                    {
+                        CSScriptIntellisense.Plugin.OnCurrentFileChanegd();
+                        CSScriptNpp.Plugin.OnCurrentFileChanged();
+                        Debugger.OnCurrentFileChanged();
+                    }
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILEOPENED)
                 {
@@ -137,7 +155,7 @@ namespace CSScriptNpp
 
                 Plugin.OnNotification(nc);
             }
-            catch { }//this is indeed the last line of defense as all CS-S calls have the error handling inside 
+            catch { }//this is indeed the last line of defense as all CS-S calls have the error handling inside
         }
     }
 }

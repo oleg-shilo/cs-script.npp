@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace CSScriptNpp
@@ -22,7 +23,7 @@ namespace CSScriptNpp
             InitializeComponent();
 
             appPath.Text = Config.Instance.LastExternalProcess;
-            managedOnly.Checked = IsManagedOnly;
+            managedOnly.Checked = Config.Instance.ListManagedProcessesOnly;
             processList.ListViewItemSorter = new ListViewItemComparer(0, sorting[0]);
         }
 
@@ -48,8 +49,13 @@ namespace CSScriptNpp
                 int procId = (int)item.Tag;
                 var cpu = (Debugger.CpuType)Enum.Parse(typeof(Debugger.CpuType), item.SubItems[2].Text);
 
-                Debugger.Attach(procId, cpu);
+                ThreadPool.QueueUserWorkItem(x => Debugger.Attach(procId, cpu));
 
+                //It is extremely important to ensure that at this point DebugPanel is created.
+                //If not it will be created automatically on debugger message handling from the non-GUI thread 
+                //of the Debugger message. And in result N++ and one of its docked panes will belong to different 
+                //threads and N++ will hang.
+                Plugin.GetDebugPanel(); 
 
                 return; //do only the first selection
             }
@@ -200,11 +206,10 @@ namespace CSScriptNpp
             }
         }
 
-        static bool IsManagedOnly = false;
-
         private void managedOnly_CheckedChanged(object sender, EventArgs e)
         {
-            IsManagedOnly = managedOnly.Checked;
+            Config.Instance.ListManagedProcessesOnly = managedOnly.Checked;
+            Config.Instance.Save();
             Repopulete(false);
         }
 

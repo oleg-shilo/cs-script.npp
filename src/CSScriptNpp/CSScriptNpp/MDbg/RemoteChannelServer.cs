@@ -90,6 +90,7 @@ namespace CSScriptNpp
     {
         static WaitableQueue<string> commands = new WaitableQueue<string>();
         static WaitableQueue<string> notifications = new WaitableQueue<string>();
+        static WaitableQueue<string> automationCommans = new WaitableQueue<string>();
 
         static public void AddCommand(string data)
         {
@@ -107,6 +108,11 @@ namespace CSScriptNpp
             notifications.Enqueue(data);
         }
 
+        static public void AddAutomationCommand(string data)
+        {
+            automationCommans.Enqueue(data);
+        }
+
         static public void Clear()
         {
             notifications.Clear();
@@ -115,13 +121,17 @@ namespace CSScriptNpp
 
         static public string WaitForNotification()
         {
-            var data = notifications.WaitItem();
-            return data;
+            return notifications.WaitItem();
         }
 
         static public string WaitForCommand()
         {
             return commands.WaitItem();
+        }
+
+        static public string WaitForAutomationCommand()
+        {
+            return automationCommans.WaitItem();
         }
     }
 
@@ -214,6 +224,29 @@ namespace CSScriptNpp
             }
 
             Notify("Out.Client disconnected.");
+        }
+
+        public void PullAutomationCommands()
+        {
+            try
+            {
+                string name = "npp.css.ide.commands." + remoteProcessId;
+                using (var pipeServer = new NamedPipeServerStream(name, PipeDirection.In))
+                using (var streamReader = new StreamReader(pipeServer))
+                {
+                    pipeServer.WaitForConnection();
+                    while (true)
+                    {
+                        string message = streamReader.ReadLine();
+                        Debug.WriteLine(message);
+                        MessageQueue.AddAutomationCommand(message);
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Notify("ERROR: " + e.Message);
+            }
         }
     }
 }

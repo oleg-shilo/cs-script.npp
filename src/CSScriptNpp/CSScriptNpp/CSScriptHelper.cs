@@ -243,7 +243,11 @@ namespace CSScriptNpp
         {
             string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
             string script = "\"" + scriptFile + "\"";
-            string args = string.Format("{0} /nl /l {1} {2}", cscs, GenerateProbingDirArg(), script);
+            string debugFlag = "/dbg ";
+            if (!Config.Instance.RunExternalInDebugMode)
+                debugFlag = " ";
+
+            string args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateProbingDirArg(), script, debugFlag);
 
             if (!RunningAsAdmin)
                 ProcessStart(ConsoleHostPath, args, IsAsAdminScriptFile(scriptFile));

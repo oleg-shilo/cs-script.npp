@@ -258,6 +258,8 @@ namespace Microsoft.Samples.Tools.Mdbg
             if (!Debugger.Processes.HaveActive)
             {
                 CommandBase.WriteOutput("STOP: Process Exited");
+                if (MDbgProcess.LastStopReason is DebuggerErrorStopReason && OnCommandError != null)
+                    OnCommandError(new Exception(Debugger.Processes.Active.StopReason.ToString()), "");
                 return; // don't try to display current location
             }
             else
@@ -340,6 +342,12 @@ namespace Microsoft.Samples.Tools.Mdbg
                     Exception e = (stopReason as MDbgErrorStopReason).ExceptionThrown;
                     CommandBase.WriteOutput("STOP: MdbgError");
                     CommandBase.WriteOutput(FormatExceptionDiagnosticText(e));
+                }
+                else if (stopReasonType == typeof(DebuggerErrorStopReason))
+                {
+                    CommandBase.WriteOutput("STOP " + Debugger.Processes.Active.StopReason);
+                    if (OnCommandError != null)
+                        OnCommandError(new Exception(Debugger.Processes.Active.StopReason.ToString()), "");
                 }
                 else
                 {
@@ -542,11 +550,16 @@ namespace Microsoft.Samples.Tools.Mdbg
                     {
                         cmd.Execute(cmdArgs);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         if (OnCommandError != null)
-                            OnCommandError(e, cmd.CommandName);
-
+                        {
+                            if (MDbgProcess.LastStopReason != null)
+                                OnCommandError(new Exception(MDbgProcess.LastStopReason.ToString()), cmd.CommandName);
+                                //OnCommandError(new Exception(e.GetBaseException().Message + "\n" + MDbgProcess.LastStopReason), cmd.CommandName);
+                            else
+                                OnCommandError(e, cmd.CommandName);
+                        }
                         throw;
                     }
 
