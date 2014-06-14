@@ -22,29 +22,38 @@ class Program
             {
                 bool isCurrentProcWin64 = Process.GetCurrentProcess().IsWin64();
 
-                foreach (Process p in Process.GetProcesses())
+                Action<Process> printInfo = p =>
                 {
-                    if (isCurrentProcWin64 != p.IsWin64())
-                        continue;
+                    if (isCurrentProcWin64 == p.IsWin64())
+                        try
+                        {
+                            string info = string.Format("{0}:{1}:{2}:{3}:{4}",
+                                                p.ProcessName + ".exe",
+                                                p.Id,
+                                                isCurrentProcWin64 ? "x86" : "x64",
+                                                p.IsManaged() ? "Managed" : "Native",
+                                                p.MainWindowTitle);
+                            Console.WriteLine(info);
+                        }
+                        catch { }
+                };
 
-                    try
-                    {
-                        string info = string.Format("{0}:{1}:{2}:{3}:{4}",
-                                            p.ProcessName + ".exe",
-                                            p.Id,
-                                            isCurrentProcWin64 ? "x86" : "x64",
-                                            p.IsManaged() ? "Managed" : "Native",
-                                            p.MainWindowTitle);
-                        Console.WriteLine(info);
-                    }
-                    catch { }
+                if (args.First().StartsWith("/lp:"))
+                {
+                    int procId = int.Parse(args.First().Substring("/lp:".Length));
+                    printInfo(Process.GetProcessById(procId));
+                }
+                else
+                {
+                    foreach (Process p in Process.GetProcesses())
+                        printInfo(p);
                 }
             }
             else
             {
                 string mdbg = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "mdbg.exe");
                 AppDomain.CurrentDomain.ExecuteAssembly(mdbg, args);
-//                Bootstap.Main(args);
+                //                Bootstap.Main(args);
             }
         }
         catch (Exception ex)

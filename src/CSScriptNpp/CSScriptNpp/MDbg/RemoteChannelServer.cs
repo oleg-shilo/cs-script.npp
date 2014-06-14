@@ -154,6 +154,7 @@ namespace CSScriptNpp
         {
             Task.Factory.StartNew(PullNotifications);
             Task.Factory.StartNew(PushCommands);
+            //Task.Factory.StartNew(PullAutomationCommands); //for future use
         }
 
         public void Stop()

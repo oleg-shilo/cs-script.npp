@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -12,10 +13,13 @@ namespace CSScriptNpp
 {
     public partial class DebugExternal : Form
     {
-        public static void ShowModal()
+        public static void ShowModal(int selectedProc = -1)
         {
             using (var dialog = new DebugExternal())
+            {
+                dialog.initialSelection = selectedProc;
                 dialog.ShowDialog();
+            }
         }
 
         public DebugExternal()
@@ -42,22 +46,38 @@ namespace CSScriptNpp
             {
                 Close();
 
-                Plugin.ShowOutputPanel()
-                      .ClearAllDefaultOutputs()
-                      .ShowDebugOutput();
-
                 int procId = (int)item.Tag;
                 var cpu = (Debugger.CpuType)Enum.Parse(typeof(Debugger.CpuType), item.SubItems[2].Text);
+                AttachTo(procId, cpu);
 
-                ThreadPool.QueueUserWorkItem(x => Debugger.Attach(procId, cpu));
+                return; //do only the first selection
+            }
+        }
 
+        static internal void AttachTo(int procId)
+        {
+            var cpu = IsWin64(procId) ? Debugger.CpuType.x64 : Debugger.CpuType.x86;
+            AttachTo(procId, cpu);
+        }
+
+        static internal void AttachTo(int procId, Debugger.CpuType cpu)
+        {
+            try
+            {
                 //It is extremely important to ensure that at this point DebugPanel is created.
                 //If not it will be created automatically on debugger message handling from the non-GUI thread 
                 //of the Debugger message. And in result N++ and one of its docked panes will belong to different 
                 //threads and N++ will hang.
-                Plugin.GetDebugPanel(); 
+                Plugin.GetDebugPanel();
+                Plugin.ShowOutputPanel()
+                      .ClearAllDefaultOutputs()
+                      .ShowDebugOutput();
 
-                return; //do only the first selection
+                ThreadPool.QueueUserWorkItem(x => Debugger.Attach(procId, cpu));
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Cannot attach debugger to the external process.\n" + e.Message, "CS-Script");
             }
         }
 
@@ -135,8 +155,20 @@ namespace CSScriptNpp
                 column.Width = -2;
         }
 
-        //string[] GetProcessList()
-        public static IEnumerable<string> GetProcessList()
+        public static bool IsWin64(int id)
+        {
+            //it will be no more than asingle item. It is either x86 or x64
+            var info = GetProcessList(id).FirstOrDefault();
+            if (info != null)
+            {
+                //<name>:<id>:<cpu>:<runtime>:<title>
+                string[] values = info.Split(new[] { ':' }, 5);
+                return values[2] == "x64";
+            }
+            return false;
+        }
+
+        public static IEnumerable<string> GetProcessList(int procId = -1)
         {
             string host32 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"CSScriptNpp\MDbg\mdbghost_32.exe");
             string host64 = host32.Remove(host32.Length - 6) + "64.exe";
@@ -144,7 +176,7 @@ namespace CSScriptNpp
 
             var p = new Process();
             p.StartInfo.FileName = host32;
-            p.StartInfo.Arguments = "/lp";
+            p.StartInfo.Arguments = (procId == -1 ? "/lp" : "/lp:" + procId);
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.RedirectStandardOutput = true;
@@ -223,10 +255,23 @@ namespace CSScriptNpp
             attacheBtn.PerformClick();
         }
 
+        int initialSelection = -1;
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Enabled = false;
             Reload();
+            if (initialSelection != -1)
+            {
+                foreach (ListViewItem item in processList.Items)
+                {
+                    item.Selected = false;
+                    if (item.SubItems[1].Text == initialSelection.ToString())
+                    {
+                        item.Selected = true;
+                    }
+                }
+            }
         }
 
         private void processList_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)

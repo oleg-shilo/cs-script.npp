@@ -95,50 +95,50 @@ namespace CSScriptNpp
             File.SetLastWriteTimeUtc(fileDest, File.GetLastWriteTimeUtc(fileSrc));
         }
 
-        public static bool IsWin64(this Process process)
-        {
-            if ((Environment.OSVersion.Version.Major > 5)
-                || ((Environment.OSVersion.Version.Major == 5) && (Environment.OSVersion.Version.Minor >= 1)))
-            {
-                IntPtr processHandle;
-                bool retVal;
+        //public static bool IsWin64(this Process process)
+        //{
+        //    if ((Environment.OSVersion.Version.Major > 5)
+        //        || ((Environment.OSVersion.Version.Major == 5) && (Environment.OSVersion.Version.Minor >= 1)))
+        //    {
+        //        IntPtr processHandle;
+        //        bool retVal;
 
-                try
-                {
-                    processHandle = Process.GetProcessById(process.Id).Handle;
-                }
-                catch
-                {
-                    return false; // access is denied to the process
-                }
+        //        try
+        //        {
+        //            processHandle = Process.GetProcessById(process.Id).Handle;
+        //        }
+        //        catch
+        //        {
+        //            return false; // access is denied to the process
+        //        }
 
-                return IsWow64Process(processHandle, out retVal) && retVal;
-            }
+        //        return IsWow64Process(processHandle, out retVal) && retVal;
+        //    }
 
-            return false; // not on 64-bit Windows
-        }
+        //    return false; // not on 64-bit Windows
+        //}
 
-        [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool IsWow64Process([In] IntPtr process, [Out] out bool wow64Process);
+        //[DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+        //[return: MarshalAs(UnmanagedType.Bool)]
+        //internal static extern bool IsWow64Process([In] IntPtr process, [Out] out bool wow64Process);
 
-        public static bool IsManaged(this Process proc)
-        {
-            try
-            {
-                return proc.Modules.Cast<ProcessModule>()
-                                   .Where(m => m.ModuleName.IsSameAs("mscorwks.dll", ignoreCase: true) ||      //OlderDesktopCLR
-                                               m.ModuleName.IsSameAs("mscorlib.dll", ignoreCase: true) ||      //Mscorlib
-                                               m.ModuleName.IsSameAs("mscorlib.ni.dll", ignoreCase: true) ||
-                                               m.ModuleName.IsSameAs("mscoree.dll", ignoreCase: true) ||       //Desktop40CLR
-                                               m.ModuleName.IsSameAs("mscoreei.ni.dll", ignoreCase: true))
-                                   .Any();
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        //public static bool IsManaged(this Process proc)
+        //{
+        //    try
+        //    {
+        //        return proc.Modules.Cast<ProcessModule>()
+        //                           .Where(m => m.ModuleName.IsSameAs("mscorwks.dll", ignoreCase: true) ||      //OlderDesktopCLR
+        //                                       m.ModuleName.IsSameAs("mscorlib.dll", ignoreCase: true) ||      //Mscorlib
+        //                                       m.ModuleName.IsSameAs("mscorlib.ni.dll", ignoreCase: true) ||
+        //                                       m.ModuleName.IsSameAs("mscoree.dll", ignoreCase: true) ||       //Desktop40CLR
+        //                                       m.ModuleName.IsSameAs("mscoreei.ni.dll", ignoreCase: true))
+        //                           .Any();
+        //    }
+        //    catch
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public static bool IsSameAs(this string text, string textToCompare, bool ignoreCase)
         {

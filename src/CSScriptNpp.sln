@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mdbghost32", "mdbghost\mdbg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mdbghost64", "mdbghost\mdbghost64.csproj", "{4A203371-731B-4CEF-97C5-12529B8C6744}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "npp_jit", "npp_jit\npp_jit.csproj", "{A3661C7F-E278-40A1-86C2-C2AF66877DB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{4A203371-731B-4CEF-97C5-12529B8C6744}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A203371-731B-4CEF-97C5-12529B8C6744}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A203371-731B-4CEF-97C5-12529B8C6744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3661C7F-E278-40A1-86C2-C2AF66877DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3661C7F-E278-40A1-86C2-C2AF66877DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3661C7F-E278-40A1-86C2-C2AF66877DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3661C7F-E278-40A1-86C2-C2AF66877DB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,5 +117,6 @@ Global
 		{C5941F6E-41FB-4059-AD2E-CAF744A9C3D3} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{747199C1-862A-46E8-B7B3-3C692DD6EED5} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{4A203371-731B-4CEF-97C5-12529B8C6744} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
+		{A3661C7F-E278-40A1-86C2-C2AF66877DB0} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 	EndGlobalSection
 EndGlobal

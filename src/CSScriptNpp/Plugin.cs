@@ -1,3 +1,4 @@
+using CSScriptIntellisense.Interop;
 using CSScriptNpp.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -30,8 +31,10 @@ namespace CSScriptNpp
      *     - auto-add usings
      *     - Debugger start process
      *       - add process arguments
+     *       - add process cpu
      *     - Debugger attach to process
-     *       - check presence of dbg info
+     *       - check presence of dbg info and open source file if possible
+     *       - try to recover and report locals and source it it failes on the first break/breakpoing
      *       - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
      *     + allow script manager buttons to be rearranged
      *     + allow N++ reboot from CS-Script toolbar
@@ -517,7 +520,7 @@ namespace CSScriptNpp
                 {
                     try
                     {
-                        while(true)
+                        while (true)
                         {
                             string message = MessageQueue.WaitForAutomationCommand();
                             if (message == "automation.exit")
@@ -532,7 +535,16 @@ namespace CSScriptNpp
 
         static public void ProcessCommandArgs(string args)
         {
-            MessageBox.Show(args, "Command Arguments");
+            //System.Diagnostics.Debug.Assert(false);
+            if (args.StartsWith("/css.attach:")) //attach to external process
+            {
+                try
+                {
+                    var id = int.Parse(args.Substring("/css.attach:".Length));
+                    DebugExternal.AttachTo(id);
+                }
+                catch { }
+            }
         }
     }
 }

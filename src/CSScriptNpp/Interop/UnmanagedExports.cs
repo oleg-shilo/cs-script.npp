@@ -119,15 +119,13 @@ namespace CSScriptNpp
                     if (file.EndsWith("npp.args"))
                     {
                         Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_CLOSE);
-                        Task.Factory.StartNew(() =>
-                            {
-                                string args = File.ReadAllText(file);
-                                
-                                Plugin.ProcessCommandArgs(args);
 
-                                try { File.Delete(file); }
-                                catch { }
-                            });
+                        string args = File.ReadAllText(file);
+
+                        Plugin.ProcessCommandArgs(args);
+
+                        try { File.Delete(file); }
+                        catch { }
                     }
                     else
                     {
