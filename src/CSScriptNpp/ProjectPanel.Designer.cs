@@ -424,7 +424,7 @@
             this.whatsNewTxt.BackColor = System.Drawing.Color.White;
             this.whatsNewTxt.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.whatsNewTxt.ForeColor = System.Drawing.Color.DarkBlue;
-            this.whatsNewTxt.Location = new System.Drawing.Point(8, 25);
+            this.whatsNewTxt.Location = new System.Drawing.Point(-52, 69);
             this.whatsNewTxt.Multiline = true;
             this.whatsNewTxt.Name = "whatsNewTxt";
             this.whatsNewTxt.ReadOnly = true;
