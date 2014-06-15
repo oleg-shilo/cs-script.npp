@@ -293,7 +293,6 @@
     <EmbeddedResource Include="Resources\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectPanel.resx">
       <DependentUpon>ProjectPanel.cs</DependentUpon>
@@ -524,6 +523,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\restart_npp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\deploy.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

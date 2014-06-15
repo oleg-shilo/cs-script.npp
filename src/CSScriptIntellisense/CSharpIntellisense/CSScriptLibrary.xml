@@ -864,7 +864,7 @@
         </member>
         <member name="P:csscript.Settings.DefaultRefAssemblies">
             <summary>
-            List of assembly names to be automatically referenced by the scripst. The items must be separated by coma or semicolon. Specifying .dll extension (e.g. System.Core.dll) is optional.
+            List of assembly names to be automatically referenced by the script. The items must be separated by coma or semicolon. Specifying .dll extension (e.g. System.Core.dll) is optional.
             Assembly can contain expandable environment variables.
             </summary>
         </member>
@@ -883,6 +883,24 @@
             <summary>
             Path to the precompiller script/assembly (see documentation for details). You can specify multiple recompiles separating them by semicolon.
             </summary>
+        </member>
+        <member name="P:csscript.Settings.CustomHashing">
+            <summary>
+            Gets or sets a value indicating whether custom string hashing algorithm should be used.
+            <para>
+            String hashing is used by the script engine for allocating temporary and cached paths. 
+            However default string hashing is platform dependant (x32 vs. x64) what makes impossible 
+            truly deterministic string hashing. This in turns complicates the integration of the 
+            CS-Script infrastructure with the third-party applications (e.g. Notepad++ CS-Script plugin).
+            </para>
+            <para>
+            To overcome this problem CS-Script uses custom string hashing algorithm (default setting).
+            Though the native .NET hashing can be enabled if desired by setting <c>CustomHashing</c>
+            to <c>false</c>.</para>
+            </summary>
+            <value>
+              <c>true</c> if custom hashing is in use; otherwise, <c>false</c>.
+            </value>
         </member>
         <member name="P:csscript.Settings.ReportDetailedErrorInfo">
             <summary>
@@ -1106,6 +1124,20 @@
             assemblies the interface depends in. </param>
             <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
         </member>
+        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object,System.Boolean,System.String[])">
+            <summary>
+            Attempts to align (pseudo typecast) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all loaded assemblies of the current <see cref="T:System.AppDomain"/>
+            when emitting (compiling) aligned proxy object.</param>
+            <param name="refAssemblies">The string array containing file names to the additional dependency
+            assemblies the interface depends in. </param>
+            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
+        </member>
         <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object,System.Boolean)">
             <summary>
             Aligns (pseudo typecasts) object to interface.
@@ -1126,7 +1158,21 @@
             </summary>
             <typeparam name="T">Interface definition to align with.</typeparam>
             <param name="obj">The object to be aligned with the interface.</param>
-            <param name="refAssemblies">The string array containing file nemes to the additional dependency
+            <param name="refAssemblies">The string array containing file names to the additional dependency
+            assemblies the interface depends in. </param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object,System.Boolean,System.String[])">
+            <summary>
+            Aligns (pseudo typecasts) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all non-GAC loaded assemblies of the current <see cref="T:System.AppDomain"/>
+            when emitting (compiling) aligned proxy object.</param>
+            <param name="refAssemblies">The string array containing file names to the additional dependency
             assemblies the interface depends in. </param>
             <returns>Interface object.</returns>
         </member>

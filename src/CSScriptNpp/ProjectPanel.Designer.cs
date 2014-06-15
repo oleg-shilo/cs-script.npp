@@ -350,7 +350,7 @@
             // deployBtn
             // 
             this.deployBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.deployBtn.Image = ((System.Drawing.Image)(resources.GetObject("deployBtn.Image")));
+            this.deployBtn.Image = global::CSScriptNpp.Resources.Resources.deploy;
             this.deployBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deployBtn.Name = "deployBtn";
             this.deployBtn.Size = new System.Drawing.Size(23, 28);
