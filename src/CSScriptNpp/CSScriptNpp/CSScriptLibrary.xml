@@ -4,93 +4,424 @@
         <name>CSScriptLibrary</name>
     </assembly>
     <members>
-        <member name="T:csscript.AssemblyExecutor">
+        <member name="T:csscript.COM">
             <summary>
-            Executes "public static void Main(..)" of assembly in a separate domain.
+            COM HR checker: just to make code more compact;
             </summary>
         </member>
-        <member name="T:csscript.RemoteExecutor">
+        <member name="T:csscript.IAssemblyCache">
             <summary>
-            Invokes static method 'Main' from the assembly.
+            IAssemblyCache; COM import
             </summary>
         </member>
-        <member name="M:csscript.RemoteExecutor.ResolveEventHandler(System.Object,System.ResolveEventArgs)">
+        <member name="T:csscript.IAssemblyName">
             <summary>
-            AppDomain event handler. This handler will be called if CLR cannot resolve
-            referenced local assemblies
+            IAssemblyName; COM import
             </summary>
         </member>
-        <member name="T:CSScriptLibrary.AssemblyResolver">
+        <member name="T:csscript.IAssemblyEnum">
             <summary>
-            Class for resolving assembly name to assembly file
+            IAssemblyEnum; COM import
             </summary>
         </member>
-        <member name="F:CSScriptLibrary.AssemblyResolver.ignoreFileName">
+        <member name="T:csscript.AssemblyCommitFlags">
             <summary>
-            File to be excluded from assembly search
+            AssemblyCommitFlags; Used by COM imported calls
             </summary>
         </member>
-        <member name="M:CSScriptLibrary.AssemblyResolver.ResolveAssembly(System.String,System.String,System.Boolean)">
+        <member name="T:csscript.AssemblyCacheFlags">
             <summary>
-            Resolves assembly name to assembly file. Loads assembly file to the current AppDomain.
-            </summary>
-            <param name="assemblyName">The name of assembly</param>
-            <param name="dir">The name of directory where local assemblies are expected to be</param>
-            <param name="throwExceptions">if set to <c>true</c> [throw exceptions].</param>
-            <returns>loaded assembly</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AssemblyResolver.IsLegalPathToken(System.String)">
-            <summary>
-            Determines whether the string is a legal path token.
-            </summary>
-            <param name="name">The name.</param>
-            <returns>
-            	<c>true</c> if the string is a legal path token; otherwise, <c>false</c>.
-            </returns>
-        </member>
-        <member name="M:CSScriptLibrary.AssemblyResolver.FindAssembly(System.String,System.String[])">
-            <summary>
-            Resolves namespace/assembly(file) name into array of assembly locations (local and GAC ones).
-            </summary>
-            <param name="name">'namespace'/assembly(file) name</param>
-            <param name="searchDirs">Assembly search directories</param>
-            <returns>collection of assembly file names where namespace is implemented</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AssemblyResolver.FindLocalAssembly(System.String,System.String)">
-            <summary>
-            Resolves namespace into array of local assembly locations.
-            (Currently it returns only one assembly location but in future
-            it can be extended to collect all assemblies with the same namespace)
-            </summary>
-            <param name="name">namespace/assembly name</param>
-            <param name="dir">directory</param>
-            <returns>collection of assembly file names where namespace is implemented</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AssemblyResolver.FindGlobalAssembly(System.String)">
-            <summary>
-            Resolves namespace into array of global assembly (GAC) locations.
-            </summary>
-            <param name="namespaceStr">'namespace' name</param>
-            <returns>collection of assembly file names where namespace is implemented</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AssemblyResolver.IsNamespaceDefinedInAssembly(System.String,System.String)">
-            <summary>
-            Search for namespace into local assembly file.
+            AssemblyCacheFlags; Used by COM imported calls
             </summary>
         </member>
-        <member name="P:CSScriptLibrary.AssemblyResolver.CacheProbingResults">
+        <member name="T:csscript.AssemblyCacheUninstallDisposition">
             <summary>
-            Gets or sets a value indicating whether the assembly probing results should be cached. Default value is <c>false</c>;
-            <para>
-            Caching means that during the probing if the assembly is not found in one of the probing directories this directory will not
-            be checked again if the same assembly is to be resolved in the future.
+            AssemblyCacheUninstallDisposition; Used by COM imported calls
+            </summary>
+        </member>
+        <member name="T:csscript.CreateAssemblyNameObjectFlags">
+            <summary>
+            CreateAssemblyNameObjectFlags; Used by COM imported calls
+            </summary>
+        </member>
+        <member name="T:csscript.AssemblyNameDisplayFlags">
+            <summary>
+            AssemblyNameDisplayFlags; Used by COM imported calls
+            </summary>
+        </member>
+        <member name="T:csscript.InstallReference">
+            <summary>
+            InstallReference + struct initialization; Used by COM imported calls
+            </summary>
+        </member>
+        <member name="T:csscript.AssemblyInfo">
+            <summary>
+            AssemblyInfo; Used by COM imported calls
+            </summary>
+        </member>
+        <member name="T:csscript.InstallReferenceGuid">
+            <summary>
+            InstallReferenceGuid; Used by COM imported calls
+            </summary>
+        </member>
+        <member name="T:csscript.AssemblyCache">
+            <summary>
+             Helper calss for IAssemblyCache
+            </summary>
+        </member>
+        <member name="T:csscript.AssemblyEnum">
+            <summary>
+            Helper calss for IAssemblyEnum
+            </summary>
+        </member>
+        <member name="T:CSScriptLibrary.ParsingParams">
+            <summary>
+            ParsingParams is an class that holds parsing parameters (parameters that controls how file is to be parsed).
+            At this moment they are namespace renaming rules only.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.ParsingParams.Compare(CSScriptLibrary.ParsingParams,CSScriptLibrary.ParsingParams)">
+            <summary>
+            Compare() is to be used to help with implementation of IComparer for sorting operations.
+            </summary>
+        </member>
+        <member name="T:CSScriptLibrary.ScriptInfo">
+            <summary>
+            Class which is a placeholder for general information of the script file
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptInfo.#ctor(csscript.CSharpParser.ImportInfo)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="info">ImportInfo object containing the information how the script file should be parsed.</param>
+        </member>
+        <member name="T:CSScriptLibrary.FileParser">
+            <summary>
+            Class that implements parsing the single C# script file
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.FileParser.ResolveFile(System.String,System.String[])">
+            <summary>
+            Searches for script file by given script name. Calls ResolveFile(string fileName, string[] extraDirs, bool throwOnError)
+            with throwOnError flag set to true.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.FileParser.ResolveFile(System.String,System.String[],System.Boolean)">
+            <summary>
+            Searches for script file by given script name. Search order:
+            1. Current directory
+            2. extraDirs (usually %CSSCRIPT_DIR%\Lib and ExtraLibDirectory)
+            3. PATH
+            Also fixes file name if user did not provide extension for script file (assuming .cs extension)
+            </summary>
+        </member>
+        <member name="T:CSScriptLibrary.FileParserComparer">
+             <summary>
+             Class that implements parsing the single C# Script file
+             </summary>
+             <summary>
+             Implementation of the IComparer for sorting operations of collections of FileParser instances
+             </summary>
+            
+        </member>
+        <member name="T:CSScriptLibrary.ScriptParser">
+            <summary>
+            Class that manages parsing the main and all imported (if any) C# Script files
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParser.apartmentState">
+            <summary>
+            ApartmentState of a script during the execution (default: ApartmentState.Unknown)
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.#ctor(System.String)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="fileName">Script file name</param>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.#ctor(System.String,System.String[])">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="fileName">Script file name</param>
+            <param name="searchDirs">Extra ScriptLibrary directory </param>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.#ctor(System.String,System.String[],System.Boolean)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="fileName">Script file name</param>
+            <param name="searchDirs">Extra ScriptLibrary directory(ies) </param>
+            <param name="throwOnError">flag to indicate if the file parsing/processing error should raise an exception</param>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.Init(System.String,System.String[])">
+            <summary>
+            Initialization of ScriptParser instance
+            </summary>
+            <param name="fileName">Script file name</param>
+            <param name="searchDirs">Extra ScriptLibrary directory(ies) </param>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.SaveImportedScripts">
+            <summary>
+            Saves all imported scripts int temporary location.
+            </summary>
+            <returns>Collection of the saved imported scrips file names</returns>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.DeleteImportedFiles">
+            <summary>
+            Deletes imported scripts as a cleanup operation
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParser.SearchDirs">
+            <summary>
+            CS-Script SearchDirectories specified in the parsed script or its dependent scripts.
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.ScriptParser.FilesToCompile">
+            <summary>
+            Collection of the files to be compiled (including dependant scripts)
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.ScriptParser.ImportedFiles">
+            <summary>
+            Collection of the imported files (dependant scripts)
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.ScriptParser.ReferencedResources">
+            <summary>
+            Collection of resource files referenced from code
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.ScriptParser.CompilerOptions">
+            <summary>
+            Collection of compiler options
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.ScriptParser.Precompilers">
+            <summary>
+            Precompilers specified in the primary script file.
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.ScriptParser.ReferencedNamespaces">
+            <summary>
+            Collection of namespaces referenced from code (including those referenced in dependand scripts)
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.ScriptParser.IgnoreNamespaces">
+            <summary>
+            Collection of namespaces, which if found in code, should not be resolved into referenced assembly.
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.ScriptParser.ReferencedAssemblies">
+            <summary>
+            Collection of referenced asesemblies. All assemblies are referenced either from command-line, code or resolved from referenced namespaces.
+            </summary>
+        </member>
+        <member name="T:csscript.PrecompilationContext">
+            <summary>
+            This class is a container for information related to the script precompilation.
+            <para>It is used to pass an input information from the script engine to the <c>precompiler</c> instance as well as to pass back
+            to the script engine some output information (e.g. added referenced assemblies)</para> .
+            </summary>
+        </member>
+        <member name="F:csscript.PrecompilationContext.NewReferences">
+            <summary>
+            Collection of the referenced assemblies to be added to the process script referenced assemblies.
+            <para>You may want to add new items to the referenced assemblies because of the precompilation logic (e.g. some code using assemblies not referenced by the primary script 
+            is injected in the script).</para>
+            </summary>
+        </member>
+        <member name="F:csscript.PrecompilationContext.NewDependencies">
+            <summary>
+            Collection of the new dependency items (files). 
+            <para>Dependency files are checked before the script execution in order to understand if the script should be recompiled or it can be loaded from 
+            the cache. If any of the dependency files is changed since the last script execution the script engine will recompile the script. In the simple execution 
+            scenarios the script file is a dependency file.</para>
+            </summary>
+        </member>
+        <member name="F:csscript.PrecompilationContext.NewIncludes">
+            <summary>
+            Collection of the new 'include' items (dependency source files). 
+            </summary>
+        </member>
+        <member name="F:csscript.PrecompilationContext.NewSearchDirs">
+            <summary>
+            Collection of the assembly and script probing directories to be added to the process search directories.
+            <para>You may want to add new items to the process search directories because of the precompilation logic.</para>
+            </summary>
+        </member>
+        <member name="F:csscript.PrecompilationContext.SearchDirs">
+            <summary>
+            Collection of the process assembly and script probing directories.
+            </summary>
+        </member>
+        <member name="T:csscript.AutoclassGenerator">
+            <summary>
+            AutoclassGenerator to be used by external applications for generating the auto-class from the classless scripts
+            </summary>
+        </member>
+        <member name="M:csscript.AutoclassGenerator.Process(System.String,System.Int32@,System.Int32@)">
+            <summary>
+            Processes the specified code.
+            </summary>
+            <param name="code">The code.</param>
+            <param name="injectionPos">The injection position.</param>
+            <param name="injectionLength">Length of the injection.</param>
+            <returns></returns>
+        </member>
+        <member name="M:csscript.AutoclassGenerator.Process(System.String,System.Int32@)">
+            <summary>
+            Processes the specified code.
+            </summary>
+            <param name="code">The code.</param>
+            <param name="position">The position.</param>
+            <returns></returns>
+        </member>
+        <member name="T:csscript.CSExecutor">
+            <summary>
+            CSExecutor is an class that implements execution of *.cs files.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.Execute(System.String[],csscript.PrintDelegate,System.String)">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.GetCustomAppConfig(System.String[])">
+            <summary>
+            Returns custom application config file.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.VoidPrint(System.String)">
+            <summary>
+            Dummy 'print' to suppress displaying application messages.
+            </summary>
+        </member>
+        <member name="F:csscript.CSExecutor.lastException">
+            <summary>
+            This method implements compiling and execution of the script.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.ExecuteImpl">
+            <summary>
+            This method implements compiling and execution of the script.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.Compile(System.String,System.String,System.Boolean)">
+            <summary>
+            Compiles C# script file into assembly.
+            </summary>
+        </member>
+        <member name="F:csscript.CSExecutor.scriptArgs">
+            <summary>
+            C# Script arguments array (sub array of application arguments array).
+            </summary>
+        </member>
+        <member name="F:csscript.CSExecutor.print">
+            <summary>
+            Callback to print application messages to appropriate output.
+            </summary>
+        </member>
+        <member name="F:csscript.CSExecutor.options">
+            <summary>
+            Container for parsed command line arguments
+            </summary>
+        </member>
+        <member name="F:csscript.CSExecutor.rethrow">
+            <summary>
+            Flag to force to rethrow critical exceptions
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.#ctor(System.Boolean,csscript.ExecuteOptions)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.GetAvailableAssembly(System.String)">
+            <summary>
+            Checks/returns if compiled C# script file (ScriptName + ".compiled") available and valid.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.Compile(System.String)">
+            <summary>
+            Compiles C# script file.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.GetScriptTempFile">
+            <summary>
+            Returns the name of the temporary file in the CSSCRIPT subfolder of Path.GetTempPath().
+            </summary>
+            <returns>Temporary file name.</returns>
+        </member>
+        <member name="M:csscript.CSExecutor.GetScriptTempDir">
+            <summary>
+            Returns the name of the temporary folder in the CSSCRIPT subfolder of Path.GetTempPath().
+            <para>Under certain circumstances it may be desirable to the use the alternative location for the CS-Script temporary files.
+            In such cases use SetScriptTempDir() to set the alternative location.
             </para>
-            <para>
-            This setting is to be used with the caution. While it can bring some performance benefits when the list of probing directories
-            is large it also may be wrong to assume that if the assembly in not found in a particular directory it still will not be there if the probing is repeated.
-            </para>
             </summary>
-            <value><c>true</c> if probing results should be cached; otherwise, <c>false</c>.</value>
+            <returns>Temporary directory name.</returns>
+        </member>
+        <member name="M:csscript.CSExecutor.SetScriptTempDir(System.String)">
+            <summary>
+            Sets the location for the CS-Script temporary files directory.
+            </summary>
+            <param name="path">The path for the temporary directory.</param>
+        </member>
+        <member name="M:csscript.CSExecutor.GetCacheDirectory(System.String)">
+            <summary>
+            Generates the name of the cache directory for the specified script file.
+            </summary>
+            <param name="file">Script file name.</param>
+            <returns>Cache directory name.</returns>
+        </member>
+        <member name="M:csscript.CSExecutor.SetScriptCacheDir(System.String)">
+            <summary>
+            Generates the name of the temporary cache folder in the CSSCRIPT subfolder of Path.GetTempPath(). The cache folder is specific for every script file.
+            </summary>
+            <param name="scriptFile">script file</param>
+        </member>
+        <member name="M:csscript.CSExecutor.ShowHelp">
+            <summary>
+            Prints Help info.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.ShowSample">
+            <summary>
+            Show sample C# script file.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.ShowPrecompilerSample">
+            <summary>
+            Show sample precompiler C# script file.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.CreateDefaultConfigFile">
+            <summary>
+            Creates the default config file in the CurrentDirectory.
+            </summary>
+        </member>
+        <member name="M:csscript.CSExecutor.ShowVersion">
+            <summary>
+            Show CS-Script version information.
+            </summary>
+        </member>
+        <member name="P:csscript.CSExecutor.Rethrow">
+            <summary>
+            Force caught exceptions to be rethrown.
+            </summary>
+        </member>
+        <member name="P:csscript.CSExecutor.ScriptCacheDir">
+            <summary>
+             Contains the name of the temporary cache folder in the CSSCRIPT subfolder of Path.GetTempPath(). The cache folder is specific for every script file.
+             </summary>
         </member>
         <member name="T:csscript.CSharpParser">
             <summary>
@@ -286,149 +617,93 @@
             If set to 'true' "static...Main" in the imported script is not renamed.
             </summary>
         </member>
-        <member name="T:csscript.CSExecutor">
+        <member name="T:CSScriptLibrary.AssemblyResolver">
             <summary>
-            CSExecutor is an class that implements execution of *.cs files.
+            Class for resolving assembly name to assembly file
             </summary>
         </member>
-        <member name="M:csscript.CSExecutor.Execute(System.String[],csscript.PrintDelegate,System.String)">
+        <member name="F:CSScriptLibrary.AssemblyResolver.ignoreFileName">
             <summary>
-            The main entry point for the application.
+            File to be excluded from assembly search
             </summary>
         </member>
-        <member name="M:csscript.CSExecutor.GetCustomAppConfig(System.String[])">
+        <member name="M:CSScriptLibrary.AssemblyResolver.ResolveAssembly(System.String,System.String,System.Boolean)">
             <summary>
-            Returns custom application config file.
+            Resolves assembly name to assembly file. Loads assembly file to the current AppDomain.
+            </summary>
+            <param name="assemblyName">The name of assembly</param>
+            <param name="dir">The name of directory where local assemblies are expected to be</param>
+            <param name="throwExceptions">if set to <c>true</c> [throw exceptions].</param>
+            <returns>loaded assembly</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AssemblyResolver.IsLegalPathToken(System.String)">
+            <summary>
+            Determines whether the string is a legal path token.
+            </summary>
+            <param name="name">The name.</param>
+            <returns>
+            	<c>true</c> if the string is a legal path token; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:CSScriptLibrary.AssemblyResolver.FindAssembly(System.String,System.String[])">
+            <summary>
+            Resolves namespace/assembly(file) name into array of assembly locations (local and GAC ones).
+            </summary>
+            <param name="name">'namespace'/assembly(file) name</param>
+            <param name="searchDirs">Assembly search directories</param>
+            <returns>collection of assembly file names where namespace is implemented</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AssemblyResolver.FindLocalAssembly(System.String,System.String)">
+            <summary>
+            Resolves namespace into array of local assembly locations.
+            (Currently it returns only one assembly location but in future
+            it can be extended to collect all assemblies with the same namespace)
+            </summary>
+            <param name="name">namespace/assembly name</param>
+            <param name="dir">directory</param>
+            <returns>collection of assembly file names where namespace is implemented</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AssemblyResolver.FindGlobalAssembly(System.String)">
+            <summary>
+            Resolves namespace into array of global assembly (GAC) locations.
+            </summary>
+            <param name="namespaceStr">'namespace' name</param>
+            <returns>collection of assembly file names where namespace is implemented</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AssemblyResolver.IsNamespaceDefinedInAssembly(System.String,System.String)">
+            <summary>
+            Search for namespace into local assembly file.
             </summary>
         </member>
-        <member name="M:csscript.CSExecutor.VoidPrint(System.String)">
+        <member name="P:CSScriptLibrary.AssemblyResolver.CacheProbingResults">
             <summary>
-            Dummy 'print' to suppress displaying application messages.
-            </summary>
-        </member>
-        <member name="F:csscript.CSExecutor.lastException">
-            <summary>
-            This method implements compiling and execution of the script.
-            </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.ExecuteImpl">
-            <summary>
-            This method implements compiling and execution of the script.
-            </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.Compile(System.String,System.String,System.Boolean)">
-            <summary>
-            Compiles C# script file into assembly.
-            </summary>
-        </member>
-        <member name="F:csscript.CSExecutor.scriptArgs">
-            <summary>
-            C# Script arguments array (sub array of application arguments array).
-            </summary>
-        </member>
-        <member name="F:csscript.CSExecutor.print">
-            <summary>
-            Callback to print application messages to appropriate output.
-            </summary>
-        </member>
-        <member name="F:csscript.CSExecutor.options">
-            <summary>
-            Container for parsed command line arguments
-            </summary>
-        </member>
-        <member name="F:csscript.CSExecutor.rethrow">
-            <summary>
-            Flag to force to rethrow critical exceptions
-            </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.#ctor">
-            <summary>
-            Constructor
-            </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.#ctor(System.Boolean,csscript.ExecuteOptions)">
-            <summary>
-            Constructor
-            </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.GetAvailableAssembly(System.String)">
-            <summary>
-            Checks/returns if compiled C# script file (ScriptName + ".compiled") available and valid.
-            </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.Compile(System.String)">
-            <summary>
-            Compiles C# script file.
-            </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.GetScriptTempFile">
-            <summary>
-            Returns the name of the temporary file in the CSSCRIPT subfolder of Path.GetTempPath().
-            </summary>
-            <returns>Temporary file name.</returns>
-        </member>
-        <member name="M:csscript.CSExecutor.GetScriptTempDir">
-            <summary>
-            Returns the name of the temporary folder in the CSSCRIPT subfolder of Path.GetTempPath().
-            <para>Under certain circumstances it may be desirable to the use the alternative location for the CS-Script temporary files.
-            In such cases use SetScriptTempDir() to set the alternative location.
+            Gets or sets a value indicating whether the assembly probing results should be cached. Default value is <c>false</c>;
+            <para>
+            Caching means that during the probing if the assembly is not found in one of the probing directories this directory will not
+            be checked again if the same assembly is to be resolved in the future.
+            </para>
+            <para>
+            This setting is to be used with the caution. While it can bring some performance benefits when the list of probing directories
+            is large it also may be wrong to assume that if the assembly in not found in a particular directory it still will not be there if the probing is repeated.
             </para>
             </summary>
-            <returns>Temporary directory name.</returns>
+            <value><c>true</c> if probing results should be cached; otherwise, <c>false</c>.</value>
         </member>
-        <member name="M:csscript.CSExecutor.SetScriptTempDir(System.String)">
+        <member name="T:csscript.AssemblyExecutor">
             <summary>
-            Sets the location for the CS-Script temporary files directory.
-            </summary>
-            <param name="path">The path for the temporary directory.</param>
-        </member>
-        <member name="M:csscript.CSExecutor.GetCacheDirectory(System.String)">
-            <summary>
-            Generates the name of the cache directory for the specified script file.
-            </summary>
-            <param name="file">Script file name.</param>
-            <returns>Cache directory name.</returns>
-        </member>
-        <member name="M:csscript.CSExecutor.SetScriptCacheDir(System.String)">
-            <summary>
-            Generates the name of the temporary cache folder in the CSSCRIPT subfolder of Path.GetTempPath(). The cache folder is specific for every script file.
-            </summary>
-            <param name="scriptFile">script file</param>
-        </member>
-        <member name="M:csscript.CSExecutor.ShowHelp">
-            <summary>
-            Prints Help info.
+            Executes "public static void Main(..)" of assembly in a separate domain.
             </summary>
         </member>
-        <member name="M:csscript.CSExecutor.ShowSample">
+        <member name="T:csscript.RemoteExecutor">
             <summary>
-            Show sample C# script file.
+            Invokes static method 'Main' from the assembly.
             </summary>
         </member>
-        <member name="M:csscript.CSExecutor.ShowPrecompilerSample">
+        <member name="M:csscript.RemoteExecutor.ResolveEventHandler(System.Object,System.ResolveEventArgs)">
             <summary>
-            Show sample precompiler C# script file.
+            AppDomain event handler. This handler will be called if CLR cannot resolve
+            referenced local assemblies
             </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.CreateDefaultConfigFile">
-            <summary>
-            Creates the default config file in the CurrentDirectory.
-            </summary>
-        </member>
-        <member name="M:csscript.CSExecutor.ShowVersion">
-            <summary>
-            Show CS-Script version information.
-            </summary>
-        </member>
-        <member name="P:csscript.CSExecutor.Rethrow">
-            <summary>
-            Force caught exceptions to be rethrown.
-            </summary>
-        </member>
-        <member name="P:csscript.CSExecutor.ScriptCacheDir">
-            <summary>
-             Contains the name of the temporary cache folder in the CSSCRIPT subfolder of Path.GetTempPath(). The cache folder is specific for every script file.
-             </summary>
         </member>
         <member name="T:csscript.CompilerException">
             <summary>
@@ -465,281 +740,6 @@
             <summary>
             Application specific runtime settings
             </summary>
-        </member>
-        <member name="T:CSScriptLibrary.ParsingParams">
-            <summary>
-            ParsingParams is an class that holds parsing parameters (parameters that controls how file is to be parsed).
-            At this moment they are namespace renaming rules only.
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.ParsingParams.Compare(CSScriptLibrary.ParsingParams,CSScriptLibrary.ParsingParams)">
-            <summary>
-            Compare() is to be used to help with implementation of IComparer for sorting operations.
-            </summary>
-        </member>
-        <member name="T:CSScriptLibrary.ScriptInfo">
-            <summary>
-            Class which is a placeholder for general information of the script file
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.ScriptInfo.#ctor(csscript.CSharpParser.ImportInfo)">
-            <summary>
-            Constructor
-            </summary>
-            <param name="info">ImportInfo object containing the information how the script file should be parsed.</param>
-        </member>
-        <member name="T:CSScriptLibrary.FileParser">
-            <summary>
-            Class that implements parsing the single C# script file
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.FileParser.ResolveFile(System.String,System.String[])">
-            <summary>
-            Searches for script file by given script name. Calls ResolveFile(string fileName, string[] extraDirs, bool throwOnError)
-            with throwOnError flag set to true.
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.FileParser.ResolveFile(System.String,System.String[],System.Boolean)">
-            <summary>
-            Searches for script file by given script name. Search order:
-            1. Current directory
-            2. extraDirs (usually %CSSCRIPT_DIR%\Lib and ExtraLibDirectory)
-            3. PATH
-            Also fixes file name if user did not provide extension for script file (assuming .cs extension)
-            </summary>
-        </member>
-        <member name="T:CSScriptLibrary.FileParserComparer">
-             <summary>
-             Class that implements parsing the single C# Script file
-             </summary>
-             <summary>
-             Implementation of the IComparer for sorting operations of collections of FileParser instances
-             </summary>
-            
-        </member>
-        <member name="T:CSScriptLibrary.ScriptParser">
-            <summary>
-            Class that manages parsing the main and all imported (if any) C# Script files
-            </summary>
-        </member>
-        <member name="F:CSScriptLibrary.ScriptParser.apartmentState">
-            <summary>
-            ApartmentState of a script during the execution (default: ApartmentState.Unknown)
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.ScriptParser.#ctor(System.String)">
-            <summary>
-            Constructor.
-            </summary>
-            <param name="fileName">Script file name</param>
-        </member>
-        <member name="M:CSScriptLibrary.ScriptParser.#ctor(System.String,System.String[])">
-            <summary>
-            Constructor.
-            </summary>
-            <param name="fileName">Script file name</param>
-            <param name="searchDirs">Extra ScriptLibrary directory </param>
-        </member>
-        <member name="M:CSScriptLibrary.ScriptParser.#ctor(System.String,System.String[],System.Boolean)">
-            <summary>
-            Constructor.
-            </summary>
-            <param name="fileName">Script file name</param>
-            <param name="searchDirs">Extra ScriptLibrary directory(ies) </param>
-            <param name="throwOnError">flag to indicate if the file parsing/processing error should raise an exception</param>
-        </member>
-        <member name="M:CSScriptLibrary.ScriptParser.Init(System.String,System.String[])">
-            <summary>
-            Initialization of ScriptParser instance
-            </summary>
-            <param name="fileName">Script file name</param>
-            <param name="searchDirs">Extra ScriptLibrary directory(ies) </param>
-        </member>
-        <member name="M:CSScriptLibrary.ScriptParser.SaveImportedScripts">
-            <summary>
-            Saves all imported scripts int temporary location.
-            </summary>
-            <returns>Collection of the saved imported scrips file names</returns>
-        </member>
-        <member name="M:CSScriptLibrary.ScriptParser.DeleteImportedFiles">
-            <summary>
-            Deletes imported scripts as a cleanup operation
-            </summary>
-        </member>
-        <member name="F:CSScriptLibrary.ScriptParser.SearchDirs">
-            <summary>
-            CS-Script SearchDirectories specified in the parsed script or its dependent scripts.
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.ScriptParser.FilesToCompile">
-            <summary>
-            Collection of the files to be compiled (including dependant scripts)
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.ScriptParser.ImportedFiles">
-            <summary>
-            Collection of the imported files (dependant scripts)
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.ScriptParser.ReferencedResources">
-            <summary>
-            Collection of resource files referenced from code
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.ScriptParser.CompilerOptions">
-            <summary>
-            Collection of compiler options
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.ScriptParser.Precompilers">
-            <summary>
-            Precompilers specified in the primary script file.
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.ScriptParser.ReferencedNamespaces">
-            <summary>
-            Collection of namespaces referenced from code (including those referenced in dependand scripts)
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.ScriptParser.IgnoreNamespaces">
-            <summary>
-            Collection of namespaces, which if found in code, should not be resolved into referenced assembly.
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.ScriptParser.ReferencedAssemblies">
-            <summary>
-            Collection of referenced asesemblies. All assemblies are referenced either from command-line, code or resolved from referenced namespaces.
-            </summary>
-        </member>
-        <member name="T:csscript.COM">
-            <summary>
-            COM HR checker: just to make code more compact;
-            </summary>
-        </member>
-        <member name="T:csscript.IAssemblyCache">
-            <summary>
-            IAssemblyCache; COM import
-            </summary>
-        </member>
-        <member name="T:csscript.IAssemblyName">
-            <summary>
-            IAssemblyName; COM import
-            </summary>
-        </member>
-        <member name="T:csscript.IAssemblyEnum">
-            <summary>
-            IAssemblyEnum; COM import
-            </summary>
-        </member>
-        <member name="T:csscript.AssemblyCommitFlags">
-            <summary>
-            AssemblyCommitFlags; Used by COM imported calls
-            </summary>
-        </member>
-        <member name="T:csscript.AssemblyCacheFlags">
-            <summary>
-            AssemblyCacheFlags; Used by COM imported calls
-            </summary>
-        </member>
-        <member name="T:csscript.AssemblyCacheUninstallDisposition">
-            <summary>
-            AssemblyCacheUninstallDisposition; Used by COM imported calls
-            </summary>
-        </member>
-        <member name="T:csscript.CreateAssemblyNameObjectFlags">
-            <summary>
-            CreateAssemblyNameObjectFlags; Used by COM imported calls
-            </summary>
-        </member>
-        <member name="T:csscript.AssemblyNameDisplayFlags">
-            <summary>
-            AssemblyNameDisplayFlags; Used by COM imported calls
-            </summary>
-        </member>
-        <member name="T:csscript.InstallReference">
-            <summary>
-            InstallReference + struct initialization; Used by COM imported calls
-            </summary>
-        </member>
-        <member name="T:csscript.AssemblyInfo">
-            <summary>
-            AssemblyInfo; Used by COM imported calls
-            </summary>
-        </member>
-        <member name="T:csscript.InstallReferenceGuid">
-            <summary>
-            InstallReferenceGuid; Used by COM imported calls
-            </summary>
-        </member>
-        <member name="T:csscript.AssemblyCache">
-            <summary>
-             Helper calss for IAssemblyCache
-            </summary>
-        </member>
-        <member name="T:csscript.AssemblyEnum">
-            <summary>
-            Helper calss for IAssemblyEnum
-            </summary>
-        </member>
-        <member name="T:csscript.PrecompilationContext">
-            <summary>
-            This class is a container for information related to the script precompilation.
-            <para>It is used to pass an input information from the script engine to the <c>precompiler</c> instance as well as to pass back
-            to the script engine some output information (e.g. added referenced assemblies)</para> .
-            </summary>
-        </member>
-        <member name="F:csscript.PrecompilationContext.NewReferences">
-            <summary>
-            Collection of the referenced assemblies to be added to the process script referenced assemblies.
-            <para>You may want to add new items to the referenced assemblies because of the precompilation logic (e.g. some code using assemblies not referenced by the primary script 
-            is injected in the script).</para>
-            </summary>
-        </member>
-        <member name="F:csscript.PrecompilationContext.NewDependencies">
-            <summary>
-            Collection of the new dependency items (files). 
-            <para>Dependency files are checked before the script execution in order to understand if the script should be recompiled or it can be loaded from 
-            the cache. If any of the dependency files is changed since the last script execution the script engine will recompile the script. In the simple execution 
-            scenarios the script file is a dependency file.</para>
-            </summary>
-        </member>
-        <member name="F:csscript.PrecompilationContext.NewIncludes">
-            <summary>
-            Collection of the new 'include' items (dependency source files). 
-            </summary>
-        </member>
-        <member name="F:csscript.PrecompilationContext.NewSearchDirs">
-            <summary>
-            Collection of the assembly and script probing directories to be added to the process search directories.
-            <para>You may want to add new items to the process search directories because of the precompilation logic.</para>
-            </summary>
-        </member>
-        <member name="F:csscript.PrecompilationContext.SearchDirs">
-            <summary>
-            Collection of the process assembly and script probing directories.
-            </summary>
-        </member>
-        <member name="T:csscript.AutoclassGenerator">
-            <summary>
-            AutoclassGenerator to be used by external applications for generating the auto-class from the classless scripts
-            </summary>
-        </member>
-        <member name="M:csscript.AutoclassGenerator.Process(System.String,System.Int32@,System.Int32@)">
-            <summary>
-            Processes the specified code.
-            </summary>
-            <param name="code">The code.</param>
-            <param name="injectionPos">The injection position.</param>
-            <param name="injectionLength">Length of the injection.</param>
-            <returns></returns>
-        </member>
-        <member name="M:csscript.AutoclassGenerator.Process(System.String,System.Int32@)">
-            <summary>
-            Processes the specified code.
-            </summary>
-            <param name="code">The code.</param>
-            <param name="position">The position.</param>
-            <returns></returns>
         </member>
         <member name="T:csscript.Settings">
             <summary>
@@ -991,526 +991,6 @@
              Note: A .dll assembly is always compiled and linked in a normal way without any custom meta data attached.
              </summary>
         </member>
-        <member name="T:CSScriptLibraryExtensionMethods">
-            <summary>
-            Method extensions for
-            </summary>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.GetScriptName(System.Reflection.Assembly)">
-            <summary>
-            Determines whether the specified assembly is a script assembly (compiled script) and returns full path of the script file
-            used to compile the assembly. The analysis is based on the fact that script assembly (in hosing scenarios) is always
-            stamped with <see cref="T:System.Reflection.AssemblyDescriptionAttribute"/>, which contains name of the script file the
-            assembly was compiled from.
-            <para>The format of the description </para>
-            </summary>
-            <param name="assembly">The assembly.</param>
-            <returns>
-            	Script file path if the specified assembly is a script assembly otherwise <c>null</c>.
-            </returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.GetHelper(System.Reflection.Assembly)">
-            <summary>
-            Constructs and returns an instance of CSScriptLibrary.AsmHelper class from the underlying Assembly.
-            </summary>
-            <returns>CSScriptLibrary.AsmHelper</returns>
-            <param name="obj">Instance of the type to be extended</param>
-            <returns>CSScriptLibrary.AsmHelper</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.GetStaticMethod(System.Reflection.Assembly,System.String,System.Object[])">
-            <summary>
-            Returns which emitted delegate based on MethodInfo of the underlying assembly.
-            </summary>
-            <param name="obj">Instance of the type to be extended</param>
-            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
-            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or even *.*).</param>
-            <param name="list">List of 'Method' arguments.
-            Note that values of the items in the list do not have any importance. The type of the list item is
-            to be used for method search. For example if class Calc has method Sum(int a, int b) the method invoker
-            can be obtained as following:
-            <para>
-            GetStaticMethod("Calc.Sum", 0, 0)
-            </para>
-            You can pass any integer as the second and third parameter because it will be used only to obtain the
-            information about the parameter type (in this case System.Int32).</param>
-            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.GetStaticMethodWithArgs(System.Reflection.Assembly,System.String,System.Type[])">
-            <summary>
-            Returns which emitted delegate based on MethodInfo of the underlying assembly.
-            </summary>
-            <param name="obj">Instance of the type to be extended</param>
-            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
-            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or even *.*).</param>
-            <param name="list">List of 'Method' arguments.</param>
-            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.GetStaticMethod(System.Reflection.Assembly)">
-             <summary>
-             <param name="obj">Instance of the type to be extended</param>
-             Specialised version of GetMethodInvoker which returns MethodDelegate of the very first method found in the
-             underlying assembly. This method is an overloaded implementation of the GetStaticMethod(string methodName, params object[] list).
-            
-             Use this method when script assembly contains only one single type with one method.
-             </summary>
-             <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.TryCreateObject(System.Reflection.Assembly,System.String)">
-             <summary>
-             Attempts to create instance of a class from underlying assembly.
-             </summary>
-             <param name="obj">Instance of the type to be extended</param>
-             <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
-            
-             You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
-             <returns>Instance of the 'Type'. Returns null if the instance cannot be created.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.CreateObject(System.Reflection.Assembly,System.String)">
-            <summary>
-            Creates instance of a class from underlying assembly.
-            </summary>
-            <param name="obj">Instance of the type to be extended</param>
-            <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
-            You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
-            <returns>Instance of the 'Type'. Throws an ApplicationException if the instance cannot be created.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.ExtendLife(System.MarshalByRefObject,System.TimeSpan)">
-            <summary>
-            Extends the life of the instance created in the remote AppDomain.
-            </summary>
-            <param name="obj">The instance created in the remote AppDomain.</param>
-            <param name="renewalTime">The renewal time.</param>
-            <returns>Returns <see cref="T:System.Runtime.Remoting.LifetimeClientSponsor" />  object.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.ExtendLifeFromMinutes(System.MarshalByRefObject,System.Int32)">
-            <summary>
-            Extends the life of the instance created in the remote AppDomain.
-            </summary>
-            <param name="obj">The instance created in the remote AppDomain.</param>
-            <param name="minutes">The renewal time in minutes.</param>
-            <returns>Returns <see cref="T:System.Runtime.Remoting.LifetimeClientSponsor" />  object.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object)">
-            <summary>
-            Attempts to align (pseudo typecast) object to interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object,System.Boolean)">
-            <summary>
-            Attempts to align (pseudo typecast) object to interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all loaded assemblies of the current <see cref="T:System.AppDomain"/>
-            when emitting (compiling) aligned proxy object.</param>
-            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object,System.String[])">
-            <summary>
-            Attempts to align (pseudo typecast) object to interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <param name="refAssemblies">The string array containing file nemes to the additional dependency
-            assemblies the interface depends in. </param>
-            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object,System.Boolean,System.String[])">
-            <summary>
-            Attempts to align (pseudo typecast) object to interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all loaded assemblies of the current <see cref="T:System.AppDomain"/>
-            when emitting (compiling) aligned proxy object.</param>
-            <param name="refAssemblies">The string array containing file names to the additional dependency
-            assemblies the interface depends in. </param>
-            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object,System.Boolean)">
-            <summary>
-            Aligns (pseudo typecasts) object to interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all non-GAC loaded assemblies of the current <see cref="T:System.AppDomain"/>
-            when emitting (compiling) aligned proxy object.</param>
-            <returns>Interface object.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object,System.String[])">
-            <summary>
-            Aligns (pseudo typecasts) object to interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <param name="refAssemblies">The string array containing file names to the additional dependency
-            assemblies the interface depends in. </param>
-            <returns>Interface object.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object,System.Boolean,System.String[])">
-            <summary>
-            Aligns (pseudo typecasts) object to interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all non-GAC loaded assemblies of the current <see cref="T:System.AppDomain"/>
-            when emitting (compiling) aligned proxy object.</param>
-            <param name="refAssemblies">The string array containing file names to the additional dependency
-            assemblies the interface depends in. </param>
-            <returns>Interface object.</returns>
-        </member>
-        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object)">
-            <summary>
-            Aligns (pseudo typecasts) object to interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <returns>Interface object.</returns>
-        </member>
-        <member name="T:CSScriptLibrary.FastInvokeDelegate">
-             <summary>
-             Delegate which is used as a return type for AsmHelper.GetMethodInvoker().
-            
-             AsmHelper.GetMethodInvoker() allows obtaining dynamic method delegate emitted on the base of the MethodInfo (from the compiled script type).
-             </summary>
-             <param name="instance">Instance of the type which method is to be invoked.</param>
-             <param name="paramters">Optional method parameters.</param>
-             <returns>Returns MethodInfo return value</returns>
-        </member>
-        <member name="T:CSScriptLibrary.MethodDelegate">
-             <summary>
-             Delegate which is used as a return type for AsmHelper.GetMethodInvoker().
-            
-             AsmHelper.GetStaticMethod() and AsmHelper.GetMethod() allow obtaining dynamic method delegate emitted on the base of the MethodInfo (from the compiled script type).
-             </summary>
-             <param name="paramters">Optional method parameters.</param>
-             <returns>Returns MethodInfo return value</returns>
-        </member>
-        <member name="T:CSScriptLibrary.AsmHelper">
-            <summary>
-            Helper class to simplify working with dynamically loaded assemblies.
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.AlignToInterface``1(System.Object)">
-            <summary>
-            Aligns (pseudo typecasts) object to the specified interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            <remarks>
-            The important difference between this method being called from <see cref="T:CSScriptLibrary.AsmHelper"/> working
-            with the assembly in current and remote <see cref="T:System.AppDomain"/> is that is that the actual
-            interface alignment is performed in the corresponding <see cref="T:System.AppDomain"/>.
-            </remarks>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <returns>Interface object.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.AlignToInterface``1(System.Object,System.String[])">
-            <summary>
-            Aligns (pseudo typecasts) object to the specified interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            <remarks>
-            The important difference between this method being called from <see cref="T:CSScriptLibrary.AsmHelper"/> working
-            with the assembly in current and remote <see cref="T:System.AppDomain"/> is that is that the actual
-            interface alignment is performed in the corresponding <see cref="T:System.AppDomain"/>.
-            </remarks>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <param name="refAssemblies">The string array containing file nemes to the additional dependency
-            assemblies the interface depends in. </param>
-            <returns>Interface object.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.AlignToInterface``1(System.Object,System.Boolean)">
-            <summary>
-            Aligns (pseudo typecasts) object to the specified interface.
-            <para>The object does not necessarily need to implement the interface formally.</para>
-            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
-            <remarks>
-            The important difference between this method being called from <see cref="T:CSScriptLibrary.AsmHelper"/> working
-            with the assembly in current and remote <see cref="T:System.AppDomain"/> is that is that the actual
-            interface alignment is performed in the corresponding <see cref="T:System.AppDomain"/>.
-            </remarks>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="obj">The object to be aligned with the interface.</param>
-            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all loaded assemblies of the current <see cref="T:System.AppDomain"/></param>
-            <returns>Interface object.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.CreateAndAlignToInterface``1(System.String)">
-            <summary>
-            Creates object in remote or current <see cref="T:System.AppDomain"/> and aligns (pseudo typecasts) it to the specified interface.
-            <para>Semantically it is an equivalent of calling
-            <code>asmHelper.AlignToInterface(asmHelper.CreateObject(typeName))</code>
-            </para>
-            </summary>
-            <typeparam name="T">Interface definition to align with.</typeparam>
-            <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
-            You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
-            <returns>Interface object.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.GetMethodInvoker(System.String,System.Object[])">
-            <summary>
-            This method returns extremely fast delegate for the method specified by "methodName" and
-            method arguments "list". Invoking such delegate is ~100 times faster than invoking with pure reflection
-            (MethodInfo.Invoke()).
-            </summary>
-            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowd to use wild
-            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or "*.*").</param>
-            <param name="list">List of 'Method' arguments.
-            Note that values of the items in the list do not have any importance. The type of the list item is
-            to be used for method search. For example if class Calc has method Sum(int a, int b) the method invoker
-            can be obtained as following:
-            <para></para>
-            GetMethodInvoker("Calc.Sum", 0, 0)
-            <para></para>
-            You can pass any integer as the second and third parameter because it will be used only to obtain the
-            information about the parameter type (in this case System.Int32).</param>
-            <returns>Returns delegate of CSScriptLibrary.FastInvokeDelegate type.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.GetStaticMethod(System.String,System.Object[])">
-            <summary>
-            Specialised version of GetMethodInvoker which returns MethodDelegate thus you do not need to specify
-            object instance (null) when calling static methods.
-            </summary>
-            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
-            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or "*.*").</param>
-            <param name="list">List of 'Method' arguments. </param>
-            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
-            <remarks>
-            <para>
-            <para>
-            Note that values of the items in the list do not have any importance. The type of the list item is
-            to be used for method search. For example if class Calc has method Sum(int a, int b) the method invoker
-            can be obtained as following:
-            </para>
-            </para>
-            <example>
-            <code>GetStaticMethod("Calc.Sum", 0, 0)</code>
-            </example>
-            <para>
-            You can pass any integer as the second and third parameter because it will be used only to obtain the
-            information about the parameter type (in this case System.Int32).
-            </para>
-            </remarks>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.GetStaticMethodWithArgs(System.String,System.Type[])">
-            <summary>
-            Specialised version of GetMethodInvoker which returns MethodDelegate thus you do not need to specify
-            object instance (null) when calling static methods.
-            </summary>
-            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
-            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or "*.*").</param>
-            <param name="list">List of 'Method' arguments. </param>
-            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.GetStaticMethod">
-            <summary>
-            Specialised version of GetMethodInvoker which returns MethodDelegate of the very first method found in the
-            underlying assembly. This method is an overloaded implementation of the GetStaticMethod(string methodName, params object[] list).
-            <para>
-            Use this method when script assembly contains only one single type with one method.
-            </para>
-            </summary>
-            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.GetMethod(System.Object,System.String,System.Object[])">
-            <summary>
-            Specialised version of GetMethodInvoker which returns MethodDelegate thus you do not need to specify
-            object instance when calling instance methods as delegate will maintain the instance object internally.
-            </summary>
-            <param name="instance">Instance of the type, which implements method is to be wrapped by MethodDelegate.</param>
-            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
-            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or "*.*").</param>
-            <param name="list">List of 'Method' arguments.
-            <para>
-            Note that values of the items in the list do not have any importance. The type of the list item is
-            to be used for method search. For example if class Calc has method Sum(int a, int b) the method invoker
-            can be obtained as following:
-            <code>
-            GetMethod(instance, "Sum", 0, 0)
-            </code>
-            You can pass any integer as the second and third parameter because it will be used only to obtain the
-            information about the parameter type (in this case System.Int32).
-            </para>
-            </param>
-            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.#ctor(System.Reflection.Assembly)">
-            <summary>
-            Creates an instance of AsmHelper for working with assembly dynamically loaded to current AppDomain.
-            Calling "Dispose" is optional for "current AppDomain"scenario as no new AppDomain will be ever created.
-            </summary>
-            <param name="asm">Assembly object.</param>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.#ctor(System.String,System.String,System.Boolean)">
-            <summary>
-            Creates an instance of AsmHelper for working with assembly dynamically loaded to non-current AppDomain.
-            This method initialises instance and creates new ('remote') AppDomain with 'domainName' name. New AppDomain is automatically unloaded as result of "disposable" behaviour of AsmHelper.
-            </summary>
-            <param name="asmFile">File name of the assembly to be loaded.</param>
-            <param name="domainName">Name of the domain to be created.</param>
-            <param name="deleteOnExit">'true' if assembly file should be deleted when new AppDomain is unloaded; otherwise, 'false'.</param>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.Invoke(System.String,System.Object[])">
-            <summary>
-            Executes static method of the underlying assembly.
-            </summary>
-            <param name="methodName">'Method' name including 'Type' name (e.g. MyType.DoJob). It is allowed to use wild card character
-            to indicate that the Type name of the method is irrelevant (e.g. "*.Method").</param>
-            <param name="list">List of 'Method' arguments.</param>
-            <returns>Returns object of the same type as 'Method' return type.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.InvokeInst(System.Object,System.String,System.Object[])">
-            <summary>
-            Executes an instance method of the underlying assembly.
-            </summary>
-            <param name="obj">Instance of the object whose method is to be invoked.</param>
-            <param name="methodName">'Method' name (excluding 'Type' name). It is allowed to use wild card character
-            to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or even "*.*").</param>
-            <param name="list">List of 'Method' arguments.</param>
-            <returns>Returns object of the same type as 'Method' return type.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.TryCreateObject(System.String)">
-             <summary>
-             Attempts to create instance of a class from underlying assembly.
-             </summary>
-             <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
-            
-             You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
-             <returns>Instance of the 'Type'. Returns null if the instance cannot be created.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.CreateObject(System.String)">
-            <summary>
-            Creates instance of a class from underlying assembly.
-            </summary>
-            <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
-            You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
-            <returns>Instance of the 'Type'. Throws an ApplicationException if the instance cannot be created.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.Unload">
-            <summary>
-            Unloads 'remote' AppDomain if it was created.
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.Dispose">
-            <summary>
-            Implementation of IDisposable.Dispose(). Disposes allocated exetrnal resources if any. Call this method to unload non-current AppDomain (if it was created).
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.Dispose(System.Boolean)">
-            <summary>
-            Actual implementation of IDisposable.Dispose()
-            </summary>
-            <param name="disposing">'false' if the method has been called by the runtime from inside the finalizer ; otherwise, 'true'.</param>
-        </member>
-        <member name="M:CSScriptLibrary.AsmHelper.Finalize">
-            <summary>
-            Finalizer
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.AsmHelper.ScriptExecutionDomain">
-            <summary>
-            Instance of the AppDomain, which is used to execute the script.
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.AsmHelper.RemoteObject">
-            <summary>
-            Reference to the <see cref="T:CSScriptLibrary.AsmHelper"/> "worker" object created in the remote AppDomain. This property is null
-            unless <see cref="T:CSScriptLibrary.AsmHelper"/> was instantiated for the <c>remote execution</c> scenario.
-            <para>This property can be useful when you need to access the remote object in order to manage the "life time" of the AsmHelper in
-            Remoting and WCF scenarios.</para>
-            </summary>
-            <example>
-            <code>
-            var scriptHelper = new AsmHelper(scriptAsmFile, null, true);
-            scriptHelper.RemoteObject.ExtendLifeFromMinutes(30);
-            </code>
-            </example>
-        </member>
-        <member name="P:CSScriptLibrary.AsmHelper.CachingEnabled">
-            <summary>
-            Flag that indicates if method caching is enabled. It is set to true by default.
-            <para></para>
-            When caching is enabled AsmHelper generates (emits) extremely fast delegates for
-            the methods being invoked. If AsmHelper is in cache mode it performs more than twice faster.
-            However generation of the delegate does take some time that is why you may consider
-            switching caching off if the method is to be invoked only once.
-            </summary>
-        </member>
-        <member name="P:CSScriptLibrary.AsmHelper.ProbingDirs">
-             <summary>
-            Array of directories to be used for assembly probing.
-             </summary>
-        </member>
-        <member name="T:CSScriptLibrary.IAsmBrowser">
-            <summary>
-            Defines method for calling assembly methods and instantiating assembly types.
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.AsmBrowser.CreateInstance(System.String)">
-            <summary>
-            Creates instance of a Type from underlying assembly.
-            </summary>
-            <param name="typeName">Name of the type to be instantiated. Allows wild card character (e.g. *.MyClass can be used to instantiate MyNamespace.MyClass).</param>
-            <returns>Created instance of the type.</returns>
-        </member>
-        <member name="T:CSScriptLibrary.FastInvoker">
-             <summary>
-             Class which is capable of emitting the dynamic method delegate based on the MethodInfo. Such delegate is
-             extremely fast and it can demonstrate up to 100 times better performance comparing to the pure
-             Reflection method invokation (MethodInfo.Invoke()).
-            
-            
-             Based on http://www.codeproject.com/KB/cs/FastInvokerWrapper.aspx
-             </summary>
-        </member>
-        <member name="F:CSScriptLibrary.FastInvoker.info">
-            <summary>
-            MethodInfo instance which was used to generate dynamic method delegate.
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.FastInvoker.#ctor(System.Reflection.MethodInfo)">
-            <summary>
-            Constructor
-            </summary>
-            <param name="info">MethodInfo instance which is to be used to generate dynamic method delegate.</param>
-        </member>
-        <member name="M:CSScriptLibrary.FastInvoker.Invoke(System.Object,System.Object[])">
-            <summary>
-            Invokes dynamic method delegate generated from the MethodInfo object.
-            </summary>
-            <param name="instance">Instance of the type which method is to be invoked.</param>
-            <param name="paramters">Optional method parameters.</param>
-            <returns>Invokes dynamic method delegate return value</returns>
-        </member>
-        <member name="M:CSScriptLibrary.FastInvoker.GetMethodInvoker">
-            <summary>
-            Returns dynamic method delegate generated from the MethodInfo object.
-            </summary>
-            <returns>FastInvokeDelegate instance.</returns>
-        </member>
         <member name="T:CSScriptLibrary.Ref`1">
              <summary>
              This class encapsulates another object for the purpose of passing it to the anonymous methods as parameters.
@@ -1681,13 +1161,6 @@
             </summary>
             <param name="domain">The <see cref="T:System.AppDomain"/> to be cloned.</param>
             <returns>The newly created <see cref="T:System.AppDomain"/>.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.AppDomainHelper.GetStrongName(System.Reflection.Assembly)">
-            <summary>
-            Gets the strong name of the assembly.
-            </summary>
-            <param name="assembly">The assembly.</param>
-            <returns>Assembly strong name.</returns>
         </member>
         <member name="M:CSScriptLibrary.AppDomainHelper.Clone(System.AppDomain,System.String,System.Security.PermissionSet,System.Security.Policy.StrongName[])">
             <summary>
@@ -2402,6 +1875,625 @@
             Repository for application specific data
             </summary>
         </member>
+        <member name="T:CSScriptLibraryExtensionMethods">
+            <summary>
+            Method extensions for
+            </summary>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.GetScriptName(System.Reflection.Assembly)">
+            <summary>
+            Determines whether the specified assembly is a script assembly (compiled script) and returns full path of the script file
+            used to compile the assembly. The analysis is based on the fact that script assembly (in hosing scenarios) is always
+            stamped with <see cref="T:System.Reflection.AssemblyDescriptionAttribute"/>, which contains name of the script file the
+            assembly was compiled from.
+            <para>The format of the description </para>
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <returns>
+            	Script file path if the specified assembly is a script assembly otherwise <c>null</c>.
+            </returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.GetHelper(System.Reflection.Assembly)">
+            <summary>
+            Constructs and returns an instance of CSScriptLibrary.AsmHelper class from the underlying Assembly.
+            </summary>
+            <returns>CSScriptLibrary.AsmHelper</returns>
+            <param name="obj">Instance of the type to be extended</param>
+            <returns>CSScriptLibrary.AsmHelper</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.GetStaticMethod(System.Reflection.Assembly,System.String,System.Object[])">
+            <summary>
+            Returns which emitted delegate based on MethodInfo of the underlying assembly.
+            </summary>
+            <param name="obj">Instance of the type to be extended</param>
+            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
+            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or even *.*).</param>
+            <param name="list">List of 'Method' arguments.
+            Note that values of the items in the list do not have any importance. The type of the list item is
+            to be used for method search. For example if class Calc has method Sum(int a, int b) the method invoker
+            can be obtained as following:
+            <para>
+            GetStaticMethod("Calc.Sum", 0, 0)
+            </para>
+            You can pass any integer as the second and third parameter because it will be used only to obtain the
+            information about the parameter type (in this case System.Int32).</param>
+            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.GetStaticMethodWithArgs(System.Reflection.Assembly,System.String,System.Type[])">
+            <summary>
+            Returns which emitted delegate based on MethodInfo of the underlying assembly.
+            </summary>
+            <param name="obj">Instance of the type to be extended</param>
+            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
+            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or even *.*).</param>
+            <param name="list">List of 'Method' arguments.</param>
+            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.GetStaticMethod(System.Reflection.Assembly)">
+             <summary>
+             <param name="obj">Instance of the type to be extended</param>
+             Specialised version of GetMethodInvoker which returns MethodDelegate of the very first method found in the
+             underlying assembly. This method is an overloaded implementation of the GetStaticMethod(string methodName, params object[] list).
+            
+             Use this method when script assembly contains only one single type with one method.
+             </summary>
+             <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.TryCreateObject(System.Reflection.Assembly,System.String)">
+             <summary>
+             Attempts to create instance of a class from underlying assembly.
+             </summary>
+             <param name="obj">Instance of the type to be extended</param>
+             <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
+            
+             You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+             <returns>Instance of the 'Type'. Returns null if the instance cannot be created.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.CreateObject(System.Reflection.Assembly,System.String)">
+            <summary>
+            Creates instance of a class from underlying assembly.
+            </summary>
+            <param name="obj">Instance of the type to be extended</param>
+            <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
+            You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+            <returns>Instance of the 'Type'. Throws an ApplicationException if the instance cannot be created.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.ExtendLife(System.MarshalByRefObject,System.TimeSpan)">
+            <summary>
+            Extends the life of the instance created in the remote AppDomain.
+            </summary>
+            <param name="obj">The instance created in the remote AppDomain.</param>
+            <param name="renewalTime">The renewal time.</param>
+            <returns>Returns <see cref="T:System.Runtime.Remoting.LifetimeClientSponsor" />  object.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.ExtendLifeFromMinutes(System.MarshalByRefObject,System.Int32)">
+            <summary>
+            Extends the life of the instance created in the remote AppDomain.
+            </summary>
+            <param name="obj">The instance created in the remote AppDomain.</param>
+            <param name="minutes">The renewal time in minutes.</param>
+            <returns>Returns <see cref="T:System.Runtime.Remoting.LifetimeClientSponsor" />  object.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object)">
+            <summary>
+            Attempts to align (pseudo typecast) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object,System.Boolean)">
+            <summary>
+            Attempts to align (pseudo typecast) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all loaded assemblies of the current <see cref="T:System.AppDomain"/>
+            when emitting (compiling) aligned proxy object.</param>
+            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object,System.String[])">
+            <summary>
+            Attempts to align (pseudo typecast) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="refAssemblies">The string array containing file nemes to the additional dependency
+            assemblies the interface depends in. </param>
+            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.TryAlignToInterface``1(System.Object,System.Boolean,System.String[])">
+            <summary>
+            Attempts to align (pseudo typecast) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all loaded assemblies of the current <see cref="T:System.AppDomain"/>
+            when emitting (compiling) aligned proxy object.</param>
+            <param name="refAssemblies">The string array containing file names to the additional dependency
+            assemblies the interface depends in. </param>
+            <returns>Interface object or <c>null</c> if alignment was unsuccessful.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object,System.Boolean)">
+            <summary>
+            Aligns (pseudo typecasts) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all non-GAC loaded assemblies of the current <see cref="T:System.AppDomain"/>
+            when emitting (compiling) aligned proxy object.</param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object,System.String[])">
+            <summary>
+            Aligns (pseudo typecasts) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="refAssemblies">The string array containing file names to the additional dependency
+            assemblies the interface depends in. </param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object,System.Boolean,System.String[])">
+            <summary>
+            Aligns (pseudo typecasts) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all non-GAC loaded assemblies of the current <see cref="T:System.AppDomain"/>
+            when emitting (compiling) aligned proxy object.</param>
+            <param name="refAssemblies">The string array containing file names to the additional dependency
+            assemblies the interface depends in. </param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.AlignToInterface``1(System.Object)">
+            <summary>
+            Aligns (pseudo typecasts) object to interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="T:CSScriptLibrary.FastInvokeDelegate">
+             <summary>
+             Delegate which is used as a return type for AsmHelper.GetMethodInvoker().
+            
+             AsmHelper.GetMethodInvoker() allows obtaining dynamic method delegate emitted on the base of the MethodInfo (from the compiled script type).
+             </summary>
+             <param name="instance">Instance of the type which method is to be invoked.</param>
+             <param name="paramters">Optional method parameters.</param>
+             <returns>Returns MethodInfo return value</returns>
+        </member>
+        <member name="T:CSScriptLibrary.MethodDelegate">
+             <summary>
+             Delegate which is used as a return type for AsmHelper.GetMethodInvoker().
+            
+             AsmHelper.GetStaticMethod() and AsmHelper.GetMethod() allow obtaining dynamic method delegate emitted on the base of the MethodInfo (from the compiled script type).
+             </summary>
+             <param name="paramters">Optional method parameters.</param>
+             <returns>Returns MethodInfo return value</returns>
+        </member>
+        <member name="T:CSScriptLibrary.AsmHelper">
+            <summary>
+            Helper class to simplify working with dynamically loaded assemblies.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.AlignToInterface``1(System.Object)">
+            <summary>
+            Aligns (pseudo typecasts) object to the specified interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            <remarks>
+            The important difference between this method being called from <see cref="T:CSScriptLibrary.AsmHelper"/> working
+            with the assembly in current and remote <see cref="T:System.AppDomain"/> is that is that the actual
+            interface alignment is performed in the corresponding <see cref="T:System.AppDomain"/>.
+            </remarks>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.AlignToInterface``1(System.Object,System.String[])">
+            <summary>
+            Aligns (pseudo typecasts) object to the specified interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            <remarks>
+            The important difference between this method being called from <see cref="T:CSScriptLibrary.AsmHelper"/> working
+            with the assembly in current and remote <see cref="T:System.AppDomain"/> is that is that the actual
+            interface alignment is performed in the corresponding <see cref="T:System.AppDomain"/>.
+            </remarks>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="refAssemblies">The string array containing file nemes to the additional dependency
+            assemblies the interface depends in. </param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.AlignToInterface``1(System.Object,System.Boolean)">
+            <summary>
+            Aligns (pseudo typecasts) object to the specified interface.
+            <para>The object does not necessarily need to implement the interface formally.</para>
+            <para>See <see cref="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster"/>.</para>
+            <remarks>
+            The important difference between this method being called from <see cref="T:CSScriptLibrary.AsmHelper"/> working
+            with the assembly in current and remote <see cref="T:System.AppDomain"/> is that is that the actual
+            interface alignment is performed in the corresponding <see cref="T:System.AppDomain"/>.
+            </remarks>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="obj">The object to be aligned with the interface.</param>
+            <param name="useAppDomainAssemblies">If set to <c>true</c> uses all loaded assemblies of the current <see cref="T:System.AppDomain"/></param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.CreateAndAlignToInterface``1(System.String)">
+            <summary>
+            Creates object in remote or current <see cref="T:System.AppDomain"/> and aligns (pseudo typecasts) it to the specified interface.
+            <para>Semantically it is an equivalent of calling
+            <code>asmHelper.AlignToInterface(asmHelper.CreateObject(typeName))</code>
+            </para>
+            </summary>
+            <typeparam name="T">Interface definition to align with.</typeparam>
+            <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
+            You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+            <returns>Interface object.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.GetMethodInvoker(System.String,System.Object[])">
+            <summary>
+            This method returns extremely fast delegate for the method specified by "methodName" and
+            method arguments "list". Invoking such delegate is ~100 times faster than invoking with pure reflection
+            (MethodInfo.Invoke()).
+            </summary>
+            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowd to use wild
+            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or "*.*").</param>
+            <param name="list">List of 'Method' arguments.
+            Note that values of the items in the list do not have any importance. The type of the list item is
+            to be used for method search. For example if class Calc has method Sum(int a, int b) the method invoker
+            can be obtained as following:
+            <para></para>
+            GetMethodInvoker("Calc.Sum", 0, 0)
+            <para></para>
+            You can pass any integer as the second and third parameter because it will be used only to obtain the
+            information about the parameter type (in this case System.Int32).</param>
+            <returns>Returns delegate of CSScriptLibrary.FastInvokeDelegate type.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.GetStaticMethod(System.String,System.Object[])">
+            <summary>
+            Specialised version of GetMethodInvoker which returns MethodDelegate thus you do not need to specify
+            object instance (null) when calling static methods.
+            </summary>
+            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
+            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or "*.*").</param>
+            <param name="list">List of 'Method' arguments. </param>
+            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
+            <remarks>
+            <para>
+            <para>
+            Note that values of the items in the list do not have any importance. The type of the list item is
+            to be used for method search. For example if class Calc has method Sum(int a, int b) the method invoker
+            can be obtained as following:
+            </para>
+            </para>
+            <example>
+            <code>GetStaticMethod("Calc.Sum", 0, 0)</code>
+            </example>
+            <para>
+            You can pass any integer as the second and third parameter because it will be used only to obtain the
+            information about the parameter type (in this case System.Int32).
+            </para>
+            </remarks>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.GetStaticMethodWithArgs(System.String,System.Type[])">
+            <summary>
+            Specialised version of GetMethodInvoker which returns MethodDelegate thus you do not need to specify
+            object instance (null) when calling static methods.
+            </summary>
+            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
+            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or "*.*").</param>
+            <param name="list">List of 'Method' arguments. </param>
+            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.GetStaticMethod">
+            <summary>
+            Specialised version of GetMethodInvoker which returns MethodDelegate of the very first method found in the
+            underlying assembly. This method is an overloaded implementation of the GetStaticMethod(string methodName, params object[] list).
+            <para>
+            Use this method when script assembly contains only one single type with one method.
+            </para>
+            </summary>
+            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.GetMethod(System.Object,System.String,System.Object[])">
+            <summary>
+            Specialised version of GetMethodInvoker which returns MethodDelegate thus you do not need to specify
+            object instance when calling instance methods as delegate will maintain the instance object internally.
+            </summary>
+            <param name="instance">Instance of the type, which implements method is to be wrapped by MethodDelegate.</param>
+            <param name="methodName">'Method' name including 'Type' name (eg. MyType.DoJob). It is allowed to use wild
+            card character to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or "*.*").</param>
+            <param name="list">List of 'Method' arguments.
+            <para>
+            Note that values of the items in the list do not have any importance. The type of the list item is
+            to be used for method search. For example if class Calc has method Sum(int a, int b) the method invoker
+            can be obtained as following:
+            <code>
+            GetMethod(instance, "Sum", 0, 0)
+            </code>
+            You can pass any integer as the second and third parameter because it will be used only to obtain the
+            information about the parameter type (in this case System.Int32).
+            </para>
+            </param>
+            <returns>Returns delegate of CSScriptLibrary.MethodDelegate type.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.#ctor(System.Reflection.Assembly)">
+            <summary>
+            Creates an instance of AsmHelper for working with assembly dynamically loaded to current AppDomain.
+            Calling "Dispose" is optional for "current AppDomain"scenario as no new AppDomain will be ever created.
+            </summary>
+            <param name="asm">Assembly object.</param>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.#ctor(System.String,System.String,System.Boolean)">
+            <summary>
+            Creates an instance of AsmHelper for working with assembly dynamically loaded to non-current AppDomain.
+            This method initialises instance and creates new ('remote') AppDomain with 'domainName' name. New AppDomain is automatically unloaded as result of "disposable" behaviour of AsmHelper.
+            </summary>
+            <param name="asmFile">File name of the assembly to be loaded.</param>
+            <param name="domainName">Name of the domain to be created.</param>
+            <param name="deleteOnExit">'true' if assembly file should be deleted when new AppDomain is unloaded; otherwise, 'false'.</param>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.Invoke(System.String,System.Object[])">
+            <summary>
+            Executes static method of the underlying assembly.
+            </summary>
+            <param name="methodName">'Method' name including 'Type' name (e.g. MyType.DoJob). It is allowed to use wild card character
+            to indicate that the Type name of the method is irrelevant (e.g. "*.Method").</param>
+            <param name="list">List of 'Method' arguments.</param>
+            <returns>Returns object of the same type as 'Method' return type.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.InvokeInst(System.Object,System.String,System.Object[])">
+            <summary>
+            Executes an instance method of the underlying assembly.
+            </summary>
+            <param name="obj">Instance of the object whose method is to be invoked.</param>
+            <param name="methodName">'Method' name (excluding 'Type' name). It is allowed to use wild card character
+            to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or even "*.*").</param>
+            <param name="list">List of 'Method' arguments.</param>
+            <returns>Returns object of the same type as 'Method' return type.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.TryCreateObject(System.String)">
+             <summary>
+             Attempts to create instance of a class from underlying assembly.
+             </summary>
+             <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
+            
+             You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+             <returns>Instance of the 'Type'. Returns null if the instance cannot be created.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.CreateObject(System.String)">
+            <summary>
+            Creates instance of a class from underlying assembly.
+            </summary>
+            <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
+            You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+            <returns>Instance of the 'Type'. Throws an ApplicationException if the instance cannot be created.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.Unload">
+            <summary>
+            Unloads 'remote' AppDomain if it was created.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.Dispose">
+            <summary>
+            Implementation of IDisposable.Dispose(). Disposes allocated exetrnal resources if any. Call this method to unload non-current AppDomain (if it was created).
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.Dispose(System.Boolean)">
+            <summary>
+            Actual implementation of IDisposable.Dispose()
+            </summary>
+            <param name="disposing">'false' if the method has been called by the runtime from inside the finalizer ; otherwise, 'true'.</param>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.Finalize">
+            <summary>
+            Finalizer
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.AsmHelper.ScriptExecutionDomain">
+            <summary>
+            Instance of the AppDomain, which is used to execute the script.
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.AsmHelper.RemoteObject">
+            <summary>
+            Reference to the <see cref="T:CSScriptLibrary.AsmHelper"/> "worker" object created in the remote AppDomain. This property is null
+            unless <see cref="T:CSScriptLibrary.AsmHelper"/> was instantiated for the <c>remote execution</c> scenario.
+            <para>This property can be useful when you need to access the remote object in order to manage the "life time" of the AsmHelper in
+            Remoting and WCF scenarios.</para>
+            </summary>
+            <example>
+            <code>
+            var scriptHelper = new AsmHelper(scriptAsmFile, null, true);
+            scriptHelper.RemoteObject.ExtendLifeFromMinutes(30);
+            </code>
+            </example>
+        </member>
+        <member name="P:CSScriptLibrary.AsmHelper.CachingEnabled">
+            <summary>
+            Flag that indicates if method caching is enabled. It is set to true by default.
+            <para></para>
+            When caching is enabled AsmHelper generates (emits) extremely fast delegates for
+            the methods being invoked. If AsmHelper is in cache mode it performs more than twice faster.
+            However generation of the delegate does take some time that is why you may consider
+            switching caching off if the method is to be invoked only once.
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.AsmHelper.ProbingDirs">
+             <summary>
+            Array of directories to be used for assembly probing.
+             </summary>
+        </member>
+        <member name="T:CSScriptLibrary.IAsmBrowser">
+            <summary>
+            Defines method for calling assembly methods and instantiating assembly types.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.AsmBrowser.CreateInstance(System.String)">
+            <summary>
+            Creates instance of a Type from underlying assembly.
+            </summary>
+            <param name="typeName">Name of the type to be instantiated. Allows wild card character (e.g. *.MyClass can be used to instantiate MyNamespace.MyClass).</param>
+            <returns>Created instance of the type.</returns>
+        </member>
+        <member name="T:CSScriptLibrary.FastInvoker">
+             <summary>
+             Class which is capable of emitting the dynamic method delegate based on the MethodInfo. Such delegate is
+             extremely fast and it can demonstrate up to 100 times better performance comparing to the pure
+             Reflection method invokation (MethodInfo.Invoke()).
+            
+            
+             Based on http://www.codeproject.com/KB/cs/FastInvokerWrapper.aspx
+             </summary>
+        </member>
+        <member name="F:CSScriptLibrary.FastInvoker.info">
+            <summary>
+            MethodInfo instance which was used to generate dynamic method delegate.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.FastInvoker.#ctor(System.Reflection.MethodInfo)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="info">MethodInfo instance which is to be used to generate dynamic method delegate.</param>
+        </member>
+        <member name="M:CSScriptLibrary.FastInvoker.Invoke(System.Object,System.Object[])">
+            <summary>
+            Invokes dynamic method delegate generated from the MethodInfo object.
+            </summary>
+            <param name="instance">Instance of the type which method is to be invoked.</param>
+            <param name="paramters">Optional method parameters.</param>
+            <returns>Invokes dynamic method delegate return value</returns>
+        </member>
+        <member name="M:CSScriptLibrary.FastInvoker.GetMethodInvoker">
+            <summary>
+            Returns dynamic method delegate generated from the MethodInfo object.
+            </summary>
+            <returns>FastInvokeDelegate instance.</returns>
+        </member>
+        <member name="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1">
+            <summary>
+                A utility class which converts an object to specified interface T. The object does
+                not necessarily need to implement the interface formally.
+            </summary>
+            <typeparam name="T">Interface definition to convert to.</typeparam>
+            <remarks>
+            <para>
+                Class Information:
+                <list type="bullet">
+                    <item name="authors">Authors: Ruben Hakopian</item>
+                    <item name="date">March 2009</item>
+                    <item name="originalURL">http://rubenhak.com/?p=167</item>
+                </list>
+            </para>
+            </remarks>
+        </member>
+        <member name="F:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1._proxyCache">
+            <summary>
+            Represents a map from a object type to the type of its proxy class.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.As(System.Object,System.String[])">
+            <summary>
+            Converts specified object to an another object which implements interface T.
+            </summary>
+            <param name="o">The object to convert.</param>
+            <param name="refAssemblies">The string array containing file names to the additional dependency assemblies
+            the interface depends in. </param>
+            <returns>Converted object if succeeded; null otherwise.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.CheckSourceObject(System.Type,System.Type,System.String[])">
+            <summary>
+            Checks if the source type can be convert to destination interface type.
+            </summary>
+            <param name="interfaceType">The source type to convert from.</param>
+            <param name="sourceType">The destination interface type to convert to.</param>
+            <param name="refAssemblies">The string array containing file nemes to the additional dependency assemblies
+            the interface depends in. </param>
+            <returns>true if conversion can be performed; false otherwise</returns>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.CastToInterface(System.Type,System.Object,System.String[])">
+            <summary>
+            Creates an instance of an proxy object which implements interface T and wraps specified object.
+            </summary>
+            <param name="interfaceType">Type of the interface.</param>
+            <param name="o">The object to convert.</param>
+            <param name="refAssemblies">The string array containing file names to the additional dependency assemblies
+            the interface depends in. </param>
+            <returns>Instance of the proxy object.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.BuildProxyClass(System.Type,System.Type,System.String[])">
+            <summary>
+            Builds the proxy class for specified interface and source types.
+            </summary>
+            <param name="interfaceType">Type of the interface.</param>
+            <param name="sourceType">Type of the source.</param>
+            <param name="refAssemblies">The string array containing file nemes to the additional dependency assemblies
+            the interface depends in. </param>
+            <returns>Type definition for proxy class.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.BuildProxyClassCode(System.Type,System.Type,System.String@)">
+            <summary>
+            Added by Oleg Shilo
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.GenerateProxyClass(System.Type,System.Type)">
+            <summary>
+            Generates the proxy class.
+            </summary>
+            <param name="interfaceType">Type of the interface.</param>
+            <param name="sourceType">Type of the source.</param>
+            <returns></returns>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.GenerateProxyClassProperties(System.CodeDom.CodeTypeDeclaration,System.Type,System.Type)">
+            <summary>
+            Generates the proxy class properties.
+            </summary>
+            <param name="genClass">The generated class.</param>
+            <param name="interfaceType">Type of the interface.</param>
+            <param name="sourceType">Type of the source.</param>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.GenerateProxyClassMethods(System.CodeDom.CodeTypeDeclaration,System.Type,System.Type)">
+            <summary>
+            Generates the proxy class methods.
+            </summary>
+            <param name="genClass">The generated class.</param>
+            <param name="interfaceType">Type of the interface.</param>
+            <param name="sourceType">Type of the source.</param>
+        </member>
+        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.GenerateProxyClassEvents(System.CodeDom.CodeTypeDeclaration,System.CodeDom.CodeConstructor,System.Type,System.Type)">
+            <summary>
+            Generates the proxy class events.
+            </summary>
+            <param name="genClass">The generated class.</param>
+            <param name="constructor">The generated class constructor.</param>
+            <param name="interfaceType">Type of the interface.</param>
+            <param name="sourceType">Type of the source.</param>
+        </member>
         <member name="T:CSScriptLibrary.DomainAssemblies">
             <summary>
             Type of the assemblies to be loaded/referenced.
@@ -2874,105 +2966,6 @@
             Indicates if the last compilation yielded any warnings.
             </summary>
             <value>If set to <c>true</c> indicates presence of compilation warning(s).</value>
-        </member>
-        <member name="T:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1">
-            <summary>
-                A utility class which converts an object to specified interface T. The object does
-                not necessarily need to implement the interface formally.
-            </summary>
-            <typeparam name="T">Interface definition to convert to.</typeparam>
-            <remarks>
-            <para>
-                Class Information:
-                <list type="bullet">
-                    <item name="authors">Authors: Ruben Hakopian</item>
-                    <item name="date">March 2009</item>
-                    <item name="originalURL">http://rubenhak.com/?p=167</item>
-                </list>
-            </para>
-            </remarks>
-        </member>
-        <member name="F:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1._proxyCache">
-            <summary>
-            Represents a map from a object type to the type of its proxy class.
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.As(System.Object,System.String[])">
-            <summary>
-            Converts specified object to an another object which implements interface T.
-            </summary>
-            <param name="o">The object to convert.</param>
-            <param name="refAssemblies">The string array containing file names to the additional dependency assemblies
-            the interface depends in. </param>
-            <returns>Converted object if succeeded; null otherwise.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.CheckSourceObject(System.Type,System.Type,System.String[])">
-            <summary>
-            Checks if the source type can be convert to destination interface type.
-            </summary>
-            <param name="interfaceType">The source type to convert from.</param>
-            <param name="sourceType">The destination interface type to convert to.</param>
-            <param name="refAssemblies">The string array containing file nemes to the additional dependency assemblies
-            the interface depends in. </param>
-            <returns>true if conversion can be performed; false otherwise</returns>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.CastToInterface(System.Type,System.Object,System.String[])">
-            <summary>
-            Creates an instance of an proxy object which implements interface T and wraps specified object.
-            </summary>
-            <param name="interfaceType">Type of the interface.</param>
-            <param name="o">The object to convert.</param>
-            <param name="refAssemblies">The string array containing file names to the additional dependency assemblies
-            the interface depends in. </param>
-            <returns>Instance of the proxy object.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.BuildProxyClass(System.Type,System.Type,System.String[])">
-            <summary>
-            Builds the proxy class for specified interface and source types.
-            </summary>
-            <param name="interfaceType">Type of the interface.</param>
-            <param name="sourceType">Type of the source.</param>
-            <param name="refAssemblies">The string array containing file nemes to the additional dependency assemblies
-            the interface depends in. </param>
-            <returns>Type definition for proxy class.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.BuildProxyClassCode(System.Type,System.Type,System.String@)">
-            <summary>
-            Added by Oleg Shilo
-            </summary>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.GenerateProxyClass(System.Type,System.Type)">
-            <summary>
-            Generates the proxy class.
-            </summary>
-            <param name="interfaceType">Type of the interface.</param>
-            <param name="sourceType">Type of the source.</param>
-            <returns></returns>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.GenerateProxyClassProperties(System.CodeDom.CodeTypeDeclaration,System.Type,System.Type)">
-            <summary>
-            Generates the proxy class properties.
-            </summary>
-            <param name="genClass">The generated class.</param>
-            <param name="interfaceType">Type of the interface.</param>
-            <param name="sourceType">Type of the source.</param>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.GenerateProxyClassMethods(System.CodeDom.CodeTypeDeclaration,System.Type,System.Type)">
-            <summary>
-            Generates the proxy class methods.
-            </summary>
-            <param name="genClass">The generated class.</param>
-            <param name="interfaceType">Type of the interface.</param>
-            <param name="sourceType">Type of the source.</param>
-        </member>
-        <member name="M:CSScriptLibrary.ThirdpartyLibraries.Rubenhak.Utils.ObjectCaster`1.GenerateProxyClassEvents(System.CodeDom.CodeTypeDeclaration,System.CodeDom.CodeConstructor,System.Type,System.Type)">
-            <summary>
-            Generates the proxy class events.
-            </summary>
-            <param name="genClass">The generated class.</param>
-            <param name="constructor">The generated class constructor.</param>
-            <param name="interfaceType">Type of the interface.</param>
-            <param name="sourceType">Type of the source.</param>
         </member>
     </members>
 </doc>

@@ -82,7 +82,7 @@
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(859, -1);
+            this.pictureBox1.Location = new System.Drawing.Point(932, -1);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 21);
             this.pictureBox1.TabIndex = 11;
@@ -424,12 +424,12 @@
             this.whatsNewTxt.BackColor = System.Drawing.Color.White;
             this.whatsNewTxt.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.whatsNewTxt.ForeColor = System.Drawing.Color.DarkBlue;
-            this.whatsNewTxt.Location = new System.Drawing.Point(-52, 69);
+            this.whatsNewTxt.Location = new System.Drawing.Point(6, 24);
             this.whatsNewTxt.Multiline = true;
             this.whatsNewTxt.Name = "whatsNewTxt";
             this.whatsNewTxt.ReadOnly = true;
             this.whatsNewTxt.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.whatsNewTxt.Size = new System.Drawing.Size(881, 426);
+            this.whatsNewTxt.Size = new System.Drawing.Size(954, 426);
             this.whatsNewTxt.TabIndex = 5;
             // 
             // whatsNewPanel
@@ -444,7 +444,7 @@
             this.whatsNewPanel.Controls.Add(this.whatsNewTxt);
             this.whatsNewPanel.Location = new System.Drawing.Point(12, 23);
             this.whatsNewPanel.Name = "whatsNewPanel";
-            this.whatsNewPanel.Size = new System.Drawing.Size(892, 455);
+            this.whatsNewPanel.Size = new System.Drawing.Size(965, 455);
             this.whatsNewPanel.TabIndex = 10;
             // 
             // label1
