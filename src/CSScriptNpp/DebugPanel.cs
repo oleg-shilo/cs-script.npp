@@ -17,6 +17,7 @@ namespace CSScriptNpp
         {
             InitializeComponent();
 
+
             UpdateButtonsTooltips();
 
             locals = new LocalsPanel();
@@ -57,6 +58,8 @@ namespace CSScriptNpp
 
             appTypeCombo.Width = 80;
             RefreshBreakOnException();
+
+            UpdateControlsState();
         }
 
         void UpdateButtonsTooltips()
@@ -74,8 +77,9 @@ namespace CSScriptNpp
 
         void UpdateControlsState()
         {
-            breakBtn.Enabled =
+            breakBtn.Enabled = Debugger.IsRunning && !Debugger.IsInBreak;
             stopBtn.Enabled = Debugger.IsRunning;
+            goBtn.Enabled = !Debugger.IsRunning || (Debugger.IsRunning && Debugger.IsInBreak);
 
             runToCursorBtn.Enabled =
             stepIntoBtn.Enabled =

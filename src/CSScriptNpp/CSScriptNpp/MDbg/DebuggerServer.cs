@@ -14,6 +14,7 @@ namespace CSScriptNpp
         public static string Trace = "trace=>";
         public static string Threads = "threads=>";
         public static string Modules = "modules=>";
+        public static string BreakEntered = "break_entered=>";
         public static string CallStack = "callstack=>";
         public static string Invoke = "invoke=>";
         public static string Exception = "exception=>";
@@ -210,7 +211,7 @@ namespace CSScriptNpp
                         if (message == NppCommand.Exit)
                             continue; //ignore ClientServer debugger hand-shaking
 
-                        if (message.StartsWith(NppCategory.SourceCode))
+                        if (message.StartsWith(NppCategory.BreakEntered)) 
                         {
                             IsInBreak = true;
                         }

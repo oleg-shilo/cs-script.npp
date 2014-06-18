@@ -43,6 +43,8 @@ namespace CSScriptNpp
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
         public string LastExternalProcess = "";
+        public string LastExternalProcessArgs = "";
+        public int LastExternalProcessCpu = 0;
         public string ReleaseNotesViewedFor = "";
         public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
         public string SciptHistory = "";
@@ -85,6 +87,8 @@ namespace CSScriptNpp
                 SetValue(Section, "UpdateMode", UpdateMode);
                 SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
                 SetValue(Section, "LastExternalProcess", LastExternalProcess);
+                SetValue(Section, "LastExternalProcessArgs", LastExternalProcessArgs);
+                SetValue(Section, "LastExternalProcessCpu", LastExternalProcessCpu);
                 SetValue(Section, "TargetVersion", TargetVersion);
                 SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
                 SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
@@ -117,6 +121,8 @@ namespace CSScriptNpp
                 LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
                 TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
                 LastExternalProcess = GetValue(Section, "LastExternalProcess", LastExternalProcess);
+                LastExternalProcessArgs = GetValue(Section, "LastExternalProcessArgs", LastExternalProcessArgs);
+                LastExternalProcessCpu = GetValue(Section, "LastExternalProcessCpu", LastExternalProcessCpu);
                 ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
                 BreakOnException = GetValue(Section, "BreakOnException", BreakOnException);
                 LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);

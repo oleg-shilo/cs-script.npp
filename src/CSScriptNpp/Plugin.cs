@@ -29,18 +29,12 @@ namespace CSScriptNpp
      *                   - visualizer for the collection
      *         - make handling Debug.Assert user friendlier
      *     - auto-add usings
-     *     - Debugger start process
-     *       - add process arguments
-     *       - add process cpu
-     *     - Debugger attach to process
-     *       - check presence of dbg info and open source file if possible
-     *       - try to recover and report locals and source it it failes on the first break/breakpoing
-     *       - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
-     *     + allow script manager buttons to be rearranged
-     *     + allow N++ reboot from CS-Script toolbar
-     *
+     *     - Debugger tooltips (rollover members) should also visualize collections
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
+     *     - Debugger attach to process
+     *          - check presence of dbg info and open source file if possible
+     *          - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
      *      - Debug panel
      *          - Locals panel cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)

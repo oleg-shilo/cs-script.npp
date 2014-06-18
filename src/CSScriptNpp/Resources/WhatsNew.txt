@@ -1,6 +1,14 @@
-v1.0.27.0+
+v1.0.28.0
 
-* Added "Restart Notepad++ (Elevated)" button
+* Added "Restart Notepad++ (Elevated)" button.
+
+* Script manager buttons can now be rearranged.
 
 * Implemented script manager buttons customization.
 
+* Implemented Debugger start/attach to external process
+
+* Implemented JIT debugger launcher (npp_jit.exe), which 
+  allows passing plugin specific command line arguments
+  
+     

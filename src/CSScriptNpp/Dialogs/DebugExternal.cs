@@ -17,7 +17,6 @@ namespace CSScriptNpp
         {
             using (var dialog = new DebugExternal())
             {
-                dialog.initialSelection = selectedProc;
                 dialog.ShowDialog();
             }
         }
@@ -27,17 +26,41 @@ namespace CSScriptNpp
             InitializeComponent();
 
             appPath.Text = Config.Instance.LastExternalProcess;
+            arguments.Text = Config.Instance.LastExternalProcessArgs;
+            platform.SelectedIndex = Config.Instance.LastExternalProcessCpu;
             managedOnly.Checked = Config.Instance.ListManagedProcessesOnly;
             processList.ListViewItemSorter = new ListViewItemComparer(0, sorting[0]);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void startBtn_Click(object sender, EventArgs e)
         {
-            Config.Instance.LastExternalProcess = appPath.Text;
-            Config.Instance.Save();
+            try
+            {
+                //It is extremely important to ensure that at this point DebugPanel is created.
+                //If not it will be created automatically on debugger message handling from the non-GUI thread 
+                //of the Debugger message. And in result N++ and one of its docked panes will belong to different 
+                //threads and N++ will hang.
+                Plugin.GetDebugPanel();
+                Plugin.ShowOutputPanel()
+                      .ClearAllDefaultOutputs()
+                      .ShowDebugOutput();
 
-            Debugger.Start(appPath.Text, null);
-            Close();
+                Config.Instance.LastExternalProcess = appPath.Text;
+                Config.Instance.LastExternalProcessArgs = arguments.Text;
+                Config.Instance.LastExternalProcessCpu = platform.SelectedIndex;
+                Config.Instance.Save();
+
+                var cpu = (Debugger.CpuType)platform.SelectedIndex;
+                string app = appPath.Text;
+                string args = arguments.Text;
+                ThreadPool.QueueUserWorkItem(x => Debugger.Start(app, args, cpu));
+
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Cannot start debugger to the external process.\n" + ex.Message, "CS-Script");
+            }
         }
 
         private void attacheBtn_Click(object sender, EventArgs e)
@@ -101,7 +124,7 @@ namespace CSScriptNpp
                 processList.Enabled =
                 refreshBtn.Enabled = true;
                 Cursor = Cursors.Default;
-                processList.Select();
+                processList.Focus();
             });
         }
 
@@ -157,7 +180,7 @@ namespace CSScriptNpp
 
         public static bool IsWin64(int id)
         {
-            //it will be no more than asingle item. It is either x86 or x64
+            //it will be no more than a single item. It is either x86 or x64
             var info = GetProcessList(id).FirstOrDefault();
             if (info != null)
             {
@@ -255,23 +278,10 @@ namespace CSScriptNpp
             attacheBtn.PerformClick();
         }
 
-        int initialSelection = -1;
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Enabled = false;
             Reload();
-            if (initialSelection != -1)
-            {
-                foreach (ListViewItem item in processList.Items)
-                {
-                    item.Selected = false;
-                    if (item.SubItems[1].Text == initialSelection.ToString())
-                    {
-                        item.Selected = true;
-                    }
-                }
-            }
         }
 
         private void processList_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)

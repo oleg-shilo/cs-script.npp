@@ -895,9 +895,9 @@ namespace CSScriptNpp
 
         public enum CpuType
         {
+            Any,
             x86,
             x64,
-            Any
         }
 
         static public void Attach(int process, CpuType cpu)
@@ -912,11 +912,11 @@ namespace CSScriptNpp
             }
         }
 
-        static public void Start(string app, string args)
+        static public void Start(string app, string args, CpuType cpu)
         {
             if (!IsRunning)
             {
-                Start();
+                Start(cpu);
                 SendSettings(BreakOnException);
                 watchExtressions.ForEach(x => DebuggerServer.AddWatchExpression(x));
                 Run(app, args ?? "");

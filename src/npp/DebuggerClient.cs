@@ -80,7 +80,7 @@ namespace npp
         {
             //if (string.IsNullOrWhiteSpace(command))
             //    command = "unknown";
-            
+
             string error = e.GetBaseException().Message;
             string notifyMessage = (NppCategory.DbgError + command + ":" + error).Replace("\n", "{$NL}");
             MessageQueue.AddNotification(notifyMessage);
@@ -129,7 +129,7 @@ namespace npp
                 return;
 
             Console.WriteLine("Received command: " + command.Substring(0, Math.Min(50, command.Length)));
-                        
+
             if (command.StartsWith("attach"))
             {
                 //Debug.Assert(false);
@@ -205,6 +205,8 @@ namespace npp
 
         public void ProcessThreadSwitch(string command)
         {
+            //Debug.Assert(false);
+
             //gotothread|<threadId>
             string[] parts = command.Split('|');
             if (parts[0] == "gotothread" && IsInBreakMode)
@@ -467,8 +469,21 @@ namespace npp
         {
             shell.Debugger.Processes.Active.AsyncStop().WaitOne();
 
-            //if (reportPosition)
-            //ReportCurrentState();
+            if (reportPosition)
+                try
+                {
+                    var proc = System.Diagnostics.Process.GetProcessById(shell.Debugger.Processes.Active.CorProcess.Id);
+                    if (proc != null)
+                    {
+                        //gotothread|<threadId>
+                        ProcessThreadSwitch("gotothread|" + proc.Threads[0].Id); //this will also report current state
+                    }
+                }
+                catch
+                {
+
+                    ReportCurrentState();
+                }
         }
 
         MDbgFrame GetCurrentFrame()
@@ -523,6 +538,7 @@ namespace npp
 
         public void StepOver()
         {
+            //Debug.Assert(false);
             if (CanProceed())
                 ExecuteCommand("next");
         }
@@ -531,6 +547,8 @@ namespace npp
         {
             if (CanProceed())
                 ExecuteCommand("go");
+
+            ReportBreakMode();
         }
 
         public void StepIn()
@@ -659,6 +677,7 @@ namespace npp
         {
             reportedValues.Clear();
 
+            ReportBreakMode();
             ReportSourceCodePosition();
             ReportCallStack();
             ReportLocals();
@@ -734,6 +753,11 @@ namespace npp
 
                 MessageQueue.AddNotification(NppCategory.Threads + "<threads>" + threadsInfo.ToString() + "</threads>");
             }
+        }
+
+        void ReportBreakMode()
+        {
+            MessageQueue.AddNotification(NppCategory.BreakEntered + IsInBreakMode);
         }
 
         void ReportModules()
@@ -822,7 +846,7 @@ namespace npp
                 catch (Exception e)
                 {
                     //if (this.shell.OnCommandError != null)
-                     //   this.shell.OnCommandError(e, cmd.CommandName);
+                    //   this.shell.OnCommandError(e, cmd.CommandName);
                 }
             }
         }

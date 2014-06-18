@@ -20,7 +20,8 @@ class Program
 
             if (args.First().StartsWith("/lp"))
             {
-                bool isCurrentProcWin64 = Process.GetCurrentProcess().IsWin64();
+                Process currentProcess = Process.GetCurrentProcess();
+                bool isCurrentProcWin64 = currentProcess.IsWin64();
 
                 Action<Process> printInfo = p =>
                 {
@@ -46,7 +47,8 @@ class Program
                 else
                 {
                     foreach (Process p in Process.GetProcesses())
-                        printInfo(p);
+                        if (p.Id != currentProcess.Id)
+                            printInfo(p);
                 }
             }
             else
