@@ -119,7 +119,7 @@
             this.processList.Location = new System.Drawing.Point(6, 19);
             this.processList.MultiSelect = false;
             this.processList.Name = "processList";
-            this.processList.Size = new System.Drawing.Size(661, 133);
+            this.processList.Size = new System.Drawing.Size(661, 232);
             this.processList.TabIndex = 0;
             this.processList.UseCompatibleStateImageBehavior = false;
             this.processList.View = System.Windows.Forms.View.Details;
@@ -155,7 +155,7 @@
             // 
             this.managedOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.managedOnly.AutoSize = true;
-            this.managedOnly.Location = new System.Drawing.Point(6, 158);
+            this.managedOnly.Location = new System.Drawing.Point(6, 257);
             this.managedOnly.Name = "managedOnly";
             this.managedOnly.Size = new System.Drawing.Size(147, 17);
             this.managedOnly.TabIndex = 9;
@@ -236,7 +236,7 @@
             this.groupBox2.Controls.Add(this.refreshBtn);
             this.groupBox2.Location = new System.Drawing.Point(6, 111);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(754, 175);
+            this.groupBox2.Size = new System.Drawing.Size(754, 274);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             // 
@@ -245,7 +245,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(767, 293);
+            this.ClientSize = new System.Drawing.Size(767, 392);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;

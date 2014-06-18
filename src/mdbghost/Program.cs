@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, Unrestricted = true)]
 
@@ -46,9 +46,11 @@ class Program
                 }
                 else
                 {
-                    foreach (Process p in Process.GetProcesses())
+                    Parallel.ForEach(Process.GetProcesses(), p =>
+                    {
                         if (p.Id != currentProcess.Id)
                             printInfo(p);
+                    });
                 }
             }
             else
