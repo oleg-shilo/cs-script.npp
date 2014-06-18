@@ -472,12 +472,15 @@ namespace npp
             if (reportPosition)
                 try
                 {
-                    var proc = System.Diagnostics.Process.GetProcessById(shell.Debugger.Processes.Active.CorProcess.Id);
-                    if (proc != null)
-                    {
-                        //gotothread|<threadId>
-                        ProcessThreadSwitch("gotothread|" + proc.Threads[0].Id); //this will also report current state
-                    }
+                    ReportCurrentState();
+
+                    //auto thread-switching is not reliable yet
+                    //var proc = System.Diagnostics.Process.GetProcessById(shell.Debugger.Processes.Active.CorProcess.Id);
+                    //if (proc != null)
+                    //{
+                    //    //gotothread|<threadId>
+                    //    //ProcessThreadSwitch("gotothread|" + proc.Threads[0].Id); //this will also report current state
+                    //}
                 }
                 catch
                 {
