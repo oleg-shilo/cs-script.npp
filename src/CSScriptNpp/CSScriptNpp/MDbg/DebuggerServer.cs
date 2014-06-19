@@ -180,7 +180,10 @@ namespace CSScriptNpp
                 }
 
                 if (OnDebuggerStateChanged != null)
+                {
+                    //Debug.WriteLine("-----------------------  IsInBreak = "+isInBreak);
                     OnDebuggerStateChanged();
+                }
             }
         }
 
@@ -213,7 +216,9 @@ namespace CSScriptNpp
 
                         if (message.StartsWith(NppCategory.BreakEntered)) 
                         {
-                            IsInBreak = true;
+                            //Debug.WriteLine("----------------------- "+message);
+                            //break_entered=><True|False>
+                            IsInBreak = (message == NppCategory.BreakEntered+"True");
                         }
                         else if (message.StartsWith(NppCategory.Process))
                         {
@@ -247,9 +252,10 @@ namespace CSScriptNpp
                 string id = message.Substring(NppCategory.Process.Length).Split(':').FirstOrDefault();
                 int.TryParse(id, out debuggeeProcessId);
                 if (debuggeeProcessId != 0)
+                {
+                    IsInBreak = false;
                     Task.Factory.StartNew(() =>
                         {
-                            IsInBreak = false;
 
                             try
                             {
@@ -270,6 +276,7 @@ namespace CSScriptNpp
                             //NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
                             NppUI.Marshal(() => Plugin.GetDebugPanel().Clear());
                         });
+                }
             }
             return message;
         }

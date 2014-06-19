@@ -314,6 +314,7 @@ namespace CSScriptNpp
         static public event Action<string> OnNotification;
 
         private static int stepsCount = 0;
+        private static bool resumeOnNextBreakPoint = false;
 
         private static void HandleNotification(string notification)
         {
@@ -361,11 +362,21 @@ namespace CSScriptNpp
                             DebuggerServer.AddBreakpoint(key);
                         }
 
-                        Go();
+                        //By default Mdbg always enters break mode at start/attach completed
+                        //however we should only resume after mdbg finished the initialization (first break is reported).
+                        resumeOnNextBreakPoint = true; 
                     }
                     else if (message.EndsWith(":ENDED"))
                     {
                         NotifyOnDebugStepChanges();
+                    }
+                }
+                else if (message.StartsWith(NppCategory.BreakEntered))
+                {
+                    if (resumeOnNextBreakPoint)
+                    {
+                        resumeOnNextBreakPoint = false;
+                        Go();
                     }
                 }
                 else if (message.StartsWith(NppCategory.Exception))

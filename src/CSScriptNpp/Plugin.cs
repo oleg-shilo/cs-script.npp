@@ -29,7 +29,9 @@ namespace CSScriptNpp
      *                   - visualizer for the collection
      *         - make handling Debug.Assert user friendlier
      *     - auto-add usings
+     *     + Implemented automatic thread-switch on explicit 'break'
      *     - Debugger tooltips (rollover members) should also visualize collections
+     *     - On stop/detach should clean all panels except watch
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
      *     - Debugger attach to process

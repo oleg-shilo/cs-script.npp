@@ -49,17 +49,6 @@ namespace npp
 
         public DebuggerClient(IMDbgShell shell)
         {
-            //shell.OnStepExecitionFailure = step =>
-            //    {
-            //        Task.Factory.StartNew(() =>
-            //            {
-            //                //step has failed usually it loses the source code location so trigger it
-            //                //by breaking the already stopped applications.
-            //                Thread.Sleep(700);
-            //                ResetAndReport();
-            //            });
-            //    };
-
             //Debug.Assert(false);
             this.shell = shell;
             this.shell.OnCommandError += shell_OnCommandError;
@@ -78,9 +67,6 @@ namespace npp
 
         void shell_OnCommandError(Exception e, string command)
         {
-            //if (string.IsNullOrWhiteSpace(command))
-            //    command = "unknown";
-
             string error = e.GetBaseException().Message;
             string notifyMessage = (NppCategory.DbgError + command + ":" + error).Replace("\n", "{$NL}");
             MessageQueue.AddNotification(notifyMessage);
@@ -107,6 +93,8 @@ namespace npp
 
         public bool ReadCommand(out string command)
         {
+            ReportBreakMode();
+
             AnalyseExecutionPosition();
 
             command = mdbgInputQueue.WaitItem();
@@ -472,15 +460,7 @@ namespace npp
             if (reportPosition)
                 try
                 {
-                    ReportCurrentState();
-
-                    //auto thread-switching is not reliable yet
-                    //var proc = System.Diagnostics.Process.GetProcessById(shell.Debugger.Processes.Active.CorProcess.Id);
-                    //if (proc != null)
-                    //{
-                    //    //gotothread|<threadId>
-                    //    //ProcessThreadSwitch("gotothread|" + proc.Threads[0].Id); //this will also report current state
-                    //}
+                    SwitchToThread(shell.Debugger.Processes.Active.Threads[0].CorThread);
                 }
                 catch
                 {
@@ -846,10 +826,8 @@ namespace npp
                     ReportCurrentState();
                     ReportWatch();
                 }
-                catch (Exception e)
+                catch
                 {
-                    //if (this.shell.OnCommandError != null)
-                    //   this.shell.OnCommandError(e, cmd.CommandName);
                 }
             }
         }
@@ -903,6 +881,7 @@ namespace npp
             }
 
             WriteOutput("meta=>", e.CallbackType.ToString());
+            ReportBreakMode();
         }
 
         bool SwitchToThread(CorThread thread)
