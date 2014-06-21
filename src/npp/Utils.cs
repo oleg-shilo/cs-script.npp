@@ -66,11 +66,11 @@ namespace npp
         //    return value.TypeName.StartsWith("System.Collections.Generic.List<");
         //}
 
-        public static MDbgValue[] GenerateListItems(this MDbgValue value)
+        public static MDbgValue[] GenerateListItems(this MDbgValue value, int maxCount = int.MaxValue)
         {
             try
             {
-                return value.GetListItems();
+                return value.GetListItems(maxCount);
             }
             catch
             {
@@ -78,11 +78,11 @@ namespace npp
             }
         }
 
-        public static MDbgValue[] GenerateDictionaryItems(this MDbgValue value)
+        public static MDbgValue[] GenerateDictionaryItems(this MDbgValue value, int maxCount = int.MaxValue)
         {
             try
             {
-                return value.GetDictionaryItems();
+                return value.GetDictionaryItems(maxCount);
             }
             catch
             {
@@ -106,7 +106,7 @@ namespace npp
                 ///Dangers of Eval: http://blogs.msdn.com/b/jmstall/archive/2005/03/23/400794.aspx
                 CorDebugUserState pState;
                 dbgThred.GetUserState(out pState);
-                //CorDebugUserState.USER_NONE was idenified by the experimenting
+                //CorDebugUserState.USER_NONE was identified by the experimenting
                 if ((!pState.IsSet(CorDebugUserState.USER_UNSAFE_POINT) && pState.IsSet(CorDebugUserState.USER_STOPPED)) || pState == CorDebugUserState.USER_NONE)
                     return true;
                 else

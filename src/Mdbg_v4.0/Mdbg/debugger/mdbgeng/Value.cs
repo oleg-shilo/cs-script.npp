@@ -334,7 +334,7 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
         /// Gets Array Items.  This function can be called only on one dimensional arrays.
         /// </summary>
         /// <returns>An array of the values for the Array Items.</returns>
-        public MDbgValue[] GetArrayItems()
+        public MDbgValue[] GetArrayItems(int maxCount = int.MaxValue)
         {
             if (!IsArrayType)
                 throw new MDbgValueException("Type is not array type");
@@ -348,7 +348,8 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
 
             ArrayList al = new ArrayList();
             Debug.Assert(av.Rank == 1);
-            for (int i = 0; i < dims[0]; i++)
+            int length = Math.Min(dims[0],maxCount);
+            for (int i = 0; i < length; i++)
             {
                 MDbgValue v = new MDbgValue(Process, "[" + i + "]", av.GetElementAtPosition(i));
                 al.Add(v);
@@ -360,10 +361,10 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
         /// Gets List Items.  This function can be called only on one generic list.
         /// </summary>
         /// <returns>An array of the values for the List Items.</returns>
-        public MDbgValue[] GetListItems() //zos; CSScript.Npp related changes//zos
+        public MDbgValue[] GetListItems(int maxCount = int.MaxValue) //zos; CSScript.Npp related changes//zos
         {
             var items = GetField("_items");
-            var length = this.GetFieldValue<int>("_size");
+            var length = Math.Min(this.GetFieldValue<int>("_size"), maxCount);
 
             CorValue value = Dereference(items.CorValue, null);
             CorArrayValue av = value.CastToArrayValue();
@@ -384,10 +385,10 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
         /// Gets List Items.  This function can be called only on one generic list.
         /// </summary>
         /// <returns>An array of the values for the Dictionary Items.</returns>
-        public MDbgValue[] GetDictionaryItems() //zos; CSScript.Npp related changes
+        public MDbgValue[] GetDictionaryItems(int maxCount = int.MaxValue) //zos; CSScript.Npp related changes
         {
             var items = GetField("entries");
-            var length = this.GetFieldValue<int>("count");
+            var length = Math.Min(this.GetFieldValue<int>("count"), maxCount);
 
             CorValue value = Dereference(items.CorValue, null);
             CorArrayValue av = value.CastToArrayValue();

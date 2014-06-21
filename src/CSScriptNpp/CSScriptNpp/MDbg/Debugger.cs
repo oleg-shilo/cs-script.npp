@@ -152,12 +152,29 @@ namespace CSScriptNpp
                     if (!string.IsNullOrEmpty(data))
                     {
                         var dbgValue = XElement.Parse(data);
-                        var dbgValueText = dbgValue.Attribute("value").Value;
+                        if (dbgValue.Name == "items")
+                        {
+                            string[] items = dbgValue.Elements()
+                                                     .Select(e =>
+                                                         {
+                                                             var displayValue = e.Attribute("rawDisplayValue");
+                                                             if (displayValue != null && displayValue.Value != "")
+                                                                 return string.Format(" " + displayValue.Value);
+                                                             else
+                                                                 return string.Format(" {0}={1}", e.Attribute("name").Value, e.Attribute("value").Value);
+                                                         }).ToArray();
 
-                        if (dbgValueText.Length > DbgObject.TrancationSize)
-                            return content + ": <value has been truncated because it is too long>";
+                            return content + ": \n" + string.Join("\n", items);
+                        }
                         else
-                            return content + ": " + dbgValue.Attribute("value").Value;
+                        {
+                            var dbgValueText = dbgValue.Attribute("value").Value;
+
+                            if (dbgValueText.Length > DbgObject.TrancationSize)
+                                return content + ": <value has been truncated because it is too long>";
+                            else
+                                return content + ": " + dbgValue.Attribute("value").Value;
+                        }
                     }
                 }
                 catch { }
@@ -364,7 +381,7 @@ namespace CSScriptNpp
 
                         //By default Mdbg always enters break mode at start/attach completed
                         //however we should only resume after mdbg finished the initialization (first break is reported).
-                        resumeOnNextBreakPoint = true; 
+                        resumeOnNextBreakPoint = true;
                     }
                     else if (message.EndsWith(":ENDED"))
                     {

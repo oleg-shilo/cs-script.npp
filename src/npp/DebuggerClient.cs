@@ -278,6 +278,85 @@ namespace npp
                 breakOnException = false;
         }
 
+        string SerializeValue(MDbgValue value, bool itemsOnly = false, int itemsMaxCount = int.MaxValue)
+        {
+            string result = "";
+            MDbgValue[] items = null;
+            MDbgValue[] diaplayItems = null; //decorated (fake) display items
+
+            int tempMaxCount = itemsMaxCount;
+            if (tempMaxCount != int.MaxValue)
+                tempMaxCount++;
+
+            if (value.IsArrayType)
+            {
+                items = value.GetArrayItems(tempMaxCount);
+            }
+            else if (value.IsListType)
+            {
+                diaplayItems = value.GenerateListItems(tempMaxCount);
+            }
+            else if (value.IsDictionaryType)
+            {
+                diaplayItems = value.GenerateDictionaryItems(tempMaxCount);
+            }
+
+            if (!itemsOnly && value.IsComplexType)
+            {
+                items = value.GetFields().Concat(
+                        value.GetProperties()).ToArray();
+            }
+
+            if (items != null || itemsOnly)
+            {
+                string logicalItems = "";
+
+                if (diaplayItems != null)
+                {
+                    MDbgValue truncatedValue = null;
+
+                    if (diaplayItems.Count() > itemsMaxCount)
+                        truncatedValue = diaplayItems.Last();
+
+                    logicalItems = diaplayItems.Select(x =>
+                                                        {
+                                                            x.IsFake = true;
+                                                            if (truncatedValue != null && x == truncatedValue)
+                                                                return Serialize(x, "...", "...");
+                                                            else
+                                                                return Serialize(x);
+                                                        }).Join();
+                }
+
+
+                string rawItems = "";
+                if (items != null)
+                {
+                    bool hasIndexer = value.IsListType || value.IsDictionaryType;
+
+                    MDbgValue truncatedValue = null;
+
+                    if (items.Count() > itemsMaxCount)
+                        truncatedValue = items.Last();
+
+                    rawItems = items.Where(x => !x.Name.Contains("$")) //ignore any internal vars
+                                                             .Where(x => !hasIndexer || x.Name != "Item")
+                                                             .Select(x =>
+                                                                 {
+                                                                     if (truncatedValue != null && x == truncatedValue)
+                                                                         return Serialize(x, "...", "...");
+                                                                     else
+                                                                         return Serialize(x);
+                                                                 })
+                                                             .Join();
+                }
+
+                result = "<items>" + logicalItems + rawItems + "</items>";
+            }
+
+            return result;
+        }
+
         public void ProcessInvoke(string command)
         {
             //<invokeId>:<action>:<args>
@@ -296,48 +375,7 @@ namespace npp
                         if (reportedValues.ContainsKey(args))
                         {
                             MDbgValue value = reportedValues[args];
-                            MDbgValue[] items = null;
-                            MDbgValue[] diaplayItems = null; //decorated (fake) display items
-
-                            if (value.IsArrayType)
-                            {
-                                items = value.GetArrayItems();
-                            }
-                            else if (value.IsListType)
-                            {
-                                diaplayItems = value.GenerateListItems();
-                            }
-                            else if (value.IsDictionaryType)
-                            {
-                                diaplayItems = value.GenerateDictionaryItems();
-                            }
-
-                            if (value.IsComplexType)
-                            {
-                                items = value.GetFields().Concat(
-                                        value.GetProperties()).ToArray();
-                            }
-
-                            if (items != null)
-                            {
-                                string logicalItems = "";
-
-                                if (diaplayItems != null)
-                                    logicalItems = diaplayItems.Select(x =>
-                                                                        {
-                                                                            x.IsFake = true;
-                                                                            return Serialize(x);
-                                                                        }).Join();
-
-                                bool hasIndexer = value.IsListType || value.IsDictionaryType;
-
-                                string rawItems = items.Where(x => !x.Name.Contains("$")) //ignore any internal vars
-                                                                          .Where(x => !hasIndexer || x.Name != "Item")
-                                                                          .Select(x => Serialize(x))
-                                                                          .Join();
-
-                                result = "<items>" + logicalItems + rawItems + "</items>";
-                            }
+                            result = SerializeValue(value);
                         }
                     }
                     else if (action == "resolve_primitive")
@@ -346,8 +384,13 @@ namespace npp
                         {
                             MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(args, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
 
-                            if (value != null && !value.IsArrayType && !value.IsComplexType)
-                                result = Serialize(value, args);
+                            if (value != null)
+                            {
+                                if (value.IsArrayType || value.IsListType || value.IsDictionaryType)
+                                    result = SerializeValue(value, itemsOnly: true, itemsMaxCount: 15);
+                                else if (!value.IsComplexType)
+                                    result = Serialize(value, args);
+                            }
                         }
                         catch
                         {
@@ -382,7 +425,7 @@ namespace npp
         Dictionary<string, MDbgValue> reportedValues = new Dictionary<string, MDbgValue>();
         int reportedValuesCount = 0;
 
-        string Serialize(MDbgValue val, string displayName = null)
+        string Serialize(MDbgValue val, string displayName = null, string substituteValue = null)
         {
             lock (reportedValues)
             {
@@ -399,7 +442,7 @@ namespace npp
                                         new XAttribute("isFake", false),
                                         new XAttribute("isComplex", false),
                                         new XAttribute("isArray", false),
-                                        new XAttribute("value", "<N/A>"),
+                                        new XAttribute("value", substituteValue ?? "<N/A>"),
                                         new XAttribute("typeName", "<N/A>"))
                                         .ToString();
                 }
@@ -411,7 +454,7 @@ namespace npp
                                                new XAttribute("id", valueId),
                                                new XAttribute("isProperty", val.IsProperty),
                                                new XAttribute("isFake", val.IsFake),
-                                               new XAttribute("rawDisplayValue", val.DisplayValue ?? ""),
+                                               new XAttribute("rawDisplayValue", substituteValue ?? val.DisplayValue ?? ""),
                                                new XAttribute("isPublic", !val.IsPrivate),
                                                new XAttribute("isStatic", val.IsStatic),
                                                new XAttribute("typeName", val.TypeName));
@@ -439,7 +482,7 @@ namespace npp
                         string stValue = val.GetStringValue(false);
                         result.Add(new XAttribute("isComplex", false),
                                    new XAttribute("isArray", false),
-                                   new XAttribute("value", stValue));
+                                   new XAttribute("value", substituteValue ?? stValue));
                     }
                 }
                 catch (System.Runtime.InteropServices.COMException)

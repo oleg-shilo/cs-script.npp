@@ -30,7 +30,12 @@ namespace CSScriptNpp
      *         - make handling Debug.Assert user friendlier
      *     - auto-add usings
      *     + Implemented automatic thread-switch on explicit 'break'
-     *     - Debugger tooltips (rollover members) should also visualize collections
+     *     + Debugger tooltips (rollover members) should also visualize collections
+     *     - Fix breakpoint persistence problem. Test-case: 
+     *             place breakpoint
+     *             observe it being reflected in breakpoints window
+     *             start adding lines above
+     *             observe breakpoint being updated in editor but not in breakpoints window (internal bp list isn't updated neither) 
      *     - On stop/detach should clean all panels except watch
      * - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
