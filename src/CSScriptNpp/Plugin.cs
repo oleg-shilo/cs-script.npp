@@ -37,16 +37,20 @@ namespace CSScriptNpp
      *          + Script.StaticField
      *          + instance.FieldProp
      *          + instance.Prop
-     *          - complex type should show 'ToString'
      * 
-     *     + Debugger tooltips (rollover members) should also visualize collections
+     *     + Debugging tooltip for complex types shows ToString() result
+     *     - Debugger tooltips (rollover members) should also visualize collections
+     *        - pass maxItems from client
+     *        + visualize colections
      *     - Fix breakpoint persistence problem. Test-case: 
      *             place breakpoint
      *             observe it being reflected in breakpoints window
      *             start adding lines above
      *             observe breakpoint being updated in editor but not in breakpoints window (internal bp list isn't updated neither) 
      *     - On stop/detach should clean all panels except watch
-     * - Desirable but not essential features
+
+     * 
+     *  - Desirable but not essential features
      *      - F12 should work on constructors e.g. 'new Te|st();'
      *     - Debugger attach to process
      *          - check presence of dbg info and open source file if possible

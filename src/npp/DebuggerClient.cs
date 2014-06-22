@@ -408,8 +408,23 @@ namespace npp
                             {
                                 if (value.IsArrayType || value.IsListType || value.IsDictionaryType)
                                     result = SerializeValue(value, itemsOnly: true, itemsMaxCount: 15);
-                                else if (!value.IsComplexType)
-                                    result = Serialize(value, args);
+                                else
+                                {
+                                    if (value.IsComplexType)
+                                    {
+                                        //Complex types have no 'value' attribute set as they are expandable
+                                        //but for the tooltips we need to show some value. So invoke 'object.ToString' 
+                                        //and inject the result as 'value' attribute
+                                        string stValue = value.GetStringValue(false);
+
+                                        var xml = XmlSerialize(value, -1, args);
+                                        xml.Add(new XAttribute("value", stValue));
+                                        result = xml.ToString();
+                                    }
+                                    else
+                                        result = Serialize(value, args);
+                                }
+
                             }
                         }
                         catch
@@ -450,69 +465,74 @@ namespace npp
                 int valueId = reportedValuesCount++;
                 reportedValues.Add(valueId.ToString(), val);
 
-                if (val == null)
-                {
-                    return new XElement("value",
-                                        new XAttribute("name", displayName ?? "<unknown>"),
-                                        new XAttribute("id", valueId),
-                                        new XAttribute("isProperty", false),
-                                        new XAttribute("isStatic", false),
-                                        new XAttribute("isFake", false),
-                                        new XAttribute("isComplex", false),
-                                        new XAttribute("isArray", false),
-                                        new XAttribute("value", substituteValue ?? "<N/A>"),
-                                        new XAttribute("typeName", "<N/A>"))
-                                        .ToString();
-                }
-
-                string name = val.Name;
-
-                XElement result = new XElement("value",
-                                               new XAttribute("name", displayName ?? name),
-                                               new XAttribute("id", valueId),
-                                               new XAttribute("isProperty", val.IsProperty),
-                                               new XAttribute("isFake", val.IsFake),
-                                               new XAttribute("rawDisplayValue", substituteValue ?? val.DisplayValue ?? ""),
-                                               new XAttribute("isPublic", !val.IsPrivate),
-                                               new XAttribute("isStatic", val.IsStatic),
-                                               new XAttribute("typeName", val.TypeName));
-
-                try
-                {
-                    if (val.IsArrayType)
-                    {
-                        // It would be nice to display array length here too.
-                        // Add a "dummy" sub-node to signify that this node is expandable. We then trap
-                        // the BeforeExpand event to add the real children.
-                        result.Add(new XAttribute("isComplex", true),
-                                   new XAttribute("isArray", true));
-                    }
-                    else if (val.IsComplexType)
-                    {
-                        // This will include both instance and static fields
-                        // It will also include all base class fields.
-                        result.Add(new XAttribute("isComplex", true),
-                                   new XAttribute("isArray", false));
-                    }
-                    else
-                    {
-                        // This is a catch-all for primitives.
-                        string stValue = val.GetStringValue(false);
-                        result.Add(new XAttribute("isComplex", false),
-                                   new XAttribute("isArray", false),
-                                   new XAttribute("value", substituteValue ?? stValue));
-                    }
-                }
-                catch (System.Runtime.InteropServices.COMException)
-                {
-                    result.Add(new XAttribute("isComplex", false),
-                                   new XAttribute("isArray", false),
-                                   new XAttribute("value", "<unavailable>"));
-                }
-
-                return result.ToString();
+                return XmlSerialize(val, valueId, displayName, substituteValue).ToString();
             }
         }
+
+        XElement XmlSerialize(MDbgValue val, int valueId, string displayName = null, string substituteValue = null)
+        {
+            if (val == null)
+            {
+                return new XElement("value",
+                                    new XAttribute("name", displayName ?? "<unknown>"),
+                                    new XAttribute("id", valueId),
+                                    new XAttribute("isProperty", false),
+                                    new XAttribute("isStatic", false),
+                                    new XAttribute("isFake", false),
+                                    new XAttribute("isComplex", false),
+                                    new XAttribute("isArray", false),
+                                    new XAttribute("value", substituteValue ?? "<N/A>"),
+                                    new XAttribute("typeName", "<N/A>"));
+            }
+
+            string name = val.Name;
+
+            XElement result = new XElement("value",
+                                           new XAttribute("name", displayName ?? name),
+                                           new XAttribute("id", valueId),
+                                           new XAttribute("isProperty", val.IsProperty),
+                                           new XAttribute("isFake", val.IsFake),
+                                           new XAttribute("rawDisplayValue", substituteValue ?? val.DisplayValue ?? ""),
+                                           new XAttribute("isPublic", !val.IsPrivate),
+                                           new XAttribute("isStatic", val.IsStatic),
+                                           new XAttribute("typeName", val.TypeName));
+
+            try
+            {
+                if (val.IsArrayType)
+                {
+                    // It would be nice to display array length here too.
+                    // Add a "dummy" sub-node to signify that this node is expandable. We then trap
+                    // the BeforeExpand event to add the real children.
+                    result.Add(new XAttribute("isComplex", true),
+                               new XAttribute("isArray", true));
+                }
+                else if (val.IsComplexType)
+                {
+                    // This will include both instance and static fields
+                    // It will also include all base class fields.
+                    result.Add(new XAttribute("isComplex", true),
+                               new XAttribute("isArray", false));
+                }
+                else
+                {
+                    // This is a catch-all for primitives.
+                    string stValue = val.GetStringValue(false);
+                    result.Add(new XAttribute("isComplex", false),
+                               new XAttribute("isArray", false),
+                               new XAttribute("value", substituteValue ?? stValue));
+                }
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                result.Add(new XAttribute("isComplex", false),
+                               new XAttribute("isArray", false),
+                               new XAttribute("value", "<unavailable>"));
+            }
+
+            return result;
+        }
+
 
         public void Break(bool reportPosition)
         {
