@@ -163,8 +163,10 @@ namespace CSScriptNpp
                                                              else
                                                                  return string.Format(" {0}={1}", e.Attribute("name").Value, e.Attribute("value").Value);
                                                          }).ToArray();
-
-                            return content + ": \n" + string.Join("\n", items);
+                            if (items.Any())
+                                return content + ": \n" + string.Join("\n", items);
+                            else
+                                return content + ": <empty>";
                         }
                         else
                         {

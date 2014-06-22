@@ -296,34 +296,47 @@ namespace CSScriptNpp.Dialogs
                         dbgObject.Value = displayValue.Value;
                 }
                 return dbgObject;
-            }).Where(x => x != null);
+            })
+            .Where(x => x != null)
+            .ToArray();
 
             var staticMembers = values.Where(x => x.IsStatic);
             var fakeMembers = values.Where(x => x.IsFake);
             var privateMembers = values.Where(x => !x.IsPublic);
 
-            var instanceMembers = values.Where(x => !x.IsStatic && !x.IsFake && x.IsPublic);
-            var result = new List<DbgObject>(instanceMembers);
-            if (staticMembers.Any())
-                result.Add(
-                    new DbgObject
-                    {
-                        Name = "Static members",
-                        HasChildren = true,
-                        IsSeparator = true,
-                        IsStatic = true,
-                        Children = staticMembers.ToArray()
-                    });
+            var result = new List<DbgObject>();
 
-            if (privateMembers.Any())
-                result.Add(
-                    new DbgObject
-                    {
-                        Name = "Non-Public members",
-                        HasChildren = true,
-                        IsSeparator = true,
-                        Children = privateMembers.ToArray()
-                    });
+            if (values.Count() == 1 && !values[0].HasChildren) //it is a primitive value
+            {
+                result.Add(values[0]);
+            }
+            else
+            {
+                var instanceMembers = values.Where(x => !x.IsStatic && !x.IsFake && x.IsPublic);
+                result.AddRange(instanceMembers);
+
+                if (staticMembers.Any())
+                    result.Add(
+                        new DbgObject
+                        {
+                            Name = "Static members",
+                            HasChildren = true,
+                            IsSeparator = true,
+                            IsStatic = true,
+                            Children = staticMembers.ToArray()
+                        });
+
+                if (privateMembers.Any())
+                    result.Add(
+                        new DbgObject
+                        {
+                            Name = "Non-Public members",
+                            HasChildren = true,
+                            IsSeparator = true,
+                            Children = privateMembers.ToArray()
+                        });
+
+            }
 
             if (fakeMembers.Any())
             {

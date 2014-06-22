@@ -2235,12 +2235,28 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                                             goto FieldValueFound;   // done if we find the first match in any module
                                         }
                                     }
+
+                                    foreach (MetadataPropertyInfo pi in classType.GetProperties())
+                                    {
+                                        if (pi.Name != nameParts[i])
+                                            continue;
+
+                                        if (pi.IsStatic)
+                                        {
+                                            sb.Append(".").Append(nameParts[i]);
+                                            var = MDbgValue.GetStaticPropertyValue(pi, this);
+                                            nextPart = i + 1;
+                                            goto PropValueFound;   // done if we find the first match in any module
+                                        }
+                                    }
+
                                 }
                                 sb.Append(".").Append(nameParts[i]);
                             }
                         }
                     }
                 FieldValueFound:
+                PropValueFound:
                     ;
                 }
             };

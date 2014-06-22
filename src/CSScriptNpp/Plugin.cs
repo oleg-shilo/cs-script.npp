@@ -30,6 +30,15 @@ namespace CSScriptNpp
      *         - make handling Debug.Assert user friendlier
      *     - auto-add usings
      *     + Implemented automatic thread-switch on explicit 'break'
+     *     - rendering current step indicator is nor reliable
+     *     - Resolving expressions (e.g. tooltip) does not handle Type.Statics, module globals 
+     *          GlobalType.StaticProp (e.g. Environment.CurrentDirectory)
+     *          + Script.StaticProp
+     *          + Script.StaticField
+     *          + instance.FieldProp
+     *          + instance.Prop
+     *          - complex type should show 'ToString'
+     * 
      *     + Debugger tooltips (rollover members) should also visualize collections
      *     - Fix breakpoint persistence problem. Test-case: 
      *             place breakpoint

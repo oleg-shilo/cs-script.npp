@@ -124,7 +124,7 @@ namespace CSScriptNpp.Dialogs
         {
             if (Debugger.IsInBreak)
             {
-                string data = Debugger.Invoke("resolve", textBox1.Text);
+                string data = Debugger.Invoke("resolve", textBox1.Text.Trim());
                 if (data != null)
                     content.SetData(data);
             }

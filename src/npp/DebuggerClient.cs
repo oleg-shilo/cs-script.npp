@@ -357,6 +357,25 @@ namespace npp
             return result;
         }
 
+        MDbgValue ResolveVariable(string args)
+        {
+            var expressions = new List<string>();
+
+            expressions.Add(args);
+            expressions.Add(shell.Debugger.Processes.Active.Threads.Active.CurrentFrame.Function.MethodInfo.DeclaringType.FullName + "." + args);
+
+            MDbgValue value = null;
+
+            foreach (string item in expressions)
+            {
+                value = shell.Debugger.Processes.Active.ResolveVariable(item, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+
+                if (value != null)
+                    return value;
+            }
+            return null;
+        }
+
         public void ProcessInvoke(string command)
         {
             //<invokeId>:<action>:<args>
@@ -378,11 +397,12 @@ namespace npp
                             result = SerializeValue(value);
                         }
                     }
-                    else if (action == "resolve_primitive")
+                    else if (action == "resolve_primitive") //UI request fro short info for tooltips
                     {
                         try
                         {
-                            MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(args, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+
+                            MDbgValue value = ResolveVariable(args);
 
                             if (value != null)
                             {
@@ -401,12 +421,10 @@ namespace npp
                     {
                         try
                         {
-                            MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(args, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+                            MDbgValue value = ResolveVariable(args);
 
                             if (value != null)
-                            {
                                 result = "<items>" + Serialize(value, args) + "</items>";
-                            }
                         }
                         catch
                         {
@@ -1001,8 +1019,10 @@ namespace npp
             if (shell.Debugger.Processes.Active.IsEvalSafe())
                 try
                 {
-                    MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
-                    MessageQueue.AddNotification(NppCategory.Watch + "<items>" + Serialize(value, expression) + "</items>");
+
+                    MDbgValue value = ResolveVariable(expression);
+                    if (value != null)
+                        MessageQueue.AddNotification(NppCategory.Watch + "<items>" + Serialize(value, expression) + "</items>");
                 }
                 catch { }
         }
@@ -1036,10 +1056,12 @@ namespace npp
                                 //t.MyPorp = 9;
                                 //string expression = "t.MyCount";
 
-                                MDbgValue value = shell.Debugger.Processes.Active.ResolveVariable(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
-
-                                expressionValue = Serialize(value, expression);
-                                watchValues.Append(expressionValue);
+                                MDbgValue value = ResolveVariable(expression);
+                                if (value != null)
+                                {
+                                    expressionValue = Serialize(value, expression);
+                                    watchValues.Append(expressionValue);
+                                }
                             }
                             catch
                             {

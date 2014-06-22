@@ -81,6 +81,13 @@ namespace Microsoft.Samples.Debugging.CorDebug
             m_class.GetStaticFieldValue((uint)fieldToken, (managedFrame==null)?null:managedFrame.m_frame, out pValue);
             return pValue==null?null:new CorValue(pValue);
         }
+       
+        public CorValue GetStaticPropertyValue(int fieldToken, CorFrame managedFrame)
+        {
+            ICorDebugValue pValue;
+            m_class.GetStaticFieldValue((uint)fieldToken, (managedFrame==null)?null:managedFrame.m_frame, out pValue);
+            return pValue==null?null:new CorValue(pValue);
+        }
 
     } /* class Class */
 

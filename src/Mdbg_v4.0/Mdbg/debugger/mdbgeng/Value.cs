@@ -348,7 +348,7 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
 
             ArrayList al = new ArrayList();
             Debug.Assert(av.Rank == 1);
-            int length = Math.Min(dims[0],maxCount);
+            int length = Math.Min(dims[0], maxCount);
             for (int i = 0; i < length; i++)
             {
                 MDbgValue v = new MDbgValue(Process, "[" + i + "]", av.GetElementAtPosition(i));
@@ -996,6 +996,38 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
         }
 
         static Dictionary<string, Tuple<MDbgFunction, CorEval>> propEvalCache = new Dictionary<string, Tuple<MDbgFunction, CorEval>>();
+
+        static public MDbgValue GetStaticPropertyValue(MetadataPropertyInfo pi, MDbgProcess Process)
+        {
+            try
+            {
+                bool isExplicitInterfaceMember = (pi.Name.IndexOf(".") != -1);
+                if (isExplicitInterfaceMember)
+                    return null; //ignore (at least for now) due to the limited practical value
+
+                string propFullName = pi.DeclarintTypeName + ".get_" + pi.Name;
+
+                MDbgFunction func = Process.ResolveFunctionNameFromScope(propFullName, Process.AppDomains[0].CorAppDomain);
+                CorEval eval = Process.Threads.Active.CorThread.CreateEval();
+
+                if (pi.IsStatic) //Important to try to read even if pi.CanRead==false as it can be because the getter is private (what is OK for debugger).
+                {
+                    //func.CorFunction
+                    eval.CallFunction(func.CorFunction, new CorValue[0]);
+                    Process.Go().WaitOne();
+                    if (Process.StopReason is EvalCompleteStopReason && !(Process.StopReason is EvalExceptionStopReason))
+                    {
+                        CorValue propertyValue = (Process.StopReason as EvalCompleteStopReason).Eval.Result;
+                        return new MDbgValue(Process, pi.Name, propertyValue) { IsProperty = true, IsStatic = pi.IsStatic, IsPrivate = !pi.IsPublic };
+                    }
+                }
+            }
+            catch (COMException)
+            {
+                // we won't report any problems.
+            }
+            return null;
+        }
 
         private MDbgValue[] InternalGetProperties(string propName = null) //zos; CSScript.Npp related changes
         {

@@ -1,13 +1,11 @@
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Globalization;
-using System.Diagnostics;
-using Microsoft.Samples.Debugging.CorDebug;
-using Microsoft.Samples.Debugging.CorMetadata.NativeApi;
 using Microsoft.Samples.Debugging.CorDebug.NativeApi;
+using Microsoft.Samples.Debugging.CorMetadata.NativeApi;
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Microsoft.Samples.Debugging.CorMetadata
 {
@@ -19,6 +17,13 @@ namespace Microsoft.Samples.Debugging.CorMetadata
         public bool IsPublic { get; set; }
         public bool canWrite;
         public bool canRead;
+        public string DeclarintTypeName
+        {
+            get
+            {
+                return m_declaringType.FullName;
+            }
+        }
 
         bool ContainsAttribute<T>(T collection, T attr) where T : struct
         {
@@ -88,7 +93,6 @@ namespace Microsoft.Samples.Debugging.CorMetadata
                     IsPublic = true;
                 if (ContainsAttribute(getterInfo.Attributes, MethodAttributes.Public) && !ContainsAttribute(getterInfo.Attributes, MethodAttributes.Abstract))
                     canRead = true;
-
             }
 
             if (m_importer.IsValidToken((uint)pmdSetter))
@@ -135,24 +139,34 @@ namespace Microsoft.Samples.Debugging.CorMetadata
             {
                 case CorElementType.ELEMENT_TYPE_CHAR:
                     return (char)Marshal.ReadByte(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_I1:
                     return (sbyte)Marshal.ReadByte(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_U1:
                     return Marshal.ReadByte(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_I2:
                     return Marshal.ReadInt16(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_U2:
                     return (ushort)Marshal.ReadInt16(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_I4:
                     return Marshal.ReadInt32(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_U4:
                     return (uint)Marshal.ReadInt32(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_I8:
                     return Marshal.ReadInt64(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_U8:
                     return (ulong)Marshal.ReadInt64(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_I:
                     return Marshal.ReadIntPtr(ppvRawValue);
+
                 case CorElementType.ELEMENT_TYPE_U:
                 case CorElementType.ELEMENT_TYPE_R4:
                 case CorElementType.ELEMENT_TYPE_R8:
