@@ -56,6 +56,28 @@ namespace CSScriptIntellisense.Test
             Assert.Equal(10, map[3].Line);
             Assert.Equal("main2(,)", map[3].DisplayName);
         }
+      
+        [Fact]
+        public void DetectGetUsings()
+        {
+            string code = @"using System;
+                            using System.IO;
+                            
+                            class Script
+                            {
+                                int Count;
+                                int fieldI;
+                                int prop {get;set;}
+                                void main0() {}
+                                void main1(int test) {}
+                                void main2(int test, int test2) {}
+                            }";
+
+            string[] items = Reflector.GetCodeUsings(code);
+            Assert.Equal(2, items.Length);
+            Assert.Equal("System", items[0]);
+            Assert.Equal("System.IO", items[1]);
+        }
 
         [Fact]
         public void AutoClassClass()

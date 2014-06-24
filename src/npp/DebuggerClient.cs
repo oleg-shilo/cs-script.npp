@@ -1,3 +1,8 @@
+using Microsoft.Samples.Debugging.CorDebug;
+using Microsoft.Samples.Debugging.CorDebug.NativeApi;
+using Microsoft.Samples.Debugging.MdbgEngine;
+using Microsoft.Samples.Tools.Mdbg;
+using npp.CSScriptNpp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,12 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using Microsoft.Samples.Debugging.CorDebug;
-using Microsoft.Samples.Debugging.CorDebug.NativeApi;
-using Microsoft.Samples.Debugging.MdbgEngine;
-using Microsoft.Samples.Tools.Mdbg;
-using npp.CSScriptNpp;
-using System.Diagnostics;
 
 namespace npp
 {
@@ -328,7 +327,6 @@ namespace npp
                                                         }).Join();
                 }
 
-
                 string rawItems = "";
                 if (items != null)
                 {
@@ -364,6 +362,9 @@ namespace npp
             expressions.Add(args);
             expressions.Add(shell.Debugger.Processes.Active.Threads.Active.CurrentFrame.Function.MethodInfo.DeclaringType.FullName + "." + args);
 
+            foreach (var item in currentNamespaces)
+                expressions.Add(item + "." + args);
+
             MDbgValue value = null;
 
             foreach (string item in expressions)
@@ -374,6 +375,15 @@ namespace npp
                     return value;
             }
             return null;
+        }
+
+        string RemoveArgsNamespaces(string args, out string[] namespaces)
+        {
+            string[] argParts = args.Split(new[] { lineDelimiter }, StringSplitOptions.None);
+
+            namespaces = argParts.Skip(1).ToArray();
+
+            return argParts[0];
         }
 
         public void ProcessInvoke(string command)
@@ -401,7 +411,6 @@ namespace npp
                     {
                         try
                         {
-
                             MDbgValue value = ResolveVariable(args);
 
                             if (value != null)
@@ -413,7 +422,7 @@ namespace npp
                                     if (value.IsComplexType)
                                     {
                                         //Complex types have no 'value' attribute set as they are expandable
-                                        //but for the tooltips we need to show some value. So invoke 'object.ToString' 
+                                        //but for the tooltips we need to show some value. So invoke 'object.ToString'
                                         //and inject the result as 'value' attribute
                                         string stValue = value.GetStringValue(false);
 
@@ -424,7 +433,6 @@ namespace npp
                                     else
                                         result = Serialize(value, args);
                                 }
-
                             }
                         }
                         catch
@@ -533,7 +541,6 @@ namespace npp
             return result;
         }
 
-
         public void Break(bool reportPosition)
         {
             shell.Debugger.Processes.Active.AsyncStop().WaitOne();
@@ -545,7 +552,6 @@ namespace npp
                 }
                 catch
                 {
-
                     ReportCurrentState();
                 }
         }
@@ -678,6 +684,15 @@ namespace npp
             return false;
         }
 
+        string[] GetCurrentSourceNamespaces()
+        {
+            string info = GetCurrentSourcePosition();
+            if (info != null)
+                return Utils.GetCodeUsings(info.Split('|').FirstOrDefault());
+            else
+                return new string[0];
+        }
+
         string GetCurrentSourcePosition()
         {
             if (!shell.Debugger.Processes.HaveActive)
@@ -737,9 +752,14 @@ namespace npp
             }
         }
 
+        List<string> currentNamespaces = new List<string>();
+
         void ReportCurrentState()
         {
             reportedValues.Clear();
+
+            currentNamespaces.Clear();
+            currentNamespaces.AddRange(GetCurrentSourceNamespaces());
 
             ReportBreakMode();
             ReportSourceCodePosition();
@@ -1039,7 +1059,6 @@ namespace npp
             if (shell.Debugger.Processes.Active.IsEvalSafe())
                 try
                 {
-
                     MDbgValue value = ResolveVariable(expression);
                     if (value != null)
                         MessageQueue.AddNotification(NppCategory.Watch + "<items>" + Serialize(value, expression) + "</items>");

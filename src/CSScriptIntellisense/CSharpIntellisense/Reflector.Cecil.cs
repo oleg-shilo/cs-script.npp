@@ -556,6 +556,23 @@ namespace UltraSharp.Cecil
             return map;
         }
 
+        static public string[] GetCodeUsings(string code)
+        {
+            try
+            {
+                var syntaxTree = new CSharpParser().Parse(code, "demo.cs");
+
+                return syntaxTree.Children.DeepAll(x => x is UsingDeclaration)
+                                          .Cast<UsingDeclaration>()
+                                          .Select(x => x.Namespace)
+                                          .ToArray();
+            }
+            catch
+            {
+                return new string[0];
+            }
+        }
+
         private static CodeMapItem[] GetMapOfImpl(string code, bool decorated)
         {
             var syntaxTree = new CSharpParser().Parse(code, "demo.cs");

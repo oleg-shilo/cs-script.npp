@@ -2,7 +2,9 @@ using Microsoft.Samples.Debugging.CorDebug;
 using Microsoft.Samples.Debugging.CorDebug.NativeApi;
 using Microsoft.Samples.Debugging.MdbgEngine;
 using Microsoft.Samples.Tools.Mdbg;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -53,6 +55,77 @@ namespace npp
         public static string Join(this IEnumerable<string> items, string delimiter = "")
         {
             return string.Join(delimiter, items.ToArray());
+        }
+
+        static public string[] GetCodeUsings(string csFile)
+        {
+            return GetCodeUsingsSimple(csFile);
+            //return GetCodeUsingsNRefactory(csFile);
+        }
+
+        static public string[] GetCodeUsingsSimple(string csFile)
+        {
+            //Very simplistic implementation with no dependency
+
+            var result = new List<string>();
+            try
+            {
+                using (var reader = new StreamReader(csFile))
+                {
+                    int blockCommantLevel = 0;
+
+                    string line;
+                    while (null != (line = reader.ReadLine()))
+                    {
+                        line = line.Trim();
+
+                        if (blockCommantLevel == 0)
+                        {
+                            if (Regex.Matches(line, @"(namespace\s*|class\s*|delegate\s*|public\s*|private\s*|protected\s*|internal\s*|static\s*)").Count != 0)
+                            {
+                                break; //end of 'usings' header 
+                            }
+                            else if (line.StartsWith("//"))
+                            {
+                                continue;
+                            }
+                            else if (line.StartsWith("using "))
+                            {
+                                foreach (string statement in line.Split(';'))
+                                {
+                                    if (statement.StartsWith("using "))
+                                    {
+                                        string @namespace = statement.Substring("using ".Length);
+                                        if (!string.IsNullOrWhiteSpace(@namespace) && !@namespace.Contains(' '))
+                                            result.Add(@namespace);
+                                    }
+                                }
+                            }
+                        }
+
+                        int opening = Regex.Matches(line, @"/\*").Count;
+                        int closing = Regex.Matches(line, @"\*/").Count;
+
+                        blockCommantLevel += (opening - closing);
+                    }
+                }
+
+            }
+            catch { }
+            return result.ToArray();
+        }
+
+        static public string[] GetCodeUsingsNRefactory(string csFile)
+        {
+            //very reliable and accurate but with a huge dependency cost: ICSharpCode.NRefactory.dll, ICSharpCode.NRefactory.CSharp.dll
+            //var syntaxTree = new CSharpParser().Parse(code, "demo.cs");
+
+            //return syntaxTree.Children.DeepAll(x => x is UsingDeclaration)
+            //                          .Cast<UsingDeclaration>()
+            //                          .Select(x => x.Namespace)
+            //                          .ToArray();
+
+            throw new NotImplementedException();
         }
 
         public static CorValue CreateCorValue(this MDbgProcess process, string value)

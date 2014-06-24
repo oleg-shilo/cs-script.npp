@@ -11,14 +11,21 @@ namespace CSScriptNpp.Dialogs
 {
     public partial class CallStackPanel : Form
     {
+
         public CallStackPanel()
         {
             InitializeComponent();
         }
 
+        public static string CurrentFrameFile;
+
         public void UpdateCallstack(string data)
         {
             //<call_info>|<source_location>{$NL}
+
+            //+0|debugging2.cs.compiled!Scripting.Script..cctor() Line 13|c:\Users\user\Documents\C# Scripts\debugging2.cs|13:13|13:26{$NL}
+            //-1|[External Code]|{$NL}-13|[External Code]|{$NL}
+
             string lineDelimiter = "{$NL}";
             stack.Items.Clear();
             var items = data.Split(new string[] { lineDelimiter }, StringSplitOptions.RemoveEmptyEntries)
@@ -45,6 +52,9 @@ namespace CSScriptNpp.Dialogs
                 li.SubItems.Add(item.Call);
                 li.Tag = item.Id;
 
+                if(item.Id.StartsWith("+"))
+                    CurrentFrameFile = item.Source.Split(new[] { '|' }, 2).FirstOrDefault();
+
                 maxWidth = Math.Max(maxWidth, (int)g.MeasureString(item.Call, stack.Font).Width);
                 this.stack.Items.Add(li);
             }
@@ -52,7 +62,9 @@ namespace CSScriptNpp.Dialogs
             this.stack.Columns[1].Width = maxWidth + 10;
         }
 
-        private void stack_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        
+
+        void stack_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
             e.DrawBackground();
             if (e.Item.Selected)

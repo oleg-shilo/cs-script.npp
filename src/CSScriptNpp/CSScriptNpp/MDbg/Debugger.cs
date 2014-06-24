@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
@@ -146,7 +147,7 @@ namespace CSScriptNpp
         {
             if (IsInBreak && IsRunning && !string.IsNullOrWhiteSpace(content))
             {
-                string data = Debugger.Invoke("resolve_primitive", content);
+                string data = Debugger.InvokeResolve("resolve_primitive", content);
                 try
                 {
                     if (!string.IsNullOrEmpty(data))
@@ -182,6 +183,16 @@ namespace CSScriptNpp
                 catch { }
             }
             return null;
+        }
+
+        public static string InvokeResolve(string command, string expression)
+        {
+            //string code = File.ReadAllText(CallStackPanel.CurrentFrameFile);
+            //string[] usings = Reflector.GetCodeUsings(code);
+            //string args = expression + "{$NL}" + string.Join("{$NL}", usings);
+            //return Invoke(command, args);
+
+            return Invoke(command, expression);
         }
 
         public static string Invoke(string command, string args)

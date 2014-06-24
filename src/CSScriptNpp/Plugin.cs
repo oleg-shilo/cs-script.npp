@@ -13,45 +13,33 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *     - Debugger
-     *         - Debug panel
-     *             - Watch panel
-     *                 - Setting the variable/expression value
-     *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'
-     *
-     *                             lsMVar = Debugger.Processes.Active.ResolveVariable(varName,
-     *                                         Debugger.Processes.Active.Threads.Active.CurrentFrame); )
-     *                 - Handle global (non variable based) expressions likes Environment.TickCount
-     *                 - Handle method expressions like Console.WriteLine("test")
-     *             - Debug Objects panel
-     *                 - dedicated support for collections
-     *                   - truncation warning
-     *                   - visualizer for the collection
-     *         - make handling Debug.Assert user friendlier
+     *     - Debug Objects panel: visualizer for the collection
      *     - auto-add usings
-     *     + Implemented automatic thread-switch on explicit 'break'
-     *     - rendering current step indicator is nor reliable
-     *     - Resolving expressions (e.g. tooltip) does not handle Type.Statics, module globals 
-     *          GlobalType.StaticProp (e.g. Environment.CurrentDirectory)
+     *     - On stop/detach should clean all panels except watch
+     *     - rendering current step indicator is nor reliable at firts breakpoint hit
+     *     
+     *     + Resolving expressions (e.g. tooltip) does not handle Type.Statics, module globals 
+     *          + GlobalType.StaticProp (e.g. Environment.CurrentDirectory)
      *          + Script.StaticProp
      *          + Script.StaticField
      *          + instance.FieldProp
      *          + instance.Prop
      * 
-     *     + Debugging tooltip for complex types shows ToString() result
+     *     - There should be an option for non-debug tooltips (rollover members) to be based on N++ calltip mechanism
      *     - Debugger tooltips (rollover members) should also visualize collections
      *        - pass maxItems from client
-     *        + visualize colections
+     *        + visualize collections
+     *        
      *     - Fix breakpoint persistence problem. Test-case: 
      *             place breakpoint
      *             observe it being reflected in breakpoints window
      *             start adding lines above
      *             observe breakpoint being updated in editor but not in breakpoints window (internal bp list isn't updated neither) 
-     *     - On stop/detach should clean all panels except watch
-
+     *     + Debugging tooltip for complex types shows ToString() result
+     *     + Implemented automatic thread-switch on explicit 'break'
      * 
      *  - Desirable but not essential features
-     *      - F12 should work on constructors e.g. 'new Te|st();'
+     *     - F12 should work on constructors e.g. 'new Te|st();'
      *     - Debugger attach to process
      *          - check presence of dbg info and open source file if possible
      *          - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
@@ -59,10 +47,17 @@ namespace CSScriptNpp
      *          - Locals panel cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
      *              - reconstruct the tree branch by branch
-     *          - QuickWatch panel
-     *              - auto update
      *          - Debug Objects panel
      *              - Refresh value on demand
+     *          - QuickWatch panel
+     *              - auto update
+     *              - Setting the variable/expression value
+     *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'
+     *
+     *                             lsMVar = Debugger.Processes.Active.ResolveVariable(varName,
+     *                                         Debugger.Processes.Active.Threads.Active.CurrentFrame); )
+     *             - Handle method expressions like Console.WriteLine("test")
+     *     - Debugger: make handling Debug.Assert user friendlier
      *
      */
 

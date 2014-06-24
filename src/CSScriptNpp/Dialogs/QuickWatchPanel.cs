@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using UltraSharp.Cecil;
 
 namespace CSScriptNpp.Dialogs
 {
@@ -124,7 +126,8 @@ namespace CSScriptNpp.Dialogs
         {
             if (Debugger.IsInBreak)
             {
-                string data = Debugger.Invoke("resolve", textBox1.Text.Trim());
+                string data = Debugger.InvokeResolve("resolve", textBox1.Text.Trim());
+
                 if (data != null)
                     content.SetData(data);
             }
