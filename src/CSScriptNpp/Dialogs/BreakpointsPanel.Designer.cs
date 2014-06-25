@@ -33,6 +33,7 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.removeAll = new System.Windows.Forms.LinkLabel();
+            this.refreshFromCurrent = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // breakPoints
@@ -57,7 +58,7 @@
             this.breakPoints.UseCompatibleStateImageBehavior = false;
             this.breakPoints.View = System.Windows.Forms.View.Details;
             this.breakPoints.ItemMouseHover += new System.Windows.Forms.ListViewItemMouseHoverEventHandler(this.breakpoints_ItemMouseHover);
-            this.breakPoints.DoubleClick += new System.EventHandler(this.stack_DoubleClick);
+            this.breakPoints.DoubleClick += new System.EventHandler(this.breakpoint_DoubleClick);
             // 
             // columnHeader1
             // 
@@ -84,11 +85,23 @@
             this.removeAll.Text = "Remove All";
             this.removeAll.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.removeAll_LinkClicked);
             // 
+            // refreshFromCurrent
+            // 
+            this.refreshFromCurrent.AutoSize = true;
+            this.refreshFromCurrent.Location = new System.Drawing.Point(67, 4);
+            this.refreshFromCurrent.Name = "refreshFromCurrent";
+            this.refreshFromCurrent.Size = new System.Drawing.Size(44, 13);
+            this.refreshFromCurrent.TabIndex = 2;
+            this.refreshFromCurrent.TabStop = true;
+            this.refreshFromCurrent.Text = "Refresh";
+            this.refreshFromCurrent.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.refreshFromCurrent_LinkClicked);
+            // 
             // BreakpointsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.refreshFromCurrent);
             this.Controls.Add(this.removeAll);
             this.Controls.Add(this.breakPoints);
             this.Name = "BreakpointsPanel";
@@ -105,5 +118,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.LinkLabel removeAll;
+        private System.Windows.Forms.LinkLabel refreshFromCurrent;
     }
 }

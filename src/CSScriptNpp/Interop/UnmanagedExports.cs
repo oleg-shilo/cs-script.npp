@@ -142,6 +142,7 @@ namespace CSScriptNpp
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED || nc.nmhdr.code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
                 {
                     string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
+                    Debugger.RefreshBreakPointsFromContent();
                     Debugger.SaveBreakPointsFor(file);
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)

@@ -56,7 +56,7 @@ namespace CSScriptNpp.Dialogs
 
         ToolTip toolTip = new ToolTip();
 
-        private void stack_DoubleClick(object sender, EventArgs e)
+        private void breakpoint_DoubleClick(object sender, EventArgs e)
         {
             try
             {
@@ -86,6 +86,11 @@ namespace CSScriptNpp.Dialogs
         private void removeAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Debugger.RemoveAllBreakpoints();
+        }
+
+        private void refreshFromCurrent_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Debugger.RefreshBreakPointsFromContent();
         }
     }
 }

@@ -16,25 +16,20 @@ namespace CSScriptNpp
      *     - Debug Objects panel: visualizer for the collection
      *     - auto-add usings
      *     - On stop/detach should clean all panels except watch
-     *     - rendering current step indicator is nor reliable at firts breakpoint hit
-     *     
+     *     - rendering current step indicator sometimes is not reliable (e.g. at first breakpoint hit)
+     * 
+     *     - There should be an option for non-debug tooltips (rollover members) to be based on N++ calltip mechanism
+     *     - Debugger tooltips (rollover members) should also visualize collections
+     *        - pass maxItems from client at start of debugging
+     *        + visualize collections
+     *        
      *     + Resolving expressions (e.g. tooltip) does not handle Type.Statics, module globals 
      *          + GlobalType.StaticProp (e.g. Environment.CurrentDirectory)
      *          + Script.StaticProp
      *          + Script.StaticField
      *          + instance.FieldProp
      *          + instance.Prop
-     * 
-     *     - There should be an option for non-debug tooltips (rollover members) to be based on N++ calltip mechanism
-     *     - Debugger tooltips (rollover members) should also visualize collections
-     *        - pass maxItems from client
-     *        + visualize collections
-     *        
-     *     - Fix breakpoint persistence problem. Test-case: 
-     *             place breakpoint
-     *             observe it being reflected in breakpoints window
-     *             start adding lines above
-     *             observe breakpoint being updated in editor but not in breakpoints window (internal bp list isn't updated neither) 
+     *     + Fix for problem with loosing line number on moving the breakpoint lines. 
      *     + Debugging tooltip for complex types shows ToString() result
      *     + Implemented automatic thread-switch on explicit 'break'
      * 

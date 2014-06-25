@@ -353,13 +353,13 @@ namespace CSScriptNpp
             execute(SciMsg.SCI_SETMARGINMASKN, 1, (1 << marker) | mask);
         }
 
-        static int execute(SciMsg msg, int wParam, int lParam)
+        static int execute(SciMsg msg, int wParam, int lParam = 0)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             return (int)Win32.SendMessage(sci, msg, wParam, lParam);
         }
 
-        static int execute(NppMsg msg, int wParam, int lParam)
+        static int execute(NppMsg msg, int wParam, int lParam = 0)
         {
             return (int)Win32.SendMessage(Npp.NppHandle, msg, wParam, lParam);
         }
@@ -367,6 +367,16 @@ namespace CSScriptNpp
         static public IntPtr PlaceMarker(int markerId, int line)
         {
             return (IntPtr)execute(SciMsg.SCI_MARKERADD, line, markerId);       //'line, marker#
+        }
+
+        static public int HasMarker(int line)
+        {
+            return execute(SciMsg.SCI_MARKERGET, line, 0);       
+        }
+       
+        static public int GetLineOfMarker(IntPtr markerHandle)
+        {
+            return execute(SciMsg.SCI_MARKERLINEFROMHANDLE, (int)markerHandle);       
         }
 
         static public void DeleteAllMarkers(int markerId)

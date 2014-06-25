@@ -77,7 +77,7 @@ namespace CSScriptNpp
             }
         }
 
-        private static void RefreshBreakPointsForCurrentTab()
+        private static void PlaceBreakPointsForCurrentTab()
         {
             try
             {
@@ -99,6 +99,36 @@ namespace CSScriptNpp
             catch { }
         }
 
+        public static void RefreshBreakPointsFromContent()
+        {
+            var chengedFiles = new List<string>();
+
+            foreach (string key in breakpoints.Keys.ToArray())
+            {
+                IntPtr marker = breakpoints[key];
+                if (marker != IntPtr.Zero)
+                {
+                    int line = Npp.GetLineOfMarker(marker);
+                    if (line != -1 && !key.EndsWith("|" + (line+1)))
+                    {
+                        //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
+                        string file = key.Split('|').First();
+
+                        if (!chengedFiles.Contains(file))
+                            chengedFiles.Add(file);
+
+                        string newKey = file + "|" + (line+1);
+                        
+                        breakpoints.Remove(key);
+                        breakpoints.Add(newKey, marker);
+                    }
+                }
+            }
+
+            if (OnBreakpointChanged != null)
+                OnBreakpointChanged();
+        }
+
         public static void OnCurrentFileChanged()
         {
             string file = Npp.GetCurrentFile();
@@ -106,7 +136,7 @@ namespace CSScriptNpp
             string dbg = CSScriptHelper.GetDbgInfoFile(file);
 
             if (File.Exists(dbg))
-                RefreshBreakPointsForCurrentTab();
+                PlaceBreakPointsForCurrentTab();
 
             if (!IsRunning)
             {
