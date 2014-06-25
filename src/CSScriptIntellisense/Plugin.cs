@@ -344,7 +344,8 @@ namespace CSScriptIntellisense
 
         static void ShowQuickInfo()
         {
-            ShowInfo(true);
+            if (!Config.Instance.ShowQuickInfoAsNativeNppTooltip)
+                ShowInfo(true);
         }
 
         public static bool IsShowingMemberInfo
@@ -384,41 +385,60 @@ namespace CSScriptIntellisense
                         }
                     }
 
-                    string file = Npp.GetCurrentFile();
+                    int methodStartPosition = 0;
 
-                    if (Npp.IsCurrentScriptFile())
+                    string[] data = GetMemberUnderCursorInfo(simple, ref methodStartPosition);
+                    
+                    if (data.Length > 0)
                     {
-                        int pos;
-
-                        if (simple)
-                            pos = Npp.GetPositionFromMouseLocation();
+                        if (simple && Config.Instance.ShowQuickInfoInStatusBar)
+                            Npp.SetStatusbarLabel(data.FirstOrDefault() ?? defaultStatusbarLabel);
                         else
-                            pos = Npp.GetCaretPosition();
-
-                        if (pos != -1)
-                        {
-                            int rawPos = pos; //note non-decorated position
-
-                            string text = Npp.GetTextBetween(0, Npp.DocEnd);
-
-                            CSScriptHelper.DecorateIfRequired(ref text, ref pos);
-
-                            EnsureCurrentFileParsed();
-
-                            int methodStartPos;
-
-                            string[] data = SimpleCodeCompletion.GetMemberInfo(text, pos, file, simple, out methodStartPos);
-
-                            if (data.Length > 0)
-                            {
-                                if (simple && Config.Instance.ShowQuickInfoInStatusBar)
-                                    Npp.SetStatusbarLabel(data.FirstOrDefault() ?? defaultStatusbarLabel);
-                                else
-                                    memberInfoPopup.TriggerPopup(simple, rawPos + (methodStartPos - pos), data);
-                            }
-                        }
+                            memberInfoPopup.TriggerPopup(simple, methodStartPosition, data);
                     }
                 });
+        }
+
+        public static string[] GetMemberUnderCursorInfo()
+        {
+            int methodStartPosition = 0;
+            return GetMemberUnderCursorInfo(true, ref methodStartPosition);
+        }
+
+        static string[] GetMemberUnderCursorInfo(bool simple, ref int methodStartPosition)
+        {
+            string file = Npp.GetCurrentFile();
+
+            if (Npp.IsCurrentScriptFile())
+            {
+                int pos;
+
+                if (simple)
+                    pos = Npp.GetPositionFromMouseLocation();
+                else
+                    pos = Npp.GetCaretPosition();
+
+                if (pos != -1)
+                {
+                    int rawPos = pos; //note non-decorated position
+
+                    string text = Npp.GetTextBetween(0, Npp.DocEnd);
+
+                    CSScriptHelper.DecorateIfRequired(ref text, ref pos);
+
+                    EnsureCurrentFileParsed();
+
+                    int methodStartPosTemp;
+
+                    string[] data = SimpleCodeCompletion.GetMemberInfo(text, pos, file, simple, out methodStartPosTemp);
+
+                    methodStartPosition = rawPos + (methodStartPosTemp - pos);
+
+                    return data;
+                }
+            }
+
+            return new string[0];
         }
 
         static CustomContextMenu namespaceMenu;

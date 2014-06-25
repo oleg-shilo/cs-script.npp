@@ -49,6 +49,7 @@ namespace CSScriptNpp
         public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
         public string SciptHistory = "";
         public int SciptHistoryMaxCount = 10;
+        public int CollectionItemsInTooltipsMaxCount = 15;
         public int DebugPanelInitialTab = 0;
         public bool ShowLineNuberInCodeMap = false;
         public bool ShowProjectPanel = false;
@@ -79,6 +80,7 @@ namespace CSScriptNpp
                 SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
                 SetValue(Section, "SciptHistory", SciptHistory);
                 SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+                SetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
                 SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
                 SetValue(Section, "LocalDebug", LocalDebug);
                 SetValue(Section, "BreakOnException", BreakOnException);
@@ -113,6 +115,7 @@ namespace CSScriptNpp
                 //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
                 SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
                 SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+                CollectionItemsInTooltipsMaxCount = GetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
                 DebugPanelInitialTab = GetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
                 OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
                 NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);

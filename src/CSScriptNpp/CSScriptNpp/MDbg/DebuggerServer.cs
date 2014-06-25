@@ -115,7 +115,7 @@ namespace CSScriptNpp
         {
             if (IsRunning)
             {
-                MessageQueue.AddCommand(NppCategory.Settings + "breakonexception=" + (breakOnException ? "true" : "false"));
+                MessageQueue.AddCommand(NppCategory.Settings + string.Format("breakonexception={0}|maxItemsInResolve={1}", breakOnException.ToString().ToLower(), Config.Instance.CollectionItemsInTooltipsMaxCount));
             }
         }
 

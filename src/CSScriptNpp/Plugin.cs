@@ -16,11 +16,11 @@ namespace CSScriptNpp
      *     - Debug Objects panel: visualizer for the collection
      *     - auto-add usings
      *     - On stop/detach should clean all panels except watch
-     *     - rendering current step indicator sometimes is not reliable (e.g. at first breakpoint hit)
      * 
-     *     - There should be an option for non-debug tooltips (rollover members) to be based on N++ calltip mechanism
-     *     - Debugger tooltips (rollover members) should also visualize collections
-     *        - pass maxItems from client at start of debugging
+     *     + Added the option for non-debug tooltips (on rollover members info) to be based on the native NPP calltip mechanism
+     *     
+     *     + Debugger tooltips (rollover members) should also visualize collections
+     *        + pass maxItems from client at start of debugging
      *        + visualize collections
      *        
      *     + Resolving expressions (e.g. tooltip) does not handle Type.Statics, module globals 
@@ -35,10 +35,14 @@ namespace CSScriptNpp
      * 
      *  - Desirable but not essential features
      *     - F12 should work on constructors e.g. 'new Te|st();'
+     *     
      *     - Debugger attach to process
      *          - check presence of dbg info and open source file if possible
      *          - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
-     *      - Debug panel
+     *     
+     *     - Rendering current step indicator sometimes (very rare occasions) is not reliable (e.g. at first breakpoint hit)
+     *     
+     *     - Debug panel
      *          - Locals panel cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
      *              - reconstruct the tree branch by branch

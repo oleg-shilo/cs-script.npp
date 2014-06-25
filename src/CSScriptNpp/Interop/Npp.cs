@@ -1,9 +1,10 @@
-﻿using CSScriptIntellisense;
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSScriptIntellisense;
 
 namespace CSScriptNpp
 {
@@ -75,6 +76,7 @@ namespace CSScriptNpp
             static public bool IsShowing = false;
             static public string LastExpression = null;
             static public string LastEval = null;
+            static public string LastDocument = null;
         }
 
         static public void OnCalltipRequest(int position)
@@ -92,28 +94,42 @@ namespace CSScriptNpp
 
                 Task.Factory.StartNew(() =>  //must be asynch to allow processing other Debugger notifications
                     {
-                        if (Debugger.IsInBreak) //The calltips are used to show the values of the variables only. For everything else (e.g. MemberInfo) modal borderless forms are used
+                        string underMouseExpression = CSScriptIntellisense.Npp.GetStatementAtPosition(position);
+                        string document = Npp.GetCurrentFile();
+                        string tooltip = null;
+
+                        //if (Debugger.IsInBreak) //The calltips are used to show the values of the variables only. For everything else (e.g. MemberInfo) modal borderless forms are used
+                        //{
+
+                        if (!string.IsNullOrEmpty(underMouseExpression))
                         {
-                            string content = CSScriptIntellisense.Npp.GetStatementAtPosition(position);
-                            if (!string.IsNullOrEmpty(content))
+                            //also need to check expression start position (if not debugging) as the same expression can lead to differet tooltip
+                            //NOTE: if DBG frame is changed the LastExpression is cleared 
+                            if (underMouseExpression == Calltip.LastExpression && Calltip.LastDocument == document)
                             {
-                                string tooltip;
-                                if (content == Calltip.LastExpression) //if DBG frame is changed the LastExpression is cleared
-                                {
+                                if(Debugger.IsInBreak) 
                                     tooltip = Calltip.LastEval;
-                                }
-                                else
+                            }
+
+                            if (tooltip == null)
+                            {
+                                if (Debugger.IsInBreak)
                                 {
-                                    tooltip = Debugger.GetDebugTooltipValue(content);
-                                    Calltip.LastEval = tooltip;
-                                    Calltip.LastExpression = content;
+                                    tooltip = Debugger.GetDebugTooltipValue(underMouseExpression);
+                                }
+                                else if (CSScriptIntellisense.Config.Instance.ShowQuickInfoAsNativeNppTooltip)
+                                {
+                                    tooltip = CSScriptIntellisense.Plugin.GetMemberUnderCursorInfo().FirstOrDefault();
                                 }
 
-                                if (tooltip != null)
-                                {
-                                    Npp.ShowCalltip(position, tooltip);
-                                    return;
-                                }
+                                Calltip.LastEval = tooltip;
+                                Calltip.LastExpression = underMouseExpression;
+                            }
+
+                            if (tooltip != null)
+                            {
+                                Npp.ShowCalltip(position, tooltip);
+                                return;
                             }
                         }
 
@@ -371,12 +387,12 @@ namespace CSScriptNpp
 
         static public int HasMarker(int line)
         {
-            return execute(SciMsg.SCI_MARKERGET, line, 0);       
+            return execute(SciMsg.SCI_MARKERGET, line, 0);
         }
-       
+
         static public int GetLineOfMarker(IntPtr markerHandle)
         {
-            return execute(SciMsg.SCI_MARKERLINEFROMHANDLE, (int)markerHandle);       
+            return execute(SciMsg.SCI_MARKERLINEFROMHANDLE, (int)markerHandle);
         }
 
         static public void DeleteAllMarkers(int markerId)

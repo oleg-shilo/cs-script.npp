@@ -5,6 +5,7 @@ using Microsoft.Samples.Tools.Mdbg;
 using npp.CSScriptNpp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -271,11 +272,22 @@ namespace npp
         public void ProcessSettings(string command)
         {
             //<name>=<value>[|<name>=<value>]
-            if (command.Contains("breakonexception=true"))
+
+            string[] items = command.Split('|');
+
+            if (items.Contains("breakonexception=true"))
                 breakOnException = true;
-            else if (command.Contains("breakonexception=false"))
+            else if (items.Contains("breakonexception=false"))
                 breakOnException = false;
+
+            var newValue = items.Where(x => x.StartsWith("maxItemsInResolve="))
+                                .Select(x =>x.Substring("maxItemsInResolve=".Length))
+                                .FirstOrDefault();  
+
+                int.TryParse(newValue, out maxCollectionItemsInPrimitiveResolve);
         }
+
+        int maxCollectionItemsInPrimitiveResolve = 15;
 
         string SerializeValue(MDbgValue value, bool itemsOnly = false, int itemsMaxCount = int.MaxValue)
         {
@@ -416,7 +428,7 @@ namespace npp
                             if (value != null)
                             {
                                 if (value.IsArrayType || value.IsListType || value.IsDictionaryType)
-                                    result = SerializeValue(value, itemsOnly: true, itemsMaxCount: 15);
+                                    result = SerializeValue(value, itemsOnly: true, itemsMaxCount: maxCollectionItemsInPrimitiveResolve);
                                 else
                                 {
                                     if (value.IsComplexType)

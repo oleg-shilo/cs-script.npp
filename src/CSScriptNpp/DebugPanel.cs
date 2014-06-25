@@ -64,7 +64,7 @@ namespace CSScriptNpp
 
         void UpdateButtonsTooltips()
         {
-            goBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("_Run", "F5"));
+            goBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("_Debug", "F5"));
             stopBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("Stop", "Shift+F5"));
             stepOverBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("StepOver", "F10"));
             stepOutBtn.EmbeddShortcutIntoTooltip(Config.Shortcuts.GetValue("StepOut", "Shift+F11"));

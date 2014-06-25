@@ -40,6 +40,7 @@ namespace CSScriptIntellisense
         public bool CodeSnippetsEnabled = true;
         public bool InterceptCtrlSpace = true;
         public bool ShowQuickInfoInStatusBar = false;
+        public bool ShowQuickInfoAsNativeNppTooltip = false;
         public bool UseMethodBrackets = false;
         public bool DisableMethodInfo = false;
         public bool FormatAsYouType = true;
@@ -60,6 +61,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "UseMethodBrackets", UseMethodBrackets);
                 SetValue(Section, "CodeSnippetsEnabled", CodeSnippetsEnabled);
                 SetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
+                SetValue(Section, "ShowQuickInfoAsNativeNppTooltip", ShowQuickInfoAsNativeNppTooltip);
                 SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 SetValue(Section, "SmartIndenting", SmartIndenting);
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
@@ -79,7 +81,7 @@ namespace CSScriptIntellisense
                 SmartIndenting = GetValue(Section, "SmartIndenting", SmartIndenting);
                 CodeSnippetsEnabled = GetValue(Section, "CodeSnippetsEnabled", CodeSnippetsEnabled);
                 FormatAsYouType = GetValue(Section, "FormatAsYouType", FormatAsYouType);
-                ShowQuickInfoInStatusBar = GetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
+                ShowQuickInfoAsNativeNppTooltip = GetValue(Section, "ShowQuickInfoAsNativeNppTooltip", ShowQuickInfoAsNativeNppTooltip);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 MemberInfoMaxCharWidth = GetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
