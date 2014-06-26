@@ -138,7 +138,7 @@ namespace CSScriptNpp.Dialogs
 
         private void releaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://csscript.net/npp/CSScriptNpp." + version + ".ReleaseNotes.txt");
+            Process.Start("http://csscript.net/npp/CSScriptNpp." + version + ".ReleaseNotes.html");
         }
 
         private void showOptions_CheckedChanged(object sender, EventArgs e)

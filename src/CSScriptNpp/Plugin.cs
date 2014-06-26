@@ -17,23 +17,10 @@ namespace CSScriptNpp
      *     - auto-add usings
      *     - On stop/detach should clean all panels except watch
      * 
-     *     + Added the option for non-debug tooltips (on rollover members info) to be based on the native NPP calltip mechanism
-     *     
-     *     + Debugger tooltips (rollover members) should also visualize collections
-     *        + pass maxItems from client at start of debugging
-     *        + visualize collections
-     *        
-     *     + Resolving expressions (e.g. tooltip) does not handle Type.Statics, module globals 
-     *          + GlobalType.StaticProp (e.g. Environment.CurrentDirectory)
-     *          + Script.StaticProp
-     *          + Script.StaticField
-     *          + instance.FieldProp
-     *          + instance.Prop
-     *     + Fix for problem with loosing line number on moving the breakpoint lines. 
-     *     + Debugging tooltip for complex types shows ToString() result
-     *     + Implemented automatic thread-switch on explicit 'break'
+     * -------------------------------------------------------------------
      * 
-     *  - Desirable but not essential features
+     *  - Desirable but not essential features:
+     *  
      *     - F12 should work on constructors e.g. 'new Te|st();'
      *     
      *     - Debugger attach to process

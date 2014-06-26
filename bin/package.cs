@@ -3,13 +3,26 @@ using System.Windows.Forms;
 using System.IO;
 using System.Linq;
 using System;
-
+ 
 void main(string[] args)
 {
     var version = Directory.GetFiles(".", "CSScriptNpp.*.msi").Select(x =>Path.GetFileNameWithoutExtension(x)).First().Replace("CSScriptNpp.", "");
 
     Console.WriteLine("Injecting version into file names: " + version);
 
+    File.WriteAllText(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", version);
+
+    File.Copy(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", @".\latest_version.txt");
+    File.Copy(@".\latest_version.txt", @".\latest_version_dbg.txt");
+
+    string releaseNotesFile = @"..\src\CSScriptNpp\Resources\WhatsNew.txt";
+    File.Copy(releaseNotesFile, @".\CSScriptNpp."+version+".ReleaseNotes.txt", true);
+    
+    string content = File.ReadAllText(releaseNotesFile).Replace("\n", "</br>");
+    File.WriteAllText(@".\CSScriptNpp."+version+".ReleaseNotes.html", content);
+
+    return;
+    
     var zipFile = Directory.GetFiles(".", "CSScriptNpp.zip").FirstOrDefault();
     if(zipFile != null)
     {
@@ -28,12 +41,4 @@ void main(string[] args)
             File.Delete(distro);
         File.Move(sevenZFile, distro);
     }
-
-    File.WriteAllText(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", version);
-
-    File.Copy(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", @".\latest_version.txt");
-    File.Copy(@".\latest_version.txt", @".\latest_version_dbg.txt");
-                  
-    File.Copy(@"..\src\CSScriptNpp\Resources\WhatsNew.txt",
-              @".\CSScriptNpp."+version+".ReleaseNotes.txt", true);
 }

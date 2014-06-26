@@ -1,14 +1,13 @@
-v1.0.28.0
+v1.0.29.0
 
-* Added "Restart Notepad++ (Elevated)" button.
+* Added the option for non-debug tooltips (on-rollover members info) to be based on the native NPP calltip mechanism.
+  (ShowQuickInfoAsNativeNppTooltip option in the config file)
 
-* Script manager buttons can now be rearranged.
+* Implemented collection visualization for the debugging tooltips.
 
-* Implemented script manager buttons customization.
+* Added handling globals and statics for expressions resolving (e.g. tooltip, Watch, QuickView).
 
-* Implemented Debugger start/attach to external process
+* Fix for the line number discrepancy problems when moving the lines with breakpoints. 
 
-* Implemented JIT debugger launcher (npp_jit.exe), which 
-  allows passing plugin specific command line arguments
-  
+* Improved current debugging step visualization with automatic switch to the main thread on explicit 'break'.
      
