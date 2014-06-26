@@ -21,7 +21,7 @@ void main(string[] args)
     string content = File.ReadAllText(releaseNotesFile).Replace("\n", "</br>");
     File.WriteAllText(@".\CSScriptNpp."+version+".ReleaseNotes.html", content);
 
-    return;
+    //return;
     
     var zipFile = Directory.GetFiles(".", "CSScriptNpp.zip").FirstOrDefault();
     if(zipFile != null)
