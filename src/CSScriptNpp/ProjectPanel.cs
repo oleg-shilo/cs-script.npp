@@ -545,6 +545,69 @@ void main(string[] args)
             LoadScript(currentScript);
         }
 
+        public void RefreshProjectStructure()
+        {
+            if (Npp.GetCurrentFile() == currentScript)
+            {
+                try
+                {
+                    Project project = CSScriptHelper.GenerateProjectFor(currentScript);
+
+                    treeView1.BeginUpdate();
+
+                    /*
+                     root
+                     references
+                        assembly_1 
+                        assembly_2 
+                        assembly_n 
+                     script_1 
+                     script_2 
+                     script_N 
+                     */
+
+                    TreeNode root = treeView1.Nodes[0];
+                    TreeNode references = root.Nodes[0];
+
+                    Action<TreeNode, string[]> updateNode =
+                        (node, files) =>
+                        {
+                            string[] currentFiles = node.Nodes
+                                                        .Cast<TreeNode>()
+                                                        .Where(x => x.Tag is ProjectItem)
+                                                        .Select(x => (x.Tag as ProjectItem).File)
+                                                        .ToArray();
+
+                            string[] newItems = files.Except(currentFiles).ToArray();
+
+                            var orphantItems = node.Nodes
+                                                   .Cast<TreeNode>()
+                                                   .Where(x => x.Tag is ProjectItem)
+                                                   .Where(x => !files.Contains((x.Tag as ProjectItem).File))
+                                                   .Where(x => x != root && x != references)
+                                                   .ToArray();
+
+                            orphantItems.ForEach(x => node.Nodes.Remove(x));
+                            newItems.ForEach(file =>
+                            {
+                                int imageIndex = includeImage;
+                                var info = new ProjectItem(file) { IsPrimary = (file == project.PrimaryScript) };
+                                if (info.IsAssembly)
+                                    imageIndex = assemblyImage;
+                                node.Nodes.Add(new TreeNode(info.Name) { ImageIndex = imageIndex, SelectedImageIndex = imageIndex, Tag = info, ToolTipText = file, ContextMenuStrip = itemContextMenu });
+                            });
+                        };
+
+                    updateNode(references, project.Assemblies);
+                    updateNode(root, project.SourceFiles);
+                    root.Expand();
+
+                    treeView1.EndUpdate();
+                }
+                catch { }
+            }
+        }
+
         private void RefreshControls()
         {
             openInVsBtn.Visible = Utils.IsVS2010PlusAvailable;
@@ -653,6 +716,17 @@ void main(string[] args)
                         Npp.OpenFile(scriptFile);
 
                         Project project = CSScriptHelper.GenerateProjectFor(scriptFile);
+
+                        /*
+                        root
+                        references
+                           assembly_1 
+                           assembly_2 
+                           assembly_n 
+                        script_1 
+                        script_2 
+                        script_N 
+                        */
 
                         treeView1.BeginUpdate();
                         treeView1.Nodes.Clear();

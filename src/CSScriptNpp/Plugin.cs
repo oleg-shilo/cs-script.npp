@@ -15,6 +15,7 @@ namespace CSScriptNpp
      * - Outstanding features
      *     - Debug Objects panel: visualizer for the collection
      *     - auto-add usings
+     *     + auto update references and includes on script saved
      *     - On stop/detach should clean all panels except watch
      * 
      * -------------------------------------------------------------------
@@ -437,6 +438,12 @@ namespace CSScriptNpp
             StartCheckForUpdates();
 
             OpenAutomationChannel();
+        }
+
+        static internal void OnDocumentSaved()
+        {
+            if (Plugin.ProjectPanel != null)
+                Plugin.ProjectPanel.RefreshProjectStructure();
         }
 
         static internal void CleanUp()

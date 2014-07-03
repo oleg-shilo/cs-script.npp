@@ -144,12 +144,15 @@ namespace CSScriptNpp
                     string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
                     Debugger.RefreshBreakPointsFromContent();
                     Debugger.SaveBreakPointsFor(file);
+                    
+                    if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
+                        Plugin.OnDocumentSaved();
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {
                     Marshal.FreeHGlobal(_ptrPluginName);
 
-                    CSScriptNpp.Plugin.CleanUp();
+                    Plugin.CleanUp();
                 }
 
                 Plugin.OnNotification(nc);

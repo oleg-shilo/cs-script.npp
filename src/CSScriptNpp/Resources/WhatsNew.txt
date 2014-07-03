@@ -1,13 +1,5 @@
-v1.0.29.0
+v1.0.29.0+
 
-* Added the option for non-debug tooltips (on-rollover members info) to be based on the native NPP calltip mechanism.
-  (ShowQuickInfoAsNativeNppTooltip option in the config file)
+* Implemented auto-updating references and includes on script saving
 
-* Implemented collection visualization for the debugging tooltips.
-
-* Added handling globals and statics for expressions resolving (e.g. tooltip, Watch, QuickView).
-
-* Fix for the line number discrepancy problems when moving the lines with breakpoints. 
-
-* Improved current debugging step visualization with automatic switch to the main thread on explicit 'break'.
      
