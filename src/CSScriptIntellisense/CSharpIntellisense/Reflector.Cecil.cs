@@ -556,6 +556,8 @@ namespace UltraSharp.Cecil
             return map;
         }
 
+        static public Func<string, string[]> GetCodeCompileOutput;
+
         static public string[] GetCodeUsings(string code)
         {
             try
@@ -572,6 +574,7 @@ namespace UltraSharp.Cecil
                 return new string[0];
             }
         }
+
 
         private static CodeMapItem[] GetMapOfImpl(string code, bool decorated)
         {

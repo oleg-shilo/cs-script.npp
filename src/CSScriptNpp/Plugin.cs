@@ -1,5 +1,3 @@
-using CSScriptIntellisense.Interop;
-using CSScriptNpp.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptNpp.Dialogs;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -14,9 +13,9 @@ namespace CSScriptNpp
     /*TODO:
      * - Outstanding features
      *     - Debug Objects panel: visualizer for the collection
-     *     - auto-add usings
-     *     + auto update references and includes on script saved
      *     - On stop/detach should clean all panels except watch
+     *     + auto-add missing usings (Alt+U)
+     *     + auto update references and includes on script saved
      * 
      * -------------------------------------------------------------------
      * 

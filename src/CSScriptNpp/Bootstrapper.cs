@@ -12,6 +12,12 @@ namespace CSScriptNpp
         {
             //Debug.Assert(false);
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            ConnectPlugins(); //must be a separate method to allow assembly probing
+        }
+
+        static void ConnectPlugins()
+        {
+            UltraSharp.Cecil.Reflector.GetCodeCompileOutput = CSScriptHelper.GetCodeCompileOutput;
         }
 
         static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)

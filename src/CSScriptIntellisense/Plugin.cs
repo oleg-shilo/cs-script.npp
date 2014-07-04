@@ -66,7 +66,8 @@ namespace CSScriptIntellisense
                 //'_' prefix in the shortcutName means "plugin action shortcut" as opposite to "plugin key interceptor action"
                 setCommand(cmdIndex++, "Show auto-complete list", ShowSuggestionList, "_ShowAutoComplete:Ctrl+Space");
                 setCommand(cmdIndex++, "Insert Code Snippet", ShowSnippetsList, "_InsertCodeSnippet:Ctrl+Shift+Space");
-                setCommand(cmdIndex++, "Add missing 'using'", AddMissingUsings, "_AddMissingUsings:Ctrl+OemPeriod");
+                setCommand(cmdIndex++, "Auto-add missing 'usings'", AddAllMissingUsings, "_AddAllMissingUsings:Alt+U");
+                setCommand(cmdIndex++, "Add missing 'using'", AddMissingUsing, "_AddMissingUsings:Ctrl+OemPeriod");
                 setCommand(cmdIndex++, "Re-analyze current document", Reparse, null);
                 if (!Config.Instance.DisableMethodInfo)
                     setCommand(cmdIndex++, "Show Method Info", ShowMethodInfo, "_ShowMethodInfo:F6");
@@ -388,7 +389,7 @@ namespace CSScriptIntellisense
                     int methodStartPosition = 0;
 
                     string[] data = GetMemberUnderCursorInfo(simple, ref methodStartPosition);
-                    
+
                     if (data.Length > 0)
                     {
                         if (simple && Config.Instance.ShowQuickInfoInStatusBar)
@@ -443,13 +444,81 @@ namespace CSScriptIntellisense
 
         static CustomContextMenu namespaceMenu;
 
-        static void AddMissingUsings()
+        static void AddAllMissingUsings()
+        {
+            if (UltraSharp.Cecil.Reflector.GetCodeCompileOutput != null)
+                HandleErrors(() =>
+                {
+                    if (Npp.IsCurrentScriptFile())
+                    {
+                        var cursor = Cursor.Current;
+                        try
+                        {
+                            Cursor.Current = Cursors.WaitCursor;
+
+                            bool usingInserted = false;
+                            int count = 0;
+
+                            do
+                            {
+                                Npp.SaveCurrentFile();
+
+                                usingInserted = false;
+                                count++;
+
+                                List<string> presentUsings = Reflector.GetCodeUsings(Npp.GetTextBetween(0, -1)).ToList();
+
+                                //c:\Users\user\Documents\C# Scripts\TooltipTest1.cs(27,9): error CS0103: The name 'Debug' does not exist in the current context
+
+                                string currentDocument = Npp.GetCurrentFile();
+
+                                string[] output = UltraSharp.Cecil.Reflector.GetCodeCompileOutput(currentDocument);
+
+                                var missingNamespaceErrors = output.Select(x => x.ToFileErrorReference())
+                                                                   .Where(x => string.Compare(x.File, currentDocument, true) == 0)
+                                                                   .ToArray();
+
+                                var namespacesToInsert = new List<string>();
+
+                                foreach (FileReference item in missingNamespaceErrors)
+                                {
+                                    int errorPosition = Npp.GetLineStart(item.Line - 1) + item.Column - 1;
+                                    IEnumerable<TypeInfo> items = ResolveNamespacesAtPosition(errorPosition);
+
+                                    if (items.Count() == 1) //do only if there is no ambiguity about what namespace it is
+                                    {
+                                        string resolvedNamespace = items.First().Namespace;
+                                        if (!presentUsings.Contains(resolvedNamespace))
+                                        {
+                                            namespacesToInsert.Add("using " + resolvedNamespace + ";");
+                                            presentUsings.Add(resolvedNamespace);
+                                            usingInserted = true;
+                                        }
+                                    }
+                                }
+
+                                namespacesToInsert.ForEach(x => NppEditor.InsertNamespace(x));
+
+                            } while (usingInserted && count < 10); //10 just a safe guard
+                        }
+                        catch { }
+                        finally
+                        {
+                            Cursor.Current = cursor;
+                        }
+                    }
+                });
+        }
+
+        static void AddMissingUsing()
         {
             HandleErrors(() =>
             {
                 if (Npp.IsCurrentScriptFile())
                 {
-                    IEnumerable<TypeInfo> items = ResolveNamespacesAtCaret().ToArray();
+                    string[] presentUsings = UltraSharp.Cecil.Reflector.GetCodeUsings(Npp.GetTextBetween(0, -1));
+
+                    IEnumerable<TypeInfo> items = ResolveNamespacesAtCaret().Where(x => !presentUsings.Contains(x.Namespace)).ToArray();
 
                     if (items.Count() > 0)
                     {
@@ -803,9 +872,14 @@ namespace CSScriptIntellisense
 
         static IEnumerable<TypeInfo> ResolveNamespacesAtCaret()
         {
+            int currentPos = Npp.GetCaretPosition();
+            return ResolveNamespacesAtPosition(currentPos);
+        }
+
+        static IEnumerable<TypeInfo> ResolveNamespacesAtPosition(int currentPos)
+        {
             string file = Npp.GetCurrentFile();
             string text = Npp.GetTextBetween(0, Npp.DocEnd);
-            int currentPos = Npp.GetCaretPosition();
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 

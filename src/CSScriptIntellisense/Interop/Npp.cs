@@ -19,6 +19,10 @@ namespace CSScriptIntellisense
             Win32.SendMessage(Plugin.NppData._nppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
             return path.ToString();
         }
+        static public void SaveCurrentFile()
+        {
+            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+        }
 
         static public void DisplayInNewDocument(string text)
         {

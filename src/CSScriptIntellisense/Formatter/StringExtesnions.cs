@@ -1,11 +1,16 @@
 using System;
-using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace CSScriptIntellisense
 {
+    public class FileReference
+    {
+        public string File;
+        public int Line;
+        public int Column;
+    }
+
     public static class StringExtesnions
     {
         public static bool IsScriptFile(this string file)
@@ -60,7 +65,6 @@ namespace CSScriptIntellisense
             return false;
         }
 
-
         public static bool IsControlStatement(this string text)
         {
             text = text.TrimEnd();
@@ -101,7 +105,7 @@ namespace CSScriptIntellisense
                 builder.Append(text);
             return builder;
         }
-       
+
         public static string MultiplyBy(this string text, int count)
         {
             string retval = "";
@@ -303,6 +307,64 @@ namespace CSScriptIntellisense
                 builder.Length = i + 1;
             }
             return builder;
+        }
+
+        public static FileReference ToFileErrorReference(this string text)
+        {
+            var result = new FileReference();
+            text.ParseAsErrorFileReference(out result.File, out result.Line, out result.Column);
+            return result;
+        }
+
+        public static bool ParseAsErrorFileReference(this string text, out string file, out int line, out int column)
+        {
+            line = -1;
+            column = -1;
+            file = "";
+            //@"c:\Users\user\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\New Script2.g.cs(11,1): error";
+            var match = Regex.Match(text, @"\(\d+,\d+\):\s+");
+            if (match.Success)
+            {
+                //"(11,1):"
+                string[] parts = match.Value.Substring(1, match.Value.Length - 4).Split(',');
+                if (!int.TryParse(parts[0], out line))
+                    return false;
+                else if (!int.TryParse(parts[1], out column))
+                    return false;
+                else
+                    file = text.Substring(0, match.Index).Trim();
+                return true;
+            }
+            return false;
+        }
+
+        public static bool ParseAsExceptionFileReference(this string text, out string file, out int line, out int column)
+        {
+            line = -1;
+            column = 1;
+            file = "";
+            //@"   at ScriptClass.main(String[] args) in c:\Users\osh\AppData\Local\Temp\CSSCRIPT\Cache\-1529274573\dev.g.csx:line 12";
+            var match = Regex.Match(text, @".*:line\s\d+\s?");
+            if (match.Success)
+            {
+                //"...mp\CSSCRIPT\Cache\-1529274573\dev.g.csx:line 12"
+                int pos = match.Value.LastIndexOf(":line");
+                if (pos != -1)
+                {
+                    string lineRef = match.Value.Substring(pos + 5, match.Value.Length - (pos + 5));
+                    if (!int.TryParse(lineRef, out line))
+                        return false;
+
+                    var fileRef = match.Value.Substring(0, pos);
+                    pos = fileRef.LastIndexOf(":");
+                    if (pos > 0)
+                    {
+                        file = fileRef.Substring(pos - 1);
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

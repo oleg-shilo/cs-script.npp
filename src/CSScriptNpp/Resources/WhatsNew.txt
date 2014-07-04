@@ -1,5 +1,7 @@
 v1.0.29.0+
 
-* Implemented auto-updating references and includes on script saving
+* Implemented auto-updating references and includes on script saving.
+
+* Implemented auto-add missing 'usings' on Alt+U
 
      

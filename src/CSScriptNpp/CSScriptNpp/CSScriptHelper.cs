@@ -92,6 +92,24 @@ namespace CSScriptNpp
 
         static public void Build(string scriptFileCmd)
         {
+            string compilerOutput;
+            bool success = Build(scriptFileCmd, out compilerOutput);
+            if (!success)
+                throw new ApplicationException(compilerOutput.Replace("csscript.CompilerException: ", "")); //for a better appearance remove CS-Script related stuff
+        }
+
+        static public string[] GetCodeCompileOutput(string scriptFile)
+        {
+            string compilerOutput;
+            bool success = Build(scriptFile, out compilerOutput);
+            if (!success)
+                return compilerOutput.Replace("csscript.CompilerException: ", "").Split('\n');
+            else
+                return new string[0];
+        }
+
+        static bool Build(string scriptFileCmd, out string compilerOutput)
+        {
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
             p.StartInfo.Arguments = "/nl /ca " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
@@ -120,8 +138,8 @@ namespace CSScriptNpp
             }
             p.WaitForExit();
 
-            if (error)
-                throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", "")); //for a better appearance remove CS-Script related stuff
+            compilerOutput = output.ToString();
+            return !error;
         }
 
         static public void ClearVSDir()
@@ -471,10 +489,10 @@ namespace CSScriptNpp
             if (asScript)
             {
                 string engine = Path.Combine(Plugin.PluginDir, engineFileName);
-                
+
                 proj.SourceFiles.Concat(assemblies)
                                 .Concat(engine)
-                                .ForEach(file=>copy(file, dir));
+                                .ForEach(file => copy(file, dir));
 
                 string batchFile = Path.Combine(dir, "run.cmd");
                 File.WriteAllText(batchFile, "cscs.exe \"" + Path.GetFileName(scriptFile) + "\"\r\npause");
