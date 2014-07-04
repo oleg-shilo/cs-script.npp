@@ -50,6 +50,7 @@ namespace CSScriptNpp
         public string SciptHistory = "";
         public int SciptHistoryMaxCount = 10;
         public int CollectionItemsInTooltipsMaxCount = 15;
+        public int CollectionItemsInVisualizersMaxCount = 1000;
         public int DebugPanelInitialTab = 0;
         public bool ShowLineNuberInCodeMap = false;
         public bool ShowProjectPanel = false;
@@ -81,6 +82,7 @@ namespace CSScriptNpp
                 SetValue(Section, "SciptHistory", SciptHistory);
                 SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
                 SetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
+                SetValue(Section, "CollectionItemsInVisualizersMaxCount", CollectionItemsInVisualizersMaxCount);
                 SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
                 SetValue(Section, "LocalDebug", LocalDebug);
                 SetValue(Section, "BreakOnException", BreakOnException);
@@ -116,6 +118,7 @@ namespace CSScriptNpp
                 SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
                 SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
                 CollectionItemsInTooltipsMaxCount = GetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
+                CollectionItemsInVisualizersMaxCount = GetValue(Section, "CollectionItemsInVisualizersMaxCount", CollectionItemsInVisualizersMaxCount);
                 DebugPanelInitialTab = GetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
                 OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
                 NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);

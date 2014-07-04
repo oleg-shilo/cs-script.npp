@@ -12,8 +12,9 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *     - Debug Objects panel: visualizer for the collection
-     *     - On stop/detach should clean all panels except watch
+     *     + Debug Objects panel: visualizer for the collection
+     *       + implement global Max items in debugger
+     *     + On stop/detach should clean all panels except watch
      *     + auto-add missing usings (Alt+U)
      *     + auto update references and includes on script saved
      * 
@@ -28,6 +29,7 @@ namespace CSScriptNpp
      *          - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
      *     
      *     - Rendering current step indicator sometimes (very rare occasions) is not reliable (e.g. at first breakpoint hit)
+     *       Very hard to reproduce. Pressing "Break" fixes it anyway
      *     
      *     - Debug panel
      *          - Locals panel cached update (not recommended as it requires asynch funcevals)

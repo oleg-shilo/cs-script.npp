@@ -115,7 +115,11 @@ namespace CSScriptNpp
         {
             if (IsRunning)
             {
-                MessageQueue.AddCommand(NppCategory.Settings + string.Format("breakonexception={0}|maxItemsInResolve={1}", breakOnException.ToString().ToLower(), Config.Instance.CollectionItemsInTooltipsMaxCount));
+                MessageQueue.AddCommand(NppCategory.Settings + string.Format(
+                    "breakonexception={0}|maxItemsInTooltipResolve={1}|maxItemsInResolve={2}", 
+                    breakOnException.ToString().ToLower(), 
+                    Config.Instance.CollectionItemsInTooltipsMaxCount, 
+                    Config.Instance.CollectionItemsInVisualizersMaxCount));
             }
         }
 

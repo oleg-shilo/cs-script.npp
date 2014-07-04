@@ -611,7 +611,11 @@ namespace CSScriptNpp.Dialogs
                     {
                         if (GetItemVisualizerClickableRange().Contains(e.X))
                             using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value.StripQuotation()))
+                            {
+                                if(dbgObject.IsCollection)
+                                    panel.InitAsCollection(dbgObject.DbgId);
                                 panel.ShowDialog();
+                            }
                     }
                 }
             }

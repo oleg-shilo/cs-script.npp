@@ -1,11 +1,5 @@
-using Microsoft.Samples.Debugging.CorDebug;
-using Microsoft.Samples.Debugging.CorDebug.NativeApi;
-using Microsoft.Samples.Debugging.MdbgEngine;
-using Microsoft.Samples.Tools.Mdbg;
-using npp.CSScriptNpp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,6 +8,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Microsoft.Samples.Debugging.CorDebug;
+using Microsoft.Samples.Debugging.CorDebug.NativeApi;
+using Microsoft.Samples.Debugging.MdbgEngine;
+using Microsoft.Samples.Tools.Mdbg;
+using npp.CSScriptNpp;
+using System.Diagnostics;
 
 namespace npp
 {
@@ -280,24 +280,34 @@ namespace npp
             else if (items.Contains("breakonexception=false"))
                 breakOnException = false;
 
-            var newValue = items.Where(x => x.StartsWith("maxItemsInResolve="))
-                                .Select(x =>x.Substring("maxItemsInResolve=".Length))
-                                .FirstOrDefault();  
+            Func<string, string> getValue = name =>
+                {
+                    string preffix = name + "=";
+                    return items.Where(x => x.StartsWith(preffix))
+                                        .Select(x => x.Substring(preffix.Length))
+                                        .FirstOrDefault();
+                };
 
-                int.TryParse(newValue, out maxCollectionItemsInPrimitiveResolve);
+            int.TryParse(getValue("maxItemsInTooltipResolve"), out maxCollectionItemsInPrimitiveResolve);
+            int.TryParse(getValue("maxItemsInResolve"), out maxCollectionItemsInResolve);
         }
 
         int maxCollectionItemsInPrimitiveResolve = 15;
+        int maxCollectionItemsInResolve = int.MaxValue;
 
-        string SerializeValue(MDbgValue value, bool itemsOnly = false, int itemsMaxCount = int.MaxValue)
+        string SerializeValue(MDbgValue value, bool itemsOnly = false)
+        {
+            return SerializeValue(value, itemsOnly, maxCollectionItemsInResolve);
+        }
+
+        string SerializeValue(MDbgValue value, bool itemsOnly, int itemsMaxCount)
         {
             string result = "";
             MDbgValue[] items = null;
             MDbgValue[] diaplayItems = null; //decorated (fake) display items
 
             int tempMaxCount = itemsMaxCount;
-            if (tempMaxCount != int.MaxValue)
-                tempMaxCount++;
+            tempMaxCount++;
 
             if (value.IsArrayType)
             {
@@ -527,6 +537,16 @@ namespace npp
                     result.Add(new XAttribute("isComplex", true),
                                new XAttribute("isArray", true));
                 }
+                else if (val.IsListType)
+                {
+                    result.Add(new XAttribute("isComplex", true),
+                               new XAttribute("isList", true));
+                }
+                else if (val.IsDictionaryType)
+                {
+                    result.Add(new XAttribute("isComplex", true),
+                               new XAttribute("isDictionary", true));
+                }
                 else if (val.IsComplexType)
                 {
                     // This will include both instance and static fields
@@ -539,7 +559,7 @@ namespace npp
                     // This is a catch-all for primitives.
                     string stValue = val.GetStringValue(false);
                     result.Add(new XAttribute("isComplex", false),
-                               new XAttribute("isArray", false),
+                               //new XAttribute("isArray", false),
                                new XAttribute("value", substituteValue ?? stValue));
                 }
             }
