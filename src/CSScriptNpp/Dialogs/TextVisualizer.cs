@@ -25,7 +25,7 @@ namespace CSScriptNpp.Dialogs
                                                    if (rawDisplay != null && rawDisplay.Value != "")
                                                        return rawDisplay.Value;
                                                    else
-                                                       return x.Attribute("name").Value + ": " + x.Attribute("value").Value;
+                                                       return x.Attribute("name").Value + "=" + x.Attribute("value").Value;
                                                })
                                        .ToArray();
 

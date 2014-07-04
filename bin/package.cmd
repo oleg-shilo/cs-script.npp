@@ -4,6 +4,7 @@ del CSScriptNpp*.msi
 del CSScriptNpp*.zip
 del CSScriptNpp*.7z
 del CSScriptNpp*.txt
+del CSScriptNpp*.html
 
 move latest_version.txt latest_version.txt_
 move latest_version_dbg.txt latest_version_dbg.txt_
