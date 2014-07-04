@@ -11,12 +11,7 @@ using UltraSharp.Cecil;
 namespace CSScriptNpp
 {
     /*TODO:
-     * - Outstanding features
-     *     + Debug Objects panel: visualizer for the collection
-     *       + implement global Max items in debugger
-     *     + On stop/detach should clean all panels except watch
-     *     + auto-add missing usings (Alt+U)
-     *     + auto update references and includes on script saved
+     * + Outstanding features
      * 
      * -------------------------------------------------------------------
      * 
