@@ -442,6 +442,30 @@ namespace CSScriptIntellisense
                     }
                 }
             }
+            else if (result is InvocationResolveResult)
+            {
+                var member = (result as InvocationResolveResult).Member;
+
+                var asm = member.ParentAssembly;
+                if (asm.UnresolvedAssembly is CSharpProjectContent) //source code
+                {
+                    //constructors are not always resolved (e.g. implicit default constructor in absence of other constructors)
+                    //thus point to tye definition instead
+                    
+                    var method = member as DefaultResolvedMethod;
+                    var type = result.Type as DefaultResolvedTypeDefinition;
+
+                    if (member.BodyRegion.FileName == null && type != null && method != null && method.IsConstructor)  
+                        return type.BodyRegion; 
+                    else
+                        return member.BodyRegion;
+                }
+                else if (asm.UnresolvedAssembly is IUnresolvedAssembly) //referenced assembly
+                {
+                    FileLocation document = new Reflector().ReconstructToFile(asm, member.DeclaringType, member);
+                    return document.ToDomRegion();
+                }
+            }
             else if (result is MemberResolveResult)
             {
                 var member = (result as MemberResolveResult).Member;

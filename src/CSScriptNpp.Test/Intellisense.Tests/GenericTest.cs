@@ -102,7 +102,7 @@ class Script
             SimpleCodeCompletion.ResetProject();
 
             // File|.
-            var info = SimpleCodeCompletion.GetMissingUsings(code, 171, "test.cs").FirstOrDefault();
+            var info = SimpleCodeCompletion.GetMissingUsings(code, 187, "test.cs").FirstOrDefault();
 
             Assert.Equal("System.IO", info.Namespace);
             Assert.Equal("System.IO.File", info.FullName);
@@ -114,7 +114,7 @@ class Script
             SimpleCodeCompletion.ResetProject();
 
             // F|ile.
-            var info = SimpleCodeCompletion.GetMissingUsings(code, 169, "test.cs").FirstOrDefault();
+            var info = SimpleCodeCompletion.GetMissingUsings(code, 184, "test.cs").FirstOrDefault();
 
             Assert.Equal("System.IO", info.Namespace);
             Assert.Equal("System.IO.File", info.FullName);

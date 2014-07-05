@@ -650,7 +650,43 @@ class TestCls<T>
             Assert.Equal(201, result.BeginLine);
             Assert.Equal(201, result.EndLine);
         }
+
+        [Fact]
+        public void ResolveConstructor()
+        {
+            var tt = AppDomain.CurrentDomain.BaseDirectory;
+            tt = Environment.CurrentDirectory;
+            tt = Assembly.GetExecutingAssembly().Location;
+
+            SimpleCodeCompletion.ResetProject();
+
+            //Te|st(   => 127
+
+            var result = SimpleCodeCompletion.ResolveMember(@"using System;
+using System.Linq;
+
+class Script
+{
+    static public void Main(string[] args)
+    {
+        var t = new Test();
+        Console.WriteLine(""test"");
+        System.IO.File.Delete(""file"");
+    }
+}
+
+class Test
+{
+    //public Test(int count){}
+    
+}", 127, "test.cs");
+
+            Assert.True(result.FileName.EndsWith(".cs"));
+            Assert.Equal(15, result.BeginLine);
+            Assert.Equal(18, result.EndLine);
+        }
        
+
         [Fact]
         public void Testbed()
         {
