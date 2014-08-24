@@ -60,7 +60,7 @@ namespace CSScriptNpp
             //'_' prefix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"
             SetCommand(projectPanelId = index++, "Build (validate)", Build, "_BuildFromMenu:Ctrl+Shift+B");
             SetCommand(projectPanelId = index++, "Run", Run, "_Run:F5");
-            SetCommand(projectPanelId = index++, "Debug", Run, "_Debug:Alt+F5");
+            SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
             SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
             SetCommand(index++, "---", null);
             SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);

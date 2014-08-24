@@ -730,7 +730,7 @@
         </member>
         <member name="M:csscript.CompilerException.Create(System.CodeDom.Compiler.CompilerErrorCollection,System.Boolean)">
             <summary>
-            Creates the CompilerException instance from the specified compiler errors errors.
+            Creates the CompilerException instance from the specified compiler errors.
             </summary>
             <param name="Errors">The compiler errors.</param>
             <param name="hideCompilerWarnings">if set to <c>true</c> hide compiler warnings.</param>
@@ -2221,7 +2221,7 @@
         </member>
         <member name="M:CSScriptLibrary.AsmHelper.GetMethod(System.Object,System.String,System.Object[])">
             <summary>
-            Specialised version of GetMethodInvoker which returns MethodDelegate thus you do not need to specify
+            Specialized version of GetMethodInvoker which returns MethodDelegate thus you do not need to specify
             object instance when calling instance methods as delegate will maintain the instance object internally.
             </summary>
             <param name="instance">Instance of the type, which implements method is to be wrapped by MethodDelegate.</param>
@@ -2949,11 +2949,12 @@
             Clears all errors and warnings.
             </summary>
         </member>
-        <member name="M:CSScriptLibrary.CompilingResult.Print(Mono.CSharp.AbstractMessage)">
+        <member name="M:CSScriptLibrary.CompilingResult.Print(Mono.CSharp.AbstractMessage,System.Boolean)">
             <summary>
             Handles compilation event message.
             </summary>
             <param name="msg">The compilation event message.</param>
+            <param name="showFullPath">if set to <c>true</c> [show full path].</param>
         </member>
         <member name="P:CSScriptLibrary.CompilingResult.HasErrors">
             <summary>
