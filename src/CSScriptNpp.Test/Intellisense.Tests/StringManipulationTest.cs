@@ -10,6 +10,7 @@ namespace CSScriptIntellisense.Test
 
     public class StringManipulationTest
     {
+
         [Fact]
         public void LeftAlign()
         {

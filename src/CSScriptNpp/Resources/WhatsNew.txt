@@ -1,5 +1,12 @@
-v1.0.31.0
+v1.0.32.0
 
-* Fixed problem with menu item 'Plugins->CSSCript->Debug' invoking 'Run' instead of 'Debug'.
+* Improved handling "OpenInVS" by respecting default IDE for VS2012 projects.
+
+* Added option to prepare script for distribution as a WindowsApp as opposite to ConsoleApp
+
+* Fixed problem with faulty code formatting caused by the NPP ridiculous caret position model based on the byte (instead of char) count  of the text.
+
+* Fixed problem with occasional 'GetWordAt' failures causing autocompletion ambiguities.
+
 
      
