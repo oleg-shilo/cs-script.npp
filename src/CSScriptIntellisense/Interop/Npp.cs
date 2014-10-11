@@ -28,7 +28,7 @@ namespace CSScriptIntellisense
         {
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_NEW);
             Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-            Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, text.Length, text);
+            Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, text.GetByteCount(), text);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace CSScriptIntellisense
 
             Win32.SendMessage(sci, SciMsg.SCI_SETTARGETSTART, start, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETTARGETEND, end, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_REPLACETARGET, text.Length, text);
+            Win32.SendMessage(sci, SciMsg.SCI_REPLACETARGET, text.GetByteCount(), text);
         }
 
         static public string TextAfterCursor(int maxLength)

@@ -48,7 +48,7 @@ namespace CSScriptIntellisense
             builtInLibs.Value.ToString(); //anything just to de-reference it
         }
 
-        public static char[] Delimiters = "\\·\t\n\r .,:;'\"[]{}()-/!?@$%^&*«»><#|~`".ToCharArray();
+        public static char[] Delimiters = "\\\t\n\r .,:;'\"[]{}()-/!?@$%^&*«»><#|~`".ToCharArray();
 
         static public XmlDocumentationProvider GetXmlDocumentation(string dllPath)
         {

@@ -210,7 +210,7 @@ namespace CSScriptNpp
                 {
                     Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_NEW);
                     Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, scriptCode.Length, scriptCode);
+                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, scriptCode.GetByteCount(), scriptCode);
 
                     //for some reason setting the lexer does not work
                     int SCLEX_CPP = 3;

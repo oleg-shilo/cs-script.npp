@@ -98,7 +98,7 @@ namespace CSScriptIntellisense
         {
             int currentPos = Npp.GetCaretPosition();
             IntPtr sci = Npp.CurrentScintilla;
-            Win32.SendMessage(sci, SciMsg.SCI_ADDTEXT, IndentText.Length, IndentText);
+            Win32.SendMessage(sci, SciMsg.SCI_ADDTEXT, IndentText.GetByteCount(), IndentText);
         }
 
         static string indentText = null;
@@ -148,7 +148,7 @@ namespace CSScriptIntellisense
         {
             int currentPos = Npp.GetCaretPosition();
             IntPtr sci = Npp.CurrentScintilla;
-            int startPos = currentPos - 1 - IndentText.Length;
+            int startPos = currentPos - 1 - IndentText.GetByteCount();
             int endPos = currentPos - 1;
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, startPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, endPos, 0);

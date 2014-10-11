@@ -65,6 +65,11 @@ namespace CSScriptIntellisense
             return false;
         }
 
+        public static int GetByteCount(this string text)
+        {
+            return Encoding.Default.GetByteCount(text);
+        }
+
         public static bool IsControlStatement(this string text)
         {
             text = text.TrimEnd();

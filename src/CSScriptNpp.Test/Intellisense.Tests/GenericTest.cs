@@ -149,6 +149,15 @@ class Script
         }
 
         [Fact]
+        public void GetWordAt()
+        {
+            //Console.Wri|teLine
+            string word = SimpleCodeCompletion.GetWordAt("Console.WriteLine;", 11);
+            
+            Assert.Equal("WriteLine", word);
+        }
+
+        [Fact]
         public void GenerateMemeberQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();

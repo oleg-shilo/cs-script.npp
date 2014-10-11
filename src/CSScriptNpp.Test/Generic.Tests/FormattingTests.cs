@@ -373,22 +373,22 @@ public int MyProperty { get; set; }
         }
 
 try
-	{
-		Console.WriteLine(7);
-	}
+    {
+        Console.WriteLine(7);
+    }
 
-	catch{}
+    catch{}
 
 while(false)
-	{
-		Console.WriteLine(7);
-	}
+    {
+        Console.WriteLine(7);
+    }
 
 
 do
-	{
-		Console.WriteLine(7);
-	}while(false);
+    {
+        Console.WriteLine(7);
+    }while(false);
 
 ";
             int pos = 69; //void main(str|ing[] args)
@@ -548,6 +548,23 @@ class Script
         Name = ""Action_StartNPP""
     }
 };";
+
+            int pos = 0;
+            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+
+            Assert.Equal(code, newCode); //no changes
+
+        }
+       
+        [Fact]
+        public void ShouldHandleNonUnicodeChiniseChars()
+        {
+            SourceCodeFormatter.UseTabs = false;
+            SourceCodeFormatter.IndentText = "    ";
+
+            string code = 
+@"Console.WriteLine(""тест"");
+Console.WriteLine(""这是中文"");";
 
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
