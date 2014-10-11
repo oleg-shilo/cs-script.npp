@@ -42,12 +42,13 @@ namespace CSScriptNpp
 
             versionsList.SelectedItem = Versions.Where(x => x.Version == Config.Instance.TargetVersion)
                                                 .FirstOrDefault();
-            
+
             if (versionsList.SelectedItem == null)
                 versionsList.SelectedItem = Versions.First();
 
             asScript.Checked = Config.Instance.DistributeScriptAsScriptByDefault;
             asExe.Checked = !asScript.Checked;
+            windowApp.Checked = Config.Instance.DistributeScriptAsWindowApp;
         }
 
         public bool AsScript
@@ -55,11 +56,22 @@ namespace CSScriptNpp
             get { return asScript.Checked; }
         }
 
+        public bool AsWindowApp
+        {
+            get { return windowApp.Checked; }
+        }
+
         void okBtn_Click(object sender, EventArgs e)
         {
             Config.Instance.TargetVersion = SelectedVersion.Version;
             Config.Instance.DistributeScriptAsScriptByDefault = asScript.Checked;
+            Config.Instance.DistributeScriptAsWindowApp = windowApp.Checked;
             Config.Instance.Save();
+        }
+
+        private void asExe_CheckedChanged(object sender, EventArgs e)
+        {
+            windowApp.Enabled = asExe.Checked;
         }
     }
 }

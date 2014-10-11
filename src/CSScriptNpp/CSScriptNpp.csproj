@@ -196,7 +196,7 @@
     <Compile Include="Dialogs\PluginShortcuts.Designer.cs">
       <DependentUpon>PluginShortcuts.cs</DependentUpon>
     </Compile>
-    <Compile Include="Resources\Resources.Designer.cs">
+    <Compile Include="Resources\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -293,6 +293,7 @@
     <EmbeddedResource Include="Resources\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectPanel.resx">
       <DependentUpon>ProjectPanel.cs</DependentUpon>
@@ -329,7 +330,9 @@
     <None Include="Resources\css_logo_16x16_tb.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\DebugScript.csproj" />
+    <None Include="Resources\DebugScript.csproj">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Help.png" />
@@ -526,6 +529,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\deploy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DebugScript.sln" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

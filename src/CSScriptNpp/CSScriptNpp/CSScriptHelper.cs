@@ -468,7 +468,7 @@ namespace CSScriptNpp
             return words.Any() && words.First() == "//css_npp" && (words.Contains("asadmin") || words.Contains("asadmin,") || words.Contains("asadmin;"));
         }
 
-        static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion)
+        static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion, bool windowApp)
         {
             string dir = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile));
 
@@ -507,7 +507,7 @@ namespace CSScriptNpp
                 string script = "\"" + scriptFile + "\"";
 
                 string cscs = Path.Combine(Plugin.PluginDir, engineFileName);
-                string args = string.Format("/e  {0} {1}", GenerateProbingDirArg(), script);
+                string args = string.Format("/e{2} {0} {1}", GenerateProbingDirArg(), script, (windowApp?"w":""));
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs;
@@ -541,7 +541,7 @@ namespace CSScriptNpp
             var searchDirs = new List<string> { ScriptsDir, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
-            searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
+            searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined in the script
             searchDirs.AddRange(GetGlobalSearchDirs());
 
             if (NppScriptsDir != null)
@@ -563,7 +563,9 @@ namespace CSScriptNpp
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
-            string projectFile = Path.Combine(dir, Path.GetFileNameWithoutExtension(script) + ".csproj");
+            string projectName = Path.GetFileNameWithoutExtension(script);
+            string projectFile = Path.Combine(dir, projectName + ".csproj");
+            string solutionFile = Path.Combine(dir, projectName + ".sln");
 
             string sourceFilesXml = string.Join(Environment.NewLine,
                                                 sourceFiles.Select(file => "<Compile Include=\"" + file + "\" />").ToArray());
@@ -572,12 +574,17 @@ namespace CSScriptNpp
                                             refAsms.Select(file => "<Reference Include=\"" + Path.GetFileNameWithoutExtension(file) + "\"><HintPath>" + file + "</HintPath></Reference>").ToArray());
 
             File.WriteAllText(projectFile,
-                              Resources.Resources.VS2010ProjectTemplate
+                              Resources.Resources.VS2012ProjectTemplate
                                                  .Replace("<UseVSHostingProcess>false", "<UseVSHostingProcess>true") // to ensure *.vshost.exe is created
                                                  .Replace("<OutputType>Library", "<OutputType>Exe")
                                                  .Replace("{$SOURCES}", sourceFilesXml)
                                                  .Replace("{$REFERENCES}", refAsmsXml));
-            Process.Start(projectFile);
+
+            File.WriteAllText(solutionFile,
+                              Encoding.UTF8.GetString(Resources.Resources.VS2012SolutionTemplate)
+                                      .Replace("{$PROJECTNAME}", projectName));
+
+            Process.Start(solutionFile);
         }
 
         static public string ScriptEngineVersion()

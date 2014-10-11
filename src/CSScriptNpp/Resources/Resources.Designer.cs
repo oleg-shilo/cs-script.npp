@@ -371,6 +371,16 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] DebugScript {
+            get {
+                object obj = ResourceManager.GetObject("DebugScript", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap deploy {
@@ -581,20 +591,18 @@ namespace CSScriptNpp.Resources {
         ///    &lt;ProjectGuid&gt;{8860B29B-749F-4925-86C8-F9C4B93C9DA5}&lt;/ProjectGuid&gt;
         ///    &lt;OutputType&gt;Library&lt;/OutputTy [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string VS2010ProjectTemplate {
+        internal static string VS2012ProjectTemplate {
             get {
-                return ResourceManager.GetString("VS2010ProjectTemplate", resourceCulture);
+                return ResourceManager.GetString("VS2012ProjectTemplate", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to v1.0.27.0+
+        ///   Looks up a localized string similar to v1.0.31.0
         ///
-        ///* Added &quot;Restart Notepad++ (Elevated)&quot; button
+        ///* Fixed problem with menu item &apos;Plugins-&gt;CSSCript-&gt;Debug&apos; invoking &apos;Run&apos; instead of &apos;Debug&apos;.
         ///
-        ///* Implemented script manager buttons customization.
-        ///
-        ///.
+        ///     .
         /// </summary>
         internal static string WhatsNew {
             get {

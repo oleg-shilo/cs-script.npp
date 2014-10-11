@@ -2824,12 +2824,6 @@
             <param name="code">The C# code.</param>
             <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
         </member>
-        <member name="M:CSScriptLibrary.Evaluator.GetCompiledAssembly">
-            <summary>
-            Gets the assembly compiled with the last Compile*/Load* call.
-            </summary>
-            <returns>Instance of the <see cref="T:System:Reflection.Assembly"/>.</returns>
-        </member>
         <member name="M:CSScriptLibrary.Evaluator.GetCompiledType(System.String)">
             <summary>
             Gets a type from the last Compile/Evaluate/Load call.
@@ -2842,7 +2836,7 @@
             Evaluates (compiles) C# code.
             </summary>
             <param name="scriptText">The C# script text.</param>
-            <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
+            <returns>The compiled assembly.</returns>
         </member>
         <member name="M:CSScriptLibrary.Evaluator.Evaluate(System.String)">
             <summary>
@@ -2892,6 +2886,18 @@
             Gets or sets the flag indicating if the compilation error should throw an exception.
             </summary>
             <value>The throw on error.</value>
+        </member>
+        <member name="P:CSScriptLibrary.Evaluator.AutoResetEvaluatorOnError">
+            <summary>
+            Gets or sets a value indicating whether to reset <c>Mono.Evaluator</c> automatically after it fails
+            to compile the code.
+            <para>It is a work around for the <c>Mono.Evaluator</c> (v4.0.0.0), which cannot longer compile the valid C# code
+            after the first compilation failure.</para>
+            <para>This setting allows auto recreation (reset) of the actual <c>Mono.Evaluator</c> service.</para>
+            </summary>
+            <value>
+            <c>true</c> if <c>Mono.Evaluator</c> is to be reset automatically; otherwise, <c>false</c>.
+            </value>
         </member>
         <member name="P:CSScriptLibrary.Evaluator.WarningsAsErrors">
             <summary>

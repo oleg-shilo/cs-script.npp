@@ -12,7 +12,7 @@ namespace CSScriptNpp
 {
     /*TODO:
      * + Outstanding features
-     * 
+     *  - Debugger does not treat DateTime members as primitives
      * -------------------------------------------------------------------
      * 
      *  - Desirable but not essential features:

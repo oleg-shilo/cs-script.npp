@@ -30,6 +30,7 @@ namespace CSScriptNpp
 
         public bool ClasslessScriptByDefault = false;
         public bool DistributeScriptAsScriptByDefault = true;
+        public bool DistributeScriptAsWindowApp = false;
         public bool InterceptConsole = false;
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
@@ -96,6 +97,7 @@ namespace CSScriptNpp
                 SetValue(Section, "TargetVersion", TargetVersion);
                 SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
                 SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
+                SetValue(Section, "DistributeScriptAsWindowApp", DistributeScriptAsWindowApp);
 
                 CSScriptIntellisense.Config.Instance.Save();
 
@@ -137,6 +139,7 @@ namespace CSScriptNpp
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
                 ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
                 DistributeScriptAsScriptByDefault = GetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
+                DistributeScriptAsWindowApp = GetValue(Section, "DistributeScriptAsWindowApp", DistributeScriptAsWindowApp);
 
                 CSScriptIntellisense.Config.Instance.Open();
             }

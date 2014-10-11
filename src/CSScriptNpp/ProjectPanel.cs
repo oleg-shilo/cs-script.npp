@@ -926,7 +926,7 @@ void main(string[] args)
                             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
-                            string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion);
+                            string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp);
 
                             if (path != null)
                             {
