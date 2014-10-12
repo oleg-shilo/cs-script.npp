@@ -224,13 +224,13 @@ namespace CSScriptIntellisense
                 size.Width = size.Width + statsSize.Width + controlButtonSize * 2 + controlButtonsPadding * 2 + 5;
             }
 
-            int extraHight = 0;
+            int extraHight = 5;
             if (info.GetLines(2).Length > 1) //has API documentation
             {
                 extraHight = docSeparatorHeight;
             }
 
-            return new SizeF(size.Width + 10, size.Height + 10 + extraHight);
+            return new SizeF(size.Width + 10, size.Height + 5 + extraHight);
         }
 
         RectangleF upButtonArea = new RectangleF(0, 0, controlButtonSize, controlButtonSize);
@@ -255,7 +255,7 @@ namespace CSScriptIntellisense
 
             var area = this.ClientRectangle;
 
-            float yOffset = 10;
+            float yOffset = 5;
             float xOffset = 5;
 
             e.Graphics.FillRectangle(bgdBrush, area);

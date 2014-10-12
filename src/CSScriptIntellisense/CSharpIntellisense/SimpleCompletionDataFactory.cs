@@ -6,9 +6,7 @@ using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 public enum DeclarationType : byte
 {
@@ -41,8 +39,8 @@ public class CompletionData : ICompletionData
 {
     public void AddOverload(ICompletionData data)
     {
-        if (overloadedData.Count == 0)
-            overloadedData.Add(this);
+        if (overloadedData.Count == 0 && this is IEntityCompletionData)
+            overloadedData.Add(this); //method/property itself
         overloadedData.Add(data);
     }
 
@@ -126,6 +124,24 @@ public class ImportCompletionData : CompletionData
         this.UseFullName = useFullName;
     }
 }
+
+public class TypeCompletionData : CompletionData
+{
+    public IType Type { get; private set; }
+
+    public TypeCompletionData(IType type, string shortName)
+        : base(shortName)
+    {
+        this.Type = type;
+
+        foreach (IMethod method in this.Type.GetConstructors())
+        {
+            if (method is IEntity)
+                AddOverload(new EntityCompletionData(method as IEntity, null));
+        }
+    }
+}
+
 public class SimpleCompletionDataFactory : ICompletionDataFactory
 {
     CSharpResolver state;
@@ -136,8 +152,6 @@ public class SimpleCompletionDataFactory : ICompletionDataFactory
         this.state = state;
         builder = new TypeSystemAstBuilder(state);
     }
-
-
 
     public ICompletionData CreateEntityCompletionData(ICSharpCode.NRefactory.TypeSystem.IEntity entity)
     {
@@ -224,7 +238,6 @@ public class SimpleCompletionDataFactory : ICompletionDataFactory
 
     public ICompletionData CreateTypeCompletionData(IType type, string shortType)
     {
-        return new CompletionData(shortType) { DeclarationType = DeclarationType.Type };
+        return new TypeCompletionData(type, shortType) { DeclarationType = DeclarationType.Type };
     }
 }
-

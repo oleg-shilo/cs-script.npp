@@ -46,6 +46,26 @@ namespace CSScriptIntellisense
             }
         }
 
+        public static string ToTooltip(this ICSharpCode.NRefactory.TypeSystem.IType entity, bool full, bool isInstantiation = false)
+        {
+            try
+            {
+                var builder = new StringBuilder();
+                if (isInstantiation)
+                    builder.Append("Constructor");
+                else
+                    builder.Append("Type");
+                builder.Append(": ");
+                builder.Append(entity.FullName);
+
+                return builder.ToString();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public static string ToTooltip(this ICSharpCode.NRefactory.TypeSystem.IEntity entity, bool full)
         {
             try
@@ -58,7 +78,7 @@ namespace CSScriptIntellisense
                 var field = (entity as IField);
 
                 var method = (entity as IMethod);
-                if (method != null)
+                if (method != null && entity.EntityType != EntityType.Constructor)
                 {
                     builder.Append(method.ReturnType.ReflectionName);
                     builder.Append(' ');
@@ -79,8 +99,11 @@ namespace CSScriptIntellisense
                 }
 
                 builder.Append(entity.DeclaringType.ReflectionName);
-                builder.Append('.');
-                builder.Append(entity.Name);
+                if (entity.EntityType != EntityType.Constructor)
+                {
+                    builder.Append('.');
+                    builder.Append(entity.Name);
+                }
 
                 if (method != null && method.TypeParameters.Count > 0)
                 {
@@ -158,7 +181,6 @@ namespace CSScriptIntellisense
                 return null;
             }
         }
-
         public static string GetCrefAttribute(this XmlTextReader reader)
         {
             string typeName = reader.GetAttribute("cref");
@@ -695,13 +717,18 @@ namespace CSScriptIntellisense
             return text.Substring(line.Offset, line.Length);
         }
 
-        public static string GetDisplayInfo(this ICompletionData data, bool full)
+        public static string GetDisplayInfo(this ICompletionData data, bool full, bool isInstantiation = false)
         {
             //TODO - needs to be revisited to implement non-EntityCompltiondata (e.g. enums) eventually
-            var d = (data as EntityCompletionData);
-            if (d != null)
+            if (data is EntityCompletionData)
             {
+                var d = (data as EntityCompletionData);
                 return d.Entity.ToTooltip(full);
+            }
+            else if (data is TypeCompletionData)
+            {
+                var d = (TypeCompletionData)data;
+                return d.Type.ToTooltip(full, isInstantiation);
             }
             else
                 return null;

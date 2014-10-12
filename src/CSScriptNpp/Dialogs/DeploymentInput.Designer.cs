@@ -106,9 +106,9 @@
             this.windowApp.AutoSize = true;
             this.windowApp.Location = new System.Drawing.Point(36, 60);
             this.windowApp.Name = "windowApp";
-            this.windowApp.Size = new System.Drawing.Size(120, 17);
+            this.windowApp.Size = new System.Drawing.Size(125, 17);
             this.windowApp.TabIndex = 6;
-            this.windowApp.Text = "Window Application";
+            this.windowApp.Text = "Windows Application";
             this.windowApp.UseVisualStyleBackColor = true;
             // 
             // DeploymentInput

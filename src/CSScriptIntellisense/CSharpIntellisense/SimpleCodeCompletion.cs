@@ -1,23 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using ICSharpCode.NRefactory.Completion;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Completion;
 using ICSharpCode.NRefactory.CSharp.Resolver;
-using ICSharpCode.NRefactory.Completion;
 using ICSharpCode.NRefactory.Documentation;
 using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
-using Mono.Cecil;
-using UltraSharp.Cecil;
-using System.Diagnostics;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
@@ -100,8 +98,6 @@ namespace CSScriptIntellisense
 
         static IProjectContent Project;
 
-
-
         public static IEnumerable<ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true, bool prepareForDisplay = true) // not the best way to put in the whole string every time
         {
             try
@@ -129,7 +125,6 @@ namespace CSScriptIntellisense
                 var unresolvedFile = syntaxTree.ToTypeSystem();
 
                 Project = Project.AddOrUpdateFiles(unresolvedFile);
-
 
                 //note project should be reassigned/recreated every time we add asms or file
 
@@ -159,7 +154,7 @@ namespace CSScriptIntellisense
             }
             catch
             {
-                return new ICompletionData[0]; //the exception can happens even for the internal NRefactor-related reasons 
+                return new ICompletionData[0]; //the exception can happens even for the internal NRefactor-related reasons
             }
         }
 
@@ -207,7 +202,7 @@ namespace CSScriptIntellisense
             }
             catch
             {
-                return new TypeInfo[0]; //the exception can happens even for the internal NRefactor-related reasons 
+                return new TypeInfo[0]; //the exception can happens even for the internal NRefactor-related reasons
             }
         }
 
@@ -223,11 +218,14 @@ namespace CSScriptIntellisense
         {
             methodStartPos = offset;
 
+            bool isInstantiation = false;
+
             try
             {
                 string nameToResolve = "";
                 if (collapseOverloads) //simple resolving from the position
                 {
+                    isInstantiation = GetPrevWordAt(editorText, offset) == "new";
                     nameToResolve = GetWordAt(editorText, offset);
                 }
                 else
@@ -252,15 +250,30 @@ namespace CSScriptIntellisense
 
                 if (match != null)
                 {
-                    bool fullInfo = collapseOverloads;
+                    bool fullInfo = !collapseOverloads;
                     //Note x.OverloadedData includes all instances of the same-name member. Thus '-1' should be applied
                     if (collapseOverloads)
                     {
-                        string[] infoParts = match.GetDisplayInfo(fullInfo).HideKnownNamespaces(usedNamespaces).GetLines(2);
+                        string[] infoParts = match.GetDisplayInfo(fullInfo, isInstantiation).HideKnownNamespaces(usedNamespaces).GetLines(2);
                         string desctription = infoParts.First();
                         string documentation = (infoParts.Length > 1 ? "\r\n" + infoParts[1] : "");
 
-                        string info = desctription + (match.HasOverloads ? (" (+ " + (match.OverloadedData.Count() - 1) + " overload(s))") : "") + documentation;
+                        string info = desctription;
+
+                        int overloadsCount = 0;
+
+                        if (match.HasOverloads)
+                            overloadsCount = match.OverloadedData.Count() - 1;
+
+                        if (match is TypeCompletionData)
+                        {
+                            if (isInstantiation)
+                                info += "()";
+                            else
+                                overloadsCount = 0;
+                        }
+
+                        info += (overloadsCount > 0 ? (" (+ " + overloadsCount + " overload(s))") : "") + documentation;
 
                         if (!string.IsNullOrEmpty(info))
                             return new string[] { info };
@@ -270,10 +283,11 @@ namespace CSScriptIntellisense
                         if (match.HasOverloads)
                         {
                             return match.OverloadedData
-                                       .Select(d => d as IEntityCompletionData)
-                                       .Select(d => d.Entity.ToTooltip(fullInfo).HideKnownNamespaces(usedNamespaces))
-                                       .Where(x => !string.IsNullOrEmpty(x))
-                                       .ToArray();
+                                        .Where(d => d is IEntityCompletionData)
+                                        .Cast<IEntityCompletionData>()
+                                        .Select(d => d.Entity.ToTooltip(fullInfo).HideKnownNamespaces(usedNamespaces))
+                                        .Where(x => !string.IsNullOrEmpty(x))
+                                        .ToArray();
                         }
                         else
                         {
@@ -286,7 +300,7 @@ namespace CSScriptIntellisense
             }
             catch
             {
-                //the exception can happens even for the internal NRefactor-related reasons 
+                //the exception can happens even for the internal NRefactor-related reasons
             }
             return new string[0];
         }
@@ -311,6 +325,32 @@ namespace CSScriptIntellisense
                         break;
                     else
                         retval += editorText[i];
+            }
+            return retval;
+        }
+
+        public static string GetPrevWordAt(string editorText, int offset)
+        {
+            string retval = "";
+
+            int primaryWordStart = -1;
+
+            if (offset > 0 && editorText[offset - 1] != '.') //avoid "type.|"
+            {
+                //following VS default practice:  "type|."
+                for (int i = offset - 1; i >= 0; i--)
+                    if (SimpleCodeCompletion.Delimiters.Contains(editorText[i]))
+                    {
+                        if (primaryWordStart == -1)
+                        {
+                            primaryWordStart = i;
+                        }
+                        else
+                        {
+                            retval = editorText.Substring(i + 1, primaryWordStart - i - 1).Trim();
+                            break;
+                        }
+                    }
             }
             return retval;
         }
@@ -347,7 +387,7 @@ namespace CSScriptIntellisense
 
                     Tuple<int, int> decoration = CSScriptHelper.GetDecorationInfo(editorText);
 
-                    if (decoration.Item1 != -1) //the file content is no the actual one but an auto-generated (decorated) 
+                    if (decoration.Item1 != -1) //the file content is no the actual one but an auto-generated (decorated)
                     {
                         if (position > decoration.Item1)
                         {
@@ -423,7 +463,6 @@ namespace CSScriptIntellisense
 
             DomRegion region = DomRegion.Empty;
 
-
             if (result is TypeResolveResult)
             {
                 var type = (result as TypeResolveResult).Type as DefaultResolvedTypeDefinition;
@@ -451,12 +490,12 @@ namespace CSScriptIntellisense
                 {
                     //constructors are not always resolved (e.g. implicit default constructor in absence of other constructors)
                     //thus point to tye definition instead
-                    
+
                     var method = member as DefaultResolvedMethod;
                     var type = result.Type as DefaultResolvedTypeDefinition;
 
-                    if (member.BodyRegion.FileName == null && type != null && method != null && method.IsConstructor)  
-                        return type.BodyRegion; 
+                    if (member.BodyRegion.FileName == null && type != null && method != null && method.IsConstructor)
+                        return type.BodyRegion;
                     else
                         return member.BodyRegion;
                 }

@@ -13,12 +13,11 @@ namespace CSScriptNpp
     /*TODO:
      * + Outstanding features
      *  - Debugger does not treat DateTime members as primitives
+     *  + F12 should work on constructors e.g. 'new Te|st();'
      * -------------------------------------------------------------------
      * 
      *  - Desirable but not essential features:
      *  
-     *     - F12 should work on constructors e.g. 'new Te|st();'
-     *     
      *     - Debugger attach to process
      *          - check presence of dbg info and open source file if possible
      *          - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)

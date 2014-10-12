@@ -177,8 +177,92 @@ class Script
             Assert.Equal(1, info.Count());
             Assert.Equal("Method: void Console.WriteLine() (+ 18 overload(s))", info.First().GetLines(2).First());
         }
-        
 
+        [Fact]
+        public void GenerateConstructorQuickInfo()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            //124 - new DateTim|e(
+            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+using System.Linq;
+
+class Script
+{
+    static public void Main(string[] args)
+    {
+        new DateTime(1, 1, 1);
+    }
+}", 124, "test.cs", true);
+
+            Assert.Equal(1, info.Count());
+            Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
+        }
+
+        [Fact]
+        public void GenerateConstructorQuickInfo1()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            //121 - new Scrip|t()
+            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+using System.Linq;
+
+class Script
+{
+    static public void Main(string[] args)
+    {
+        new Script();
+    }
+}", 121, "test.cs", true);
+
+            Assert.Equal(1, info.Count());
+            Assert.Equal("Constructor: Script()", info.First());
+        }
+        
+        [Fact]
+        public void GenerateTypeDeclarationQuickInfo()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            //61 - Scr|ipt
+            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+using System.Linq;
+
+class Script
+{
+    Script script;
+    
+    static public void Main(string[] args)
+    {
+    }
+}", 61, "test.cs", true);
+
+            Assert.Equal(1, info.Count());
+            Assert.Equal("Type: Script", info.First());
+        }
+        
+        [Fact]
+        public void GenerateConstructorFullInfo()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            //126 - new DateTime(|
+            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+using System.Linq;
+
+class Script
+{
+    static public void Main(string[] args)
+    {
+        new DateTime(1, 1, 1);new Script();
+    }
+}", 126, "test.cs", false);
+
+            Assert.Equal(12, info.Count());
+            Assert.Equal("Constructor: DateTime()", info.OrderBy(x => x).First());
+        }
+        
         [Fact]
         public void GenerateMemeberFullInfo()
         {
