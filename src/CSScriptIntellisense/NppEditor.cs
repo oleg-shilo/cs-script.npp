@@ -58,7 +58,7 @@ namespace CSScriptIntellisense
                 if (keyChar != 0)
                 {
                     justTypedText = keyChar.ToString();
-                    Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, justTypedText);
+                    Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, justTypedText);
                 }
             }
 

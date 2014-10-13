@@ -9,6 +9,7 @@ using System.Windows.Forms;
 namespace CSScriptIntellisense
 {
     #region " Notepad++ "
+
     [StructLayout(LayoutKind.Sequential)]
     public struct NppData
     {
@@ -46,7 +47,6 @@ namespace CSScriptIntellisense
         public byte _isShift;
         public byte _key;
 
-
         public bool IsCtrl { get { return _isCtrl != 0; } }
         public bool IsShift { get { return _isShift != 0; } }
         public bool IsAlt { get { return _isAlt != 0; } }
@@ -62,6 +62,7 @@ namespace CSScriptIntellisense
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string _itemName;
+
         public Action _pFunc;
         public int _cmdID;
         public bool _init2Check;
@@ -180,6 +181,7 @@ namespace CSScriptIntellisense
 
         // defines for docking manager
         CONT_LEFT = 0,
+
         CONT_RIGHT = 1,
         CONT_TOP = 2,
         CONT_BOTTOM = 3,
@@ -187,12 +189,14 @@ namespace CSScriptIntellisense
 
         // mask params for plugins of internal dialogs
         DWS_ICONTAB = 0x00000001,            // Icon for tabs are available
+
         DWS_ICONBAR = 0x00000002,            // Icon for icon bar are available (currently not supported)
         DWS_ADDINFO = 0x00000004,            // Additional information are in use
         DWS_PARAMSALL = (DWS_ICONTAB | DWS_ICONBAR | DWS_ADDINFO),
 
         // default docking values for first call of plugin
         DWS_DF_CONT_LEFT = (CONT_LEFT << 28),    // default docking on left
+
         DWS_DF_CONT_RIGHT = (CONT_RIGHT << 28),    // default docking on right
         DWS_DF_CONT_TOP = (CONT_TOP << 28),        // default docking on top
         DWS_DF_CONT_BOTTOM = (CONT_BOTTOM << 28),    // default docking on bottom
@@ -205,12 +209,16 @@ namespace CSScriptIntellisense
         public IntPtr hClient;            // HWND: client Window Handle
         public string pszName;            // TCHAR*: name of plugin (shown in window)
         public int dlgID;                // int: a funcItem provides the function pointer to start a dialog. Please parse here these ID
+
         // user modifications
         public NppTbMsg uMask;                // UINT: mask params: look to above defines
+
         public uint hIconTab;            // HICON: icon for tabs
         public string pszAddInfo;        // TCHAR*: for plugin to display additional informations
+
         // internal data, do not use !!!
         public RECT rcFloat;            // RECT: floating position
+
         public int iPrevCont;           // int: stores the privious container (toggling between float and dock)
         public string pszModuleName;    // const TCHAR*: it's the plugin file name. It's used to identify the plugin
     }
@@ -224,6 +232,7 @@ namespace CSScriptIntellisense
         L_ASM, L_DIFF, L_PROPS, L_PS, L_RUBY, L_SMALLTALK, L_VHDL, L_KIX, L_AU3,
         L_CAML, L_ADA, L_VERILOG, L_MATLAB, L_HASKELL, L_INNO, L_SEARCHRESULT,
         L_CMAKE, L_YAML, L_COBOL, L_GUI4CLI, L_D, L_POWERSHELL, L_R, L_JSP,
+
         // The end of enumated language type, so it should be always at the end
         L_EXTERNAL
     }
@@ -237,7 +246,7 @@ namespace CSScriptIntellisense
     [Flags]
     public enum NppMsg : uint
     {
-        //Here you can find how to use these messages : http://notepad-plus.sourceforge.net/uk/plugins-HOWTO.php 
+        //Here you can find how to use these messages : http://notepad-plus.sourceforge.net/uk/plugins-HOWTO.php
         NPPMSG = (0x400/*WM_USER*/ + 1000),
 
         NPPM_GETCURRENTSCINTILLA = (NPPMSG + 4),
@@ -377,7 +386,7 @@ namespace CSScriptIntellisense
 
         NPPM_GETNPPVERSION = (NPPMSG + 50),
         // int NPPM_GETNPPVERSION(0, 0)
-        // return version 
+        // return version
         // ex : v4.6
         // HIWORD(version) == 4
         // LOWORD(version) == 6
@@ -396,14 +405,14 @@ namespace CSScriptIntellisense
         // INT NPPM_GETPOSFROMBUFFERID(INT bufferID, 0)
         // Return VIEW|INDEX from a buffer ID. -1 if the bufferID non existing
         //
-        // VIEW takes 2 highest bits and INDEX (0 based) takes the rest (30 bits) 
+        // VIEW takes 2 highest bits and INDEX (0 based) takes the rest (30 bits)
         // Here's the values for the view :
         //  MAIN_VIEW 0
         //  SUB_VIEW  1
 
         NPPM_GETFULLPATHFROMBUFFERID = (NPPMSG + 58),
         // INT NPPM_GETFULLPATHFROMBUFFERID(INT bufferID, TCHAR *fullFilePath)
-        // Get full path file name from a bufferID. 
+        // Get full path file name from a bufferID.
         // Return -1 if the bufferID non existing, otherwise the number of TCHAR copied/to copy
         // User should call it with fullFilePath be NULL to get the number of TCHAR (not including the nul character),
         // allocate fullFilePath with the return values + 1, then call it again to get  full path file name
@@ -420,7 +429,6 @@ namespace CSScriptIntellisense
         //Reloads Buffer
         //wParam: Buffer to reload
         //lParam: 0 if no alert, else alert
-
 
         NPPM_GETBUFFERLANGTYPE = (NPPMSG + 64),
         //wParam: BufferID to get LangType from
@@ -547,12 +555,15 @@ namespace CSScriptIntellisense
         // Otherwise (allocated array size is too small) FALSE
 
         NPPM_GETCURRENTLINE = (RUNCOMMAND_USER + CURRENT_LINE),
+
         // INT NPPM_GETCURRENTLINE(0, 0)
         // return the caret current position line
         NPPM_GETCURRENTCOLUMN = (RUNCOMMAND_USER + CURRENT_COLUMN),
+
         // INT NPPM_GETCURRENTCOLUMN(0, 0)
         // return the caret current position column
         VAR_NOT_RECOGNIZED = 0,
+
         FULL_CURRENT_PATH = 1,
         CURRENT_DIRECTORY = 2,
         FILE_NAME = 3,
@@ -565,6 +576,7 @@ namespace CSScriptIntellisense
 
         // Notification code
         NPPN_FIRST = 1000,
+
         NPPN_READY = (NPPN_FIRST + 1), // To notify plugins that all the procedures of launchment of notepad++ are done.
         //scnNotification->nmhdr.code = NPPN_READY;
         //scnNotification->nmhdr.hwndFrom = hwndNpp;
@@ -676,8 +688,10 @@ namespace CSScriptIntellisense
         IDM_FILE_SAVE = (IDM_FILE + 6),
         IDM_FILE_SAVEALL = (IDM_FILE + 7),
         IDM_FILE_SAVEAS = (IDM_FILE + 8),
-        //IDM_FILE_ASIAN_LANG              = (IDM_FILE + 9), 
+
+        //IDM_FILE_ASIAN_LANG              = (IDM_FILE + 9),
         IDM_FILE_PRINT = (IDM_FILE + 10),
+
         IDM_FILE_PRINTNOW = 1001,
         IDM_FILE_EXIT = (IDM_FILE + 11),
         IDM_FILE_LOADSESSION = (IDM_FILE + 12),
@@ -712,6 +726,7 @@ namespace CSScriptIntellisense
 
         // Menu macro
         IDM_MACRO_STARTRECORDINGMACRO = (IDM_EDIT + 18),
+
         IDM_MACRO_STOPRECORDINGMACRO = (IDM_EDIT + 19),
         IDM_MACRO_PLAYBACKRECORDEDMACRO = (IDM_EDIT + 21),
         //-----------
@@ -728,6 +743,7 @@ namespace CSScriptIntellisense
 
         // Menu macro
         IDM_MACRO_SAVECURRENTMACRO = (IDM_EDIT + 25),
+
         //-----------
 
         IDM_EDIT_RTL = (IDM_EDIT + 26),
@@ -739,6 +755,7 @@ namespace CSScriptIntellisense
 
         // Menu macro
         IDM_MACRO_RUNMULTIMACRODLG = (IDM_EDIT + 32),
+
         //-----------
 
         IDM_EDIT_CLEARREADONLY = (IDM_EDIT + 33),
@@ -752,6 +769,7 @@ namespace CSScriptIntellisense
 
         //Belong to MENU FILE
         IDM_OPEN_ALL_RECENT_FILE = (IDM_EDIT + 40),
+
         IDM_CLEAN_RECENT_FILE_LIST = (IDM_EDIT + 41),
 
         IDM_SEARCH = (IDM + 3000),
@@ -809,8 +827,10 @@ namespace CSScriptIntellisense
         IDM_SEARCH_INVERSEMARKS = (IDM_SEARCH + 50),
 
         IDM_VIEW = (IDM + 4000),
+
         //IDM_VIEW_TOOLBAR_HIDE            = (IDM_VIEW + 1),
         IDM_VIEW_TOOLBAR_REDUCE = (IDM_VIEW + 2),
+
         IDM_VIEW_TOOLBAR_ENLARGE = (IDM_VIEW + 3),
         IDM_VIEW_TOOLBAR_STANDARD = (IDM_VIEW + 4),
         IDM_VIEW_REDUCETABBAR = (IDM_VIEW + 5),
@@ -1018,7 +1038,6 @@ namespace CSScriptIntellisense
         IDM_LANG_USER = (IDM_LANG + 80),     //46080
         IDM_LANG_USER_LIMIT = (IDM_LANG + 110),    //46110
 
-
         IDM_ABOUT = (IDM + 7000),
         IDM_HOMESWEETHOME = (IDM_ABOUT + 1),
         IDM_PROJECTPAGE = (IDM_ABOUT + 2),
@@ -1028,7 +1047,6 @@ namespace CSScriptIntellisense
         IDM_UPDATE_NPP = (IDM_ABOUT + 6),
         IDM_WIKIFAQ = (IDM_ABOUT + 7),
         IDM_HELP = (IDM_ABOUT + 8),
-
 
         IDM_SETTING = (IDM + 8000),
         IDM_SETTING_TAB_SIZE = (IDM_SETTING + 1),
@@ -1101,9 +1119,11 @@ namespace CSScriptIntellisense
         public IntPtr hToolbarBmp;
         public IntPtr hToolbarIcon;
     }
-    #endregion
+
+    #endregion " Notepad++ "
 
     #region " Scintilla "
+
     [StructLayout(LayoutKind.Sequential)]
     public struct Sci_NotifyHeader
     {
@@ -1963,7 +1983,10 @@ namespace CSScriptIntellisense
     [StructLayout(LayoutKind.Sequential)]
     public struct Sci_CharacterRange
     {
-        public Sci_CharacterRange(int cpmin, int cpmax) { cpMin = cpmin; cpMax = cpmax; }
+        public Sci_CharacterRange(int cpmin, int cpmax)
+        {
+            cpMin = cpmin; cpMax = cpmax;
+        }
         public int cpMin;
         public int cpMax;
     }
@@ -1994,7 +2017,27 @@ namespace CSScriptIntellisense
         }
 
         public IntPtr NativePointer { get { _initNativeStruct(); return _ptrSciTextRange; } }
-        public string lpstrText { get { _readNativeStruct(); return Marshal.PtrToStringAnsi(_sciTextRange.lpstrText); } }
+        public string lpstrAnsiText { get { _readNativeStruct(); return Marshal.PtrToStringAnsi(_sciTextRange.lpstrText); } }
+
+        public string lpstrText
+        {
+            get{
+            _readNativeStruct();
+            return Utf8PtrToString(_sciTextRange.lpstrText);
+        }}
+
+        public static string Utf8PtrToString(IntPtr pChar)
+        {
+            int len = MultiByteToWideChar(65001, 0, pChar, -1, null, 0);
+            if (len == 0) throw new System.ComponentModel.Win32Exception();
+            var buf = new StringBuilder(len);
+            len = MultiByteToWideChar(65001, 0, pChar, -1, buf, len);
+            return buf.ToString();
+        }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int MultiByteToWideChar(int codepage, int flags, IntPtr utf8, int utf8len, StringBuilder buffer, int buflen);
+
         public Sci_CharacterRange chrg { get { _readNativeStruct(); return _sciTextRange.chrg; } set { _sciTextRange.chrg = value; _initNativeStruct(); } }
         void _initNativeStruct()
         {
@@ -2083,9 +2126,11 @@ namespace CSScriptIntellisense
             Dispose();
         }
     }
-    #endregion
+
+    #endregion " Scintilla "
 
     #region " Platform "
+
     public class Win32
     {
         [DllImport("user32")]
@@ -2109,8 +2154,31 @@ namespace CSScriptIntellisense
         [DllImport("user32")]
         public static extern IntPtr SendMessage(IntPtr hWnd, NppMsg Msg, IntPtr wParam, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lParam);
 
+        public static IntPtr SendMessage(IntPtr hWnd, SciMsg Msg, string text)
+        {
+            byte[] bites = Encoding.UTF8.GetBytes(text);
+            IntPtr ip = ToUnmanagedArray(bites);
+            var result = Win32.SendMessage(hWnd, Msg, bites.Length, ip);
+            Marshal.FreeHGlobal(ip);
+            return result;
+        }
+
+        static IntPtr ToUnmanagedArray(byte[] data)
+        {
+            unsafe
+            {
+                int newSizeInBytes = Marshal.SizeOf(typeof(byte)) * data.Length + 2;
+                byte* newArrayPointer = (byte*)Marshal.AllocHGlobal(newSizeInBytes).ToPointer();
+
+                for (int i = 0; i < newSizeInBytes; i++)
+                    *(newArrayPointer + i) = (i < data.Length ? data[i] : (byte)0);
+
+                return (IntPtr)newArrayPointer;
+            }
+        }
         [DllImport("user32")]
         public static extern IntPtr SendMessage(IntPtr hWnd, SciMsg Msg, int wParam, IntPtr lParam);
+        
         [DllImport("user32")]
         public static extern IntPtr SendMessage(IntPtr hWnd, SciMsg Msg, int wParam, string lParam);
         [DllImport("user32")]
@@ -2201,5 +2269,6 @@ namespace CSScriptIntellisense
             Dispose();
         }
     }
-    #endregion
+
+    #endregion " Platform "
 }

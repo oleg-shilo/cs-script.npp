@@ -666,7 +666,7 @@ namespace CSScriptIntellisense
                 if (word != "")  // e.g. Console.Wr| but not Console.|
                     Win32.SendMessage(sci, SciMsg.SCI_SETSELECTION, p.X, p.Y);
 
-                Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, data.CompletionText);
+                Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, data.CompletionText);
 
                 if (snippetsOnlyMode)
                     TriggerCodeSnippetInsertion();

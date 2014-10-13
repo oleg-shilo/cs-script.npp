@@ -69,6 +69,11 @@ namespace CSScriptIntellisense
         {
             return Encoding.Default.GetByteCount(text);
         }
+        
+        public static int GetUtf8ByteCount(this string text)
+        {
+            return Encoding.UTF8.GetByteCount(text);
+        }
 
         public static bool IsControlStatement(this string text)
         {

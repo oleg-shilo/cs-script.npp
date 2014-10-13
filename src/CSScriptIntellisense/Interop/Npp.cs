@@ -28,7 +28,7 @@ namespace CSScriptIntellisense
         {
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_NEW);
             Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-            Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, text.GetByteCount(), text);
+            Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, text);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace CSScriptIntellisense
 
             Win32.SendMessage(sci, SciMsg.SCI_SETTARGETSTART, start, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETTARGETEND, end, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_REPLACETARGET, text.GetByteCount(), text);
+            Win32.SendMessage(sci, SciMsg.SCI_REPLACETARGET, text);
         }
 
         static public string TextAfterCursor(int maxLength)
@@ -242,6 +242,7 @@ namespace CSScriptIntellisense
             int currentPos = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             return TextAfterPosition(currentPos, maxLength);
         }
+
         static public string TextAfterPosition(int position, int maxLength)
         {
             int bufCapacity = maxLength + 1;
@@ -272,7 +273,8 @@ namespace CSScriptIntellisense
             string word = Npp.GetWordAtCursor(out p, SimpleCodeCompletion.Delimiters);
 
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTION, p.X, p.Y);
-            Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, text);
+            //Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, text);
+            Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, text);
         }
 
         static public string GetWordAtCursor(char[] wordDelimiters = null)
@@ -461,7 +463,7 @@ namespace CSScriptIntellisense
 
             return TextBeforePosition(currentPos, maxLength);
         }
-        
+
         /// <summary>
         /// Retrieve the height of a particular line of text in pixels.
         /// </summary>

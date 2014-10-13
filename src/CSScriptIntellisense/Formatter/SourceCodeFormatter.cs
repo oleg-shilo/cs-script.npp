@@ -13,8 +13,9 @@ namespace CSScriptIntellisense
             int currentPos = Npp.GetCaretPosition();
             string code = Npp.GetTextBetween(0, Npp.DocEnd);
             int topScrollOffset = Npp.GetLineNumber(currentPos) - Npp.GetFirstVisibleLine();
-
+            
             string newCode = FormatCode(code, ref currentPos);
+            
             Npp.SetTextBetween(newCode, 0, Npp.DocEnd);
 
             Npp.SetCaretPosition(currentPos);
