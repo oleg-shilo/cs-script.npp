@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
@@ -21,17 +20,30 @@ namespace CSScriptNpp
             DebuggerServer.OnDebuggerStateChanged += HandleDebuggerStateChanged;
             DebuggerServer.OnDebuggeeProcessNotification = message => Plugin.OutputPanel.DebugOutput.WriteLine(message);
 
-            var debugStepPointColor = Color.Yellow;
+            var debugStepPointColor = ColorFromConfig(Config.Instance.DebugStepPointColor, Color.Yellow);
 
+            //selection of the 
             Npp.SetIndicatorStyle(INDICATOR_DEBUGSTEP, SciMsg.INDIC_STRAIGHTBOX, debugStepPointColor);
             Npp.SetIndicatorTransparency(INDICATOR_DEBUGSTEP, 90, 255);
 
-            Npp.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, Color.Black, debugStepPointColor);
+            //left 'panel' arrow and breakpoint image
+            Npp.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, ColorFromConfig(Config.Instance.DebugStepPointForeColor, Color.Black), debugStepPointColor);
             Npp.SetMarkerStyle(MARK_BREAKPOINT, CSScriptNpp.Resources.Resources.breakpoint);
 
             Debugger.BreakOnException = Config.Instance.BreakOnException;
         }
 
+        static Color ColorFromConfig(string name, Color defaultColor)
+        {
+            try
+            {
+                return Color.FromName(name);
+            }
+            catch
+            {
+                return defaultColor;
+            }
+        }
         static public void LoadBreakPointsFor(string file)
         {
             string expectedkeyPrefix = file + "|";
@@ -109,7 +121,7 @@ namespace CSScriptNpp
                 if (marker != IntPtr.Zero)
                 {
                     int line = Npp.GetLineOfMarker(marker);
-                    if (line != -1 && !key.EndsWith("|" + (line+1)))
+                    if (line != -1 && !key.EndsWith("|" + (line + 1)))
                     {
                         //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
                         string file = key.Split('|').First();
@@ -117,8 +129,8 @@ namespace CSScriptNpp
                         if (!chengedFiles.Contains(file))
                             chengedFiles.Add(file);
 
-                        string newKey = file + "|" + (line+1);
-                        
+                        string newKey = file + "|" + (line + 1);
+
                         breakpoints.Remove(key);
                         breakpoints.Add(newKey, marker);
                     }
@@ -272,7 +284,6 @@ namespace CSScriptNpp
             return id;
         }
 
-
         public static void OnDebuggerFailure(string message)
         {
             string data = message.Replace("{$NL}", "\n");
@@ -286,7 +297,7 @@ namespace CSScriptNpp
                 if (IsRunning)
                     Stop();
 
-                //it is important not to display msgbox in this thread as it would release message pump 
+                //it is important not to display msgbox in this thread as it would release message pump
                 //while we are handling the current Windows message. We are in 'NppUI.Marshal'
                 if (lastCommand == "")
                     ThreadPool.QueueUserWorkItem(x => MessageBox.Show(string.Format("Debugger failed to execute last command.\n{0} ", error), "CS-Script"));

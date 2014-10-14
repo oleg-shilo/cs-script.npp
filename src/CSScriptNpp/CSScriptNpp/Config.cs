@@ -49,6 +49,8 @@ namespace CSScriptNpp
         public string ReleaseNotesViewedFor = "";
         public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
         public string SciptHistory = "";
+        public string DebugStepPointColor = "Yellow";
+        public string DebugStepPointForeColor = "Black";
         public int SciptHistoryMaxCount = 10;
         public int CollectionItemsInTooltipsMaxCount = 15;
         public int CollectionItemsInVisualizersMaxCount = 1000;
@@ -81,6 +83,8 @@ namespace CSScriptNpp
                 SetValue(Section, "InterceptConsole", InterceptConsole);
                 SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
                 SetValue(Section, "SciptHistory", SciptHistory);
+                SetValue(Section, "DebugStepPointColor", DebugStepPointColor);
+                SetValue(Section, "DebugStepPointForeColor", DebugStepPointForeColor);
                 SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
                 SetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
                 SetValue(Section, "CollectionItemsInVisualizersMaxCount", CollectionItemsInVisualizersMaxCount);
@@ -117,6 +121,8 @@ namespace CSScriptNpp
                 ListManagedProcessesOnly = GetValue(Section, "ListManagedProcessesOnly", ListManagedProcessesOnly);
                 RunExternalInDebugMode = GetValue(Section, "RunExternalInDebugMode", RunExternalInDebugMode);
                 //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
+                DebugStepPointColor = GetValue(Section, "DebugStepPointColor", DebugStepPointColor, 1024 * 4);
+                DebugStepPointForeColor = GetValue(Section, "DebugStepPointForeColor", DebugStepPointForeColor, 1024 * 4);
                 SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
                 SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
                 CollectionItemsInTooltipsMaxCount = GetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
