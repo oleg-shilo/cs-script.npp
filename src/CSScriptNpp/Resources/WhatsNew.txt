@@ -1,4 +1,5 @@
 v1.0.33.0
 
-* Added MemberInfo generation for the constructors
-* Fixed problems with text manipulation involving 'Simplified Chinese' characters    
+* Added config data for debugger step and breakpoint markers
+* Implemented background (on exit) update
+    
