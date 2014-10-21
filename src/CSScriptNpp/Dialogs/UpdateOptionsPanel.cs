@@ -14,12 +14,13 @@ namespace CSScriptNpp.Dialogs
         public UpdateOptionsPanel(string version)
         {
             InitializeComponent();
-            
+
             DoLayout();
 
             this.version = version;
             versionLbl.Text = version;
 
+            updateAfterExit.Checked = Config.Instance.UpdateAfterExit;
             customDeployment.Checked = (Config.Instance.UpdateMode == (string)customDeployment.Tag);
             msiDeployment.Checked = (Config.Instance.UpdateMode == (string)msiDeployment.Tag);
             manualDeployment.Checked = (Config.Instance.UpdateMode == (string)manualDeployment.Tag);
@@ -50,6 +51,11 @@ namespace CSScriptNpp.Dialogs
             progressLbl.Visible = true;
             progressBar.Style = ProgressBarStyle.Continuous;
 
+            if (customDeployment.Checked && updateAfterExit.Checked)
+            {
+                Close();
+            }
+
             Task.Factory.StartNew(() =>
                 {
                     try
@@ -61,7 +67,10 @@ namespace CSScriptNpp.Dialogs
                         }
                         else if (customDeployment.Checked || manualDeployment.Checked)
                         {
-                            distroFile = CSScriptHelper.GetLatestAvailableDistro(version, ".zip", UpdateProgress);
+                            if (customDeployment.Checked && updateAfterExit.Checked)
+                                distroFile = version;
+                            else
+                                distroFile = CSScriptHelper.GetLatestAvailableDistro(version, ".zip", UpdateProgress);
                         }
                         else
                         {
@@ -69,10 +78,12 @@ namespace CSScriptNpp.Dialogs
                             return;
                         }
 
-                        if (Closed)
+                        if (Closed && !updateAfterExit.Checked)
+                        {
                             return;
+                        }
 
-                        if (distroFile == null || !File.Exists(distroFile))
+                        if (distroFile == null || (!File.Exists(distroFile) && distroFile != version))
                         {
                             MessageBox.Show("Cannot download the binaries. The latest release Web page will be opened instead.", "CS-Script");
                             try
@@ -97,9 +108,18 @@ namespace CSScriptNpp.Dialogs
                             {
                                 Config.Instance.UpdateMode = (string)customDeployment.Tag;
 
+                                string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
                                 string targetDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                                string updater = DeployUpdater(targetDir, Path.GetDirectoryName(distroFile));
-                                Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
+                                string updater = DeployUpdater(targetDir, downloadDir);
+
+                                if (updateAfterExit.Checked)
+                                {
+                                    MessageBox.Show("The plugin will be updated after you close Notepad++", "CS-Script");
+                                    Process.Start(updater, string.Format("\"{0}\" \"{1}\" /asynch_update", version, targetDir));
+                                }
+                                else
+                                    Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
                             }
 
                             Config.Instance.Save();
@@ -110,7 +130,8 @@ namespace CSScriptNpp.Dialogs
                         MessageBox.Show("Cannot execute install update: " + ex.Message, "CS-Script");
                     }
 
-                    Invoke((Action)Close);
+                    try { Invoke((Action)Close); }
+                    catch { }
                 });
         }
 
@@ -150,9 +171,19 @@ namespace CSScriptNpp.Dialogs
         {
             optionsGroup.Visible = showOptions.Checked;
             if (showOptions.Checked)
-                this.Height = 277;
+                this.Height = 280;
             else
-                this.Height = 106;
+                this.Height = 110;
+        }
+
+        private void customDeployment_CheckedChanged(object sender, EventArgs e)
+        {
+            updateAfterExit.Enabled = customDeployment.Checked;
+        }
+
+        private void updateAfterExit_CheckedChanged(object sender, EventArgs e)
+        {
+            Config.Instance.UpdateAfterExit = updateAfterExit.Checked;
         }
     }
 }

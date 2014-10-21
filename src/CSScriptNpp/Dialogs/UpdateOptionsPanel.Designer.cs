@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.msiDeployment = new System.Windows.Forms.RadioButton();
             this.customDeployment = new System.Windows.Forms.RadioButton();
             this.optionsGroup = new System.Windows.Forms.GroupBox();
@@ -40,6 +41,8 @@
             this.progressLbl = new System.Windows.Forms.Label();
             this.releaseNotes = new System.Windows.Forms.LinkLabel();
             this.showOptions = new System.Windows.Forms.CheckBox();
+            this.updateAfterExit = new System.Windows.Forms.CheckBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.optionsGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,7 +50,7 @@
             // 
             this.msiDeployment.AutoSize = true;
             this.msiDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.msiDeployment.Location = new System.Drawing.Point(6, 68);
+            this.msiDeployment.Location = new System.Drawing.Point(13, 68);
             this.msiDeployment.Name = "msiDeployment";
             this.msiDeployment.Size = new System.Drawing.Size(248, 43);
             this.msiDeployment.TabIndex = 0;
@@ -61,7 +64,7 @@
             this.customDeployment.AutoSize = true;
             this.customDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.customDeployment.Checked = true;
-            this.customDeployment.Location = new System.Drawing.Point(6, 19);
+            this.customDeployment.Location = new System.Drawing.Point(13, 19);
             this.customDeployment.Name = "customDeployment";
             this.customDeployment.Size = new System.Drawing.Size(256, 43);
             this.customDeployment.TabIndex = 1;
@@ -71,13 +74,14 @@
     "ation.\r\nIt is an equivalent of Notepad++ Plugin Manager.\r\n";
             this.customDeployment.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.customDeployment.UseVisualStyleBackColor = true;
+            this.customDeployment.CheckedChanged += new System.EventHandler(this.customDeployment_CheckedChanged);
             // 
             // optionsGroup
             // 
             this.optionsGroup.Controls.Add(this.customDeployment);
             this.optionsGroup.Controls.Add(this.manualDeployment);
             this.optionsGroup.Controls.Add(this.msiDeployment);
-            this.optionsGroup.Location = new System.Drawing.Point(12, 61);
+            this.optionsGroup.Location = new System.Drawing.Point(8, 77);
             this.optionsGroup.Name = "optionsGroup";
             this.optionsGroup.Size = new System.Drawing.Size(425, 164);
             this.optionsGroup.TabIndex = 2;
@@ -87,7 +91,7 @@
             // 
             this.manualDeployment.AutoSize = true;
             this.manualDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.manualDeployment.Location = new System.Drawing.Point(6, 117);
+            this.manualDeployment.Location = new System.Drawing.Point(13, 117);
             this.manualDeployment.Name = "manualDeployment";
             this.manualDeployment.Size = new System.Drawing.Size(287, 30);
             this.manualDeployment.TabIndex = 0;
@@ -97,7 +101,7 @@
             // 
             // okBtn
             // 
-            this.okBtn.Location = new System.Drawing.Point(336, 6);
+            this.okBtn.Location = new System.Drawing.Point(332, 6);
             this.okBtn.Name = "okBtn";
             this.okBtn.Size = new System.Drawing.Size(101, 23);
             this.okBtn.TabIndex = 3;
@@ -108,7 +112,7 @@
             // cancelBtn
             // 
             this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelBtn.Location = new System.Drawing.Point(336, 35);
+            this.cancelBtn.Location = new System.Drawing.Point(332, 35);
             this.cancelBtn.Name = "cancelBtn";
             this.cancelBtn.Size = new System.Drawing.Size(101, 23);
             this.cancelBtn.TabIndex = 3;
@@ -118,7 +122,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 9);
+            this.label1.Location = new System.Drawing.Point(7, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 13);
             this.label1.TabIndex = 4;
@@ -127,7 +131,7 @@
             // versionLbl
             // 
             this.versionLbl.AutoSize = true;
-            this.versionLbl.Location = new System.Drawing.Point(101, 9);
+            this.versionLbl.Location = new System.Drawing.Point(97, 9);
             this.versionLbl.Name = "versionLbl";
             this.versionLbl.Size = new System.Drawing.Size(53, 13);
             this.versionLbl.TabIndex = 4;
@@ -135,7 +139,7 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(12, 25);
+            this.progressBar.Location = new System.Drawing.Point(8, 25);
             this.progressBar.MarqueeAnimationSpeed = 50;
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(316, 10);
@@ -145,7 +149,7 @@
             // progressLbl
             // 
             this.progressLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.progressLbl.Location = new System.Drawing.Point(228, 9);
+            this.progressLbl.Location = new System.Drawing.Point(224, 9);
             this.progressLbl.Name = "progressLbl";
             this.progressLbl.Size = new System.Drawing.Size(97, 13);
             this.progressLbl.TabIndex = 4;
@@ -157,7 +161,7 @@
             // releaseNotes
             // 
             this.releaseNotes.AutoSize = true;
-            this.releaseNotes.Location = new System.Drawing.Point(227, 45);
+            this.releaseNotes.Location = new System.Drawing.Point(223, 45);
             this.releaseNotes.Name = "releaseNotes";
             this.releaseNotes.Size = new System.Drawing.Size(103, 13);
             this.releaseNotes.TabIndex = 6;
@@ -168,7 +172,7 @@
             // showOptions
             // 
             this.showOptions.AutoSize = true;
-            this.showOptions.Location = new System.Drawing.Point(12, 41);
+            this.showOptions.Location = new System.Drawing.Point(8, 61);
             this.showOptions.Name = "showOptions";
             this.showOptions.Size = new System.Drawing.Size(138, 17);
             this.showOptions.TabIndex = 7;
@@ -176,13 +180,28 @@
             this.showOptions.UseVisualStyleBackColor = true;
             this.showOptions.CheckedChanged += new System.EventHandler(this.showOptions_CheckedChanged);
             // 
+            // updateAfterExit
+            // 
+            this.updateAfterExit.AutoSize = true;
+            this.updateAfterExit.Location = new System.Drawing.Point(8, 39);
+            this.updateAfterExit.Name = "updateAfterExit";
+            this.updateAfterExit.Size = new System.Drawing.Size(168, 17);
+            this.updateAfterExit.TabIndex = 9;
+            this.updateAfterExit.Tag = "";
+            this.updateAfterExit.Text = "Update after Notepad++ exits.";
+            this.toolTip1.SetToolTip(this.updateAfterExit, "Download binaries in background and install them after Notepad++ exits.\r\nThis opt" +
+        "ion is inly available for the \"Download and replace binaries\" deployment mode.");
+            this.updateAfterExit.UseVisualStyleBackColor = true;
+            this.updateAfterExit.CheckedChanged += new System.EventHandler(this.updateAfterExit_CheckedChanged);
+            // 
             // UpdateOptionsPanel
             // 
             this.AcceptButton = this.okBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelBtn;
-            this.ClientSize = new System.Drawing.Size(442, 238);
+            this.ClientSize = new System.Drawing.Size(442, 251);
+            this.Controls.Add(this.updateAfterExit);
             this.Controls.Add(this.showOptions);
             this.Controls.Add(this.releaseNotes);
             this.Controls.Add(this.progressBar);
@@ -218,5 +237,7 @@
         private System.Windows.Forms.Label progressLbl;
         private System.Windows.Forms.LinkLabel releaseNotes;
         private System.Windows.Forms.CheckBox showOptions;
+        private System.Windows.Forms.CheckBox updateAfterExit;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

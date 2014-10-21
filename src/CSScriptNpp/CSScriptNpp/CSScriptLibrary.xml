@@ -2211,7 +2211,7 @@
         </member>
         <member name="M:CSScriptLibrary.AsmHelper.GetStaticMethod">
             <summary>
-            Specialised version of GetMethodInvoker which returns MethodDelegate of the very first method found in the
+            Specialized version of GetMethodInvoker which returns MethodDelegate of the very first method found in the
             underlying assembly. This method is an overloaded implementation of the GetStaticMethod(string methodName, params object[] list).
             <para>
             Use this method when script assembly contains only one single type with one method.
@@ -2275,6 +2275,43 @@
             to indicate that the Type name of the method is irrelevant (e.g. "*.Method" or even "*.*").</param>
             <param name="list">List of 'Method' arguments.</param>
             <returns>Returns object of the same type as 'Method' return type.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AsmHelper.GetMembersOf(System.Object)">
+            <summary>
+            Gets the information about the object members.
+            <p>This is an extremely light way of getting Reflection information of a given object. Object can be either local one
+            or a TransparentProxy of the object instantiated in a remote AppDomain.</p>
+            <remarks>Note: Because none of the MemberInfo derivatives is serializable. This makes it impossible to use Reflection
+            for discovering the type members instantiated in the different AppDomains. And the TransparentProxies do not provide any marshaled
+            Reflection API neither.
+            </remarks>
+            <example>
+            <code>
+            using (var helper = new AsmHelper(CSScript.CompileCode(code), null, true))
+            {
+                var script = helper.CreateObject("Script"); //script code has 'class Script' declared
+                foreach (string info in helper.GetMembersOf(script))
+                    Debug.WriteLine(info);
+            }
+            </code>
+            </example>
+            </summary>
+            <param name="obj">The object.</param>
+            <returns>Collection of strings with each item representing human readable information about the Type member.
+            <para>
+            <c>Type implementation:</c><code>
+            class Script
+            {
+                public void SayHello(string gritting)
+                {
+                    ...
+            </code>
+            </para>
+            <para>
+            <para><c>Type member information:</c> </para>
+            "MemberType:Method;Name:SayHello;DeclaringType:Script;Signature:Void SayHello(System.String)"
+            </para>
+            </returns>
         </member>
         <member name="M:CSScriptLibrary.AsmHelper.TryCreateObject(System.String)">
              <summary>

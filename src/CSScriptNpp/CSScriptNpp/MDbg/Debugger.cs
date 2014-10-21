@@ -22,7 +22,7 @@ namespace CSScriptNpp
 
             var debugStepPointColor = ColorFromConfig(Config.Instance.DebugStepPointColor, Color.Yellow);
 
-            //selection of the 
+            //selection of the
             Npp.SetIndicatorStyle(INDICATOR_DEBUGSTEP, SciMsg.INDIC_STRAIGHTBOX, debugStepPointColor);
             Npp.SetIndicatorTransparency(INDICATOR_DEBUGSTEP, 90, 255);
 
@@ -44,6 +44,7 @@ namespace CSScriptNpp
                 return defaultColor;
             }
         }
+        
         static public void LoadBreakPointsFor(string file)
         {
             string expectedkeyPrefix = file + "|";

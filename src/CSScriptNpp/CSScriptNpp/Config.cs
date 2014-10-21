@@ -36,6 +36,7 @@ namespace CSScriptNpp
         public bool NavigateToRawCodeOnDblClickInOutput = false;
         //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
+        public bool UpdateAfterExit = false;
         public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
         public bool WordWrapInVisualizer = true;
@@ -91,6 +92,7 @@ namespace CSScriptNpp
                 SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
                 SetValue(Section, "LocalDebug", LocalDebug);
                 SetValue(Section, "BreakOnException", BreakOnException);
+                SetValue(Section, "UpdateAfterExit", UpdateAfterExit);
                 SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
                 SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
                 SetValue(Section, "UpdateMode", UpdateMode);
@@ -139,6 +141,7 @@ namespace CSScriptNpp
                 LastExternalProcessCpu = GetValue(Section, "LastExternalProcessCpu", LastExternalProcessCpu);
                 ReleaseNotesViewedFor = GetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
                 BreakOnException = GetValue(Section, "BreakOnException", BreakOnException);
+                UpdateAfterExit = GetValue(Section, "UpdateAfterExit", UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
                 CheckUpdatesOnStartup = GetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
                 UpdateMode = GetValue(Section, "UpdateMode", UpdateMode);

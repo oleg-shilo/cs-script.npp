@@ -1,4 +1,4 @@
-v1.0.32.0+
+v1.0.33.0
 
 * Added MemberInfo generation for the constructors
 * Fixed problems with text manipulation involving 'Simplified Chinese' characters    

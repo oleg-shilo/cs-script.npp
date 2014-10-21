@@ -2,23 +2,38 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Principal;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+using Updater;
 
 namespace CSScriptNpp.Deployment
 {
     class Program
     {
         const string elevationIndicatorArg = "/elevated";
+        const string asynchUpdateArg = "/asynch_update";
+        static Mutex appSingleInstanceMutex;
 
         static void Main(string[] args)
         {
+            bool createdNew;
+            appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
+
+            if (!createdNew)
+            {
+                MessageBox.Show("Another Notepad++ plugin update in progress.", "CS-Script");
+                return;
+            }
+
             try
             {
                 if (args[0] == "/restart") //restart
                 {
-                    // /restart [/asadmin] <prevInstanceProcId> <appPath>
+                    // /restart [/asadmin] <prevInstanceProcId> <appPath> [/background_wait]
 
                     int id;
                     string appPath;
@@ -59,13 +74,28 @@ namespace CSScriptNpp.Deployment
                         if (args.Contains(elevationIndicatorArg))
                             args = args.Where(a => a != elevationIndicatorArg).ToArray();
 
-                        if (EnsureNppNotRunning())
+                        bool isAsynchUpdate = args.Contains(asynchUpdateArg);
+
+                        // <zipFile> <pluginDir>
+                        string zipFile = args[0];
+                        string pluginDir = args[1];
+
+                        if (EnsureNppNotRunning(isAsynchUpdate))
                         {
-                            // <zipFile> <pluginDir>
-                            string zipFile = args[0];
-                            string pluginDir = args[1];
+                            if (isAsynchUpdate)
+                            {
+                                WaitPrompt.Show();
+
+                                string version = args[0];
+                                zipFile = WebHelper.DownloadDistro(version, WaitPrompt.OnProgress);
+                            }
+
                             string nppExe = Path.Combine(pluginDir, @"..\\notepad++.exe");
                             Updater.Deploy(zipFile, pluginDir);
+
+                            WaitPrompt.Hide();
+
+
                             if (File.Exists(nppExe))
                                 Process.Start(nppExe);
                             else
@@ -111,26 +141,35 @@ namespace CSScriptNpp.Deployment
             return true;
         }
 
-        static bool EnsureNppNotRunning()
+        static bool EnsureNppNotRunning(bool backgroundWait)
         {
             int count = 0;
             while (Process.GetProcessesByName("notepad++").Any())
             {
-                count++;
-
-                var buttons = MessageBoxButtons.OKCancel;
-                var prompt = "Please close any running instance of Notepad++ and press OK to proceed.";
-
-                if (count > 1)
+                if (backgroundWait)
                 {
-                    prompt = "Please close any running instance of Notepad++ and try again.";
-                    buttons = MessageBoxButtons.RetryCancel;
+                    Thread.Sleep(5000);
                 }
+                else
+                {
+                    count++;
 
-                if (MessageBox.Show(prompt, "CS-Script Update", buttons) == DialogResult.Cancel)
-                    return false;
+                    var buttons = MessageBoxButtons.OKCancel;
+                    var prompt = "Please close any running instance of Notepad++ and press OK to proceed.";
+
+
+                    if (count > 1)
+                    {
+                        prompt = "Please close any running instance of Notepad++ and try again.";
+                        buttons = MessageBoxButtons.RetryCancel;
+                    }
+
+                    if (MessageBox.Show(prompt, "CS-Script Update", buttons) == DialogResult.Cancel)
+                        return false;
+                }
             }
             return true;
         }
+
     }
 }
