@@ -707,7 +707,12 @@ namespace CSScriptNpp
                     {
                         control.SelectionStart = caretPos;
                         control.SelectionLength = 1;
-                        control.SelectedText = c.ToString();
+                        var newChar = c.ToString();
+                        if(newChar != control.SelectedText)
+                            control.SelectedText = newChar;
+                        else
+                            control.SelectionLength = 0;
+
                     }
                     caretPos++;
                 }
