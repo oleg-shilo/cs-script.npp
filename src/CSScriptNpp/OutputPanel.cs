@@ -1,15 +1,11 @@
-﻿using System;
+﻿using CSScriptLibrary;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptLibrary;
-using System.Globalization;
-using System.Reflection;
 
 namespace CSScriptNpp
 {
@@ -638,42 +634,84 @@ namespace CSScriptNpp
             control.InUiThread(() =>
                {
                    control.Text = null;
+                   caretPos = 0;
                }, true);
             return this;
         }
 
         public Output WriteLine(string text, params object[] args)
         {
-            control.InUiThread(() =>
-               {
-                   if (string.IsNullOrEmpty(text))
-                       control.Text += Environment.NewLine;
-                   else if (args.Length == 0)
-                       control.Text += text + Environment.NewLine;
-                   else
-                       control.Text += string.Format(text, args) + Environment.NewLine;
+            string newText;
+            if (string.IsNullOrEmpty(text))
+                newText = Environment.NewLine;
+            else if (args.Length == 0)
+                newText = text + Environment.NewLine;
+            else
+                newText = string.Format(text, args) + Environment.NewLine;
 
-                   EnsureCapacity();
-                   ScrollToView();
-               }, true);
-            return this;
+            return WriteText(newText);
         }
 
-        public Output Write(string text, params object[] args)
+        public Output WriteText(string text)
         {
             control.InUiThread(() =>
                 {
                     if (!string.IsNullOrEmpty(text))
                     {
-                        if (args.Length == 0)
-                            control.Text += text + Environment.NewLine;
-                        else
-                            control.Text += string.Format(text, args);
-
+                        caretPos += text.Length;
+                        control.Text += text;
                         EnsureCapacity();
                         ScrollToView();
                     }
                 }, true);
+            return this;
+        }
+
+        public Output Write(string text, params object[] args)
+        {
+            string newText;
+            if (args.Length == 0)
+                newText = text + Environment.NewLine;
+            else
+                newText = string.Format(text, args);
+
+            return WriteText(newText);
+        }
+
+        int caretPos = 0;
+        public Output WriteConsoleChar(char c)
+        {
+            control.InUiThread(() =>
+            {
+                if (c == '\n')
+                {
+                    control.AppendText(Environment.NewLine);
+
+                    EnsureCapacity();
+                    ScrollToView();
+                    caretPos = control.Text.Length;
+                }
+                else if (c == '\r')
+                {
+                    for (; caretPos > 0; caretPos--)
+                        if (control.Text[caretPos - 1] == '\n')
+                            break;
+                }
+                else
+                {
+                    if (caretPos == control.Text.Length)
+                    {
+                        control.AppendText(c.ToString());
+                    }
+                    else
+                    {
+                        control.SelectionStart = caretPos;
+                        control.SelectionLength = 1;
+                        control.SelectedText = c.ToString();
+                    }
+                    caretPos++;
+                }
+            }, true);
             return this;
         }
 

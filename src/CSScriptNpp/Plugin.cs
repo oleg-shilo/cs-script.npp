@@ -11,9 +11,18 @@ using UltraSharp.Cecil;
 namespace CSScriptNpp
 {
     /*TODO:
-     * + Outstanding features
+     * - Outstanding features
      *  - Debugger does not treat DateTime members as primitives
-     *  + F12 should work on constructors e.g. 'new Te|st();'
+     *  - Some objects cannot be inspected:
+     *      - new FileInfo(this.GetType().Assembly.Location);
+     *      - Process.GetCurrentProcess();
+     *  - F12 generated definition for FileInfo cannot be "code mapped"
+     *  - Integrate surrogate hosting //css_host /version:v4.0 /platform:x86; 
+     *      - Chinese characters
+     *      - Debugging
+     *  - In CS-Script implement object inspector (Dump)
+     *      - allow custom routine to be specified for the dump algorithm
+     *  - in CS-S.Npp allow calling object inspector and redirecting the outot to the debug window.
      * -------------------------------------------------------------------
      * 
      *  - Desirable but not essential features:

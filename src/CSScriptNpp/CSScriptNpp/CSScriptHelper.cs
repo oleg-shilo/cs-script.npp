@@ -172,7 +172,7 @@ namespace CSScriptNpp
             catch { }
         }
 
-        static public void Execute(string scriptFile, Action<Process> onStart = null, Action<string> onStdOut = null)
+        static public void Execute(string scriptFile, Action<Process> onStart = null, Action<char[]> onStdOut = null)
         {
             string outputFile = null;
             try
@@ -190,7 +190,7 @@ namespace CSScriptNpp
                     useFileRedirection = (onStdOut != null);
 
                     if (useFileRedirection)
-                        onStdOut("WARNING: StdOut interception is impossible for elevated scripts. The whole output will be displayed at the end of the execution instead. Alternatively you can elevate Notepad++ process.");
+                        onStdOut("WARNING: StdOut interception is impossible for elevated scripts. The whole output will be displayed at the end of the execution instead. Alternatively you can elevate Notepad++ process.".ToCharArray());
                 }
 
                 if (onStdOut != null)
@@ -223,11 +223,11 @@ namespace CSScriptNpp
 
                 if (onStdOut != null && !useFileRedirection)
                 {
-                    string line = null;
-                    while (null != (line = p.StandardOutput.ReadLine()))
+                    char[] buf = new char[1];
+                    while (0 != p.StandardOutput.Read(buf, 0, 1))
                     {
-                        output.AppendLine(line);
-                        onStdOut(line);
+                        output.Append(buf[0]);
+                        onStdOut(buf);
                     }
                 }
                 p.WaitForExit();
@@ -238,7 +238,7 @@ namespace CSScriptNpp
                     {
                         string outputText = File.ReadAllText(outputFile);
                         output.Append(outputText);
-                        onStdOut(outputText);
+                        onStdOut(outputText.ToCharArray());
                     }
                     catch { }
                 }

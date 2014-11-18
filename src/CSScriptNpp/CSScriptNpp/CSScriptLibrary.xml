@@ -181,7 +181,7 @@
         </member>
         <member name="P:CSScriptLibrary.ScriptParser.FilesToCompile">
             <summary>
-            Collection of the files to be compiled (including dependant scripts)
+            Collection of the files to be compiled (including dependent scripts)
             </summary>
         </member>
         <member name="P:CSScriptLibrary.ScriptParser.ImportedFiles">
@@ -482,6 +482,43 @@
             Enables omitting closing character (";") for CS-Script directives (e.g. "//css_ref System.Xml.dll" instead of "//css_ref System.Xml.dll;").
             </summary>
         </member>
+        <member name="M:csscript.CSharpParser.EscapeDirectiveDelimiters(System.String)">
+            <summary>
+            Escapes the CS-Script directive (e.g. //css_*) delimiters.
+            <para>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character. 
+            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters. 
+            The correct syntax would be as follows '//css_include script((today)).cs;'</para>
+            <remarks>The delimiters characters are ';,(){}'.
+            <para>However you should check <see cref="T:csscript.CSharpParser.DirectiveDelimiters"/> for the accurate list of all delimiters.
+            </para> 
+            </remarks>
+            </summary>
+            <param name="text">The text to be processed.</param>
+            <returns></returns>
+        </member>
+        <member name="M:csscript.CSharpParser.UnescapeDirectiveDelimiters(System.String)">
+            <summary>
+            Unescapes the CS-Script directive (e.g. //css_*) delimiters.
+            <para>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character. 
+            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters. 
+            The correct syntax would be as follows '//css_include script((today)).cs;'</para>
+            <remarks>The delimiters characters are ';,(){}'.
+            <para>However you should check <see cref="T:csscript.CSharpParser.DirectiveDelimiters"/> for the accurate list of all delimiters.
+            </para> 
+            </remarks>
+            </summary>
+            <param name="text">The text to be processed.</param>
+            <returns></returns>
+        </member>
+        <member name="F:csscript.CSharpParser.DirectiveDelimiters">
+            <summary>
+            The //css_* directive delimiters. 
+            <remarks>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character. 
+            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters. 
+            The correct syntax would be as follows '//css_include script((today)).cs;'
+            </remarks>
+            </summary>
+        </member>
         <member name="P:csscript.CSharpParser.Args">
             <summary>
             Embedded script arguments. The both script and engine arguments are allowed except "/noconfig" engine command line switch.
@@ -542,9 +579,14 @@
             Pre- and post-execution scripts.
             </summary>
         </member>
+        <member name="P:csscript.CSharpParser.Inits">
+            <summary>
+            Script initialization directives.
+            </summary>
+        </member>
         <member name="P:csscript.CSharpParser.ThreadingModel">
             <summary>
-            Appartment state of the script.
+            Apartment state of the script.
             </summary>
         </member>
         <member name="P:csscript.CSharpParser.Code">
@@ -589,6 +631,32 @@
             <summary>
             If set to 'true' parent script will be aborted on pre/post-script error, otherwise the error will be ignored.
             </summary>
+        </member>
+        <member name="T:csscript.CSharpParser.InitInfo">
+            <summary>
+            Class to hold the script initialization information.
+            </summary>
+        </member>
+        <member name="F:csscript.CSharpParser.InitInfo.CoInitializeSecurity">
+            <summary>
+            The boolean flag indicating if CoInitializeSecurity (with default parameters) should be called at the start of the script execution.
+            </summary>
+        </member>
+        <member name="F:csscript.CSharpParser.InitInfo.RpcImpLevel">
+            <summary>
+            The RpcImpLevel of CoInitializeSecurity arguments
+            </summary>
+        </member>
+        <member name="F:csscript.CSharpParser.InitInfo.EoAuthnCap">
+            <summary>
+            The EoAuthnCap of CoInitializeSecurity arguments
+            </summary>
+        </member>
+        <member name="M:csscript.CSharpParser.InitInfo.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:csscript.CSharpParser.InitInfo"/> class.
+            </summary>
+            <param name="statement">The original argument statement of the <c>//css_init</c> directive.</param>
         </member>
         <member name="T:csscript.CSharpParser.ImportInfo">
             <summary>

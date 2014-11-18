@@ -359,7 +359,7 @@ void main(string[] args)
                                 outputPanel.ShowDebugOutput();
                                 if (Config.Instance.InterceptConsole)
                                 {
-                                    CSScriptHelper.Execute(currentScript, OnRunStart, OnConsoleOut);
+                                    CSScriptHelper.Execute(currentScript, OnRunStart, OnConsoleOutChar);
                                 }
                                 else
                                 {
@@ -482,6 +482,15 @@ void main(string[] args)
                 Plugin.OutputPanel.ShowConsoleOutput();
 
             Plugin.OutputPanel.ConsoleOutput.WriteLine(line);
+        }
+
+        private void OnConsoleOutChar(char[] buf)
+        {
+            if (Plugin.OutputPanel.ConsoleOutput.IsEmpty)
+                Plugin.OutputPanel.ShowConsoleOutput();
+            
+            foreach(char c in buf)
+                Plugin.OutputPanel.ConsoleOutput.WriteConsoleChar(c);
         }
 
         private void Job()

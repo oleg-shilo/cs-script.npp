@@ -22,7 +22,7 @@ namespace CSScriptNpp
 
             var debugStepPointColor = ColorFromConfig(Config.Instance.DebugStepPointColor, Color.Yellow);
 
-            //selection of the
+            //selection of the debug step line
             Npp.SetIndicatorStyle(INDICATOR_DEBUGSTEP, SciMsg.INDIC_STRAIGHTBOX, debugStepPointColor);
             Npp.SetIndicatorTransparency(INDICATOR_DEBUGSTEP, 90, 255);
 
