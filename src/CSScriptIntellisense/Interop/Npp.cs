@@ -303,7 +303,10 @@ namespace CSScriptIntellisense
             Point point;
             if (position == -1)
                 position = Npp.GetCaretPosition();
-            return GetWordAtPosition(position, out point, statementDelimiters);
+
+            var retval = GetWordAtPosition(position, out point, statementDelimiters);
+
+            return retval;
         }
 
         static public string GetWordAtPosition(int position, out Point point, char[] wordDelimiters = null)
@@ -482,22 +485,37 @@ namespace CSScriptIntellisense
         public const int SB_SETPARTS = 1028;
         public const int SB_GETPARTS = 1030;
 
+        private const uint WM_USER = 0x0400;
+        //private const uint SB_SETPARTS = WM_USER + 4;
+        //private const uint SB_GETPARTS = WM_USER + 6;
+        private const uint SB_GETTEXTLENGTH = WM_USER + 12;
+        private const uint SB_GETTEXT = WM_USER + 13;
+
         static public string GetStatusbarLabel()
         {
             throw new NotImplementedException();
         }
 
         //static public unsafe void SetStatusbarLabel(string labelText)
-        static public void SetStatusbarLabel(string labelText)
+        static public string SetStatusbarLabel(string labelText)
         {
-            IntPtr mainWindowHandle = Process.GetCurrentProcess().MainWindowHandle;
+            string retval = null;
+            IntPtr mainWindowHandle = Plugin.NppData._nppHandle;
             // find status bar control on the main window of the application
             IntPtr statusBarHandle = FindWindowEx(mainWindowHandle, IntPtr.Zero, "msctls_statusbar32", IntPtr.Zero);
             if (statusBarHandle != IntPtr.Zero)
             {
+
+                //cut current text
+                var size = (int)SendMessage(statusBarHandle, SB_GETTEXTLENGTH, 0, IntPtr.Zero);
+                var buffer = new StringBuilder(size);
+                Win32.SendMessage(statusBarHandle, (NppMsg)SB_GETTEXT, 0, buffer);
+                retval = buffer.ToString();
+                
                 // set text for the existing part with index 0
                 IntPtr text = Marshal.StringToHGlobalAuto(labelText);
                 SendMessage(statusBarHandle, SB_SETTEXT, 0, text);
+
                 Marshal.FreeHGlobal(text);
 
                 //the foolowing may be needed for puture features
@@ -519,6 +537,7 @@ namespace CSScriptIntellisense
                 //SendMessage(statusBarHandle, SB_SETTEXT, nParts - 1, text0);
                 //Marshal.FreeHGlobal(text0);
             }
+            return retval;
         }
     }
 }

@@ -17,6 +17,7 @@ namespace CSScriptNpp
 
         static void ConnectPlugins()
         {
+            CSScriptHelper.NotifyClient = CSScriptIntellisense.Npp.SetStatusbarLabel;
             UltraSharp.Cecil.Reflector.GetCodeCompileOutput = CSScriptHelper.GetCodeCompileOutput;
         }
 

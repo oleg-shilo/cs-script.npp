@@ -143,7 +143,7 @@ namespace CSScriptNpp
                 mapTxt.Text = "";
                 ErrorMessage = e.Message;
             }
-            catch (Exception e)
+            catch 
             {
             }
         }

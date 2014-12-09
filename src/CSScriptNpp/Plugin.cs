@@ -16,13 +16,14 @@ namespace CSScriptNpp
      *  - Some objects cannot be inspected:
      *      - new FileInfo(this.GetType().Assembly.Location);
      *      - Process.GetCurrentProcess();
+     *      - Environment.CurrentDirectory
      *  - F12 generated definition for FileInfo cannot be "code mapped"
      *  - Integrate surrogate hosting //css_host /version:v4.0 /platform:x86; 
-     *      - Chinese characters
+     *      + Chinese characters
      *      - Debugging
      *  - In CS-Script implement object inspector (Dump)
      *      - allow custom routine to be specified for the dump algorithm
-     *  - in CS-S.Npp allow calling object inspector and redirecting the outot to the debug window.
+     *  - in CS-S.Npp allow calling object inspector and redirecting the output to the debug window.
      * -------------------------------------------------------------------
      * 
      *  - Desirable but not essential features:
@@ -230,8 +231,13 @@ namespace CSScriptNpp
 
         static public void ShowAbout()
         {
+#if DEBUG
+            //zos
+            CSScriptIntellisense.Npp.GetStatementAtPosition(4090);
+#else
             using (var dialog = new AboutBox())
                 dialog.ShowDialog();
+#endif
         }
 
         static public OutputPanel OutputPanel;

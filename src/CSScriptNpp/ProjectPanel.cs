@@ -784,9 +784,10 @@ void main(string[] args)
                         Config.Instance.Save();
                         ReloadScriptHistory();
                     }
-                    catch
+                    catch(Exception e)
                     {
                         //it is not a major use-case so doesn't matter why we failed
+                        MessageBox.Show("Cannot load script.\nError: "+e.Message, "CS-Script");
                     }
                 }
             }

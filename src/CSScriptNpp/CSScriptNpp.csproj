@@ -218,8 +218,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CSScriptLibrary, Version=3.5.10.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="CSScriptLibrary">
       <HintPath>CSScriptNpp\CSScriptLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -532,6 +531,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DebugScript.sln" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CSScriptNpp\nuget.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

@@ -7,7 +7,7 @@ rem CSScriptIntellisense.dll cannot be copied from build events as it would copy
 rem so it needs to be done manually.
 
 copy "CSScriptIntellisense\bin\Debug\CSScriptIntellisense.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp\CSScriptIntellisense.dll"
-copy "CSScriptIntellisense\CSharpIntellisense\*.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp"
+copy "CSScriptIntellisense\bin\Debug\CSharpIntellisense\*.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp"
 
 copy "CSScriptNpp\bin\Debug\CSScriptNpp.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp.dll"
 copy "CSScriptNpp\bin\Debug\CSScriptNpp\*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp"

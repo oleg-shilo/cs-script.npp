@@ -8,6 +8,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Principal;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 
 namespace CSScriptNpp
@@ -110,36 +111,54 @@ namespace CSScriptNpp
 
         static bool Build(string scriptFileCmd, out string compilerOutput)
         {
-            var p = new Process();
-            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /ca " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
-
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-
-            p.Start();
-
-            var output = new StringBuilder();
-
-            bool error = false;
-            string line = null;
-            while (null != (line = p.StandardOutput.ReadLine()))
+            string oldNotificationMessage = null;
+            try
             {
-                if (line.ToString().StartsWith("Error: Specified file could not be compiled."))
+                Cursor.Current = Cursors.WaitCursor;
+
+                var p = new Process();
+                p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+                p.StartInfo.Arguments = "/nl /ca " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
+
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+
+                p.Start();
+
+                var output = new StringBuilder();
+
+                bool error = false;
+                string line = null;
+                while (null != (line = p.StandardOutput.ReadLine()))
                 {
-                    error = true;
-                    continue;
+                    if (line.Contains("NuGet") && NotifyClient != null)
+                    {
+                        oldNotificationMessage = NotifyClient("Processing NuGet packages...");
+                    }
+
+                    if (line.ToString().StartsWith("Error: Specified file could not be compiled."))
+                    {
+                        error = true;
+                        continue;
+                    }
+
+                    if (!string.IsNullOrEmpty(line) && !line.Contains("at csscript.CSExecutor."))
+                        output.AppendLine(line);
                 }
+                p.WaitForExit();
 
-                if (!string.IsNullOrEmpty(line) && !line.Contains("at csscript.CSExecutor."))
-                    output.AppendLine(line);
+                compilerOutput = output.ToString();
+                return !error;
+
             }
-            p.WaitForExit();
-
-            compilerOutput = output.ToString();
-            return !error;
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+                if (oldNotificationMessage != null && NotifyClient != null)
+                    NotifyClient(oldNotificationMessage);
+            }
         }
 
         static public void ClearVSDir()
@@ -278,29 +297,51 @@ namespace CSScriptNpp
             ProcessStart("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\" //x\"");
         }
 
+        static public Func<string, string> NotifyClient;
+
         static public Project GenerateProjectFor(string script)
         {
-            var retval = new Project { PrimaryScript = script };
+            string oldNotificationMessage = null;
 
-            var searchDirs = new List<string> { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                var retval = new Project { PrimaryScript = script };
 
-            var parser = new ScriptParser(script, searchDirs.ToArray(), false);
-            searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
-            searchDirs.AddRange(GetGlobalSearchDirs());
+                var searchDirs = new List<string> { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
 
-            var sources = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
-            sources.Insert(0, script);
-            retval.SourceFiles = sources.ToArray();
+                var parser = new ScriptParser(script, searchDirs.ToArray(), false);
+                searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
+                searchDirs.AddRange(GetGlobalSearchDirs());
 
-            //some assemblies are referenced from code and some will need to be resolved from the namespaces
-            retval.Assemblies = parser.ReferencedNamespaces
-                                      .Where(name => !parser.IgnoreNamespaces.Contains(name))
-                                      .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
-                                      .Union(parser.ReferencedAssemblies
-                                                   .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
-                                      .Distinct()
-                                      .ToArray();
-            return retval;
+                var sources = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
+                sources.Insert(0, script);
+                retval.SourceFiles = sources.ToArray();
+
+                if (parser.Packages.Any() && NotifyClient != null)
+                {
+                    oldNotificationMessage = NotifyClient("Processing NuGet packages...");
+                }
+
+                //some assemblies are referenced from code and some will need to be resolved from the namespaces
+                retval.Assemblies = parser.ReferencedNamespaces
+                                          .Where(name => !parser.IgnoreNamespaces.Contains(name))
+                                          .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
+                                          .Union(parser.ResolvePackages(suppressDownloading: false))
+                                          .Union(parser.ReferencedAssemblies
+                                                       .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
+                                          .Distinct()
+                                          .ToArray();
+
+
+                return retval;
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+                if (oldNotificationMessage != null && NotifyClient != null)
+                    NotifyClient(oldNotificationMessage);
+            }
         }
 
         static public string GetDbgInfoFile(string script, bool create = false)
@@ -507,7 +548,7 @@ namespace CSScriptNpp
                 string script = "\"" + scriptFile + "\"";
 
                 string cscs = Path.Combine(Plugin.PluginDir, engineFileName);
-                string args = string.Format("/e{2} {0} {1}", GenerateProbingDirArg(), script, (windowApp?"w":""));
+                string args = string.Format("/e{2} {0} {1}", GenerateProbingDirArg(), script, (windowApp ? "w" : ""));
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs;
@@ -554,6 +595,7 @@ namespace CSScriptNpp
             var refAsms = parser.ReferencedNamespaces
                                 .Where(name => !parser.IgnoreNamespaces.Contains(name))
                                 .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
+                                .Union(parser.ResolvePackages(suppressDownloading: true)) //it is not the first time we are loading the script so we already tried to download the packages
                                 .Union(parser.ReferencedAssemblies
                                              .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
                                 .Distinct()

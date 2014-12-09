@@ -1,4 +1,5 @@
-﻿using CSScriptNpp;
+﻿using csscript;
+using CSScriptNpp;
 using CSScriptNpp.Dialogs;
 using System;
 using System.Collections.Generic;

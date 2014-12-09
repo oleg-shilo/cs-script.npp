@@ -64,6 +64,7 @@ namespace CSScriptIntellisense
             var refAsms = parser.ReferencedNamespaces
                                 .Where(name => !parser.IgnoreNamespaces.Contains(name))
                                 .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
+                                .Union(parser.ResolvePackages(suppressDownloading: true))
                                 .Union(parser.ReferencedAssemblies
                                              .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
                                 .Distinct()

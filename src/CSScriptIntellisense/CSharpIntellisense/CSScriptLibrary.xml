@@ -135,6 +135,26 @@
             ApartmentState of a script during the execution (default: ApartmentState.Unknown)
             </summary>
         </member>
+        <member name="M:CSScriptLibrary.ScriptParser.ResolvePackages">
+            <summary>
+            Resolves the NuGet packages into assemblies to be referenced by the script.
+            <para>If the package was never installed/downloaded yet CS-Script runtime will try to download it.</para>
+            <para>CS-Script will also analyze the installed package structure in try to reference compatible assemblies
+            from the package.</para>
+            </summary>
+            <returns>Collection of the referenced assembly files.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.ResolvePackages(System.Boolean)">
+            <summary>
+            Resolves the NuGet packages into assemblies to be referenced by the script.
+            <para>If the package was never installed/downloaded yet CS-Script runtime will try to download it.</para>
+            <para>CS-Script will also analyze the installed package structure in try to reference compatible assemblies
+            from the package.</para>
+            </summary>
+            <param name="suppressDownloading">if set to <c>true</c> suppresses downloading the NuGet package. 
+            Suppressing can be useful for the quick 'referencing' assessment.</param>
+            <returns>Collection of the referenced assembly files.</returns>
+        </member>
         <member name="M:CSScriptLibrary.ScriptParser.#ctor(System.String)">
             <summary>
             Constructor.
@@ -214,9 +234,14 @@
             Collection of namespaces, which if found in code, should not be resolved into referenced assembly.
             </summary>
         </member>
+        <member name="P:CSScriptLibrary.ScriptParser.Packages">
+            <summary>
+            Collection of the NuGet packages
+            </summary>
+        </member>
         <member name="P:CSScriptLibrary.ScriptParser.ReferencedAssemblies">
             <summary>
-            Collection of referenced asesemblies. All assemblies are referenced either from command-line, code or resolved from referenced namespaces.
+            Collection of referenced assemblies. All assemblies are referenced either from command-line, code or resolved from referenced namespaces.
             </summary>
         </member>
         <member name="T:csscript.PrecompilationContext">
@@ -567,6 +592,11 @@
         <member name="P:csscript.CSharpParser.RefNamespaces">
             <summary>
             References to the namespaces.
+            </summary>
+        </member>
+        <member name="P:csscript.CSharpParser.NuGets">
+            <summary>
+            References to the NuGet packages.
             </summary>
         </member>
         <member name="P:csscript.CSharpParser.Imports">

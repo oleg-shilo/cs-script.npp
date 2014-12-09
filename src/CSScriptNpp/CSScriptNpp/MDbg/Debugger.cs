@@ -44,7 +44,7 @@ namespace CSScriptNpp
                 return defaultColor;
             }
         }
-        
+
         static public void LoadBreakPointsFor(string file)
         {
             string expectedkeyPrefix = file + "|";
@@ -596,6 +596,14 @@ namespace CSScriptNpp
             public int End;
             public int Line;
 
+            public bool IsSame(FileLocation location)
+            {
+                return File == location.File &&
+                       Start == location.Start &&
+                       End == location.End &&
+                       Line == location.Line;
+            }
+
             static public FileLocation Parse(string sourceLocation)
             {
                 var parts = sourceLocation.Split('|');
@@ -877,11 +885,13 @@ namespace CSScriptNpp
 
         private static void ShowBreakpointSourceLocation(FileLocation location)
         {
+            if (lastLocation != null && lastLocation.IsSame(location)) return;
+            lastLocation = location;
+
             ClearDebuggingMarkers();
 
             Npp.PlaceIndicator(INDICATOR_DEBUGSTEP, location.Start, location.End);
             Npp.PlaceMarker(MARK_DEBUGSTEP, location.Line);
-            lastLocation = location;
 
             int start = Npp.GetFirstVisibleLine();
             int end = start + Npp.GetLinesOnScreen();
