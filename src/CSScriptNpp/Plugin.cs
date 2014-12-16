@@ -231,19 +231,27 @@ namespace CSScriptNpp
 
         static public void ShowAbout()
         {
-#if DEBUG
-            //zos
-            CSScriptIntellisense.Npp.GetStatementAtPosition(4090);
-#else
             using (var dialog = new AboutBox())
                 dialog.ShowDialog();
-#endif
         }
 
         static public OutputPanel OutputPanel;
         static public ProjectPanel ProjectPanel;
         static public CodeMapPanel CodeMapPanel;
         static public DebugPanel DebugPanel;
+
+        static public void Repaint()
+        {
+            if (CSScriptNpp.Plugin.ProjectPanel != null)
+                CSScriptNpp.Plugin.ProjectPanel.Refresh();
+            if (CSScriptNpp.Plugin.CodeMapPanel != null)
+                CSScriptNpp.Plugin.CodeMapPanel.Refresh();
+            if (CSScriptNpp.Plugin.DebugPanel != null)
+                CSScriptNpp.Plugin.DebugPanel.Refresh();
+            if (CSScriptNpp.Plugin.OutputPanel != null)
+                CSScriptNpp.Plugin.OutputPanel.Refresh();
+            
+        }
 
         static public DebugPanel GetDebugPanel()
         {

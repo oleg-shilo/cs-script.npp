@@ -984,5 +984,10 @@ void main(string[] args)
         {
             Utils.RestartNpp();
         }
+
+        private void ProjectPanel_Deactivate(object sender, EventArgs e)
+        {
+            this.Refresh();
+        }
     }
 }

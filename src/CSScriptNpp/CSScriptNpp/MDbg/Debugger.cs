@@ -1009,6 +1009,7 @@ namespace CSScriptNpp
         {
             if (!IsRunning)
             {
+                lastLocation = null;
                 Start(cpu);
                 SendSettings(BreakOnException);
                 watchExtressions.ForEach(x => DebuggerServer.AddWatchExpression(x));

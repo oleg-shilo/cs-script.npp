@@ -183,10 +183,24 @@ namespace CSScriptIntellisense
         }
         public static string GetCrefAttribute(this XmlTextReader reader)
         {
-            string typeName = reader.GetAttribute("cref");
-            if (typeName.StartsWith("T:") || typeName.StartsWith("F:"))
-                typeName = typeName.Substring(2);
-            return typeName;
+            try
+            {
+                string typeName = reader.GetAttribute("cref");
+                if (typeName != null)
+                {
+                    if (typeName.StartsWith("T:") || typeName.StartsWith("F:") || typeName.StartsWith("M:"))
+                        typeName = typeName.Substring(2);
+                }
+                else
+                {
+                    return reader.GetAttribute(0); 
+                }
+                return typeName;
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public static string Shrink(this string text)

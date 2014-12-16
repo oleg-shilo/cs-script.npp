@@ -494,6 +494,7 @@
             this.KeyPreview = true;
             this.Name = "ProjectPanel";
             this.Text = "CS-Script Scrips Manager";
+            this.Deactivate += new System.EventHandler(this.ProjectPanel_Deactivate);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

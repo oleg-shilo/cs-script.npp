@@ -54,6 +54,10 @@ namespace CSScriptNpp
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
         {
+            //WM_ACTIVATE                     0x0006
+            //WM_ACTIVATEAPP                  0x001C
+            if (Message == 0x001C || Message == 0x0006)
+                CSScriptNpp.Plugin.Repaint(); //some nasty painting artifacts need to be fixed when switching between apps
             return 1;
         }
 
