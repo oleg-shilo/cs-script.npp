@@ -1,4 +1,8 @@
-v1.0.34.0
+v1.0.35.0
 
-* Added support for /r character for the intercepted StdOut content
-    
+* Support for referencing NuGet packages from script
+* Added work around for windows painting artifact on N++ being deactivated
+* Improved F12 code reconstruction error handling
+* Implemented truncation of very large member info tooltips    
+* Improved file naming algorithm for "new script" action
+* Fixed uncontrolled auto-scrolling to current Debug step on Tooltip request
