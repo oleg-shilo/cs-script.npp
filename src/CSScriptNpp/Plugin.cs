@@ -528,6 +528,12 @@ namespace CSScriptNpp
             Plugin.FuncItems.RefreshItems();
             SetToolbarImage(Resources.Resources.css_logo_16x16_tb, projectPanelId);
         }
+        
+        public static void OnFileSavedAs(string oldName, string newName)
+        {
+            if (ProjectPanel.currentScript != null && ProjectPanel.currentScript == oldName) //script is loaded and renamed
+                ProjectPanel.LoadCurrentDoc();
+        }
 
         static void CloseAutomationChannel()
         {

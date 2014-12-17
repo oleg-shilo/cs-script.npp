@@ -74,6 +74,8 @@ namespace CSScriptNpp
         const int _SC_MARGE_SYBOLE = 1; //bookmark and breakpoint margin
         const int SCI_CTRL = 2; //Ctrl pressed modifier for SCN_MARGINCLICK
 
+        static string lastActivatedBuffer = null;
+
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
@@ -91,6 +93,13 @@ namespace CSScriptNpp
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
                 {
                     CSScriptNpp.Plugin.OnToolbarUpdate();
+                }
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPM_SAVECURRENTFILEAS ||
+                         (Config.Instance.HandleSaveAs && nc.nmhdr.code == (uint)2002)) //for some strange reason NPP doesn't fire NPPM_SAVECURRENTFILEAS but does 2002 instead.
+                {
+                    string file = Npp.GetCurrentFile();
+                    if (file != lastActivatedBuffer)
+                        CSScriptNpp.Plugin.OnFileSavedAs(lastActivatedBuffer, file);
                 }
                 else if (nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
                 {
@@ -119,6 +128,7 @@ namespace CSScriptNpp
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
                     string file = Npp.GetCurrentFile();
+                    lastActivatedBuffer = file;
 
                     if (file.EndsWith("npp.args"))
                     {

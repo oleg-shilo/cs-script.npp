@@ -672,8 +672,7 @@ void main(string[] args)
         {
             try
             {
-                MessageBox.Show("Not Implemented Yet");
-                //Process.Start("https://dl.dropboxusercontent.com/u/2192462/NPP/NppScriptsHelp.html");
+                Process.Start("https://csscriptnpp.codeplex.com/documentation");
             }
             catch { }
         }

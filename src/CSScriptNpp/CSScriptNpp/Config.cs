@@ -60,6 +60,7 @@ namespace CSScriptNpp
         public bool ShowProjectPanel = false;
         public bool ShowOutputPanel = false;
         public bool DebugAsConsole = true;
+        public bool HandleSaveAs = true;
         public bool ShowDebugPanel = false;
         public int OutputPanelCapacity = 10000; //num of characters
         public bool LocalDebug = true;
@@ -73,6 +74,7 @@ namespace CSScriptNpp
                 SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
                 SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
                 SetValue(Section, "DebugAsConsole", DebugAsConsole);
+                SetValue(Section, "HandleSaveAs", HandleSaveAs);
                 SetValue(Section, "ShowLineNuberInCodeMap", ShowLineNuberInCodeMap);
                 SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
                 SetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
@@ -119,6 +121,7 @@ namespace CSScriptNpp
                 ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
                 ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
                 DebugAsConsole = GetValue(Section, "DebugAsConsole", DebugAsConsole);
+                HandleSaveAs = GetValue(Section, "HandleSaveAs", HandleSaveAs);
                 WordWrapInVisualizer = GetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
                 ListManagedProcessesOnly = GetValue(Section, "ListManagedProcessesOnly", ListManagedProcessesOnly);
                 RunExternalInDebugMode = GetValue(Section, "RunExternalInDebugMode", RunExternalInDebugMode);
