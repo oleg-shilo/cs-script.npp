@@ -181,13 +181,13 @@ namespace CSScriptNpp
                 int index = Directory.GetFiles(ScriptsDirectory, scriptName + "*.cs").Length;
 
                 string newScript = Path.Combine(ScriptsDirectory, scriptName + ".cs");
-                if (index != -1)
+                if (index != 0)
                 {
                     int count = 0;
                     do
                     {
-                        index++;
                         count++;
+                        index++;
                         newScript = Path.Combine(ScriptsDirectory, string.Format("{0}{1}.cs", scriptName, index));
                         if (count > 10)
                         {
