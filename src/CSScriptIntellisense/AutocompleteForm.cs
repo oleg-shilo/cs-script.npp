@@ -292,7 +292,7 @@ namespace CSScriptIntellisense
         }
     }
 
-    static class Extensions
+    public static class Extensions
     {
         public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
         {
@@ -335,6 +335,20 @@ namespace CSScriptIntellisense
                     return i;
             }
             return Math.Min(pattern.Length, text.Length);
+        }
+
+        static string[] lineDelimiters = new string[] { "\r\n", "\n" };
+
+        public static string TruncateLines(this string text, int maxLineCount, string truncationPrompt)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                string[] lines = text.Split(lineDelimiters, maxLineCount + 1, StringSplitOptions.None);
+
+                if (lines.Count() > maxLineCount)
+                    return string.Join("\n", lines.Take(maxLineCount)) + "\n" + truncationPrompt;
+            }
+            return text;
         }
 
         //http://www.softcircuits.com/Blog/post/2010/01/10/Implementing-Word-Wrap-in-C.aspx

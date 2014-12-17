@@ -97,6 +97,7 @@ namespace CSScriptIntellisense
             if (longestDocumentationLine > maxLength)
                 signarure = signarure.WordWrap(maxLength);
 
+            signarure = signarure.TruncateLines(Config.Instance.MemberInfoMaxLines, "\n<Content was truncated. Use F12 to see the raw API documentation data.>");
             return signarure;
         }
 
@@ -210,7 +211,7 @@ namespace CSScriptIntellisense
 
         SizeF MeasureDisplayArea()
         {
-            string info = items[index].Text;
+            string info = items[index].Text; 
 
             if (!Simple)
                 info = RemoveTypeCategory(info);

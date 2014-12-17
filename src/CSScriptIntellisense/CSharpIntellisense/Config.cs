@@ -45,6 +45,7 @@ namespace CSScriptIntellisense
         public bool DisableMethodInfo = false;
         public bool FormatAsYouType = true;
         public int MemberInfoMaxCharWidth = 100;
+        public int MemberInfoMaxLines = 15;
         public bool SmartIndenting = true;
         public bool IgnoreDocExceptions = false;
 
@@ -66,6 +67,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "SmartIndenting", SmartIndenting);
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
+                SetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 SetValue(Section, "FormatAsYouType", FormatAsYouType);
             }
         }
@@ -84,6 +86,7 @@ namespace CSScriptIntellisense
                 ShowQuickInfoAsNativeNppTooltip = GetValue(Section, "ShowQuickInfoAsNativeNppTooltip", ShowQuickInfoAsNativeNppTooltip);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 MemberInfoMaxCharWidth = GetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
+                MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
             }
         }

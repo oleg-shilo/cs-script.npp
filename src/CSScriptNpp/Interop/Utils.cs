@@ -188,7 +188,7 @@ namespace CSScriptNpp
             else
                 return false;
         }
-
+       
         public static CSScriptNpp.FuncItem ToLocal(this CSScriptIntellisense.FuncItem item)
         {
             return new CSScriptNpp.FuncItem

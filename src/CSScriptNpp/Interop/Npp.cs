@@ -122,7 +122,7 @@ namespace CSScriptNpp
                                     tooltip = CSScriptIntellisense.Plugin.GetMemberUnderCursorInfo().FirstOrDefault();
                                 }
 
-                                Calltip.LastEval = tooltip;
+                                Calltip.LastEval = tooltip.TruncateLines(Config.Instance.CollectionItemsInTooltipsMaxCount, "\n<Content was truncated. Use F12 to see the raw API documentation data.>");
                                 Calltip.LastExpression = underMouseExpression;
                             }
 
