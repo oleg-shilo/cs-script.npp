@@ -1,8 +1,10 @@
 v1.0.35.0
-
 * Support for referencing NuGet packages from script
 * Added work around for windows painting artifact on N++ being deactivated
 * Improved F12 code reconstruction error handling
 * Implemented truncation of very large member info tooltips    
 * Improved file naming algorithm for "new script" action
 * Fixed uncontrolled auto-scrolling to current Debug step on Tooltip request
+
+v1.0.36.0
+* Update of the dependency library (critical fix in cscs.exe)

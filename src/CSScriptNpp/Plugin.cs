@@ -18,6 +18,7 @@ namespace CSScriptNpp
      *      - Process.GetCurrentProcess();
      *      - Environment.CurrentDirectory
      *  - F12 generated definition for FileInfo cannot be "code mapped"
+     *  - Formatting breaks the following code'SetKeyValue(@"*\shellex\ContextMenuHandlers\CS-Script", "", "{25D84CB0-7345-11D3-A4A1-0080C8ECFED4}");'
      *  - Integrate surrogate hosting //css_host /version:v4.0 /platform:x86; 
      *      + Chinese characters
      *      - Debugging
