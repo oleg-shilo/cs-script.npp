@@ -227,6 +227,8 @@ namespace CSScriptNpp.Dialogs
 
         void ResizeValueColumn()
         {
+            var autoSizeUnlimited = false;
+
             var g = CreateGraphics();
 
             var newWidth = 0;
@@ -242,7 +244,10 @@ namespace CSScriptNpp.Dialogs
                 int requiredWidth = Math.Max(30, (int)size.Width + visualizerIconSize);
                 if (newWidth < requiredWidth)
                 {
-                    newWidth = requiredWidth + 5;
+                    if (autoSizeUnlimited)
+                        newWidth = requiredWidth + 5;
+                    else
+                        newWidth = Math.Min(180, requiredWidth + 5);
                 }
             }
 
@@ -612,7 +617,7 @@ namespace CSScriptNpp.Dialogs
                         if (GetItemVisualizerClickableRange().Contains(e.X))
                             using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value.StripQuotation()))
                             {
-                                if(dbgObject.IsCollection)
+                                if (dbgObject.IsCollection)
                                     panel.InitAsCollection(dbgObject.DbgId);
                                 panel.ShowDialog();
                             }
@@ -786,8 +791,6 @@ namespace CSScriptNpp.Dialogs
 
     static class Extensions
     {
-        //public static ListViewItem GetTopParent(this ListViewItem item)
-        //{
         //    ListViewItem retva = item.Par
         //}
 

@@ -53,8 +53,12 @@ namespace CSScriptIntellisense
             if (string.IsNullOrEmpty(dllPath))
                 return null;
 
+            if (Path.GetDirectoryName(dllPath).EndsWith("CSScriptNpp", StringComparison.OrdinalIgnoreCase))
+                return null;
+
             var xmlFileName = Path.GetFileNameWithoutExtension(dllPath) + ".xml";
             var localPath = Path.Combine(Path.GetDirectoryName(dllPath), xmlFileName);
+
             if (File.Exists(localPath))
                 return new XmlDocumentationProvider(localPath);
 

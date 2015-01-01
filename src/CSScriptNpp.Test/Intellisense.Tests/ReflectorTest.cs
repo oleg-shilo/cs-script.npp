@@ -238,6 +238,17 @@ namespace CSScriptIntellisense.Test
         }
 
         [Fact]
+        public void Reflector_Reconstruct_DoesNotPickInheritedMembers()
+        {
+            ITypeDefinition type = LoadType<FileInfo>();
+
+            string code = new Reflector().Process(type)
+                                         .Code;
+
+            Assert.DoesNotContain(code, "public abstract string Name { get; }");
+        }
+       
+        [Fact]
         public void Reflector_Reconstruct_AbstractClass()
         {
             ITypeDefinition type = LoadLocalType("Test.TestAbstractClass");

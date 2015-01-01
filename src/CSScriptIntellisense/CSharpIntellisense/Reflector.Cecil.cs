@@ -207,19 +207,19 @@ namespace UltraSharp.Cecil
 
             intend++;
 
-            foreach (IType item in type.GetNestedTypes())
+            foreach (IType item in type.GetNestedTypes(null, GetMemberOptions.IgnoreInheritedMembers))
                 ReconstructNestedType(item);
 
-            foreach (IField item in type.GetFields())
+            foreach (IField item in type.GetFields(null, GetMemberOptions.IgnoreInheritedMembers))
                 ReconstructField(item);
 
-            foreach (IProperty item in type.GetProperties())
+            foreach (IProperty item in type.GetProperties(null, GetMemberOptions.IgnoreInheritedMembers))
                 ReconstructProperty(item);
 
-            foreach (IEvent item in type.GetEvents())
+            foreach (IEvent item in type.GetEvents(null, GetMemberOptions.IgnoreInheritedMembers))
                 ReconstructEvent(item);
 
-            IEnumerable<IMethod> constructors = type.GetConstructors();
+            IEnumerable<IMethod> constructors = type.GetConstructors(null, GetMemberOptions.IgnoreInheritedMembers);
             if (constructors.Count() == 1)
             {
                 IMethod method = constructors.First();

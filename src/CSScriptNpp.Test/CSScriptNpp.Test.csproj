@@ -39,6 +39,10 @@
     <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CSScriptLibrary, Version=3.9.1.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.NRefactory">
       <HintPath>..\CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>

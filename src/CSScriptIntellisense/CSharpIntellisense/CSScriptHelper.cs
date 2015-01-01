@@ -51,11 +51,13 @@ namespace CSScriptIntellisense
 
         static public Tuple<string[], string[]> GetProjectFiles(string script)
         {
-            var searchDirs = new List<string> { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ScriptsDir, };
+            var searchDirs = new List<string>();
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
             searchDirs.AddRange(GetGlobalSearchDirs());
+            searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            searchDirs.Add(ScriptsDir);
 
             IList<string> sourceFiles = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
             sourceFiles.Add(script);
