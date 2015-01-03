@@ -71,7 +71,7 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
             }
         }
 
-        public bool IsDictibnaryEntryType
+        public bool IsDictionaryEntryType
         {
             get { return TypeName.StartsWith("System.Collections.Generic.Dictionary+Entry<"); }
         }
@@ -108,7 +108,7 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                     {
                         return "Count = " + this.GetFieldValue<int>("count");
                     }
-                    else if (IsDictibnaryEntryType)
+                    else if (IsDictionaryEntryType)
                     {
                         return "[" + this.GetField("key").GetStringValue(false) + ", " + this.GetField("value").GetStringValue(false) + "]";
                     }
@@ -870,6 +870,242 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                 txt.Append(expandedDescription.ToString());
             }
             return txt.ToString();
+        }
+
+        //zos; CSScript.Npp related changes
+        public string InvokeToString()
+        {
+            CorObjectValue ov = this.ToInvokableObject();
+
+            var txt = new StringBuilder();
+
+            CorClass cls = ov.ExactType.Class;
+            CorMetadataImport importer = m_process.Modules.Lookup(cls.Module).Importer;
+            MetadataType mdType = importer.GetType(cls.Token) as MetadataType;
+
+            if (mdType.ReallyIsEnum)
+            {
+                txt.AppendFormat(" <{0}>", InternalGetEnumString(ov, mdType));
+            }
+            else if (m_process.IsRunning)
+            {
+                txt.Append(" <N/A during run>");
+            }
+            else
+            {
+                MDbgValue result = this.InvokeMethod("System.Object", "ToString");
+                string valName = result.GetStringValue(0);
+
+                // just purely for esthetically reasons we 'discard' "
+                if (valName.StartsWith("\"") && valName.EndsWith("\""))
+                    valName = valName.Substring(1, valName.Length - 2);
+
+                txt.Append(valName);
+            }
+            return txt.ToString();
+        }
+
+        //zos; CSScript.Npp related changes
+        public CorObjectValue ToInvokableObject()
+        {
+            CorValue value = this.CorValue;
+            if (value == null)
+                throw new Exception("MDbgValue isn't initialized");
+
+            // Record the memory addresses if displaying them is enabled
+            string prefix = String.Empty;
+            StringBuilder ptrStrBuilder = null;
+            if (m_process.m_engine.Options.ShowAddresses)
+            {
+                ptrStrBuilder = new StringBuilder();
+            }
+
+            try
+            {
+                value = Dereference(value, ptrStrBuilder);
+            }
+            catch (COMException ce)
+            {
+                if (ce.ErrorCode == (int)HResult.CORDBG_E_BAD_REFERENCE_VALUE)
+                    throw new Exception(MakePrefixFromPtrStringBuilder(ptrStrBuilder) + "<invalid reference value>");
+                throw;
+            }
+
+            prefix = MakePrefixFromPtrStringBuilder(ptrStrBuilder);
+
+            if (value == null)
+            {
+                throw new Exception(prefix + "<null>");
+            }
+
+            Unbox(ref value);
+
+            return value.CastToObjectValue();
+        }
+
+        //zos; CSScript.Npp related changes
+        public MDbgValue InvokeMethod(string name)
+        {
+            CorClass cls = this.ToInvokableObject().ExactType.Class;
+            CorMetadataImport importer = m_process.Modules.Lookup(cls.Module).Importer;
+            MetadataType mdType = importer.GetType(cls.Token) as MetadataType;
+
+            if (m_process.IsRunning)
+            {
+                throw new Exception("<N/A during run>");
+            }
+            else
+            {
+                string typeName = mdType.FullName;
+
+                if (!this.IsMethodAvailable(typeName, name))
+                {
+                    MDbgValue type = this.InvokeMethod("System.Object", "GetType");
+                    var baseType = type.InvokeMethod("System.Type", "get_BaseType");
+                    typeName = baseType.InvokeToString();
+
+                    while (!this.IsMethodAvailable(typeName, name))
+                    {
+                        type = baseType;
+                        baseType = type.InvokeMethod("System.Type", "get_BaseType");
+
+                        if (baseType.IsNull)
+                        {
+                            typeName = null;
+                            break;
+                        }
+                        typeName = baseType.InvokeToString();
+                    }
+                }
+
+                if (typeName != null)
+                    return this.InvokeMethod(typeName, name);
+                else
+                    throw new Exception("Method '" + name + "' not found");
+            }
+        }
+
+        //zos; CSScript.Npp related changes
+        MDbgValue InvokeMethod(string type, string name)
+        {
+            MDbgValue result = null;
+
+            CorObjectValue ov = this.ToInvokableObject();
+
+            bool fNeedToResumeThreads = true;
+
+            var txt = new StringBuilder();
+
+            CorClass cls = ov.ExactType.Class;
+
+            if (m_process.IsRunning)
+            {
+                throw new Exception("<N/A during run>");
+            }
+            else
+            {
+                MDbgThread activeThread = m_process.Threads.Active;
+
+                CorValue thisValue;
+                CorHeapValue hv = ov.CastToHeapValue();
+                if (hv != null)
+                {
+                    // we need to pass reference value.
+                    CorHandleValue handle = hv.CreateHandle(CorDebugHandleType.HANDLE_WEAK_TRACK_RESURRECTION);
+                    thisValue = handle;
+                }
+                else
+                    thisValue = ov;
+
+                try
+                {
+                    CorEval eval = m_process.Threads.Active.CorThread.CreateEval();
+                    m_process.CorProcess.SetAllThreadsDebugState(CorDebugThreadState.THREAD_SUSPEND,
+                                                                 activeThread.CorThread);
+
+                    MDbgFunction func = m_process.ResolveFunctionName(null, type, name,
+                                                                     thisValue.ExactType.Class.Module.Assembly.AppDomain);
+
+                    Debug.Assert(func != null); // we should be always able to resolve ToString function.
+
+                    eval.CallFunction(func.CorFunction, new CorValue[] { thisValue });
+                    m_process.Go();
+                    do
+                    {
+                        m_process.StopEvent.WaitOne();
+                        if (m_process.StopReason is EvalCompleteStopReason)
+                        {
+                            CorValue cv = eval.Result;
+                            if(cv == null) //it was VOID method
+                                result = null;
+                            else
+                                result = new MDbgValue(m_process, cv);
+                            break;
+                        }
+                        if ((m_process.StopReason is ProcessExitedStopReason) ||
+                            (m_process.StopReason is EvalExceptionStopReason))
+                        {
+                            throw new Exception("<N/A cannot evaluate>");
+                        }
+                        // hitting bp or whatever should not matter -- we need to ignore it
+                        m_process.Go();
+                    }
+                    while (true);
+                }
+                catch (COMException e)
+                {
+                    // Ignore cannot copy a VC class error - Can't copy a VC with object refs in it.
+                    if (e.ErrorCode != (int)HResult.CORDBG_E_OBJECT_IS_NOT_COPYABLE_VALUE_CLASS)
+                    {
+                        throw;
+                    }
+                }
+                catch (System.NotImplementedException)
+                {
+                    fNeedToResumeThreads = false;
+                }
+                finally
+                {
+                    if (fNeedToResumeThreads)
+                    {
+                        // we need to resume all the threads that we have suspended no matter what.
+                        m_process.CorProcess.SetAllThreadsDebugState(CorDebugThreadState.THREAD_RUN,
+                                                                     activeThread.CorThread);
+                    }
+                }
+            }
+            return result;
+        }
+
+        //zos; CSScript.Npp related changes
+        bool IsMethodAvailable(string type, string name)
+        {
+
+            if (m_process.IsRunning)
+            {
+                throw new Exception("<N/A during run>");
+            }
+            else
+            {
+                CorObjectValue ov = this.ToInvokableObject();
+
+                try
+                {
+                    //m_process.CorProcess.SetAllThreadsDebugState(CorDebugThreadState.THREAD_SUSPEND, m_process.Threads.Active.CorThread);
+
+                    MDbgFunction func = m_process.ResolveFunctionName(null, type, name, ov.ExactType.Class.Module.Assembly.AppDomain);
+                    return (func != null);
+                }
+                catch (COMException e)
+                {
+                    // Ignore cannot copy a VC class error - Can't copy a VC with object refs in it.
+                    if (e.ErrorCode != (int)HResult.CORDBG_E_OBJECT_IS_NOT_COPYABLE_VALUE_CLASS)
+                    {
+                        throw;
+                    }
+                }
+            }
+            return false;
         }
 
         private string PrintArray(int indentLevel, CorArrayValue av, int expandDepth, bool canDoFunceval)

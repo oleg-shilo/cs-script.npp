@@ -107,12 +107,19 @@ namespace gui
                 //var t = new Test();                            
                 //t.MyProp = 9;
                 string expression = "t.MyProp";
+                expression = "printer";
+                //expression = "d";
 
                 MDbgValue value = proc.ResolveVariable(expression, proc.Threads.Active.CurrentFrame);
 
                 if (value != null)
                 {
-                    Console.WriteLine(expression + ": " + value.GetStringValue(false));
+                    //Console.WriteLine(expression + ": " + value.InvokeToString());
+                    //Console.WriteLine(expression + ": " + value.InvokeMethod("Test").InvokeToString());
+                    Console.WriteLine(expression + ": " + value.InvokeMethod("Ping"));
+                    //Console.WriteLine(expression + ": " + value.InvokeMethod("Who").InvokeToString());
+                    //Console.WriteLine(expression + ": " + value.InvokeMethod("Who1").InvokeToString());
+                    //Console.WriteLine(expression + ": " + value.GetStringValue(false));
                 }
                 Console.WriteLine("#################");
             }
