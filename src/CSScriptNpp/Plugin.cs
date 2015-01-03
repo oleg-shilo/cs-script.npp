@@ -17,7 +17,6 @@ namespace CSScriptNpp
      *      - Some objects cannot be inspected:
      *          - new FileInfo(this.GetType().Assembly.Location);
      *          - Process.GetCurrentProcess();
-     *          - Environment.CurrentDirectory
      *      - in CS-S.Npp allow calling object inspector and redirecting the output to the debug window.
      *  - Integrate surrogate hosting //css_host /version:v4.0 /platform:x86; 
      *      - Debugging

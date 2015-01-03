@@ -78,7 +78,7 @@ namespace CSScriptNpp.Dialogs
                 Tooltip = null;
                 if (_value != null && _value.Length > TrancationSize)
                 {
-                    Tooltip = "Display value has been truncated";
+                    //Tooltip = "Display value has been truncated";
                     DispayValue = _value.Substring(0, TrancationSize).Replace("\r\n", "") + "...";
                 }
                 else

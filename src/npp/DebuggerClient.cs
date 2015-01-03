@@ -324,8 +324,12 @@ namespace npp
 
             if (!itemsOnly && value.IsComplexType)
             {
-                items = value.GetFields().Concat(
-                        value.GetProperties()).ToArray();
+                items = value.GetFields().ToArray();
+                try
+                {
+                    items = items.Concat(value.GetProperties()).ToArray();
+                }
+                catch { }
             }
 
             if (items != null || itemsOnly)
@@ -408,6 +412,8 @@ namespace npp
             return argParts[0];
         }
 
+        bool blockNotifications = false;
+
         public void ProcessInvoke(string command)
         {
             //<invokeId>:<action>:<args>
@@ -417,6 +423,7 @@ namespace npp
             string args = parts[2];
             string result = "";
 
+            blockNotifications = true;
             try
             {
                 if (IsInBreakMode)
@@ -482,6 +489,7 @@ namespace npp
             {
                 result = "Error: " + e.Message;
             }
+            blockNotifications = false;
             MessageQueue.AddNotification(NppCategory.Invoke + id + ":" + result);
         }
 
@@ -551,7 +559,9 @@ namespace npp
                 {
                     // This will include both instance and static fields
                     // It will also include all base class fields.
+                    //string stValue = val.InvokeToString();
                     result.Add(new XAttribute("isComplex", true),
+                      //         new XAttribute("value", stValue),
                                new XAttribute("isArray", false));
                 }
                 else
@@ -559,7 +569,7 @@ namespace npp
                     // This is a catch-all for primitives.
                     string stValue = val.GetStringValue(false);
                     result.Add(new XAttribute("isComplex", false),
-                               //new XAttribute("isArray", false),
+                        //new XAttribute("isArray", false),
                                new XAttribute("value", substituteValue ?? stValue));
                 }
             }
@@ -873,7 +883,8 @@ namespace npp
 
         void ReportBreakMode()
         {
-            MessageQueue.AddNotification(NppCategory.BreakEntered + IsInBreakMode);
+            if (!blockNotifications)
+                MessageQueue.AddNotification(NppCategory.BreakEntered + IsInBreakMode);
         }
 
         void ReportModules()

@@ -542,7 +542,13 @@ namespace CSScriptNpp.Dialogs
             }
             else
             {
-                SizeF size = e.Graphics.MeasureString(e.SubItem.Text, listView1.Font);
+                string subItemText = e.SubItem.Text;
+                if (subItemText.StartsWith("\""))
+                    subItemText = subItemText.Replace("\n", "\\n")
+                                             .Replace("\r", "\\r")
+                                             .Replace("\t", "\\t");
+
+                SizeF size = e.Graphics.MeasureString(subItemText, listView1.Font);
 
                 int visualizerOffset = visualizerIconSize;
                 if (e.ColumnIndex != 1 || !dbgObject.IsVisualizable)
@@ -567,9 +573,21 @@ namespace CSScriptNpp.Dialogs
                 {
                     Rectangle rect = e.Bounds;
                     rect.Width -= visualizerOffset;
-                    var format = new StringFormat();
-                    format.FormatFlags = StringFormatFlags.NoWrap;
-                    e.Graphics.DrawString(e.SubItem.Text, listView1.Font, textBrush, rect, format);
+                    var format = new StringFormat
+                    {
+                        FormatFlags = StringFormatFlags.NoWrap,
+                        Trimming = StringTrimming.EllipsisWord
+                    };
+                    e.Graphics.DrawString(subItemText, listView1.Font, textBrush, rect, format);
+                }
+
+                if (e.ColumnIndex == 1)
+                {
+                    if (e.Bounds.Width < requiredWidth)
+                        e.Item.ToolTipText = subItemText;
+                    else
+                        e.Item.ToolTipText = null;
+
                 }
 
                 if (e.ColumnIndex == 1 && dbgObject.IsVisualizable)
@@ -615,7 +633,7 @@ namespace CSScriptNpp.Dialogs
                     if (dbgObject != null && dbgObject.IsVisualizable)
                     {
                         if (GetItemVisualizerClickableRange().Contains(e.X))
-                            using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value.StripQuotation()))
+                            using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value.StripQuotation().Replace("\r", "").Replace("\n", "\r\n")))
                             {
                                 if (dbgObject.IsCollection)
                                     panel.InitAsCollection(dbgObject.DbgId);

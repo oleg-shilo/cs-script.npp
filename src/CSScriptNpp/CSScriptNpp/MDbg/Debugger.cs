@@ -248,14 +248,16 @@ namespace CSScriptNpp
                     retval = result ?? "";
                     done = true;
                 });
+                    Debug.WriteLine("---------- Begin Invoke: "+id+" ----------");
 
             int start = Environment.TickCount;
-            int timeout = 1000;
+            int timeout = 10000; //hard to find good timeout
 
             while (!done)
             {
                 if ((Environment.TickCount - start) > timeout)
                 {
+                    Debug.WriteLine("---------- Timeout ----------");
                     lock (invokeCompleteHandlers)
                     {
                         if (invokeCompleteHandlers.ContainsKey(id))

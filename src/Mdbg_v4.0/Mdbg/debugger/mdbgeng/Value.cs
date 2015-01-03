@@ -112,6 +112,12 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                     {
                         return "[" + this.GetField("key").GetStringValue(false) + ", " + this.GetField("value").GetStringValue(false) + "]";
                     }
+                    else
+                    {
+                        var toStringValue = this.InvokeToString();
+                        if (toStringValue != TypeName)
+                            return "{"+toStringValue+"}";
+                    }
                 }
                 catch { }
                 return null;
