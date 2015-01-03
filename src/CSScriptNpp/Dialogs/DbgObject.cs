@@ -89,7 +89,7 @@ namespace CSScriptNpp.Dialogs
         public string Tooltip { get; set; }
         public string DispayValue { get; set; }
 
-        public const int TrancationSize = 400;
+        public const int TrancationSize = 100;
 
         public bool IsUnresolved
         {

@@ -214,12 +214,14 @@ namespace CSScriptNpp
                         }
                         else
                         {
-                            var dbgValueText = dbgValue.Attribute("value").Value;
+                            var dbgValueText = dbgValue.Attribute("rawDisplayValue").Value;
+                            if (string.IsNullOrEmpty(dbgValueText))
+                                dbgValueText = dbgValue.Attribute("value").Value;
 
                             if (dbgValueText.Length > DbgObject.TrancationSize)
-                                return content + ": <value has been truncated because it is too long>";
+                                return content + ": " + dbgValueText.Substring(0, DbgObject.TrancationSize) + "...";
                             else
-                                return content + ": " + dbgValue.Attribute("value").Value;
+                                return content + ": " + dbgValueText;
                         }
                     }
                 }
@@ -248,7 +250,7 @@ namespace CSScriptNpp
                     retval = result ?? "";
                     done = true;
                 });
-                    Debug.WriteLine("---------- Begin Invoke: "+id+" ----------");
+            Debug.WriteLine("---------- Begin Invoke: " + id + " ----------");
 
             int start = Environment.TickCount;
             int timeout = 10000; //hard to find good timeout
