@@ -329,7 +329,7 @@ namespace CSScriptNpp
                                           .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
                                           .Union(parser.ResolvePackages(suppressDownloading: false))
                                           .Union(parser.ReferencedAssemblies
-                                                       .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
+                                                       .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"", ""), searchDirs.ToArray())))
                                           .Distinct()
                                           .ToArray();
 
