@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Threading.Tasks;
 
-[assembly: SecurityPermission(SecurityAction.RequestMinimum, Unrestricted = true)]
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, Unrestricted = true)] //required for MDbg
 
 class Program
 {

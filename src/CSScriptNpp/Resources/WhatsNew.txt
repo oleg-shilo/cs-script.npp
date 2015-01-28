@@ -1,6 +1,3 @@
-v1.0.37.0
-* F12 generated type definition cleared from inherited members.
-* Fixed F12 generation of XML documentation for 'nuget cs-script' assembly.
-* Improved auto-sizing of 'value column' of Debug Panel.
-* Improved 'Watch Object' tooltips and display values
-* Improved runtime code tooltips.
+v1.0.38.0
+* Added "%CSSCRIPT_DIR%\\Lib" as a probing directory for project referenced assemblies.
+* Fixed problem with displaying project references by quoted assembly full name.

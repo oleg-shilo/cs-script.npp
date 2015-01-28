@@ -20,36 +20,36 @@ namespace Testpad
         static void Main()
         {
             DebugExternal.ShowModal(); return;
-            new UpdateOptionsPanel("1.0.1.1").ShowDialog(); return;
+            //new UpdateOptionsPanel("1.0.1.1").ShowDialog(); return;
 
-            var tt = typeof(List<int>).GetProperties();
+            //var tt = typeof(List<int>).GetProperties();
 
-            var args = "dsfsd,df".Split(',');
-            var list = new List<string>(args);
-            var map = new Dictionary<int, int>()
-            {
-                {1,3},
-                {2,7}
-            };
+            //var args = "dsfsd,df".Split(',');
+            //var list = new List<string>(args);
+            //var map = new Dictionary<int, int>()
+            //{
+            //    {1,3},
+            //    {2,7}
+            //};
 
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
 
-            //var panel = new AutoWatchPanel();
-            //panel.Test();
+            ////var panel = new AutoWatchPanel();
+            ////panel.Test();
 
-            //Screen.FromPoint();
+            ////Screen.FromPoint();
 
-            var dlg = new ShortcutBuilder();
-            dlg.Name = "test gtdrfgfds";
-            dlg.Shortcut = "Ctrl+Shift+Alt+F7";
-            //dlg.ShowDialog();
-            //return;
+            //var dlg = new ShortcutBuilder();
+            //dlg.Name = "test gtdrfgfds";
+            //dlg.Shortcut = "Ctrl+Shift+Alt+F7";
+            ////dlg.ShowDialog();
+            ////return;
 
-            var panel = new DebugPanel();
-            panel.UpdateCallstack("+1|Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}+2|[External Code]|{$NL}");
-            panel.ShowDialog();
+            //var panel = new DebugPanel();
+            //panel.UpdateCallstack("+1|Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}+2|[External Code]|{$NL}");
+            //panel.ShowDialog();
 
             //Application.Run(new Form1());
         }

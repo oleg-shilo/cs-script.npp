@@ -353,8 +353,6 @@ namespace CSScriptIntellisense
                 ResetIdleTimer(); //prevent closing if the mouse is over the form in !Simple mode
         }
 
-        static int count = 0;
-
         private void MemberInfoPanel_Load(object sender, EventArgs e)
         {
             Capture = true;

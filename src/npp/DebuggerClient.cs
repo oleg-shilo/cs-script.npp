@@ -976,7 +976,7 @@ namespace npp
             }
         }
 
-        bool test = true;
+        //bool test = true;
 
         bool breakOnException = true;
 
