@@ -746,6 +746,9 @@ namespace CSScriptNpp
             var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
             if (csscriptDir != null)
             {
+                var dirs = new List<string>();
+                dirs.Add(Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\Lib"));
+
                 try
                 {
                     var configFile = Path.Combine(csscriptDir, "css_config.xml");
@@ -754,11 +757,11 @@ namespace CSScriptNpp
                     {
                         var doc = new XmlDocument();
                         doc.Load(configFile);
-
-                        return doc.FirstChild.SelectSingleNode("searchDirs").InnerText.Split(';');
+                        dirs.AddRange(doc.FirstChild.SelectSingleNode("searchDirs").InnerText.Split(';'));
                     }
                 }
                 catch { }
+                return dirs.ToArray();
             }
             return new string[0];
         }
