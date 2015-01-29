@@ -1,3 +1,6 @@
 v1.0.38.0
 * Added "%CSSCRIPT_DIR%\\Lib" as a probing directory for project referenced assemblies.
 * Fixed problem with displaying project references by quoted assembly full name.
+
+v1.0.38.1
+* Improved referenced assembly analysis in 'script project' and intellisense

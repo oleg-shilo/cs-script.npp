@@ -10,6 +10,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using CSScriptIntellisense;
 
 namespace CSScriptNpp
 {
@@ -151,7 +152,6 @@ namespace CSScriptNpp
 
                 compilerOutput = output.ToString();
                 return !error;
-
             }
             finally
             {
@@ -308,11 +308,14 @@ namespace CSScriptNpp
                 Cursor.Current = Cursors.WaitCursor;
                 var retval = new Project { PrimaryScript = script };
 
-                var searchDirs = new List<string> { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
+                var searchDirs = new List<string>();
+                searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 
                 var parser = new ScriptParser(script, searchDirs.ToArray(), false);
+
                 searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
-                searchDirs.AddRange(GetGlobalSearchDirs());
+                searchDirs.AddRange(CSScriptIntellisense.CSScriptHelper.GetGlobalSearchDirs());
+                searchDirs.RemoveEmptyAndDulicated();
 
                 var sources = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
                 sources.Insert(0, script);
@@ -323,17 +326,7 @@ namespace CSScriptNpp
                     oldNotificationMessage = NotifyClient("Processing NuGet packages...");
                 }
 
-                //some assemblies are referenced from code and some will need to be resolved from the namespaces
-                retval.Assemblies = parser.ReferencedNamespaces
-                                          .Where(name => !parser.IgnoreNamespaces.Contains(name))
-                                          .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
-                                          .Union(parser.ResolvePackages(suppressDownloading: false))
-                                          .Union(parser.ReferencedAssemblies
-                                                       .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"", ""), searchDirs.ToArray())))
-                                          .Distinct()
-                                          .ToArray();
-
-
+                retval.Assemblies = parser.AgregateReferences(searchDirs).ToArray();
                 return retval;
             }
             finally
@@ -583,7 +576,7 @@ namespace CSScriptNpp
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined in the script
-            searchDirs.AddRange(GetGlobalSearchDirs());
+            searchDirs.AddRange(CSScriptIntellisense.CSScriptHelper.GetGlobalSearchDirs());
 
             if (NppScriptsDir != null)
                 searchDirs.Add(NppScriptsDir);
@@ -597,7 +590,7 @@ namespace CSScriptNpp
                                 .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
                                 .Union(parser.ResolvePackages(suppressDownloading: true)) //it is not the first time we are loading the script so we already tried to download the packages
                                 .Union(parser.ReferencedAssemblies
-                                             .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
+                                             .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"",""), searchDirs.ToArray())))
                                 .Distinct()
                                 .ToArray();
 
@@ -741,7 +734,7 @@ namespace CSScriptNpp
             return probingDirArg;
         }
 
-        private static string[] GetGlobalSearchDirs()
+        private static string[] GetGlobalSearchDirs_tobe_removed()
         {
             var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
             if (csscriptDir != null)
@@ -757,7 +750,10 @@ namespace CSScriptNpp
                     {
                         var doc = new XmlDocument();
                         doc.Load(configFile);
-                        dirs.AddRange(doc.FirstChild.SelectSingleNode("searchDirs").InnerText.Split(';'));
+                        dirs.AddRange(doc.FirstChild
+                                         .SelectSingleNode("searchDirs")
+                                         .InnerText.Split(';')
+                                         .Select(x=>Environment.ExpandEnvironmentVariables(x)));
                     }
                 }
                 catch { }

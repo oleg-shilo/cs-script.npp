@@ -8,6 +8,7 @@ using CSScriptLibrary;
 using csscript;
 using ICSharpCode.NRefactory.Editor;
 using System.Xml;
+using System.Diagnostics;
 
 namespace CSScriptIntellisense
 {
@@ -27,11 +28,14 @@ namespace CSScriptIntellisense
             }
         }
 
-        static string[] GetGlobalSearchDirs()
+        static public string[] GetGlobalSearchDirs()
         {
             var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
             if (csscriptDir != null)
             {
+                var dirs = new List<string>();
+                dirs.Add(Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\Lib"));
+
                 try
                 {
                     var configFile = Path.Combine(csscriptDir, "css_config.xml");
@@ -40,37 +44,133 @@ namespace CSScriptIntellisense
                     {
                         var doc = new XmlDocument();
                         doc.Load(configFile);
+                        dirs.AddRange(doc.FirstChild
+                                         .SelectSingleNode("searchDirs")
+                                         .InnerText.Split(';')
+                                         .Select(x => Environment.ExpandEnvironmentVariables(x)));
+                    }
+                }
+                catch { }
+                return dirs.ToArray();
+            }
+            return new string[0];
+        }
 
-                        return doc.FirstChild.SelectSingleNode("searchDirs").InnerText.Split(';');
+        static public List<string> RemoveEmptyAndDulicated(this List<string> collection)
+        {
+            collection.RemoveAll(x => string.IsNullOrEmpty(x));
+            var distinct = collection.Distinct().ToArray();
+            collection.Clear();
+            collection.AddRange(distinct);
+            return collection;
+        }
+
+
+        static public List<string> AgregateReferences(this ScriptParser parser, IEnumerable<string> searchDirs)
+        {
+            var probingDirs = searchDirs.ToArray();
+
+            //some assemblies are referenced from code and some will need to be resolved from the namespaces
+            var refNsAsms = parser.ReferencedNamespaces
+                                  .Where(name => !parser.IgnoreNamespaces.Contains(name))
+                                  .SelectMany(name => AssemblyResolver.FindAssembly(name, probingDirs));
+            
+            var refPkAsms = parser.ResolvePackages(suppressDownloading: true);
+
+            var refCodeAsms = parser.ReferencedAssemblies
+                                    .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"", ""), probingDirs));
+
+            var refAsms = refNsAsms.Union(refPkAsms)
+                                   .Union(refCodeAsms)
+                                   .Distinct()
+                                   .ToArray();
+
+            refAsms = FilterDuplicatedAssembliesByFileName(refAsms);
+            //refAsms = FilterDuplicatedAssembliesWithReflection(refAsms); //for possible more comprehensive filtering in future 
+            return refAsms.ToList();
+        }
+
+        static public T CreateInstanceFromAndUnwrap<T>(this AppDomain domain)
+        {
+            Type type = typeof(T);
+            return (T)domain.CreateInstanceFromAndUnwrap(type.Assembly.Location, type.ToString());
+        }
+
+        class RemoteResolver : MarshalByRefObject
+        {
+            //Must be done remotely to avoid loading collisions like below:
+            //"Additional information: API restriction: The assembly 'file:///...\CSScriptLibrary.dll' has 
+            //already loaded from a different location. It cannot be loaded from a new location within the same appdomain."
+            public string[] Filter(string[] assemblies)
+            {
+                var uniqueAsms = new List<string>();
+                var asmNames = new List<string>();
+                foreach (var item in assemblies)
+                {
+                    try
+                    {
+                        string name = Assembly.ReflectionOnlyLoadFrom(item).GetName().Name;
+                        if (!asmNames.Contains(name))
+                        {
+                            uniqueAsms.Add(item);
+                            asmNames.Add(name);
+                        }
+                    }
+                    catch { }
+                }
+                return uniqueAsms.ToArray();
+            }
+        }
+
+        static string[] FilterDuplicatedAssembliesWithReflection(string[] assemblies)
+        {
+            var tempDomain = AppDomain.CurrentDomain.Clone();
+
+            var resolver = tempDomain.CreateInstanceFromAndUnwrap<RemoteResolver>();
+            var newAsms = resolver.Filter(assemblies);
+
+            tempDomain.Unload();
+
+            return newAsms;
+        }
+
+        static string[] FilterDuplicatedAssembliesByFileName(string[] assemblies)
+        {
+            var uniqueAsms = new List<string>();
+            var asmNames = new List<string>();
+            foreach (var item in assemblies)
+            {
+                try
+                {
+                    string name = Path.GetFileNameWithoutExtension(item);
+                    if (!asmNames.Contains(name))
+                    {
+                        uniqueAsms.Add(item);
+                        asmNames.Add(name);
                     }
                 }
                 catch { }
             }
-            return new string[0];
+            return uniqueAsms.ToArray();
         }
 
         static public Tuple<string[], string[]> GetProjectFiles(string script)
         {
             var searchDirs = new List<string>();
+            //searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
+
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
             searchDirs.AddRange(GetGlobalSearchDirs());
-            searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             searchDirs.Add(ScriptsDir);
+            searchDirs.RemoveEmptyAndDulicated();
 
             IList<string> sourceFiles = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
             sourceFiles.Add(script);
 
             //some assemblies are referenced from code and some will need to be resolved from the namespaces
-            var refAsms = parser.ReferencedNamespaces
-                                .Where(name => !parser.IgnoreNamespaces.Contains(name))
-                                .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
-                                .Union(parser.ResolvePackages(suppressDownloading: true))
-                                .Union(parser.ReferencedAssemblies
-                                             .SelectMany(asm => AssemblyResolver.FindAssembly(asm, searchDirs.ToArray())))
-                                .Distinct()
-                                .ToList();
+            var refAsms = parser.AgregateReferences(searchDirs);
 
             if (NppScriptsAsm != null)
                 refAsms.Add(NppScriptsAsm);

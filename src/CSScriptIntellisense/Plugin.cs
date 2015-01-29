@@ -813,7 +813,7 @@ namespace CSScriptIntellisense
                             Tuple<string[], string[]> project = CSScriptHelper.GetProjectFiles(file);
 
                             string[] sourceFiles = project.Item1;
-                            string[] assemblyFiles = project.Item2.Where(x=>!x.EndsWith(@"plugins\CSScriptNpp\CSScriptLibrary.dll")).ToArray();
+                            string[] assemblyFiles = project.Item2;
 
                             NoteCurrentSourcesStates(sourceFiles);
 
