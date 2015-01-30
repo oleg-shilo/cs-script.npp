@@ -16,12 +16,12 @@ namespace CSScriptNpp
 {
     public class CSScriptHelper
     {
-        private static string consoleHostPath;
-        private static string nppScriptsDir;
+        static string consoleHostPath;
+        static string nppScriptsDir;
 
-        private static string scriptDir;
+        static string scriptDir;
 
-        private static string vsDir;
+        static string vsDir;
 
         public static string ScriptsDir
         {
@@ -55,7 +55,7 @@ namespace CSScriptNpp
             }
         }
 
-        private static string ConsoleHostPath
+        static string ConsoleHostPath
         {
             get
             {
@@ -79,7 +79,7 @@ namespace CSScriptNpp
             }
         }
 
-        private static string NppScriptsDir
+        static string NppScriptsDir
         {
             get
             {
@@ -119,7 +119,7 @@ namespace CSScriptNpp
 
                 var p = new Process();
                 p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-                p.StartInfo.Arguments = "/nl /ca " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\"";
+                p.StartInfo.Arguments = "/nl /ca " + GenerateDefaultArgs() + " \"" + scriptFileCmd + "\"";
 
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.CreateNoWindow = true;
@@ -198,7 +198,7 @@ namespace CSScriptNpp
             {
                 var p = new Process();
                 p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-                p.StartInfo.Arguments = "/nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFile + "\"";
+                p.StartInfo.Arguments = "/nl /l /dbg " + GenerateDefaultArgs() + " \"" + scriptFile + "\"";
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
                 bool useFileRedirection = false;
@@ -284,7 +284,7 @@ namespace CSScriptNpp
             if (!Config.Instance.RunExternalInDebugMode)
                 debugFlag = " ";
 
-            string args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateProbingDirArg(), script, debugFlag);
+            string args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateDefaultArgs(), script, debugFlag);
 
             if (!RunningAsAdmin)
                 ProcessStart(ConsoleHostPath, args, IsAsAdminScriptFile(scriptFile));
@@ -294,7 +294,7 @@ namespace CSScriptNpp
 
         static public void ExecuteDebug(string scriptFileCmd)
         {
-            ProcessStart("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateProbingDirArg() + " \"" + scriptFileCmd + "\" //x\"");
+            ProcessStart("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateDefaultArgs() + " \"" + scriptFileCmd + "\" //x\"");
         }
 
         static public Func<string, string> NotifyClient;
@@ -309,12 +309,12 @@ namespace CSScriptNpp
                 var retval = new Project { PrimaryScript = script };
 
                 var searchDirs = new List<string>();
-                searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                //searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                searchDirs.AddRange(CSScriptIntellisense.CSScriptHelper.GetGlobalSearchDirs());
 
                 var parser = new ScriptParser(script, searchDirs.ToArray(), false);
 
                 searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
-                searchDirs.AddRange(CSScriptIntellisense.CSScriptHelper.GetGlobalSearchDirs());
                 searchDirs.RemoveEmptyAndDulicated();
 
                 var sources = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
@@ -488,15 +488,15 @@ namespace CSScriptNpp
             }
         }
 
-        private static char[] lineWordDelimiters = new[] { ' ', '\t' }; //for singleLine
+        static char[] lineWordDelimiters = new[] { ' ', '\t' }; //for singleLine
 
-        private static bool IsAutoclassScriptDirective(string text)
+        static bool IsAutoclassScriptDirective(string text)
         {
             string[] words = text.Split(lineWordDelimiters, StringSplitOptions.RemoveEmptyEntries);
             return words.Any() && words.First() == "//css_args" && (words.Contains("/ac") || words.Contains("/ac,") || words.Contains("/ac;"));
         }
 
-        private static bool IsAsAdminScriptDirective(string text)
+        static bool IsAsAdminScriptDirective(string text)
         {
             string[] words = text.Split(lineWordDelimiters, StringSplitOptions.RemoveEmptyEntries);
             return words.Any() && words.First() == "//css_npp" && (words.Contains("asadmin") || words.Contains("asadmin,") || words.Contains("asadmin;"));
@@ -541,7 +541,7 @@ namespace CSScriptNpp
                 string script = "\"" + scriptFile + "\"";
 
                 string cscs = Path.Combine(Plugin.PluginDir, engineFileName);
-                string args = string.Format("/e{2} {0} {1}", GenerateProbingDirArg(), script, (windowApp ? "w" : ""));
+                string args = string.Format("/e{2} {0} {1}", GenerateDefaultArgs(), script, (windowApp ? "w" : ""));
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs;
@@ -563,7 +563,7 @@ namespace CSScriptNpp
                 {
                     //just show why building has failed
                     cscs = "\"" + cscs + "\"";
-                    args = string.Format("{0} /e  {1} {2}", cscs, GenerateProbingDirArg(), script);
+                    args = string.Format("{0} /e  {1} {2}", cscs, GenerateDefaultArgs(), script);
                     Process.Start(ConsoleHostPath, args);
                     return null;
                 }
@@ -572,11 +572,12 @@ namespace CSScriptNpp
 
         static public void OpenAsVSProjectFor(string script)
         {
-            var searchDirs = new List<string> { ScriptsDir, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
+            var searchDirs = new List<string>();
+            //searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            searchDirs.AddRange(CSScriptIntellisense.CSScriptHelper.GetGlobalSearchDirs());
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined in the script
-            searchDirs.AddRange(CSScriptIntellisense.CSScriptHelper.GetGlobalSearchDirs());
 
             if (NppScriptsDir != null)
                 searchDirs.Add(NppScriptsDir);
@@ -590,7 +591,7 @@ namespace CSScriptNpp
                                 .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
                                 .Union(parser.ResolvePackages(suppressDownloading: true)) //it is not the first time we are loading the script so we already tried to download the packages
                                 .Union(parser.ReferencedAssemblies
-                                             .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"",""), searchDirs.ToArray())))
+                                             .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"", ""), searchDirs.ToArray())))
                                 .Distinct()
                                 .ToArray();
 
@@ -631,7 +632,7 @@ namespace CSScriptNpp
         {
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /l /ca " + GenerateProbingDirArg() + " \"" + scriptFile + "\"";
+            p.StartInfo.Arguments = "/nl /l /ca " + GenerateDefaultArgs() + " \"" + scriptFile + "\"";
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.RedirectStandardOutput = true;
@@ -655,7 +656,7 @@ namespace CSScriptNpp
                 return true;
         }
 
-        private static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
+        static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
         {
             var sb = new StringBuilder();
             byte[] buf = new byte[1024 * 4];
@@ -686,7 +687,7 @@ namespace CSScriptNpp
             }
         }
 
-        private static string DownloadText(string url, string proxyUser = null, string proxyPw = null)
+        static string DownloadText(string url, string proxyUser = null, string proxyPw = null)
         {
             var sb = new StringBuilder();
             byte[] buf = new byte[1024 * 4];
@@ -711,7 +712,7 @@ namespace CSScriptNpp
             }
         }
 
-        private static void EnsureCleanDirectory(string dir)
+        static void EnsureCleanDirectory(string dir)
         {
             if (Directory.Exists(dir))
             {
@@ -724,17 +725,34 @@ namespace CSScriptNpp
                 Directory.CreateDirectory(dir);
         }
 
-        private static string GenerateProbingDirArg()
+        internal static string GenerateDefaultArgs()
+        {
+            return GenerateConfigFileExecutionArg() + GenerateProbingDirArg();
+        }
+
+        static string GenerateConfigFileExecutionArg()
+        {
+            string result = "";
+            string globalConfig = CSScriptIntellisense.CSScriptHelper.GetGlobalCSSConfig();
+            if (globalConfig != null)
+                result = " \"/noconfig:" + globalConfig + "\"";
+
+            return result;
+        }
+
+        static string GenerateProbingDirArg()
         {
             string probingDirArg = "";
 
             if (NppScriptsDir != null)
-                probingDirArg = "\"/dir:" + NppScriptsDir + "\"";
+                probingDirArg = " \"/dir:" + NppScriptsDir + "\"";
 
             return probingDirArg;
         }
 
-        private static string[] GetGlobalSearchDirs_tobe_removed()
+
+
+        static string[] GetGlobalSearchDirs_tobe_removed()
         {
             var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
             if (csscriptDir != null)
@@ -753,7 +771,7 @@ namespace CSScriptNpp
                         dirs.AddRange(doc.FirstChild
                                          .SelectSingleNode("searchDirs")
                                          .InnerText.Split(';')
-                                         .Select(x=>Environment.ExpandEnvironmentVariables(x)));
+                                         .Select(x => Environment.ExpandEnvironmentVariables(x)));
                     }
                 }
                 catch { }
@@ -762,13 +780,13 @@ namespace CSScriptNpp
             return new string[0];
         }
 
-        private static bool IsAutoGenFile(string file)
+        static bool IsAutoGenFile(string file)
         {
             //auto-generated file in cache directory
             return file.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase) && file.IndexOf(@"\CSSCRIPT\Cache\") != -1;
         }
 
-        private static Process ProcessStart(string app, string args, bool elevated = false)
+        static Process ProcessStart(string app, string args, bool elevated = false)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = app;

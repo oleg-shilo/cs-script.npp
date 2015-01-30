@@ -1,20 +1,20 @@
+using csscript;
+using CSScriptLibrary;
+using ICSharpCode.NRefactory.Editor;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using CSScriptLibrary;
-using csscript;
-using ICSharpCode.NRefactory.Editor;
 using System.Xml;
-using System.Diagnostics;
 
 namespace CSScriptIntellisense
 {
     public static class CSScriptHelper
     {
         static string nppScriptsAsm;
+
         static string NppScriptsAsm
         {
             get
@@ -28,32 +28,37 @@ namespace CSScriptIntellisense
             }
         }
 
-        static public string[] GetGlobalSearchDirs()
+        static public string GetGlobalCSSConfig()
         {
             var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
             if (csscriptDir != null)
+                return Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\css_config.xml");
+            else
+                return null;
+        }
+
+        static public string[] GetGlobalSearchDirs()
+        {
+            var dirs = new List<string>();
+
+            try
             {
-                var dirs = new List<string>();
-                dirs.Add(Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\Lib"));
-
-                try
+                var configFile = GetGlobalCSSConfig();
+                if (configFile != null && File.Exists(configFile))
                 {
-                    var configFile = Path.Combine(csscriptDir, "css_config.xml");
+                    dirs.Add(Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\Lib"));
 
-                    if (File.Exists(configFile))
-                    {
-                        var doc = new XmlDocument();
-                        doc.Load(configFile);
-                        dirs.AddRange(doc.FirstChild
-                                         .SelectSingleNode("searchDirs")
-                                         .InnerText.Split(';')
-                                         .Select(x => Environment.ExpandEnvironmentVariables(x)));
-                    }
+                    var doc = new XmlDocument();
+                    doc.Load(configFile);
+                    dirs.AddRange(doc.FirstChild
+                                     .SelectSingleNode("searchDirs")
+                                     .InnerText.Split(';')
+                                     .Select(x => Environment.ExpandEnvironmentVariables(x)));
                 }
-                catch { }
-                return dirs.ToArray();
             }
-            return new string[0];
+            catch { }
+
+            return dirs.ToArray();
         }
 
         static public List<string> RemoveEmptyAndDulicated(this List<string> collection)
@@ -65,7 +70,6 @@ namespace CSScriptIntellisense
             return collection;
         }
 
-
         static public List<string> AgregateReferences(this ScriptParser parser, IEnumerable<string> searchDirs)
         {
             var probingDirs = searchDirs.ToArray();
@@ -74,7 +78,7 @@ namespace CSScriptIntellisense
             var refNsAsms = parser.ReferencedNamespaces
                                   .Where(name => !parser.IgnoreNamespaces.Contains(name))
                                   .SelectMany(name => AssemblyResolver.FindAssembly(name, probingDirs));
-            
+
             var refPkAsms = parser.ResolvePackages(suppressDownloading: true);
 
             var refCodeAsms = parser.ReferencedAssemblies
@@ -86,7 +90,7 @@ namespace CSScriptIntellisense
                                    .ToArray();
 
             refAsms = FilterDuplicatedAssembliesByFileName(refAsms);
-            //refAsms = FilterDuplicatedAssembliesWithReflection(refAsms); //for possible more comprehensive filtering in future 
+            //refAsms = FilterDuplicatedAssembliesWithReflection(refAsms); //for possible more comprehensive filtering in future
             return refAsms.ToList();
         }
 
@@ -99,7 +103,7 @@ namespace CSScriptIntellisense
         class RemoteResolver : MarshalByRefObject
         {
             //Must be done remotely to avoid loading collisions like below:
-            //"Additional information: API restriction: The assembly 'file:///...\CSScriptLibrary.dll' has 
+            //"Additional information: API restriction: The assembly 'file:///...\CSScriptLibrary.dll' has
             //already loaded from a different location. It cannot be loaded from a new location within the same appdomain."
             public string[] Filter(string[] assemblies)
             {
@@ -157,12 +161,11 @@ namespace CSScriptIntellisense
         static public Tuple<string[], string[]> GetProjectFiles(string script)
         {
             var searchDirs = new List<string>();
-            //searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            searchDirs.AddRange(GetGlobalSearchDirs());
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
 
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
-            searchDirs.AddRange(GetGlobalSearchDirs());
             searchDirs.Add(ScriptsDir);
             searchDirs.RemoveEmptyAndDulicated();
 
@@ -201,7 +204,6 @@ namespace CSScriptIntellisense
             {
                 var injectedLine = new ReadOnlyDocument(code).GetLineByOffset(pos);
                 return new Tuple<int, int>(injectedLine.Offset, injectedLine.Length + Environment.NewLine.Length);
-
             }
             else
                 return new Tuple<int, int>(-1, 0);

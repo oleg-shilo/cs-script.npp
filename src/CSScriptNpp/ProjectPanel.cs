@@ -430,7 +430,7 @@ void main(string[] args)
                             string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
 
                             Debugger.ScriptFile = currentScript;
-                            Debugger.Start(debuggingHost, string.Format("{0} /dbg /l \"{1}\"", targetType, currentScript), Debugger.CpuType.Any);
+                            Debugger.Start(debuggingHost, string.Format("{0} /dbg /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs()), Debugger.CpuType.Any);
 
                             if (breakOnFirstStep)
                             {
