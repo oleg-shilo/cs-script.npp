@@ -118,10 +118,12 @@ namespace npp
 
             Console.WriteLine("Received command: " + command.Substring(0, Math.Min(50, command.Length)));
 
-            if (command.StartsWith("attach"))
+            //if (command.StartsWith("run"))
             {
-                //Debug.Assert(false);
+            //    //Debug.Assert(false);
             }
+
+
 
             if (command == "break") //not native Mdbg command
             {

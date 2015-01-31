@@ -11,6 +11,7 @@ class Program
 {
     static public void Main(string[] args)
     {
+        //Debug.Assert(false);
         //<script_engine_executable> <script_args>
         if (args.Count() >= 2)
         {
@@ -21,11 +22,18 @@ class Program
 
     static void ExecuteScript(string engine, string[] args)
     {
-        string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        string css_asm = Path.Combine(dir, engine);
-        if (css_asm.EndsWith("csws.exe", StringComparison.OrdinalIgnoreCase))
-            Environment.SetEnvironmentVariable("CSS_IsRuntimeErrorReportingSupressed", "true");
-        AppDomain.CurrentDomain.ExecuteAssembly(css_asm, args);
+        //if (engine == "null")
+        //{
+        //    AppDomain.CurrentDomain.ExecuteAssembly(args.First(), args.Skip(1).ToArray());
+        //}
+        //else
+        //{
+            string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string css_asm = Path.Combine(dir, engine);
+            if (css_asm.EndsWith("csws.exe", StringComparison.OrdinalIgnoreCase))
+                Environment.SetEnvironmentVariable("CSS_IsRuntimeErrorReportingSupressed", "true");
+            AppDomain.CurrentDomain.ExecuteAssembly(css_asm, args);
+        //}
     }
 }
 

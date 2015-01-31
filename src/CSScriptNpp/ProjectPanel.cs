@@ -425,12 +425,22 @@ void main(string[] args)
                         try
                         {
                             string entryFile = CSScriptHelper.GetEntryFileName(currentScript);
-
-                            string targetType = Debugger.DebugAsConsole ? "cscs.exe" : "csws.exe";
-                            string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
-
                             Debugger.ScriptFile = currentScript;
-                            Debugger.Start(debuggingHost, string.Format("{0} /dbg /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs()), Debugger.CpuType.Any);
+
+                            bool isX86 = false;
+                            bool isSurrogateHost = CSScriptHelper.IsSurrogateHosted(currentScript, ref isX86);
+                            if (isSurrogateHost)
+                            {
+                                var scriptAsm = CSScript.GetCachedScriptPath(currentScript);
+                                var debuggingHost = scriptAsm + ".host.exe";
+                                Debugger.Start(debuggingHost, scriptAsm, isX86 ? Debugger.CpuType.x86 : Debugger.CpuType.x64);
+                            }
+                            else
+                            {
+                                string targetType = Debugger.DebugAsConsole ? "cscs.exe" : "csws.exe";
+                                string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
+                                Debugger.Start(debuggingHost, string.Format("{0} /dbg /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs()), Debugger.CpuType.Any);
+                            }
 
                             if (breakOnFirstStep)
                             {

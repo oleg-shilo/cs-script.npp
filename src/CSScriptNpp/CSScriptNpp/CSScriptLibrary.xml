@@ -107,6 +107,18 @@
             with throwOnError flag set to true.
             </summary>
         </member>
+        <member name="F:CSScriptLibrary.FileParser.ResolveFileAlgorithm">
+            <summary>
+            The resolve file algorithm,
+            <para>
+            The default algorithm searches for script file by given script name. Search order:
+            1. Current directory
+            2. extraDirs (usually %CSSCRIPT_DIR%\Lib and ExtraLibDirectory)
+            3. PATH
+            Also fixes file name if user did not provide extension for script file (assuming .cs extension)
+            </para>
+            </summary>
+        </member>
         <member name="M:CSScriptLibrary.FileParser.ResolveFile(System.String,System.String[],System.Boolean)">
             <summary>
             Searches for script file by given script name. Search order:
@@ -114,6 +126,8 @@
             2. extraDirs (usually %CSSCRIPT_DIR%\Lib and ExtraLibDirectory)
             3. PATH
             Also fixes file name if user did not provide extension for script file (assuming .cs extension)
+            <para>If the default implementation isn't suitable then you can set <c>FileParser.ResolveFileAlgorithm</c> 
+            to the alternative implementation of the probing algorithm.</para>
             </summary>
         </member>
         <member name="T:CSScriptLibrary.FileParserComparer">

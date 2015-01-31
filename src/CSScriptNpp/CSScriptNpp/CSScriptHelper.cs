@@ -475,13 +475,31 @@ namespace CSScriptNpp
             return HasDirective(file, IsAutoclassScriptDirective);
         }
 
+        static public bool IsSurrogateHosted(string file, ref bool isX86 )
+        {
+            bool isPlatform86 = false;
+
+            bool result = HasDirective(file, line =>
+                {
+                    if (line.Trim().StartsWith("//css_host "))
+                    {
+                        isPlatform86 = line.Contains("/platform:x86");
+                        return true;
+                    }
+                    else
+                        return false;
+                });
+            isX86 = isPlatform86;
+            return result;
+        }
+        
         static public bool HasDirective(string scriptFile, Predicate<string> lineChecker)
         {
             using (var file = new StreamReader(scriptFile))
             {
                 string line = null;
                 int count = 0;
-                while ((line = file.ReadLine()) != null && count++ < 5) //5 lines should be enough
+                while ((line = file.ReadLine()) != null && count++ < 15) //lines should be enough
                     if (lineChecker(line))
                         return true;
                 return false;
@@ -632,7 +650,9 @@ namespace CSScriptNpp
         {
             var p = new Process();
             p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
-            p.StartInfo.Arguments = "/nl /l /ca " + GenerateDefaultArgs() + " \"" + scriptFile + "\"";
+            //NOTE: it is important to always pass /dbg otherwise NPP will not be able to debug.
+            //particularly important to do for //css_host scripts
+            p.StartInfo.Arguments = "/nl /l /dbg /ca " + GenerateDefaultArgs() + " \"" + scriptFile + "\"";
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.RedirectStandardOutput = true;
