@@ -74,20 +74,32 @@ namespace CSScriptIntellisense
         {
             var probingDirs = searchDirs.ToArray();
 
-            //some assemblies are referenced from code and some will need to be resolved from the namespaces
-            var refNsAsms = parser.ReferencedNamespaces
-                                  .Where(name => !parser.IgnoreNamespaces.Contains(name))
-                                  .SelectMany(name => AssemblyResolver.FindAssembly(name, probingDirs));
 
             var refPkAsms = parser.ResolvePackages(suppressDownloading: true);
 
             var refCodeAsms = parser.ReferencedAssemblies
                                     .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"", ""), probingDirs));
 
-            var refAsms = refNsAsms.Union(refPkAsms)
+            var refAsms = refPkAsms.Union(refPkAsms)
                                    .Union(refCodeAsms)
                                    .Distinct()
                                    .ToArray();
+
+            //some assemblies are referenced from code and some will need to be resolved from the namespaces
+            bool disableNamespaceResolving = (parser.IgnoreNamespaces.Count() == 1 && parser.IgnoreNamespaces[0] == "*");
+            
+            if (!disableNamespaceResolving)
+            {
+                var asmNames = refAsms.Select(x=>Path.GetFileNameWithoutExtension(x).ToUpper()).ToArray();
+
+                var refNsAsms = parser.ReferencedNamespaces
+                                      .Where(name => !parser.IgnoreNamespaces.Contains(name))
+                                      .Where(name => !asmNames.Contains(name.ToUpper()))
+                                      .SelectMany(name => AssemblyResolver.FindAssembly(name, probingDirs))
+                                      .ToArray();
+
+                refAsms = refAsms.Union(refNsAsms).ToArray();
+            }
 
             refAsms = FilterDuplicatedAssembliesByFileName(refAsms);
             //refAsms = FilterDuplicatedAssembliesWithReflection(refAsms); //for possible more comprehensive filtering in future

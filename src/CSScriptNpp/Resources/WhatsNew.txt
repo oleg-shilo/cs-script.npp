@@ -1,6 +1,5 @@
-v1.0.38.0
-* Added "%CSSCRIPT_DIR%\\Lib" as a probing directory for project referenced assemblies.
-* Fixed problem with displaying project references by quoted assembly full name.
-
-v1.0.38.1
+v1.0.39.0
+* Changed priority of the assembly probing steps. Now Namespaces are resolved the last.
 * Improved referenced assembly analysis in 'script project' and intellisense
+* Fixed Issue#11: Wrong path for scripts in search dirs
+* Added support for debugging surrogate hosting process (//css_host)

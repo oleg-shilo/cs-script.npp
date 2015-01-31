@@ -21,10 +21,10 @@ copy "CSScriptNpp\CSScriptNpp\7z.dll" "%programfiles%\Notepad++\plugins\CSScript
 copy "CSScriptNpp\CSScriptNpp\cscs.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\cscs.exe"
 copy "CSScriptNpp\CSScriptNpp\csws.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\csws.exe"
 copy "CSScriptNpp\CSScriptNpp\cscs.v3.5.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\cscs.v3.5.exe"
-echo ----
+
 copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp\CSScriptLibrary.dll"
 copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%programfiles%\Notepad++\plugins\CSScriptNpp\CSScriptLibrary.xml"
-echo ----
+
 copy "CSScriptNpp\CSScriptNpp\MDbg\*.pdb" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Debug\CSScriptNpp\Mdbg\*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
