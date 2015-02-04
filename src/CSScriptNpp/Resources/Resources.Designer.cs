@@ -596,7 +596,19 @@ namespace CSScriptNpp.Resources {
                 return ResourceManager.GetString("VS2012ProjectTemplate", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] VS2012SolutionTemplate
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("VS2012SolutionTemplate", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to v1.0.31.0
         ///
