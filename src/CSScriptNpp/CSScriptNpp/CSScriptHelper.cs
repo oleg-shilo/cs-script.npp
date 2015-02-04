@@ -1,3 +1,4 @@
+using CSScriptIntellisense;
 using CSScriptLibrary;
 using System;
 using System.Collections.Generic;
@@ -5,34 +6,45 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using CSScriptIntellisense;
 
 namespace CSScriptNpp
 {
     public class CSScriptHelper
     {
         static string consoleHostPath;
-        static string nppScriptsDir;
-
-        static string scriptDir;
-
         static string vsDir;
+        static string scriptsDirectory;
 
         public static string ScriptsDir
         {
             get
             {
-                if (scriptDir == null)
+                if (scriptsDirectory == null)
+                    scriptsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "C# Scripts");
+
+                if (!Directory.Exists(scriptsDirectory))
+                    Directory.CreateDirectory(scriptsDirectory);
+
+                return scriptsDirectory;
+            }
+        }
+
+        static string nppScriptsScriptsDir;
+
+        public static string NppScripts_ScriptsDir  //NppScripts is another CS-Script related plugin 
+        {
+            get
+            {
+                if (nppScriptsScriptsDir == null)
                 {
                     string rootDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    scriptDir = Path.Combine(rootDir, "NppScripts");
+                    nppScriptsScriptsDir = Path.Combine(rootDir, "NppScripts");
                 }
-                return scriptDir;
+                return nppScriptsScriptsDir;
             }
         }
 
@@ -78,6 +90,8 @@ namespace CSScriptNpp
                 return consoleHostPath;
             }
         }
+
+        static string nppScriptsDir;
 
         static string NppScriptsDir
         {
@@ -475,7 +489,7 @@ namespace CSScriptNpp
             return HasDirective(file, IsAutoclassScriptDirective);
         }
 
-        static public bool IsSurrogateHosted(string file, ref bool isX86 )
+        static public bool IsSurrogateHosted(string file, ref bool isX86)
         {
             bool isPlatform86 = false;
 
@@ -492,7 +506,7 @@ namespace CSScriptNpp
             isX86 = isPlatform86;
             return result;
         }
-        
+
         static public bool HasDirective(string scriptFile, Predicate<string> lineChecker)
         {
             using (var file = new StreamReader(scriptFile))
@@ -597,8 +611,8 @@ namespace CSScriptNpp
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined in the script
 
-            if (NppScriptsDir != null)
-                searchDirs.Add(NppScriptsDir);
+            if (NppScripts_ScriptsDir != null)
+                searchDirs.Add(NppScripts_ScriptsDir);
 
             IList<string> sourceFiles = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
             sourceFiles.Add(script);
@@ -764,13 +778,11 @@ namespace CSScriptNpp
         {
             string probingDirArg = "";
 
-            if (NppScriptsDir != null)
-                probingDirArg = " \"/dir:" + NppScriptsDir + "\"";
+            if (NppScripts_ScriptsDir != null)
+                probingDirArg = " \"/dir:" + NppScripts_ScriptsDir + "\"";
 
             return probingDirArg;
         }
-
-
 
         static string[] GetGlobalSearchDirs_tobe_removed()
         {

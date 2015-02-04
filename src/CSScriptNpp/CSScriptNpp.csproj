@@ -84,6 +84,12 @@
     <Compile Include="Dialogs\DebugExternal.Designer.cs">
       <DependentUpon>DebugExternal.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\FavoritesPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FavoritesPanel.Designer.cs">
+      <DependentUpon>FavoritesPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ModulesPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -240,6 +246,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\DebugExternal.resx">
       <DependentUpon>DebugExternal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FavoritesPanel.resx">
+      <DependentUpon>FavoritesPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\LocalsPanel.resx">
       <DependentUpon>LocalsPanel.cs</DependentUpon>
@@ -536,6 +545,7 @@
     <Content Include="CSScriptNpp\nuget.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\favorites.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

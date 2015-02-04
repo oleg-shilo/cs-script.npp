@@ -887,6 +887,7 @@ namespace CSScriptNpp.Dialogs
                 Padding = new System.Windows.Forms.Padding(3),
                 TabIndex = control.TabPages.Count,
                 Text = tabName,
+                BackColor = Color.White,
                 UseVisualStyleBackColor = true
             };
 

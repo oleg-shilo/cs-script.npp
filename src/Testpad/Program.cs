@@ -19,6 +19,7 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
+            new FavoritesPanel().ShowDialog(); return;
             DebugExternal.ShowModal(); return;
             //new UpdateOptionsPanel("1.0.1.1").ShowDialog(); return;
 

@@ -371,21 +371,21 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] DebugScript {
+        internal static System.Drawing.Bitmap deploy {
             get {
-                object obj = ResourceManager.GetObject("DebugScript", resourceCulture);
-                return ((byte[])(obj));
+                object obj = ResourceManager.GetObject("deploy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap deploy {
+        internal static System.Drawing.Bitmap favorites {
             get {
-                object obj = ResourceManager.GetObject("deploy", resourceCulture);
+                object obj = ResourceManager.GetObject("favorites", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -596,25 +596,23 @@ namespace CSScriptNpp.Resources {
                 return ResourceManager.GetString("VS2012ProjectTemplate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] VS2012SolutionTemplate
-        {
-            get
-            {
+        internal static byte[] VS2012SolutionTemplate {
+            get {
                 object obj = ResourceManager.GetObject("VS2012SolutionTemplate", resourceCulture);
                 return ((byte[])(obj));
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to v1.0.31.0
-        ///
-        ///* Fixed problem with menu item &apos;Plugins-&gt;CSSCript-&gt;Debug&apos; invoking &apos;Run&apos; instead of &apos;Debug&apos;.
-        ///
-        ///     .
+        ///   Looks up a localized string similar to v1.0.39.0
+        ///* Changed priority of the assembly probing steps. Now Namespaces are resolved the last.
+        ///* Improved referenced assembly analysis in &apos;script project&apos; and intellisense
+        ///* Fixed Issue#11: Wrong path for scripts in search dirs
+        ///* Added support for debugging surrogate hosting process (//css_host).
         /// </summary>
         internal static string WhatsNew {
             get {

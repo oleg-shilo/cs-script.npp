@@ -58,6 +58,7 @@
             this.deployBtn = new System.Windows.Forms.ToolStripButton();
             this.shortcutsBtn = new System.Windows.Forms.ToolStripButton();
             this.restartNppBtn = new System.Windows.Forms.ToolStripButton();
+            this.favoritesBtn = new System.Windows.Forms.ToolStripButton();
             this.solutionContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.unloadScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCommandPromptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -144,7 +145,8 @@
             this.configBtn,
             this.deployBtn,
             this.shortcutsBtn,
-            this.restartNppBtn});
+            this.restartNppBtn,
+            this.favoritesBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(989, 31);
@@ -192,7 +194,7 @@
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(57, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
             // 
             // validateBtn
             // 
@@ -380,6 +382,16 @@
             this.restartNppBtn.ToolTipText = "Restart Notepad++ (Elevated)";
             this.restartNppBtn.Click += new System.EventHandler(this.restartNppBtn_Click);
             // 
+            // favoritesBtn
+            // 
+            this.favoritesBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.favoritesBtn.Image = global::CSScriptNpp.Resources.Resources.favorites;
+            this.favoritesBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.favoritesBtn.Name = "favoritesBtn";
+            this.favoritesBtn.Size = new System.Drawing.Size(23, 28);
+            this.favoritesBtn.Text = "Add to Favorites";
+            this.favoritesBtn.Click += new System.EventHandler(this.favoritesBtn_Click);
+            // 
             // solutionContextMenu
             // 
             this.solutionContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -474,6 +486,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.BackColor = System.Drawing.Color.White;
             this.tabPage1.Controls.Add(this.treeView1);
             this.tabPage1.Location = new System.Drawing.Point(4, 4);
             this.tabPage1.Name = "tabPage1";
@@ -481,7 +494,6 @@
             this.tabPage1.Size = new System.Drawing.Size(981, 429);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Script Project";
-            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // ProjectPanel
             // 
@@ -551,5 +563,6 @@
         private System.Windows.Forms.ContextMenuStrip toolbarContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem organizeButtonsToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton restartNppBtn;
+        private System.Windows.Forms.ToolStripButton favoritesBtn;
     }
 }
