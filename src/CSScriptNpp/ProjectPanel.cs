@@ -31,7 +31,13 @@ namespace CSScriptNpp
             tabControl1.AddTab("Code Map", mapPanel = new CodeMapPanel());
             tabControl1.AddTab("Favorites", favPanel = new FavoritesPanel());
 
-            favPanel.OnOpenScriptRequest = LoadScript;
+            favPanel.OnOpenScriptRequest = file =>
+                {
+                    if (file.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                        LoadScript(file);
+                    else
+                        Npp.OpenFile(file);
+                };
 
             RefreshControls();
             ReloadScriptHistory();
@@ -488,8 +494,8 @@ void main(string[] args)
         {
             if (Plugin.OutputPanel.ConsoleOutput.IsEmpty)
                 Plugin.OutputPanel.ShowConsoleOutput();
-            
-            foreach(char c in buf)
+
+            foreach (char c in buf)
                 Plugin.OutputPanel.ConsoleOutput.WriteConsoleChar(c);
         }
 
@@ -783,10 +789,10 @@ void main(string[] args)
                         Config.Instance.Save();
                         ReloadScriptHistory();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         //it is not a major use-case so doesn't matter why we failed
-                        MessageBox.Show("Cannot load script.\nError: "+e.Message, "CS-Script");
+                        MessageBox.Show("Cannot load script.\nError: " + e.Message, "CS-Script");
                     }
                 }
             }
@@ -988,6 +994,7 @@ void main(string[] args)
 
         void favoritesBtn_Click(object sender, EventArgs e)
         {
+            tabControl1.SelectTabWith(favPanel);
             favPanel.Add(Npp.GetCurrentFile());
         }
     }

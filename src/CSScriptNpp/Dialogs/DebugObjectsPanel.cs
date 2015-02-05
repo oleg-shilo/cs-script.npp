@@ -902,5 +902,18 @@ namespace CSScriptNpp.Dialogs
 
             return control;
         }
+
+        public static TabControl SelectTabWith(this TabControl control, Form content)
+        {
+            var tab = control.Controls
+                             .Cast<Control>()
+                             .Where(c => c is TabPage)
+                             .Cast<TabPage>()
+                             .Where(page => page.Controls.Contains(content))
+                             .FirstOrDefault();
+            if (tab != null)
+                control.SelectedTab = tab;
+            return control;
+        }
     }
 }
