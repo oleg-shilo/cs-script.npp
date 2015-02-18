@@ -39,9 +39,9 @@ namespace CSScriptNpp.Dialogs
             if (File.Exists(favListFile))
                 scriptsList.Items.AddRange(File.ReadAllLines(favListFile)
                                                .Where(line => !string.IsNullOrEmpty(line))
+                                               .Distinct()
                                                .Select(line => new ScriptInfo { File = line })
                                                .OrderBy(x => x.ToString())
-                                               .Distinct()
                                                .ToArray());
 
             if (selectedScript != null)
@@ -112,25 +112,28 @@ namespace CSScriptNpp.Dialogs
 
         void scriptsList_DrawItem(object sender, DrawItemEventArgs e)
         {
-            e.DrawBackground();
-            var script = scriptsList.Items[e.Index] as ScriptInfo;
-
-            var brush = Brushes.Black;
-
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            if (e.Index != -1)
             {
-                brush = Brushes.White;
-            }
-            else
-            {
-                if (!File.Exists(script.File))
-                    brush = Brushes.Gray;
-                e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+                e.DrawBackground();
+                var script = scriptsList.Items[e.Index] as ScriptInfo;
 
-            }
-            e.Graphics.DrawString(script.ToString(), e.Font, brush, e.Bounds, StringFormat.GenericDefault);
+                var brush = Brushes.Black;
 
-            //e.DrawFocusRectangle();
+                if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                {
+                    brush = Brushes.White;
+                }
+                else
+                {
+                    if (!File.Exists(script.File))
+                        brush = Brushes.Gray;
+                    e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+
+                }
+                e.Graphics.DrawString(script.ToString(), e.Font, brush, e.Bounds, StringFormat.GenericDefault);
+
+                //e.DrawFocusRectangle();
+            }
         }
 
         private void scriptsList_MouseMove(object sender, MouseEventArgs e)

@@ -1,2 +1,4 @@
 v1.0.39.0+
 * Added 'Favorite Scripts' panel
+* Improved code formatting
+* Extended "Auto-add missing usings" for class-less scripts
