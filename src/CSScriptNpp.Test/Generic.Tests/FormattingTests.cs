@@ -587,5 +587,20 @@ Console.WriteLine(""这是中文"");";
             Assert.Equal(code, newCode); //no changes
 
         }
+
+        [Fact]
+        public void ShouldHandleGuidsBracketsInStrings2()
+        {
+            SourceCodeFormatter.UseTabs = false;
+            SourceCodeFormatter.IndentText = "    ";
+
+            string code =@"""A\\B\\"";
+return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-0080C8ECFED4}.dll"");";
+            int pos = 0;
+            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+
+            Assert.Equal(code, newCode); //no changes
+
+        }
     }
 }

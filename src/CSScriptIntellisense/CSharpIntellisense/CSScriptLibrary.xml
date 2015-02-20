@@ -258,6 +258,11 @@
             Collection of referenced assemblies. All assemblies are referenced either from command-line, code or resolved from referenced namespaces.
             </summary>
         </member>
+        <member name="P:CSScriptLibrary.ScriptParser.ScriptPath">
+            <summary>
+            The path of the parsed script.
+            </summary>
+        </member>
         <member name="T:csscript.PrecompilationContext">
             <summary>
             This class is a container for information related to the script precompilation.
@@ -316,6 +321,23 @@
             </summary>
             <param name="code">The code.</param>
             <param name="position">The position.</param>
+            <returns></returns>
+        </member>
+        <member name="T:csscript.ResolveSourceFileHandler">
+            <summary>
+            Delegate implementing source file probing algorithm.
+            </summary>
+            <param name="file">The file.</param>
+            <param name="searchDirs">The extra dirs.</param>
+            <param name="throwOnError">if set to <c>true</c> [throw on error].</param>
+            <returns></returns>
+        </member>
+        <member name="T:csscript.ResolveAssemblyHandler">
+            <summary>
+            Delegate implementing assembly file probing algorithm.
+            </summary>
+            <param name="file">The file.</param>
+            <param name="searchDirs">The extra dirs.</param>
             <returns></returns>
         </member>
         <member name="T:csscript.CSExecutor">
@@ -763,6 +785,8 @@
             </summary>
             <param name="name">'namespace'/assembly(file) name</param>
             <param name="searchDirs">Assembly search directories</param>
+            <para>If the default implementation isn't suitable then you can set <c>CSScript.FindAssemblyAlgorithm</c> 
+            to the alternative implementation of the probing algorithm.</para>
             <returns>collection of assembly file names where namespace is implemented</returns>
         </member>
         <member name="M:CSScriptLibrary.AssemblyResolver.FindLocalAssembly(System.String,System.String)">
@@ -1363,6 +1387,16 @@
             	Script file path if the specified assembly is a script assembly otherwise <c>null</c>.
             </returns>
         </member>
+        <member name="M:CSScriptLibrary.CSScript.AggregateReferencedAssemblies(CSScriptLibrary.ScriptParser,System.String[],System.String)">
+            <summary>
+            Aggregates the referenced assemblies found by parser.
+            </summary>
+            <param name="parser">The parser.</param>
+            <param name="searchDirs">Extra search/probing directories.</param>
+            <param name="defaultRefAssemblies">The default reference assemblies. It is a semicolon separated assembly names string 
+            (e.g. "System.Core; System.Linq;").</param>
+            <returns></returns>
+        </member>
         <member name="F:CSScriptLibrary.CSScript.GlobalSettings">
             <summary>
             Settings object containing runtime settings, which controls script compilation/execution.
@@ -1863,6 +1897,28 @@
              <value>
              The <c>Eval</c> namespaces.
              </value>
+        </member>
+        <member name="P:CSScriptLibrary.CSScript.ResolveSourceAlgorithm">
+            <summary>
+            The resolve source file algorithm.
+            <para>
+            The default algorithm searches for script file by given script name. Search order:
+            1. Current directory
+            2. extraDirs (usually %CSSCRIPT_DIR%\Lib and ExtraLibDirectory)
+            3. PATH
+            Also fixes file name if user did not provide extension for script file (assuming .cs extension)
+            </para>
+            <para>If the default implementation isn't suitable then you can set <c>CSScript.ResolveSourceAlgorithm</c> 
+            to the alternative implementation of the probing algorithm.</para>
+            </summary>
+        </member>
+        <member name="P:CSScriptLibrary.CSScript.ResolveAssemblyAlgorithm">
+            <summary>
+            Resolves namespace/assembly(file) name into array of assembly locations (local and GAC ones).
+            </summary>
+            <para>If the default implementation isn't suitable then you can set <c>CSScript.ResolveAssemblyAlgorithm</c> 
+            to the alternative implementation of the probing algorithm.</para>
+            <returns>collection of assembly file names where namespace is implemented</returns>
         </member>
         <member name="P:CSScriptLibrary.CSScript.ScriptCache">
             <summary>

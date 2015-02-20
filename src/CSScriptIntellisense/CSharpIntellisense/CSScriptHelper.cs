@@ -74,7 +74,6 @@ namespace CSScriptIntellisense
         {
             var probingDirs = searchDirs.ToArray();
 
-
             var refPkAsms = parser.ResolvePackages(suppressDownloading: true);
 
             var refCodeAsms = parser.ReferencedAssemblies
@@ -138,6 +137,7 @@ namespace CSScriptIntellisense
             }
         }
 
+        //not in use yet
         static string[] FilterDuplicatedAssembliesWithReflection(string[] assemblies)
         {
             var tempDomain = AppDomain.CurrentDomain.Clone();

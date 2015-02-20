@@ -161,8 +161,7 @@ namespace CSScriptNpp
 
         void EditItem(string scriptFile)
         {
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, scriptFile);
-            Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+            Npp.OpenFile(scriptFile);
         }
 
         void newBtn_Click(object sender, EventArgs e)
@@ -325,7 +324,7 @@ void main(string[] args)
                     if (!CurrentDocumentBelongsToProject())
                         EditItem(currentScript);
 
-                    Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
+                    Npp.SaveAllButNew();
 
                     if (asExternal)
                     {
@@ -535,7 +534,7 @@ void main(string[] args)
                         if (!CurrentDocumentBelongsToProject())
                             EditItem(currentScript);
 
-                        Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
+                        Npp.SaveAllButNew();
 
                         CSScriptHelper.Build(currentScript);
 
@@ -935,7 +934,7 @@ void main(string[] args)
                         {
                             EditItem(currentScript);
 
-                            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
+                            Npp.SaveAllButNew();
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
                             string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp);

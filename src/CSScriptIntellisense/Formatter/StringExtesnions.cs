@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -69,7 +71,7 @@ namespace CSScriptIntellisense
         {
             return Encoding.Default.GetByteCount(text);
         }
-        
+
         public static int GetUtf8ByteCount(this string text)
         {
             return Encoding.UTF8.GetByteCount(text);
@@ -145,6 +147,25 @@ namespace CSScriptIntellisense
                     if (pattern[i] != builder[builder.Length - pattern.Length + i])
                         return false;
                 return true;
+            }
+            else
+                return false;
+        }
+
+        public static bool EndsWithEscapeChar(this StringBuilder builder, char escapeChar)
+        {
+            if (builder.Length > 0)
+            {
+                int matchCount = 0;
+                for (int i = builder.Length - 1; i >= 0; i--)
+                {
+                    if (builder[i] == escapeChar)
+                        matchCount++;
+                    else
+                        break;
+                }
+
+                return matchCount % 2 != 0;
             }
             else
                 return false;
@@ -323,7 +344,44 @@ namespace CSScriptIntellisense
         {
             var result = new FileReference();
             text.ParseAsErrorFileReference(out result.File, out result.Line, out result.Column);
+
+            NormaliseFileReference(ref result.File, ref result.Line);
+
             return result;
+        }
+
+        static public void NormaliseFileReference(ref string file, ref int line)
+        {
+            try
+            {
+                if (file.EndsWith(".g.csx") || file.EndsWith(".g.cs") && file.Contains(@"CSSCRIPT\Cache"))
+                {
+                    //it is an auto-generated file so try to find the original source file (logical file)
+                    string dir = Path.GetDirectoryName(file);
+                    string infoFile = Path.Combine(dir, "css_info.txt");
+                    if (File.Exists(infoFile))
+                    {
+                        string[] lines = File.ReadAllLines(infoFile);
+                        if (lines.Length > 1 && Directory.Exists(lines[1]))
+                        {
+                            string logicalFile = Path.Combine(lines[1], Path.GetFileName(file).Replace(".g.csx", ".csx").Replace(".g.cs", ".cs"));
+                            if (File.Exists(logicalFile))
+                            {
+                                string code = File.ReadAllText(file);
+                                int pos = code.IndexOf("///CS-Script auto-class generation");
+                                if (pos != -1)
+                                {
+                                    int injectedLineNumber = code.Substring(0, pos).Split('\n').Count() - 1;
+                                    if (injectedLineNumber <= line)
+                                        line -= 1; //a single line is always injected
+                                }
+                                file = logicalFile;
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
         }
 
         public static bool ParseAsErrorFileReference(this string text, out string file, out int line, out int column)

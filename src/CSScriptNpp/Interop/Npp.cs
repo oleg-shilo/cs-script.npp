@@ -293,6 +293,24 @@ namespace CSScriptNpp
             return currentPos;
         }
 
+        static public void SaveAllButNew()
+        {
+            //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
+
+            var files = Npp.GetOpenFiles();
+            var current = Npp.GetCurrentFile();
+            foreach (var item in files)
+            {
+                if (Path.IsPathRooted(item))  //the "new" file is not saved so it has no root
+                {
+                    Npp.OpenFile(item);
+                    Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+
+                }
+            }
+            Npp.OpenFile(current);
+        }
+
         static public void OpenFile(string file)
         {
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, file);

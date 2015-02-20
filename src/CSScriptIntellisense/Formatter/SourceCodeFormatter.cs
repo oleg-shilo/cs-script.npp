@@ -156,12 +156,12 @@ namespace CSScriptIntellisense
                                 {
                                     if (currentStringing == lineString)
                                     {
-                                        if (!formatted.EndsWith("\\")) //only if it is a true end of the string declaration
+                                        if (!formatted.EndsWithEscapeChar('\\')) //only if it is a true end of the string declaration
                                             currentStringing = none;
                                     }
                                     else if (currentStringing == literalString)
                                     {
-                                        if (!formatted.EndsWith("\"")) //only if it is a true end of the string declaration
+                                        if (!formatted.EndsWithEscapeChar('"')) //only if it is a true end of the string declaration
                                             currentStringing = none;
                                     }
                                     else
