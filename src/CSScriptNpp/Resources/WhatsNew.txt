@@ -1,5 +1,5 @@
 v1.0.39.0+
-* Migrated to CS-Script v3.9.3.0
+* Migrated to CS-Script v3.9.4.0
 * Added 'Favorite Scripts' panel
 * Improved code formatting
 * Plugin no longer try to save "new" file on compile/run
