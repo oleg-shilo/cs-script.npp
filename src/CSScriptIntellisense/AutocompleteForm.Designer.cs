@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // listBox1
@@ -41,6 +43,12 @@
             this.listBox1.Size = new System.Drawing.Size(127, 163);
             this.listBox1.TabIndex = 0;
             this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 500;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // AutocompleteForm
             // 
@@ -64,5 +72,6 @@
         #endregion
 
         private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Timer timer1;
     }
 }

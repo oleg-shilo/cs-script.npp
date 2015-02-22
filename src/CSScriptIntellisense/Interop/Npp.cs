@@ -81,6 +81,30 @@ namespace CSScriptIntellisense
             return buffer.ToString();
         }
 
+        const int SW_SHOWNOACTIVATE = 4;
+        const int HWND_TOPMOST = -1;
+        const uint SWP_NOACTIVATE = 0x0010;
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        static extern bool SetWindowPos(
+             int hWnd,             // Window handle
+             int hWndInsertAfter,  // Placement-order handle
+             int X,                // Horizontal position
+             int Y,                // Vertical position
+             int cx,               // Width
+             int cy,               // Height
+             uint uFlags);         // Window positioning flags
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        public static void ShowInactiveTopmost(Form frm)
+        {
+            ShowWindow(frm.Handle, SW_SHOWNOACTIVATE);
+            //SetWindowPos(frm.Handle.ToInt32(), HWND_TOPMOST, frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
+            SetWindowPos(frm.Handle.ToInt32(), Plugin.NppData._nppHandle.ToInt32(), frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
+        }
+
         static public Point[] FindIndicatorRanges(int indicator)
         {
             var ranges = new List<Point>();
@@ -424,16 +448,25 @@ namespace CSScriptIntellisense
             Win32.SendMessage(sci, SciMsg.SCI_GOTOLINE, line + 20, 0);
             Win32.SendMessage(sci, SciMsg.SCI_GOTOLINE, line - 1, 0);
             /*
-             SCI_GETFIRSTVISIBLELINE = 2152,
-        SCI_GETLINE = 2153,
-        SCI_GETLINECOUNT = 2154,*/
+            SCI_GETFIRSTVISIBLELINE = 2152,
+            SCI_GETLINE = 2153,
+            SCI_GETLINECOUNT = 2154,*/
         }
 
         static public Rectangle GetClientRect()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
 
-            Rectangle r = new Rectangle();
+            var r = new Rectangle();
+            GetWindowRect(sci, ref r);
+            return r;
+        }
+       
+        static public Rectangle GetWindowRect()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+
+            var r = new Rectangle();
             GetWindowRect(sci, ref r);
             return r;
         }

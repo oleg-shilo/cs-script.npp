@@ -3,6 +3,7 @@ using ICSharpCode.NRefactory.Completion;
 using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -19,30 +20,6 @@ namespace CSScriptIntellisense
         {
             InitializeComponent();
             OnAutocompletionAccepted = x => { };
-        }
-
-        bool keyEventsHooked = false;
-
-        //needs pay extra attention to ensure unhooking as it can potentially intercept host app keys
-        void ListenToKeyStroks(bool init)
-        {
-            if (init)
-            {
-                if (!keyEventsHooked)
-                    this.KeyDown += this.AutocompleteForm_KeyDown;
-                keyEventsHooked = true;
-            }
-            else
-            {
-                if (keyEventsHooked)
-                    this.KeyDown -= this.AutocompleteForm_KeyDown;
-                keyEventsHooked = false;
-            }
-        }
-
-        void AutocompleteForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            ListenToKeyStroks(false);
         }
 
         string initialPartialName = null;
@@ -230,6 +207,11 @@ namespace CSScriptIntellisense
 
         IEnumerable<ICompletionData> rawItems;
 
+        protected override bool ShowWithoutActivation
+        {
+            get { return true; }
+        }
+
         private void AutocompleteForm_KeyDown(object sender, KeyEventArgs e)
         {
             OnKeyDown(e.KeyCode);
@@ -237,12 +219,20 @@ namespace CSScriptIntellisense
 
         public void OnKeyDown(Keys key)
         {
-            if (!Visible)
+            if (Visible)
             {
-                ListenToKeyStroks(false);
-            }
-            else
-            {
+                if (key == Keys.Up)
+                {
+                    if (listBox1.SelectedIndex > 0)
+                        listBox1.SelectedIndex--;
+                }
+
+                if (key == Keys.Down)
+                {
+                    if (listBox1.SelectedIndex < (listBox1.Items.Count - 1))
+                        listBox1.SelectedIndex++;
+                }
+
                 if (key == Keys.Escape)
                     Close();
 
@@ -250,7 +240,6 @@ namespace CSScriptIntellisense
                    (key == Keys.Right && Config.Instance.UseArrowToAccept) ||
                    (key == Keys.Tab && Config.Instance.UseTabToAccept))
                 {
-                    ListenToKeyStroks(false);
                     OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
                     Dispatcher.Shedule(10, Close);
                 }
@@ -259,15 +248,13 @@ namespace CSScriptIntellisense
 
         private void AutocompleteForm_Deactivate(object sender, EventArgs e)
         {
-            ListenToKeyStroks(false);
             Close();
         }
 
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
-            ListenToKeyStroks(false);
-            Close();
             OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+            Close();
         }
 
         private void AutocompleteForm_Load(object sender, EventArgs e)
@@ -282,13 +269,34 @@ namespace CSScriptIntellisense
             listBox1.HorizontalScrollbar = true;
 
             FilterFor(initialPartialName);
-            ListenToKeyStroks(true);
+            // ListenToKeyStroks(true);
+
+            Capture = true;
+            MouseDown += AutocompleteForm_MouseDown;
+
+            timer1.Enabled = true;
+        }
+
+        void AutocompleteForm_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Location.X < 0 || e.Location.Y < 0 || e.Location.X > this.Width || e.Location.Y > this.Height)
+                Close();
         }
 
         private void AutocompleteForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //MessageBox.Show("AutocompleteForm_FormClosed");
-            //Debug.WriteLine("Loaded xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            Capture = false;
+        }
+
+        Rectangle? nppRect;
+        void timer1_Tick(object sender, EventArgs e)
+        {
+            var rect = Npp.GetWindowRect();
+
+            if (nppRect.HasValue && nppRect.Value != rect)
+                Close();
+
+            nppRect = rect;
         }
     }
 

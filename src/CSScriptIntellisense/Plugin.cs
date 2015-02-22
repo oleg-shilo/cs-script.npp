@@ -91,6 +91,10 @@ namespace CSScriptIntellisense
 
                 foreach (var key in keysToIntercept)
                     KeyInterceptor.Instance.Add(key);
+
+                KeyInterceptor.Instance.Add(Keys.Up);
+                KeyInterceptor.Instance.Add(Keys.Down);
+                KeyInterceptor.Instance.Add(Keys.Right);
                 KeyInterceptor.Instance.Add(Keys.Tab);
                 KeyInterceptor.Instance.Add(Keys.Return);
                 KeyInterceptor.Instance.Add(Keys.Escape);
@@ -121,6 +125,16 @@ namespace CSScriptIntellisense
 
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
+            if (IsShowingInteractivePopup && (key == Keys.Up || key == Keys.Down || key == Keys.Right || key == Keys.Tab || key == Keys.Return || key == Keys.Escape))
+            {
+                if (form != null && form.Visible)
+                {
+                    form.OnKeyDown(key);
+                }
+                handled = true;
+                return;
+            }
+
             if (Config.Instance.CodeSnippetsEnabled && !IsShowingInteractivePopup)
             {
                 if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && Npp.IsCurrentScriptFile())
@@ -642,11 +656,11 @@ namespace CSScriptIntellisense
                     if (memberInfoWasShowing)
                         NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
                 };
-                form.KeyPress += (sender, e) =>
-                {
-                    if (e.KeyChar >= ' ' || e.KeyChar == 8) //8 is backspace
-                        OnAutocompleteKeyPress(e.KeyChar);
-                };
+                //form.KeyPress += (sender, e) =>
+                //{
+                //    if (e.KeyChar >= ' ' || e.KeyChar == 8) //8 is backspace
+                //        OnAutocompleteKeyPress(e.KeyChar);
+                //};
                 form.Show();
 
                 OnAutocompleteKeyPress(allowNoText: true); //to grab current word at the caret an process it as a hint
@@ -682,8 +696,6 @@ namespace CSScriptIntellisense
 
         static void OnAutocompleteKeyPress(char keyChar = char.MinValue, bool allowNoText = false)
         {
-            NppEditor.ProcessKeyPress(keyChar);
-
             int currentPos = Npp.GetCaretPosition();
 
             string text = Npp.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
@@ -720,16 +732,25 @@ namespace CSScriptIntellisense
             if (Npp.IsCurrentScriptFile())
             {
                 if (c == '.')
+                {
                     ShowSuggestionList();
+                }
                 else if (c == '(')
                 {
                     if (!memberInfoPopup.IsShowing || memberInfoPopup.Simple)
                         ShowMethodInfo();
                 }
                 else if (memberInfoPopup.IsShowing)
+                {
                     memberInfoPopup.CheckIfNeedsClosing();
-
-                SourceCodeFormatter.OnCharTyped(c);
+                }
+                else if (form != null && form.Visible)
+                {
+                    if (c >= ' ' || c == 8) //8 is backspace
+                        OnAutocompleteKeyPress(c);
+                }
+                else
+                    SourceCodeFormatter.OnCharTyped(c);
             }
         }
 
