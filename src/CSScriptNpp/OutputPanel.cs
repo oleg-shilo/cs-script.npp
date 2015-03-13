@@ -15,6 +15,7 @@ namespace CSScriptNpp
         public const string ConsoleOutputName = "Console";
         public const string DebugOutputName = "Debug";
         public const string GeneralOutputName = "General";
+        public const string PluginLogOutputName = "Plugin Log";
 
         static public void DisplayInGenericOutputPanel(string text)
         {
@@ -89,6 +90,9 @@ namespace CSScriptNpp
             AddOutputType(DebugOutputName);
             AddOutputType(ConsoleOutputName);
             AddOutputType(GeneralOutputName);
+#if DEBUG
+            AddOutputType(PluginLogOutputName);
+#endif
         }
 
         public Output GetOutputType(string name)
@@ -219,6 +223,8 @@ namespace CSScriptNpp
         public Output BuildOutput { get { return GetOutputType(BuildOutputName); } }
 
         public Output DebugOutput { get { return GetOutputType(DebugOutputName); } }
+
+        public Output PluginLogOutput { get { return GetOutputType(PluginLogOutputName); } }
 
         public Output ConsoleOutput { get { return GetOutputType(ConsoleOutputName); } }
 

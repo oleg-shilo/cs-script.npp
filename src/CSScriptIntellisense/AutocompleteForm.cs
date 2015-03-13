@@ -207,6 +207,7 @@ namespace CSScriptIntellisense
 
         IEnumerable<ICompletionData> rawItems;
 
+        //Very important to keep it. It prevents the form from stealing the focus
         protected override bool ShowWithoutActivation
         {
             get { return true; }

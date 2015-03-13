@@ -185,7 +185,7 @@ namespace CSScriptNpp
 
                 if (OnDebuggerStateChanged != null)
                 {
-                    //Debug.WriteLine("-----------------------  IsInBreak = "+isInBreak);
+                    Plugin.Log("OnDebuggerStateChanged (isInBreak={0})", isInBreak);
                     OnDebuggerStateChanged();
                 }
             }
@@ -206,6 +206,9 @@ namespace CSScriptNpp
         static protected Action OnBreak; //breakpoint hit
         static protected Action<string> OnDebuggeeProcessNotification; //debugger process state change
 
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
         private static void Init()
         {
             initialized = true;
@@ -227,7 +230,9 @@ namespace CSScriptNpp
                         else if (message.StartsWith(NppCategory.Process))
                         {
                             if (OnDebuggerStateChanged != null)
+                            {
                                 OnDebuggerStateChanged();
+                            }
                         }
                         else if (message.StartsWith(NppCategory.State))
                         {

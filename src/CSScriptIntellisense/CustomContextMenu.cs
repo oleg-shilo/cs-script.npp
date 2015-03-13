@@ -104,13 +104,33 @@ namespace CSScriptIntellisense
 
         void AutocompleteForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape)
-                Close();
+            OnKeyDown(e.KeyCode);
+        }
 
-            if (e.KeyCode == Keys.Enter)
+        public void OnKeyDown(Keys key)
+        {
+            if (Visible)
             {
-                Close();
-                InvokeHandler();
+                if (key == Keys.Escape)
+                    Close();
+
+                if (key == Keys.Enter)
+                {
+                    Close();
+                    InvokeHandler();
+                }
+
+                if (key == Keys.Up)
+                {
+                    if (listBox1.SelectedIndex > 0)
+                        listBox1.SelectedIndex--;
+                }
+
+                if (key == Keys.Down)
+                {
+                    if (listBox1.SelectedIndex < (listBox1.Items.Count - 1))
+                        listBox1.SelectedIndex++;
+                }
             }
         }
 
@@ -131,6 +151,12 @@ namespace CSScriptIntellisense
         {
             Close();
             InvokeHandler();
+        }
+
+        //Very important to keep it. It prevents the form from stealing the focus
+        protected override bool ShowWithoutActivation
+        {
+            get { return true; }
         }
 
         private void AutocompleteForm_Load(object sender, EventArgs e)

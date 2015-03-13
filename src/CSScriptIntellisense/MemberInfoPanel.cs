@@ -30,6 +30,11 @@ namespace CSScriptIntellisense
             return Visible;
         }
 
+        protected override bool ShowWithoutActivation
+        {
+            get { return true; }
+        }
+
         int lastHintCount = -1;
 
         public void ProcessMethodOverloadHint(IEnumerable<string> hint)

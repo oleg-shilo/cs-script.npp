@@ -171,7 +171,8 @@ namespace CSScriptNpp
 
         private static void HandleDebuggerStateChanged()
         {
-            ClearDebuggingMarkers();
+            if (!IsInBreak)
+                ClearDebuggingMarkers();
         }
 
         private static Dictionary<string, Action<string>> invokeCompleteHandlers = new Dictionary<string, Action<string>>();

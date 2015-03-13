@@ -131,6 +131,12 @@ namespace CSScriptIntellisense
                 {
                     form.OnKeyDown(key);
                 }
+
+                if (namespaceMenu != null && namespaceMenu.Visible)
+                {
+                    namespaceMenu.OnKeyDown(key);
+                }
+
                 handled = true;
                 return;
             }
@@ -561,6 +567,7 @@ namespace CSScriptIntellisense
                             namespaceMenu.Add(item, null, Npp.ReplaceWordAtCaret);
 
                         namespaceMenu.Popup();
+                        namespaceMenu.Show();
                     }
                 }
             });
@@ -902,9 +909,15 @@ namespace CSScriptIntellisense
             string file = Npp.GetCurrentFile();
             string text = Npp.GetTextBetween(0, Npp.DocEnd);
 
+            string w = Npp.GetWordAtPosition(currentPos);
+            int lineNum = Npp.GetLineNumber(currentPos);
+            int start = Npp.GetLineStart(lineNum);
+            string line = Npp.GetLine(lineNum);
+
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
             EnsureCurrentFileParsed();
+            
             return SimpleCodeCompletion.GetMissingUsings(text, currentPos, file);
         }
 

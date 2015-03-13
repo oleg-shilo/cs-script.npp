@@ -232,6 +232,18 @@ namespace CSScriptNpp
                 dialog.ShowDialog();
         }
 
+        static internal void Log(string format, params object[] args)
+        {
+#if DEBUG
+            try
+            {
+                if (OutputPanel.PluginLogOutput != null)
+                    OutputPanel.PluginLogOutput.WriteLine(string.Format(format, args));
+            }
+            catch{}
+#endif
+        }
+
         static public OutputPanel OutputPanel;
         static public ProjectPanel ProjectPanel;
         static public CodeMapPanel CodeMapPanel;
