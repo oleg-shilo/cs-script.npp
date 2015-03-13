@@ -904,20 +904,63 @@ namespace CSScriptIntellisense
             return ResolveNamespacesAtPosition(currentPos);
         }
 
+        static int[] WordEndsOf(string text)
+        {
+            var delimiters = ".,\t ;<>{}()|\\/?=-*+&^%!";
+            var result = new List<int>();
+            bool wordStarted = false;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (delimiters.Contains(text[i]))
+                {
+                    if (wordStarted)
+                        result.Add(i);
+                    wordStarted = false;
+                }
+                else
+                {
+                    wordStarted = true;
+                }
+            }
+            return result.ToArray();
+        }
+
         static IEnumerable<TypeInfo> ResolveNamespacesAtPosition(int currentPos)
         {
             string file = Npp.GetCurrentFile();
             string text = Npp.GetTextBetween(0, Npp.DocEnd);
 
-            string w = Npp.GetWordAtPosition(currentPos);
             int lineNum = Npp.GetLineNumber(currentPos);
             int start = Npp.GetLineStart(lineNum);
             string line = Npp.GetLine(lineNum);
 
+            int currentPosOffset = currentPos - start; //note the diff between cuurrPos and start of the line
+            int[] probingOffsets = WordEndsOf(line); //note the all end positions of the words
+
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
             EnsureCurrentFileParsed();
-            
+
+            var actualStart = currentPos - currentPosOffset; //after the decoration currentPos is changed so the line start
+
+            foreach (int offset in probingOffsets) //try to resolve any 'word' in the line
+            {
+                var result = SimpleCodeCompletion.GetMissingUsings(text, actualStart+offset, file);
+                if (result.Any())
+                    return result;
+            }
+            return new TypeInfo[0];
+        }
+
+        static IEnumerable<TypeInfo> ResolveNamespacesAtPositionOld(int currentPos)
+        {
+            string file = Npp.GetCurrentFile();
+            string text = Npp.GetTextBetween(0, Npp.DocEnd);
+
+            CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
+
+            EnsureCurrentFileParsed();
+
             return SimpleCodeCompletion.GetMissingUsings(text, currentPos, file);
         }
 
