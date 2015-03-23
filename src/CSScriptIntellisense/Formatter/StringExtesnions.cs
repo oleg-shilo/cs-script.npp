@@ -292,6 +292,13 @@ namespace CSScriptIntellisense
             return -1;
         }
 
+        public static bool IsLastWhiteSpace(this StringBuilder builder)
+        {
+            if (builder.Length != 0)
+                return char.IsWhiteSpace(builder[builder.Length - 1]);
+            return false;
+        }
+
         public static bool LastNonWhiteSpaceToken(this StringBuilder builder, string expected)
         {
             int pos = builder.LastNonWhiteSpace();

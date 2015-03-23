@@ -13,9 +13,9 @@ namespace CSScriptIntellisense
             int currentPos = Npp.GetCaretPosition();
             string code = Npp.GetTextBetween(0, Npp.DocEnd);
             int topScrollOffset = Npp.GetLineNumber(currentPos) - Npp.GetFirstVisibleLine();
-            
+
             string newCode = FormatCode(code, ref currentPos);
-            
+
             Npp.SetTextBetween(newCode, 0, Npp.DocEnd);
 
             Npp.SetCaretPosition(currentPos);
@@ -98,6 +98,17 @@ namespace CSScriptIntellisense
             // note getNext() is the first call in the loop so after the call i always points to the next char
             Func<char> nextChar = () => (i < code.Length ? code[i] : char.MinValue);
             Func<char> getNext = () => code[i++];
+
+            Action ResetSingleLineIndent = () =>
+                {
+                    //disabled temporary
+                    //if (singleLineIndent > 0) 
+                    //{
+                    //    blockLevel -= singleLineIndent;
+                    //    singleLineIndent = 0;
+                    //}
+                };
+
             Action NoteBlockOffset = () =>
                                 {
                                     string currLine = formatted.GetLastLine();
@@ -110,6 +121,22 @@ namespace CSScriptIntellisense
                                     else
                                         blockCustomOffset = "";
                                 };
+
+            Func<bool> hasClosingBracketInSameLine = () =>
+                               {
+                                   int brcketCount = 0;
+                                   for (int j = i; j < code.Length; j++)
+                                   {
+                                       if (code[j] == '}')
+                                           brcketCount++;
+                                       else if (code[j] == '{')
+                                           brcketCount--;
+                                       else if (code[j].IsOneOf('\n', '\r'))
+                                           break;
+                                   }
+                                   return brcketCount >= 1;
+                               };
+
             Func<char, bool> isLastStatementIsComplete = (current) =>
                                 {
                                     int lastPos = formatted.LastNonWhiteSpace();
@@ -130,7 +157,7 @@ namespace CSScriptIntellisense
             {
                 char current = getNext();
 
-                if (current == ',')
+                if (current == 'f')
                     Debug.WriteLine("");
 
                 if (!posSet && i > pos)
@@ -263,8 +290,7 @@ namespace CSScriptIntellisense
                                                  .TrimLineEnd()
                                                  .Append(blockCustomOffset)
                                                  .Append(IndentText, blockLevel)
-                                                 .Append(current)
-                                                 .AppendLine("");
+                                                 .Append(current);
                                     }
                                     else
                                     {
@@ -274,9 +300,11 @@ namespace CSScriptIntellisense
                                                     .TrimLineEnd()
                                                     .Append(blockCustomOffset)
                                                     .Append(IndentText, blockLevel)
-                                                    .Append(current)
-                                                    .AppendLine("");
+                                                    .Append(current);
                                     }
+
+                                    if (!hasClosingBracketInSameLine())
+                                        formatted.AppendLine("");
                                 }
                                 else
                                 {
@@ -316,6 +344,8 @@ namespace CSScriptIntellisense
                                         }
                                     }
                                     blockLevel--;
+
+                                    ResetSingleLineIndent();
 
                                     if (blockCustomOffsetStartLevel > blockLevel)
                                         blockCustomOffset = "";
@@ -392,7 +422,7 @@ namespace CSScriptIntellisense
                                     continue;
                                 }
 
-                                if (current == 'p')
+                                if (current == '1')
                                     Debug.WriteLine("");
 
                                 int lastPos = formatted.LastNonWhiteSpace();
@@ -408,6 +438,10 @@ namespace CSScriptIntellisense
                                                      .Append(IndentText, blockLevel + 1)
                                                      .Append(current);
                                             continue;
+                                        }
+                                        else if (!char.IsWhiteSpace(current) && (i > 0 && !formatted.IsLastWhiteSpace()))
+                                        {
+                                            formatted.Append(" ");
                                         }
                                     }
                                     else if (formatted.LastNonWhiteSpaceToken("else"))
@@ -463,13 +497,17 @@ namespace CSScriptIntellisense
                                             if (prevLine.IsControlStatement())
                                             {
                                                 if (!prevLine.IsInlineElseIf()) //should not increase indent
+                                                {
                                                     singleLineIndent++;
+                                                    //blockLevel++; //should uncomment when ResetSingleLineIndent is enabled
+                                                }
 
                                                 indentLevel += singleLineIndent;
                                             }
                                             else if (singleLineIndent > 0)
                                             {
                                                 //CalculateBlockOffset();
+                                                ResetSingleLineIndent();
                                                 singleLineIndent = 0;
                                             }
 

@@ -553,7 +553,48 @@ class Script
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
+        }
 
+        [Fact]
+        public void ShouldNotBreakColloectionInits2()
+        {
+            SourceCodeFormatter.UseTabs = false;
+            SourceCodeFormatter.IndentText = "    ";
+
+            string code =
+@"instanceElement.AddAttributes(new Dictionary<int, int>()
+{
+    { 1, 12 },
+    { 2, 22 },
+    { 3, 33 }
+});";
+
+            int pos = 0;
+            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+
+            Assert.Equal(code, newCode); //no changes
+        }
+
+        [Fact]
+        public void ShouldHandleComplexInlineIf()
+        {
+            SourceCodeFormatter.UseTabs = false;
+            SourceCodeFormatter.IndentText = "    ";
+
+            string code =
+@"try
+{
+    if(true)
+        foreach(var item in ""test"")
+        {
+        }
+}
+catch{ }";
+
+            int pos = 0;
+            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+
+            //Assert.Equal(code, newCode); //no changes
         }
 
         [Fact]

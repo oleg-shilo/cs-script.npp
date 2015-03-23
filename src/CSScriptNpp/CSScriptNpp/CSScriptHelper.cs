@@ -58,6 +58,16 @@ namespace CSScriptNpp
             }
         }
 
+        public static string CSScriptTempDir
+        {
+            get
+            {
+                if (vsDir == null)
+                    vsDir = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp");
+                return vsDir;
+            }
+        }
+
         static internal bool RunningAsAdmin
         {
             get
@@ -182,8 +192,10 @@ namespace CSScriptNpp
                 string excludeDirPrefix = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) + "-";
 
                 if (Directory.Exists(VsDir))
+                {
                     foreach (string projectDir in Directory.GetDirectories(VsDir))
                     {
+                        Debug.Assert(false);
                         if (projectDir.StartsWith(excludeDirPrefix))
                             continue;
 
@@ -201,6 +213,27 @@ namespace CSScriptNpp
                         }
                         catch { }
                     }
+
+                    if (Directory.Exists(CSScriptTempDir))
+                    {
+                        foreach (string dir in Directory.GetDirectories(CSScriptTempDir))
+                        {
+                            foreach (string file in Directory.GetFiles(dir, "*.cs.dbg"))
+                            {
+                                try
+                                {
+                                    //#script: E:\Dropbox\Public\Support\test.cs
+                                    //E:\Dropbox\Public\Support\test.cs|20
+
+                                    string sourceFile = File.ReadAllLines(file).First().Split(new[] { ':' }, 2).First();
+                                    if (!File.Exists(sourceFile))
+                                        File.Delete(file);
+                                }
+                                catch { }
+                            }
+                        }
+                    }
+                }
             }
             catch { }
         }
