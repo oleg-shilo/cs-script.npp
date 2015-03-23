@@ -1,2 +1,6 @@
-v1.0.40.0+
+v1.0.41.0
 * Improved reliability of the current step marker rendering 
+* Fixed "Add using" menu focus management
+* Improved 'add usings' autoresolving
+* Implemented cleaning of the plpugin temp directory
+* Improved formatting of the inline initializers (Dictionary<T1,T2>)

@@ -155,9 +155,6 @@ void main()
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
 
-
-            //File.WriteAllText(@"E:\Galos\Projects\CS-Script.Npp\CSScriptIntellisesnse\src\CSScriptIntellisense\bin\Debug\test.cs", newCode);
-
             Assert.Equal(code, newCode);  //the original code was already formatted
         }
 
@@ -178,9 +175,6 @@ void main()
 }";
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
-
-
-            //File.WriteAllText(@"E:\Galos\Projects\CS-Script.Npp\CSScriptIntellisesnse\src\CSScriptIntellisense\bin\Debug\test.cs", newCode); return;
 
             Assert.Equal(
 @"using System;
@@ -394,9 +388,6 @@ do
             int pos = 69; //void main(str|ing[] args)
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
 
-            //File.WriteAllText(@"E:\Galos\Projects\CS-Script.Npp\CSScriptIntellisesnse\src\CSScriptIntellisense\bin\Debug\test.cs", newCode);
-
-            //return;
             Assert.Equal(
 @"//css_args /ac
 //css_inc test.cs
