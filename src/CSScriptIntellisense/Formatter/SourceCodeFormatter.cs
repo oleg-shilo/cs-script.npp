@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
+using System.Collections.Generic;
 
 namespace CSScriptIntellisense
 {
@@ -69,11 +70,15 @@ namespace CSScriptIntellisense
 
         public static string FormatCode(string code, ref int pos)
         {
-            return FormatCodeManual(code, ref pos);
+            if (Config.Instance.FallbackFormatting)
+                return FallbackSourceCodeFormatter.FormatCodeManually(code, ref pos);
+            else
+                return FormatCodeManually(code, ref pos);
+
             //return FormatCodeWithNRefactory(code, ref pos);
         }
 
-        public static string FormatCodeManual(string code, ref int pos)
+        public static string FormatCodeManually(string code, ref int pos)
         {
             var formatted = new StringBuilder();
 
@@ -91,6 +96,7 @@ namespace CSScriptIntellisense
             string blockCustomOffset = "";
             int blockCustomOffsetStartLevel = 0;
             int singleLineIndent = 0;
+            bool isInSingleLineControl = false;
 
             int i = 0;
             bool posSet = false;
@@ -99,15 +105,36 @@ namespace CSScriptIntellisense
             Func<char> nextChar = () => (i < code.Length ? code[i] : char.MinValue);
             Func<char> getNext = () => code[i++];
 
-            Action ResetSingleLineIndent = () =>
+
+            var siMap = new List<int>();
+
+            Action DecrementSingleLineIndent = () =>
+            {
+                if (singleLineIndent > 0)
                 {
-                    //disabled temporary
-                    //if (singleLineIndent > 0) 
-                    //{
-                    //    blockLevel -= singleLineIndent;
-                    //    singleLineIndent = 0;
-                    //}
-                };
+                    siMap.Remove(blockLevel);
+                    blockLevel--;
+                    singleLineIndent--;
+
+                    while (siMap.Contains(blockLevel))
+                    {
+                        siMap.Remove(blockLevel);
+                        blockLevel--;
+                        singleLineIndent--;
+                    }
+                }
+
+                isInSingleLineControl = false;
+            };
+
+
+            Action IncrementSingleLineIndent = () =>
+            {
+                isInSingleLineControl = true;
+                singleLineIndent++;
+                blockLevel++;
+                siMap.Add(blockLevel);
+            };
 
             Action NoteBlockOffset = () =>
                                 {
@@ -278,6 +305,7 @@ namespace CSScriptIntellisense
                         {
                             if (currentCommenting == none && currentStringing == none)
                             {
+                                isInSingleLineControl = false;
                                 blockLevel++;
                                 if (formatted.EndsWithWhiteSpacesLine())
                                 {
@@ -308,7 +336,7 @@ namespace CSScriptIntellisense
                                 }
                                 else
                                 {
-                                    if (!char.IsWhiteSpace(formatted.LastChar()))
+                                    if (formatted.Length > 0 && !char.IsWhiteSpace(formatted.LastChar()))
                                         formatted.Append(" ");
 
                                     formatted.Append(current);
@@ -324,6 +352,11 @@ namespace CSScriptIntellisense
                         {
                             if (currentCommenting == none && currentStringing == none)
                             {
+                                if (isInSingleLineControl)
+                                {
+                                    DecrementSingleLineIndent();
+                                }
+
                                 if (formatted.EndsWithWhiteSpacesLine())
                                 {
                                     formatted.TrimEmptyEndLines(0)
@@ -345,7 +378,7 @@ namespace CSScriptIntellisense
                                     }
                                     blockLevel--;
 
-                                    ResetSingleLineIndent();
+                                    //ResetSingleLineIndent();
 
                                     if (blockCustomOffsetStartLevel > blockLevel)
                                         blockCustomOffset = "";
@@ -414,6 +447,11 @@ namespace CSScriptIntellisense
 
                                 if (current == 'e' && code.IsNonWhitespaceNext("lse", i) && code.IsToken("else", i))
                                 {
+                                    if (isInSingleLineControl)
+                                    {
+                                        DecrementSingleLineIndent();
+                                    }
+
                                     formatted.TrimEmptyEndLines(0)
                                              .TrimLineEnd()
                                              .Append(blockCustomOffset)
@@ -422,7 +460,7 @@ namespace CSScriptIntellisense
                                     continue;
                                 }
 
-                                if (current == '1')
+                                if (current == 'p')
                                     Debug.WriteLine("");
 
                                 int lastPos = formatted.LastNonWhiteSpace();
@@ -498,19 +536,15 @@ namespace CSScriptIntellisense
                                             {
                                                 if (!prevLine.IsInlineElseIf()) //should not increase indent
                                                 {
-                                                    singleLineIndent++;
-                                                    //blockLevel++; //should uncomment when ResetSingleLineIndent is enabled
+                                                    IncrementSingleLineIndent();
                                                 }
-
-                                                indentLevel += singleLineIndent;
                                             }
-                                            else if (singleLineIndent > 0)
+                                            else
                                             {
-                                                //CalculateBlockOffset();
-                                                ResetSingleLineIndent();
-                                                singleLineIndent = 0;
+                                                DecrementSingleLineIndent();
                                             }
 
+                                            indentLevel = blockLevel + 1;
 
                                             if (lastStatementIsComplete || prevLine.IsControlStatement())
                                             {
@@ -534,16 +568,6 @@ namespace CSScriptIntellisense
             }
 
             return formatted.TrimEnd().ToString();
-        }
-
-        static public char[] operatorChars = new[] { '+', '=', '-', '*', '/', '%', '&', '|', '^', '<', '>', '!' };
-        static public char[] wordDelimiters = new[] { '\t', '\n', '\r', '\'', ' ', '.', ';', ',', '[', '{', '(', ')', '}', ']' };
-        static public char[] AllWordDelimiters
-        {
-            get
-            {
-                return wordDelimiters.Concat(operatorChars).ToArray();
-            }
         }
     }
 }

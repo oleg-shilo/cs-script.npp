@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CSScriptIntellisense
@@ -158,6 +159,16 @@ namespace CSScriptIntellisense
             Win32.SendMessage(sci, SciMsg.SCI_SETCURRENTPOS, currentPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0);
+        }
+
+        static public char[] operatorChars = new[] { '+', '=', '-', '*', '/', '%', '&', '|', '^', '<', '>', '!' };
+        static public char[] wordDelimiters = new[] { '\t', '\n', '\r', '\'', ' ', '.', ';', ',', '[', '{', '(', ')', '}', ']' };
+        static public char[] AllWordDelimiters
+        {
+            get
+            {
+                return wordDelimiters.Concat(operatorChars).ToArray();
+            }
         }
     }
 }

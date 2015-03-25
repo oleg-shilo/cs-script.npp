@@ -105,7 +105,7 @@ namespace CSScriptIntellisense
             if (text.EndsWith(")"))
             {
                 if (Regex.Match(text, @"\s*else\s*if \s*\(").Success)
-                    return true;
+                    return text.EndsWith("}") || text.EndsWith(";");
             }
 
             return false;

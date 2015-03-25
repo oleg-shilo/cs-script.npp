@@ -29,18 +29,16 @@ using System;
 
 if()
 {
-}            
+}
 else
              {
 }
-
 
 //comments B
     InUIThread(() =>                       {
                            button1.Enabled = true;
                            textBox1.Enabled = false;
                        });
-
     }
 void button1_Click(object sender,EventArg e)
         {
@@ -95,7 +93,7 @@ void button1_Click(object sender, EventArg e)
             string code =
 @"
 using System;
-    
+
 void main()
 {
     var lines = Npp.GetAllLines()
@@ -103,14 +101,13 @@ void main()
                            {
                                     if (false)
                                line.Split('\t'));
-else 
+else
                           line.Split('\n'));
 
                                     if (true)
 {
 line.Split('\t'));
 }
-
                            });
 }
 ";
@@ -150,7 +147,52 @@ void main()
 {
     foreach(var lineItems in lines)
         if (lineItems.Length == 2)
-            Npp.Output.WriteLine(""{0}: {1}"", lineItems.First(), lineItems.Last());
+            if (lineItems.Length == 2)
+                Console.WriteLine(""test"");
+}";
+            int pos = 0;
+            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+
+            Assert.Equal(code, newCode);  //the original code was already formatted
+        }
+
+        [Fact]
+        public void NakedNestedIf()
+        {
+            SourceCodeFormatter.UseTabs = false;
+            SourceCodeFormatter.IndentText = "    ";
+            string code =
+@"foreach(var i in c)
+    if (l.Length > 2)
+        if (l.Length < 9)
+            Console.WriteLine(""{0}: {1}"", c.First(), c.Last());
+Console.WriteLine(""{0}: {1}"", c.First(), c.Last());";
+            int pos = 0;
+            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+
+            Assert.Equal(code, newCode);  //the original code was already formatted
+        }
+
+        [Fact]
+        public void ComplexNestedIf()
+        {
+            SourceCodeFormatter.UseTabs = false;
+            SourceCodeFormatter.IndentText = "    ";
+            string code =
+@"{
+    foreach(var i in c)
+        if (l.Length > 2)
+            if (l.Length < 9)
+            {
+                Console.WriteLine(""{0}: {1}"", c.First(), c.Last());
+            }
+            else
+            {
+                if (l.Length == 7)
+                    Console.WriteLine(""test"");
+            }
+
+    Console.WriteLine(""{0}: {1}"", c.First(), c.Last());
 }";
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
@@ -165,7 +207,7 @@ void main()
             SourceCodeFormatter.IndentText = "    ";
             string code =
 @"using System;
-    
+
 void main()
 {
      if(true)
@@ -195,10 +237,9 @@ void main()
             SourceCodeFormatter.IndentText = "    ";
             string code =
 @"using System;
-    
+
 void main()
 {
-
      if(true)
         Console.WriteLine(2);
     else if (false)
@@ -229,7 +270,7 @@ void main()
             SourceCodeFormatter.IndentText = "    ";
             string code =
 @"using System;
-    
+
 void main()
 {
         Console.WriteLine(2); //test comment
@@ -294,7 +335,6 @@ public class Test
                     newCode);
         }
 
-
         [Fact]
         public void Class_Fluent_ControlLoops()
         {
@@ -308,7 +348,6 @@ using System;
 
    [STAThread]
           void main(string[] args)
-
 
     {
     Console.WriteLine(             ""Hello     World!""   )  ;
@@ -328,7 +367,6 @@ Project project =
                         new File(@""Plugins\CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll""),
                         new File(@""Plugins\CSharpIntellisense\ICSharpCode.NRefactory.dll""))));
 
-
 if(true)
 {
 Console.WriteLine( 1  )   ;
@@ -341,7 +379,6 @@ ttt();
 if(true)     {}
 
         Test.Print(""Hello again..."");
-
      }
 void Test(){
 }void Test2(){
@@ -377,7 +414,6 @@ while(false)
     {
         Console.WriteLine(7);
     }
-
 
 do
     {
@@ -492,10 +528,10 @@ while(false);", newCode);
             SourceCodeFormatter.IndentText = "    ";
 
             string code = @"using System;
-  
+
                             class Script
-                            {  
-                                void main2(int test,int test2) 
+                            {
+                                void main2(int test,int test2)
                                 {
                                     var t = '=';
                                     t = ',';
@@ -518,7 +554,6 @@ class Script
         vat test = 1;
     }
 }", newCode);
-
         }
 
         [Fact]
@@ -602,7 +637,6 @@ Console.WriteLine(""这是中文"");";
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
-
         }
 
         [Fact]
@@ -617,7 +651,6 @@ Console.WriteLine(""这是中文"");";
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
-
         }
 
         [Fact]
@@ -626,13 +659,28 @@ Console.WriteLine(""这是中文"");";
             SourceCodeFormatter.UseTabs = false;
             SourceCodeFormatter.IndentText = "    ";
 
-            string code =@"""A\\B\\"";
+            string code = @"""A\\B\\"";
 return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-0080C8ECFED4}.dll"");";
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
-
         }
+
+        [Fact]
+        public void ShouldFormattWithFRefactory()
+        {
+            var code = @"using System;
+
+class Test
+{
+    public static void Main(string[] args)
+    {
+        if (args != null ) {
+        }
+    }
+}";
+           // new CSharpFormatter (FormattingOptionsFactory.CreateAllman ()).Format (code));
+            }
     }
 }
