@@ -41,7 +41,7 @@ namespace CSScriptNpp
 
             CSScriptIntellisense.Plugin.FuncItems.Items.Clear();
 
-            Debugger.OnFrameChanged += () => Npp.OnCalltipRequest(-1); //clear_all_cache
+            Debugger.OnFrameChanged += () => Npp.OnCalltipRequest(-2); //clear_all_cache
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]

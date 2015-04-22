@@ -2064,9 +2064,10 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
 
         public MDbgValue ResolveExpression(string expression, MDbgFrame scope) //zos; CSScript.Npp related changes
         {
-            if (expression.Contains("("))
-                return FuncEvaluate(expression, scope);
-            else
+            //temporary disable
+            //if (expression.Contains("("))
+            //    return FuncEvaluate(expression, scope);
+            //else
                 return ResolveVariable(expression, scope);
         }
 
@@ -2079,9 +2080,14 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
         public MDbgValue FuncEvaluate(string expression, MDbgFrame scope)
         {
             var eval = new EvalHelper(this);
+            var inspector = eval.CreateInspector();
+            
+            if (expression == "cssnpp.test()")
+            {
+                return new MDbgValue(this, inspector.TestPrimitives());
+            }
 
             var info = eval.ParseExpression(expression);
-            var inspector = eval.CreateInspector();
 
             foreach (CorValue arg in info.Arguments)
                 inspector.AddArg(arg);
@@ -2093,102 +2099,6 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                 result = inspector.Invoke(info.Method);
 
             return new MDbgValue(this, result);
-            //var inspector = eval.Invoke("DbgAgent.ObjectInspector.New", null);
-
-            //eval.Invoke("DbgAgent.ObjectInspector.StackAddNull", inspector);
-            //foreach(CorValue arg in argsuments)
-
-            //eval.Invoke("DbgAgent.ObjectInspector.StackAddInt32", inspector, arg1);
-            //eval.Invoke("DbgAgent.ObjectInspector.StackAddInt32", inspector, arg2);
-
-
-            //var result = eval.Invoke("DbgAgent.ObjectInspector.Invoke", inspector, eval.CreateString(methodName));
-
-            //return new MDbgValue(this, result);
-        }
-
-
-        
-        public MDbgValue FuncEvaluateRaw(string expression, MDbgFrame scope)
-        {
-            //funceval DbgValueInspector.New d
-
-            int bracketIndex = expression.IndexOf('(');
-            string name = expression.Substring(0, bracketIndex).Trim();
-            string args = expression.Substring(bracketIndex).Replace("(", "").Replace(")", "").Trim();
-
-
-            MDbgFunction func = this.ResolveFunctionNameFromScope(name);
-            if (null == func)
-                throw new Exception(String.Format(CultureInfo.InvariantCulture, "Could not resolve {0}", new Object[] { name }));
-
-            CorEval eval = this.Threads.Active.CorThread.CreateEval();
-
-            // Get Variables
-            ArrayList vars = new ArrayList();
-            String arg;
-            if (args.Length != 0)
-                foreach (var item in args.Split(','))
-                {
-                    arg = item.Trim();
-
-                    CorValue v = this.m_engine.ParseExpression(arg, this, this.Threads.Active.CurrentFrame);
-
-                    if (v == null)
-                    {
-                        throw new Exception("Cannot resolve expression or variable " + arg);
-                    }
-
-                    if (v is CorGenericValue)
-                    {
-                        vars.Add(v as CorValue);
-                    }
-
-                    else
-                    {
-                        CorHeapValue hv = v.CastToHeapValue();
-                        if (hv != null)
-                        {
-                            // we cannot pass directly heap values, we need to pass reference to heap valus
-                            CorReferenceValue myref = eval.CreateValue(CorElementType.ELEMENT_TYPE_CLASS, null).CastToReferenceValue();
-                            myref.Value = hv.Address;
-                            vars.Add(myref);
-                        }
-                        else
-                        {
-                            vars.Add(v);
-                        }
-                    }
-
-                }
-
-            eval.CallFunction(func.CorFunction, (CorValue[])vars.ToArray(typeof(CorValue)));
-            this.Go().WaitOne();
-
-            // now display result of the funceval
-            if (!(this.StopReason is EvalCompleteStopReason))
-            {
-                // we could have received also EvalExceptionStopReason but it's derived from EvalCompleteStopReason
-                //WriteOutput("Func-eval not fully completed and debuggee has stopped");
-                //WriteOutput("Result of funceval won't be printed when finished.");
-            }
-            else
-            {
-                eval = (this.StopReason as EvalCompleteStopReason).Eval;
-                Debug.Assert(eval != null);
-
-                CorValue cv = eval.Result;
-                if (cv != null)
-                {
-                    MDbgValue mv = new MDbgValue(this, cv);
-                    //WriteOutput("result = " + mv.GetStringValue(1));
-                    //if (cv.CastToReferenceValue() != null)
-                    //    if (Debugger.Processes.Active.DebuggerVars.SetEvalResult(cv))
-                    //        WriteOutput("results saved to $result");
-                    return mv;
-                }
-            }
-            return null;
         }
 
         /// <summary>

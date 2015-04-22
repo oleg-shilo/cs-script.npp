@@ -81,7 +81,7 @@ namespace CSScriptNpp
 
         static public void OnCalltipRequest(int position)
         {
-            if (position == -1)
+            if (position == -2)
             {
                 Calltip.LastEval =
                 Calltip.LastExpression = null; //if DBG frame is changed so clear the data
@@ -111,6 +111,15 @@ namespace CSScriptNpp
                                     tooltip = Calltip.LastEval;
                             }
 
+                            if (underMouseExpression != Calltip.LastExpression)
+                            {
+                                System.Diagnostics.Debug.WriteLine("GetDebugTooltipValue -> expression is changed...");
+                                System.Diagnostics.Debug.WriteLine("old: " + Calltip.LastExpression);
+                                System.Diagnostics.Debug.WriteLine("new: " + underMouseExpression);
+                            }
+                            if(Calltip.LastDocument != document)
+                                    System.Diagnostics.Debug.WriteLine("GetDebugTooltipValue -> document is changed...");
+
                             if (tooltip == null)
                             {
                                 if (Debugger.IsInBreak)
@@ -122,6 +131,7 @@ namespace CSScriptNpp
                                     tooltip = CSScriptIntellisense.Plugin.GetMemberUnderCursorInfo().FirstOrDefault();
                                 }
 
+                                Calltip.LastDocument = document;
                                 Calltip.LastEval = tooltip.TruncateLines(Config.Instance.CollectionItemsInTooltipsMaxCount, "\n<Content was truncated. Use F12 to see the raw API documentation data.>");
                                 Calltip.LastExpression = underMouseExpression;
                             }

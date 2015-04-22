@@ -13,6 +13,8 @@ namespace CSScriptNpp
 {
     public class RemoteInspector
     {
+        static bool isAgentInjected = false;
+        static public string AssemblyFile = Environment.GetEnvironmentVariable("CSSNPP_DBG_AGENTASSEMBLY");
         EvalHelper eval;
         CorValue obj;
         List<CorValue> args = new List<CorValue>();
@@ -20,6 +22,11 @@ namespace CSScriptNpp
         public RemoteInspector(EvalHelper eval)
         {
             this.eval = eval;
+            if (!isAgentInjected)
+            {
+                isAgentInjected = true;
+                eval.Invoke("System.Reflection.Assembly.LoadFrom", null, eval.CreateString(AssemblyFile));
+            }
             obj = eval.Invoke("DbgAgent.ObjectInspector.New", null);
         }
 
@@ -34,13 +41,60 @@ namespace CSScriptNpp
             if (arg == null)
                 eval.Invoke("DbgAgent.ObjectInspector.StackAddNull", obj);
             else
-                eval.Invoke("DbgAgent.ObjectInspector.StackAddInt32", obj, arg);
+            {
+                string methodName = "DbgAgent.ObjectInspector.StackAdd_";
+                switch (arg.Type)
+                {
+                    case CorElementType.ELEMENT_TYPE_R8:
+                        methodName += "R8";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_R4:
+                        methodName += "R4";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_U8:
+                        methodName += "U8";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_I8:
+                        methodName += "I8";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_U4:
+                        methodName += "U4";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_I4:
+                        methodName += "I4";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_U2:
+                        methodName += "U2";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_I2:
+                        methodName += "I2";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_U1:
+                        methodName += "U1";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_I1:
+                        methodName += "I1";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_CHAR:
+                        methodName += "I8";
+                        break;
+                    case CorElementType.ELEMENT_TYPE_BOOLEAN:
+                        methodName += "BOOLEAN";
+                        break;
+                    default:
+                        methodName += "OBJECT";
+                        break;
+                }
+
+                eval.Invoke(methodName, obj, arg);
+            }
         }
 
         public CorValue Invoke(string methodName)
         {
             foreach (CorValue arg in args)
                 Push(arg);
+            args.Clear();
             return eval.Invoke("DbgAgent.ObjectInspector.InvokeStatic", obj, eval.CreateString(methodName));
         }
 
@@ -49,7 +103,26 @@ namespace CSScriptNpp
             Push(instance);
             foreach (CorValue arg in args)
                 Push(arg);
+            args.Clear();
             return eval.Invoke("DbgAgent.ObjectInspector.Invoke", obj, eval.CreateString(methodName));
+        }
+
+        public CorValue TestPrimitives()
+        {
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_I1", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_U1", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_I2", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_I4", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_I8", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_U2", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_U4", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_U8", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_R4", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_R8", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_BOOLEAN", obj));
+            this.AddArg(eval.Invoke("DbgAgent.ObjectInspector.Test_Get_CHAR", obj));
+
+            return Invoke("TestPrimitives", obj);
         }
     }
 
@@ -76,7 +149,11 @@ namespace CSScriptNpp
 
         public CorValue CreateString(string value)
         {
-            return ParseValue("\"" + value + "\"");
+            CorEval eval = process.Threads.Active.CorThread.CreateEval();
+            eval.NewString(value);
+            return GetResult();
+
+            //return ParseValue("\"" + value + "\"");
         }
 
         public CorValue Invoke(string methodName, CorValue instance, params CorValue[] args)
@@ -215,13 +292,7 @@ namespace CSScriptNpp
             process.Go().WaitOne();
 
             // now display result of the funceval
-            if (!(process.StopReason is EvalCompleteStopReason))
-            {
-                // we could have received also EvalExceptionStopReason but it's derived from EvalCompleteStopReason
-                //WriteOutput("Func-eval not fully completed and debuggee has stopped");
-                //WriteOutput("Result of funceval won't be printed when finished.");
-            }
-            else
+            if (process.StopReason is EvalCompleteStopReason)
             {
                 eval = (process.StopReason as EvalCompleteStopReason).Eval;
                 Debug.Assert(eval != null);
