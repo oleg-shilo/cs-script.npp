@@ -22,7 +22,9 @@ namespace gui
     partial class LaunchProcess : Form
     {
         static string lastProcessName = "\"" + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\C# Scripts\debugging2.exe""";
-        static string lastProcessArgs = @"/dbg """ + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\C# Scripts\debugging2.cs""";
+        static string lastProcessArgs = "";
+        //static string lastProcessName = "\"" + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Visual Studio 2013\Projects\DbAgentTest\bin\Debug\DbAgentTest.exe""";
+        //static string lastProcessArgs = @"/dbg """ + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\C# Scripts\debugging2.cs""";
 
         public LaunchProcess()
         {

@@ -1435,7 +1435,7 @@ namespace Microsoft.Samples.Tools.Mdbg.Extension
 
         // Hold onto the underlying shell object so that we can redirect some of its subojects (like the IMdbgIO)
         // to the GUI.
-        private IMDbgShell m_ui;
+        internal IMDbgShell m_ui;
 
         private void menuItemView_Click(object sender, EventArgs e)
         {

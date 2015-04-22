@@ -136,7 +136,7 @@ namespace CSScriptNpp.Dialogs
         void InitInPlaceEditor()
         {
             editBox.KeyDown += editBox_KeyDown;
-            editBox.LostFocus += this.FocusOver;
+            editBox.LostFocus += this.LostFocus;
             editBox.Font = listView1.Font;
             listView1.Controls.AddRange(new Control[] { this.editBox });
             editBox.Hide();

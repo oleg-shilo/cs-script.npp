@@ -68,16 +68,21 @@ namespace gui
             MDbgValue var = null;
             MainForm.ExecuteOnWorkerThreadIfStoppedAndBlock(delegate(MDbgProcess proc)
             {
+                
                 MDbgFrame frame = GetCurrentFrame(proc);
                 if (frame == null)
                 {
                     return;
                 }
 
-                var = proc.ResolveVariable(arg, frame);
+
+
+                var = proc.ResolveExpression(arg, frame);
             });
             return var;
         }
+
+
 
         // When tree mode, add stuff to it.
         void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)

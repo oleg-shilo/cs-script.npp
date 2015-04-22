@@ -146,6 +146,10 @@ namespace Microsoft.Samples.Tools.Mdbg
             set
             {
                 m_ExpressionParser = value;
+                if (m_ExpressionParser != null)
+                    m_debugger.ParseExpression = m_ExpressionParser.ParseExpression2;
+                else
+                    m_debugger.ParseExpression = null;
             }
         }
 
@@ -223,6 +227,7 @@ namespace Microsoft.Samples.Tools.Mdbg
             MdbgCommands.Shell = this;
 
             m_debugger = new MDbgEngine();
+
             MdbgCommands.Initialize();
 
             OnCommandExecuted += new CommandExecutedEventHandler(MdbgCommands.WhenHandler);
@@ -556,7 +561,7 @@ namespace Microsoft.Samples.Tools.Mdbg
                         {
                             if (MDbgProcess.LastStopReason != null)
                                 OnCommandError(new Exception(MDbgProcess.LastStopReason.ToString()), cmd.CommandName);
-                                //OnCommandError(new Exception(e.GetBaseException().Message + "\n" + MDbgProcess.LastStopReason), cmd.CommandName);
+                            //OnCommandError(new Exception(e.GetBaseException().Message + "\n" + MDbgProcess.LastStopReason), cmd.CommandName);
                             else
                                 OnCommandError(e, cmd.CommandName);
                         }

@@ -710,6 +710,7 @@ namespace CSScriptNpp
 
         static public void AddWatch(string expression)
         {
+            System.Diagnostics.Trace.WriteLine("AddWatch");
             if (!watchExtressions.Contains(expression))
             {
                 watchExtressions.Add(expression);

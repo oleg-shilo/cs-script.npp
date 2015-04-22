@@ -323,6 +323,11 @@
             <param name="position">The position.</param>
             <returns></returns>
         </member>
+        <member name="F:csscript.AutoclassGenerator.ConsoleEncoding">
+            <summary>
+            The console encoding to be set for at the script initialization.
+            </summary>
+        </member>
         <member name="T:csscript.ResolveSourceFileHandler">
             <summary>
             Delegate implementing source file probing algorithm.
@@ -924,7 +929,7 @@
             Loads CS-Script application settings from a file. Default settings object is returned if it cannot be loaded from the file.
             </summary>
             <param name="fileName">File name of the XML file</param>
-            <returns>Setting object desterilized from the XML file</returns>
+            <returns>Setting object deserilized from the XML file</returns>
         </member>
         <member name="M:csscript.Settings.Load(System.String,System.Boolean)">
             <summary>
@@ -978,6 +983,11 @@
         <member name="P:csscript.Settings.OpenEndDirectiveSyntax">
             <summary>
             Enables omitting closing character (";") for CS-Script directives (e.g. "//css_ref System.Xml.dll" instead of "//css_ref System.Xml.dll;").
+            </summary>
+        </member>
+        <member name="P:csscript.Settings.ConsoleEncoding">
+            <summary>
+            Encoding of he Console Output. Applicable for console applications script engine only.
             </summary>
         </member>
         <member name="P:csscript.Settings.TargetFramework">
@@ -2043,7 +2053,7 @@
         <member name="P:csscript.CSSEnvironment.PrimaryScriptFile">
             <summary>
             The full name of the primary script file being executed. Usually it is the same file as ScriptFile.
-            However these fields are different if analysed from the pre/post-script.
+            However these fields are different if analyzed from the pre/post-script.
             </summary>
         </member>
         <member name="T:csscript.AppInfo">

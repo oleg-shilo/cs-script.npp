@@ -127,17 +127,26 @@ namespace CSScriptIntellisense
         {
             if (IsShowingInteractivePopup && (key == Keys.Up || key == Keys.Down || key == Keys.Right || key == Keys.Tab || key == Keys.Return || key == Keys.Escape))
             {
-                if (form != null && form.Visible)
+                if (autocompleteForm != null && autocompleteForm.Visible)
                 {
-                    form.OnKeyDown(key);
+                    autocompleteForm.OnKeyDown(key);
+                    handled = true;
+                }
+
+                if (memberInfoPopup != null && memberInfoPopup.IsShowing)
+                {
+                    memberInfoPopup.popupForm.kbdHook_KeyDown(key, 1);
+                    if (key != Keys.Right) //right only processed in autocompleteForm
+                        handled = true;
                 }
 
                 if (namespaceMenu != null && namespaceMenu.Visible)
                 {
                     namespaceMenu.OnKeyDown(key);
+                    if (key != Keys.Right)//right only processed in autocompleteForm
+                        handled = true;
                 }
 
-                handled = true;
                 return;
             }
 
@@ -298,11 +307,11 @@ namespace CSScriptIntellisense
                     currentSnippetContext.CurrentParameterValue = Npp.GetTextBetween(currentSnippetContext.CurrentParameter.Value);
                 }
 
-                if (form != null)
+                if (autocompleteForm != null)
                 {
-                    if (form.Visible)
-                        form.Close();
-                    form = null;
+                    if (autocompleteForm.Visible)
+                        autocompleteForm.Close();
+                    autocompleteForm = null;
                 }
             }
         }
@@ -376,7 +385,7 @@ namespace CSScriptIntellisense
 
         public static bool IsShowingAutocompletion
         {
-            get { return form != null && form.Visible; }
+            get { return autocompleteForm != null && autocompleteForm.Visible; }
         }
 
         public static bool IsShowingNamespaceMenu
@@ -589,7 +598,7 @@ namespace CSScriptIntellisense
             }
         }
 
-        static AutocompleteForm form;
+        static AutocompleteForm autocompleteForm;
 
         static void ShowSnippetsList()
         {
@@ -648,17 +657,17 @@ namespace CSScriptIntellisense
 
                 Point point = Npp.GetCaretScreenLocation();
 
-                if (form != null && form.Visible)
+                if (autocompleteForm != null && autocompleteForm.Visible)
                 {
-                    form.Close();
+                    autocompleteForm.Close();
                 }
 
                 Action<ICompletionData> OnAccepted = data => OnAutocompletionAccepted(data, snippetsOnly);
 
-                form = new AutocompleteForm(OnAccepted, items, NppEditor.GetSuggestionHint());
-                form.Left = point.X;
-                form.Top = point.Y + Npp.GetTextHeight(Npp.GetCaretLineNumber());
-                form.FormClosed += (sender, e) =>
+                autocompleteForm = new AutocompleteForm(OnAccepted, items, NppEditor.GetSuggestionHint());
+                autocompleteForm.Left = point.X;
+                autocompleteForm.Top = point.Y + Npp.GetTextHeight(Npp.GetCaretLineNumber());
+                autocompleteForm.FormClosed += (sender, e) =>
                 {
                     if (memberInfoWasShowing)
                         NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
@@ -668,7 +677,7 @@ namespace CSScriptIntellisense
                 //    if (e.KeyChar >= ' ' || e.KeyChar == 8) //8 is backspace
                 //        OnAutocompleteKeyPress(e.KeyChar);
                 //};
-                form.Show();
+                autocompleteForm.Show();
 
                 OnAutocompleteKeyPress(allowNoText: true); //to grab current word at the caret an process it as a hint
             }
@@ -693,11 +702,11 @@ namespace CSScriptIntellisense
                     TriggerCodeSnippetInsertion();
             }
 
-            if (form != null)
+            if (autocompleteForm != null)
             {
-                if (form.Visible)
-                    form.Close();
-                form = null;
+                if (autocompleteForm.Visible)
+                    autocompleteForm.Close();
+                autocompleteForm = null;
             }
         }
 
@@ -718,12 +727,12 @@ namespace CSScriptIntellisense
 
             if (hint != null)
             {
-                form.FilterFor(hint);
+                autocompleteForm.FilterFor(hint);
             }
             else
             {
                 if (!allowNoText)
-                    form.Close();
+                    autocompleteForm.Close();
             }
         }
 
@@ -751,7 +760,7 @@ namespace CSScriptIntellisense
                 {
                     memberInfoPopup.CheckIfNeedsClosing();
                 }
-                else if (form != null && form.Visible)
+                else if (autocompleteForm != null && autocompleteForm.Visible)
                 {
                     if (c >= ' ' || c == 8) //8 is backspace
                         OnAutocompleteKeyPress(c);
@@ -945,7 +954,7 @@ namespace CSScriptIntellisense
 
             foreach (int offset in probingOffsets) //try to resolve any 'word' in the line
             {
-                var result = SimpleCodeCompletion.GetMissingUsings(text, actualStart+offset, file);
+                var result = SimpleCodeCompletion.GetMissingUsings(text, actualStart + offset, file);
                 if (result.Any())
                     return result;
             }

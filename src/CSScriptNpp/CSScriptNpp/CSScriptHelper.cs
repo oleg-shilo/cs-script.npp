@@ -195,7 +195,6 @@ namespace CSScriptNpp
                 {
                     foreach (string projectDir in Directory.GetDirectories(VsDir))
                     {
-                        Debug.Assert(false);
                         if (projectDir.StartsWith(excludeDirPrefix))
                             continue;
 

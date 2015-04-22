@@ -107,7 +107,7 @@ namespace Microsoft.Samples.Debugging.CorDebug
             return new CorStringValue((ICorDebugStringValue)m_val);
         }
 
-        public CorObjectValue CastToObjectValue()
+        public CorObjectValue   CastToObjectValue()
         {
             return new CorObjectValue((ICorDebugObjectValue)m_val);
         }

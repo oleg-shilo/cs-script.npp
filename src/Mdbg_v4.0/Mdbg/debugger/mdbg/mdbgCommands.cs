@@ -137,7 +137,7 @@ namespace Microsoft.Samples.Tools.Mdbg
             /// full type names (e.g. System.Char, System.Int32) for type.
             /// Example inputs: 45, 'a', true, 556.3, (long)45, (sbyte)5, (System.Int64)65 </param>
             /// <param name="result">A CorGenericValue that has the value of input</param>
-            /// <returns>True iff input was parsed succesfully</returns>
+            /// <returns>True iff input was parsed successfully</returns>
             public bool TryCreatePrimitiveValue(string input, out CorGenericValue result)
             {
                 result = null;

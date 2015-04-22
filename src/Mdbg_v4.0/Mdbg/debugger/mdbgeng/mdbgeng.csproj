@@ -9,12 +9,14 @@
     <RootNamespace>mdbgeng</RootNamespace>
     <AssemblyName>mdbgeng</AssemblyName>
     <WarningLevel>4</WarningLevel>
-    <StartupObject></StartupObject>
+    <StartupObject>
+    </StartupObject>
     <AssemblyOriginatorKeyFile>..\..\mdbg.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
     <SignAssembly>true</SignAssembly>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -58,6 +60,7 @@
     <Compile Include="Breakpoint.cs" />
     <Compile Include="DebuggerVar.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="EvalHelper.cs" />
     <Compile Include="Exception.cs" />
     <Compile Include="FrameFactory.cs" />
     <Compile Include="Function.cs" />

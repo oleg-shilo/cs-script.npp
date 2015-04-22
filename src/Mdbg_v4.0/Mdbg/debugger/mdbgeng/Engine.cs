@@ -464,6 +464,8 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
             m_processMgr = new MDbgProcessCollection(this);
         }
 
+        public delegate CorValue ParseExpressionDlgt(string value, MDbgProcess process, MDbgFrame scope);
+        public ParseExpressionDlgt ParseExpression;
         /// <summary>
         /// Function that extensions can call to register a FrameFactory used for all new processes
         /// </summary>

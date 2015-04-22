@@ -105,6 +105,10 @@ namespace CSScriptNpp
                 {
                     CSScriptIntellisense.Plugin.OnCharTyped((char)nc.ch);
                 }
+                //else if (nc.nmhdr.code == (uint)SciMsg.SCN_KEY)
+                //{
+                //    System.Diagnostics.Debug.WriteLine("SciMsg.SCN_KEY");
+                //}
                 else if (nc.nmhdr.code == (uint)SciMsg.SCN_MARGINCLICK)
                 {
                     if (nc.margin == _SC_MARGE_SYBOLE && nc.modifiers == SCI_CTRL)

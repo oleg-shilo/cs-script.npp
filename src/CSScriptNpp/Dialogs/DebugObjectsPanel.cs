@@ -96,7 +96,10 @@ namespace CSScriptNpp.Dialogs
         void editBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Return)
+            {
+                System.Diagnostics.Trace.WriteLine("editBox_KeyDown->EndEditing");
                 EndEditing();
+            }
             else if (e.KeyData == Keys.Escape)
                 editBox.Hide();
         }
@@ -105,8 +108,9 @@ namespace CSScriptNpp.Dialogs
 
         public event OnEditCellCompleteHandler OnEditCellComplete;
 
-        private void FocusOver(object sender, System.EventArgs e)
+        private new void LostFocus(object sender, System.EventArgs e)
         {
+            System.Diagnostics.Trace.WriteLine("editBox_KeyDown->EndEditing");
             EndEditing();
         }
 
@@ -114,9 +118,10 @@ namespace CSScriptNpp.Dialogs
         {
             if (editBox.IsEditing)
             {
+                editBox.IsEditing = false;
+                System.Diagnostics.Trace.WriteLine("EndEditing->DO");
                 string oldValue;
                 string newValue = editBox.Text;
-                editBox.IsEditing = false;
                 if (focucedItem.GetDbgObject() != AddNewPlaceholder)
                 {
                     oldValue = focucedItem.SubItems[selectedSubItem].Text;
@@ -182,7 +187,8 @@ namespace CSScriptNpp.Dialogs
         public void UpdateData(string data)
         {
             DbgObject[] freshObjects = ToWatchObjects(data);
-
+            freshObjects = freshObjects.Concat(freshObjects.SelectMany(x => x.Children)).ToArray(); //some can be nested
+            
             var nonRootItems = new List<ListViewItem>();
 
             bool updated = false;
@@ -202,6 +208,10 @@ namespace CSScriptNpp.Dialogs
                     else
                     {
                         DbgObject update = freshObjects.Where(x => x.Name == itemObject.Name).FirstOrDefault();
+
+                        //if (update != null)
+                        //    DateTime.Now
+
                         if (update != null)
                         {
                             itemObject.CopyDbgDataFrom(update);
