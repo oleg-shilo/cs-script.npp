@@ -67,6 +67,9 @@
     <Reference Include="enc">
       <HintPath>..\CSScriptNpp\CSScriptNpp\MDbg\enc.dll</HintPath>
     </Reference>
+    <Reference Include="mdbg">
+      <HintPath>..\CSScriptNpp\CSScriptNpp\MDbg\mdbg.exe</HintPath>
+    </Reference>
     <Reference Include="mdbgeng">
       <HintPath>..\CSScriptNpp\CSScriptNpp\MDbg\mdbgeng.dll</HintPath>
     </Reference>

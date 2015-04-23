@@ -13,7 +13,9 @@ using Microsoft.Samples.Debugging.CorDebug.NativeApi;
 using Microsoft.Samples.Debugging.MdbgEngine;
 using Microsoft.Samples.Tools.Mdbg;
 using npp.CSScriptNpp;
+using css=CSScriptNpp;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace npp
 {
@@ -50,7 +52,11 @@ namespace npp
         public DebuggerClient(IMDbgShell shell)
         {
             //Debug.Assert(false);
+            //Environment.SetEnvironmentVariable("CSSNPP_DBG_AGENTASSEMBLY", Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dbgagent.dll"));
+            css.RemoteInspector.AssemblyFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dbgagent.dll");
+            
             this.shell = shell;
+            this.shell.Debugger.ParseExpression = new DefaultExpressionParser(shell.Debugger).ParseExpression2;
             this.shell.OnCommandError += shell_OnCommandError;
             channel.Trace = message => Console.WriteLine(message);
             channel.Start();
@@ -383,6 +389,14 @@ namespace npp
             return result;
         }
 
+        MDbgValue ResolveExpression(string expression)
+        {
+            if (expression.Contains("("))
+                return shell.Debugger.Processes.Active.ResolveExpression(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
+            else
+                return ResolveVariable(expression);
+        }
+
         MDbgValue ResolveVariable(string args)
         {
             var expressions = new List<string>();
@@ -475,7 +489,7 @@ namespace npp
                     {
                         try
                         {
-                            MDbgValue value = ResolveVariable(args);
+                            MDbgValue value = ResolveExpression(args);
 
                             if (value != null)
                                 result = "<items>" + Serialize(value, args) + "</items>";
@@ -1104,7 +1118,7 @@ namespace npp
             if (shell.Debugger.Processes.Active.IsEvalSafe())
                 try
                 {
-                    MDbgValue value = ResolveVariable(expression);
+                    MDbgValue value = ResolveExpression(expression);
                     if (value != null)
                         MessageQueue.AddNotification(NppCategory.Watch + "<items>" + Serialize(value, expression) + "</items>");
                 }

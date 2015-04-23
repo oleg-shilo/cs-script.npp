@@ -542,6 +542,9 @@
     <None Include="Resources\DebugScript.sln" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CSScriptNpp\MDbg\DbgAgent.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="CSScriptNpp\nuget.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -69,7 +69,7 @@ namespace Microsoft.Samples.Tools.Mdbg
             }
             if (Shell.ExpressionParser == null)
             {
-                Shell.ExpressionParser = new DefaultExpressionParser();
+                Shell.ExpressionParser = new DefaultExpressionParser(Shell.Debugger);
             }
 
             // We could subscribe to process-specific event handlers via the the Shell.Debugger.Processes.ProcessAdded event.
@@ -87,378 +87,6 @@ namespace Microsoft.Samples.Tools.Mdbg
                 as MDbgStopOptions;
 
             stopOptions.ActOnCallback(sender as MDbgProcess, e);
-        }
-
-        public class DefaultExpressionParser : IExpressionParser
-        {
-            /// <summary>
-            /// Creates a new parser
-            /// </summary>
-            public DefaultExpressionParser()
-            {
-                InitPrimitiveTypes();
-            }
-
-            public MDbgValue ParseExpression(string variableName, MDbgProcess process, MDbgFrame scope)
-            {
-                Debug.Assert(process != null);
-                return process.ResolveVariable(variableName, scope);
-            }
-
-            public CorValue ParseExpression2(string value, MDbgProcess process, MDbgFrame scope)
-            {
-                if (value.Length == 0)
-                {
-                    return null;
-                }
-                CorGenericValue result;
-                if (TryCreatePrimitiveValue(value, out result))
-                {
-                    //value is a primitive type
-                    return result;
-                }
-                if (value[0] == '"' && value[value.Length - 1] == '"')
-                {
-                    //value is a string
-                    return CreateString(value);
-                }
-                //value is some variable
-                Debug.Assert(process != null);
-                MDbgValue var = process.ResolveVariable(value, scope);
-                return (var == null ? null : var.CorValue);
-            }
-
-            /// <summary>
-            /// Creates a CorGenericValue object for primitive types, for use in function 
-            /// evaluations and setting debugger variables.
-            /// </summary>
-            /// <param name="input">input has to be in the form "input" or "(type)input", where
-            /// we use the ldasm naming convention (e.g. "int", "sbyte", "ushort", etc...) OR 
-            /// full type names (e.g. System.Char, System.Int32) for type.
-            /// Example inputs: 45, 'a', true, 556.3, (long)45, (sbyte)5, (System.Int64)65 </param>
-            /// <param name="result">A CorGenericValue that has the value of input</param>
-            /// <returns>True iff input was parsed successfully</returns>
-            public bool TryCreatePrimitiveValue(string input, out CorGenericValue result)
-            {
-                result = null;
-                CorEval eval = Debugger.Processes.Active.Threads.Active.CorThread.CreateEval();
-                CorValue val = null;
-                CorGenericValue gv = null;
-                PrimitiveType literalType;
-                object value = null;
-                PrimitiveType? castType = null;
-
-                // check for a casting operation
-                if (input[0] == '(')
-                {
-                    // type is specified in value
-                    int index = input.IndexOf(')');
-                    if (index == -1)
-                    {
-                        // input has no closing parenthesis
-                        return false;
-                    }
-
-                    string typeName = input.Substring(1, index - 1).Trim();
-                    if (m_primitiveTypes.ContainsKey(typeName))
-                    {
-                        castType = m_primitiveTypes[typeName];
-                        input = input.Substring(index + 1);
-                    }
-                }
-
-                if (!TryParsePrimitiveLiteral(input, out literalType, out value))
-                {
-                    return false;
-                }
-                Debug.Assert(value != null);
-
-                // apply the cast if one was present earlier
-                if (castType != null)
-                {
-                    try
-                    {
-                        value = Convert.ChangeType(value, castType.Value.type, CultureInfo.InvariantCulture);
-                        literalType = castType.Value;
-                    }
-                    catch (InvalidCastException)
-                    {
-                        return false;
-                    }
-                }
-
-                // create and set the Generic value
-                val = eval.CreateValue(literalType.elementType, null);
-                gv = val.CastToGenericValue();
-                gv.SetValue(value);
-                result = gv;
-                return true;
-            }
-
-            /// <summary>
-            /// Creates a CorReferenceValue for an input string.
-            /// </summary>
-            /// <param name="value">The input string. Must be surrounded by quotation marks,
-            /// e.g. "mystring".</param>
-            /// <returns>A CorReferenceValue representing the input string.</returns>
-            public static CorReferenceValue CreateString(string value)
-            {
-                // ensure that input is in the correct format. Input must be surrounded by quotation marks.
-                if (value.Length < 2 || !value.StartsWith("\"") || !value.EndsWith("\""))
-                {
-                    throw new MDbgShellException("Cannot create string; input is not in correct format. Input must be surrounded by quotation marks.");
-                }
-                // strip surrounding quotation marks
-                string escapedLiteral = value.Substring(1, value.Length - 2);
-                // the value after processing escape sequences
-                string literal;
-                if (!TryParseCharacterLiteral(escapedLiteral, out literal))
-                {
-                    throw new MDbgShellException("Invalid string literal");
-                }
-                CorEval eval = Debugger.Processes.Active.Threads.Active.CorThread.CreateEval();
-                eval.NewString(literal);
-                Debugger.Processes.Active.Go().WaitOne();
-                Debug.Assert(Debugger.Processes.Active.StopReason != null);
-                if (!(Debugger.Processes.Active.StopReason is EvalCompleteStopReason))
-                {
-                    throw new MDbgShellException("Wrong stop reason when creating string!");
-                }
-                CorValue corValue = (Debugger.Processes.Active.StopReason as EvalCompleteStopReason).Eval.Result;
-                return corValue.CastToReferenceValue();
-            }
-
-            /// <summary>
-            /// Parses an input string containing escaped literal characters. Most C escape sequences
-            /// are supported, however trigraphs, /ooo (octal) and /x## (hex) are not.
-            /// </summary>
-            /// <param name="input">Expression representing the escaped literal string</param>
-            /// <param name="value">The unescaped value of the literal string</param>
-            /// <returns>True iff the string could be parsed correctly</returns>
-            private static bool TryParseCharacterLiteral(string input, out string value)
-            {
-                value = null;
-                if (input == null)
-                {
-                    return false;
-                }
-                StringBuilder result = new StringBuilder();
-
-                // iterate over each character or escape sequence
-                for (int i = 0; i < input.Length; i++)
-                {
-                    if (input[i] != '\\') // not an escape sequence
-                    {
-                        result.Append(input[i]);
-                    }
-                    else
-                    {
-                        i++; // go past the slash character
-                        if (input.Length <= i)
-                        {
-                            return false; // slash missing following character
-                        }
-                        if (input[i] == 'a')
-                        {
-                            result.Append('\a');
-                        }
-                        else if (input[i] == 'b')
-                        {
-                            result.Append('\b');
-                        }
-                        else if (input[i] == 'f')
-                        {
-                            result.Append('\f');
-                        }
-                        else if (input[i] == 'n')
-                        {
-                            result.Append('\n');
-                        }
-                        else if (input[i] == 'r')
-                        {
-                            result.Append('\r');
-                        }
-                        else if (input[i] == 't')
-                        {
-                            result.Append('\t');
-                        }
-                        else if (input[i] == 'v')
-                        {
-                            result.Append('\v');
-                        }
-                        else if (input[i] == '\'')
-                        {
-                            result.Append('\'');
-                        }
-                        else if (input[i] == '\"')
-                        {
-                            result.Append('\"');
-                        }
-                        else if (input[i] == '\\')
-                        {
-                            result.Append('\\');
-                        }
-                        else if (input[i] == '?')
-                        {
-                            result.Append('?');
-                        }
-                        else if (input[i] == 'x')
-                        {
-                            if (input.Length <= i + 4) // a 4 digit hex number should be here
-                            {
-                                return false;
-                            }
-                            int charCode;
-                            if (!int.TryParse(input.Substring(i + 1, 4), NumberStyles.AllowHexSpecifier,
-                                CultureInfo.InvariantCulture, out charCode))
-                            {
-                                return false;
-                            }
-                            result.Append((char)charCode);
-                            i += 4;
-                        }
-                        else // C also supports trigraphs, /### (octal) and /x## (hex) but
-                        // we don't parse them. Any other unrecognized escape sequence falls
-                        // in here too
-                        {
-                            return false;
-                        }
-                    }
-                }
-                value = result.ToString();
-                return true;
-            }
-
-            /// <summary>
-            /// Parses an input string representing a literal primitive value.
-            /// </summary>
-            /// <param name="input">Expression representing a literal primitive value.</param>
-            /// <param name="type">The type of the primitive value that the input expression represents.</param>
-            /// <param name="value">A boxed primitive that the input expression represents.</param>
-            /// <returns>True iff the input was parsed succesfully</returns>
-            private bool TryParsePrimitiveLiteral(string input, out PrimitiveType type, out object value)
-            {
-                type = m_primitiveTypes["bool"];
-                value = null;
-                double doubleResult;
-                int intResult;
-                bool boolResult;
-                if (input.Length == 0)
-                {
-                    return false;
-                }
-
-                // if the string starts and ends with ' and has something in the middle, assume it is a char
-                else if (input[0] == '\'' && input[input.Length - 1] == '\'' && input.Length >= 3)
-                {
-                    string literal = input.Substring(1, input.Length - 2);
-                    string literalResult;
-                    if (TryParseCharacterLiteral(literal, out literalResult))
-                    {
-                        if (literalResult != null && literalResult.Length == 1)
-                        {
-                            type = m_primitiveTypes["char"];
-                            value = (object)literalResult[0];
-                            return true;
-                        }
-                    }
-                    return false;
-
-                }
-                // if the value is parsable as an int, assume it represents one
-                else if (int.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out intResult))
-                {
-                    type = m_primitiveTypes["int"];
-                    value = (object)intResult;
-                    return true;
-                }
-                // if the value is parsable as a double, assume it represents one
-                else if (double.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out doubleResult))
-                {
-                    type = m_primitiveTypes["double"];
-                    value = (object)doubleResult;
-                    return true;
-                }
-                // if the value is parsable as a bool, assume it represents one
-                else if (bool.TryParse(input, out boolResult))
-                {
-                    type = m_primitiveTypes["bool"];
-                    value = (object)boolResult;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            private void InitPrimitiveTypes()
-            {
-                m_primitiveTypes = new Dictionary<string, PrimitiveType>();
-
-                PrimitiveType sbyteType = new PrimitiveType(typeof(SByte), CorElementType.ELEMENT_TYPE_I1);
-                m_primitiveTypes.Add("sbyte", sbyteType);
-                m_primitiveTypes.Add("System.SByte", sbyteType);
-
-                PrimitiveType byteType = new PrimitiveType(typeof(Byte), CorElementType.ELEMENT_TYPE_U1);
-                m_primitiveTypes.Add("byte", byteType);
-                m_primitiveTypes.Add("System.Byte", byteType);
-
-                PrimitiveType shortType = new PrimitiveType(typeof(Int16), CorElementType.ELEMENT_TYPE_I2);
-                m_primitiveTypes.Add("short", shortType);
-                m_primitiveTypes.Add("System.Int16", shortType);
-
-                PrimitiveType intType = new PrimitiveType(typeof(Int32), CorElementType.ELEMENT_TYPE_I4);
-                m_primitiveTypes.Add("int", intType);
-                m_primitiveTypes.Add("System.Int32", intType);
-
-                PrimitiveType longType = new PrimitiveType(typeof(Int64), CorElementType.ELEMENT_TYPE_I8);
-                m_primitiveTypes.Add("long", longType);
-                m_primitiveTypes.Add("System.Int64", longType);
-
-                PrimitiveType ushortType = new PrimitiveType(typeof(UInt16), CorElementType.ELEMENT_TYPE_U2);
-                m_primitiveTypes.Add("ushort", ushortType);
-                m_primitiveTypes.Add("System.UInt16", ushortType);
-
-                PrimitiveType uintType = new PrimitiveType(typeof(UInt32), CorElementType.ELEMENT_TYPE_U4);
-                m_primitiveTypes.Add("uint", uintType);
-                m_primitiveTypes.Add("System.UInt32", uintType);
-
-                PrimitiveType ulongType = new PrimitiveType(typeof(UInt64), CorElementType.ELEMENT_TYPE_U8);
-                m_primitiveTypes.Add("ulong", ulongType);
-                m_primitiveTypes.Add("System.UInt64", ulongType);
-
-                PrimitiveType floatType = new PrimitiveType(typeof(Single), CorElementType.ELEMENT_TYPE_R4);
-                m_primitiveTypes.Add("float", floatType);
-                m_primitiveTypes.Add("System.Single", floatType);
-
-                PrimitiveType doubleType = new PrimitiveType(typeof(Double), CorElementType.ELEMENT_TYPE_R8);
-                m_primitiveTypes.Add("double", doubleType);
-                m_primitiveTypes.Add("System.Double", doubleType);
-
-                PrimitiveType boolType = new PrimitiveType(typeof(Boolean), CorElementType.ELEMENT_TYPE_BOOLEAN);
-                m_primitiveTypes.Add("bool", boolType);
-                m_primitiveTypes.Add("System.Boolean", boolType);
-
-                PrimitiveType charType = new PrimitiveType(typeof(Char), CorElementType.ELEMENT_TYPE_CHAR);
-                m_primitiveTypes.Add("char", charType);
-                m_primitiveTypes.Add("System.Char", charType);
-            }
-
-            private struct PrimitiveType
-            {
-                public Type type;
-                public CorElementType elementType;
-
-                public PrimitiveType(Type type, CorElementType elementType)
-                {
-                    this.type = type;
-                    this.elementType = elementType;
-                }
-            }
-
-            // Dictionary mapping primitive type names to PrimitiveValue objects
-            private Dictionary<string, PrimitiveType> m_primitiveTypes;
         }
 
         [
@@ -4349,5 +3977,380 @@ namespace Microsoft.Samples.Tools.Mdbg
                 }
             }
         }
+    }
+
+    //Isolated, public portable equivalent of the original DefaultExpressionParser()
+    public class DefaultExpressionParser : IExpressionParser
+    {
+        MDbgEngine Debugger;
+        /// <summary>
+        /// Creates a new parser
+        /// </summary>
+        public DefaultExpressionParser(MDbgEngine debugger)
+        {
+            Debugger = debugger;
+            InitPrimitiveTypes();
+        }
+
+        public MDbgValue ParseExpression(string variableName, MDbgProcess process, MDbgFrame scope)
+        {
+            Debug.Assert(process != null);
+            return process.ResolveVariable(variableName, scope);
+        }
+
+        public CorValue ParseExpression2(string value, MDbgProcess process, MDbgFrame scope)
+        {
+            if (value.Length == 0)
+            {
+                return null;
+            }
+            CorGenericValue result;
+            if (TryCreatePrimitiveValue(value, out result))
+            {
+                //value is a primitive type
+                return result;
+            }
+            if (value[0] == '"' && value[value.Length - 1] == '"')
+            {
+                //value is a string
+                return CreateString(value);
+            }
+            //value is some variable
+            Debug.Assert(process != null);
+            MDbgValue var = process.ResolveVariable(value, scope);
+            return (var == null ? null : var.CorValue);
+        }
+
+        /// <summary>
+        /// Creates a CorGenericValue object for primitive types, for use in function 
+        /// evaluations and setting debugger variables.
+        /// </summary>
+        /// <param name="input">input has to be in the form "input" or "(type)input", where
+        /// we use the ldasm naming convention (e.g. "int", "sbyte", "ushort", etc...) OR 
+        /// full type names (e.g. System.Char, System.Int32) for type.
+        /// Example inputs: 45, 'a', true, 556.3, (long)45, (sbyte)5, (System.Int64)65 </param>
+        /// <param name="result">A CorGenericValue that has the value of input</param>
+        /// <returns>True iff input was parsed successfully</returns>
+        public bool TryCreatePrimitiveValue(string input, out CorGenericValue result)
+        {
+            result = null;
+            CorEval eval = Debugger.Processes.Active.Threads.Active.CorThread.CreateEval();
+            CorValue val = null;
+            CorGenericValue gv = null;
+            PrimitiveType literalType;
+            object value = null;
+            PrimitiveType? castType = null;
+
+            // check for a casting operation
+            if (input[0] == '(')
+            {
+                // type is specified in value
+                int index = input.IndexOf(')');
+                if (index == -1)
+                {
+                    // input has no closing parenthesis
+                    return false;
+                }
+
+                string typeName = input.Substring(1, index - 1).Trim();
+                if (m_primitiveTypes.ContainsKey(typeName))
+                {
+                    castType = m_primitiveTypes[typeName];
+                    input = input.Substring(index + 1);
+                }
+            }
+
+            if (!TryParsePrimitiveLiteral(input, out literalType, out value))
+            {
+                return false;
+            }
+            Debug.Assert(value != null);
+
+            // apply the cast if one was present earlier
+            if (castType != null)
+            {
+                try
+                {
+                    value = Convert.ChangeType(value, castType.Value.type, CultureInfo.InvariantCulture);
+                    literalType = castType.Value;
+                }
+                catch (InvalidCastException)
+                {
+                    return false;
+                }
+            }
+
+            // create and set the Generic value
+            val = eval.CreateValue(literalType.elementType, null);
+            gv = val.CastToGenericValue();
+            gv.SetValue(value);
+            result = gv;
+            return true;
+        }
+
+        /// <summary>
+        /// Creates a CorReferenceValue for an input string.
+        /// </summary>
+        /// <param name="value">The input string. Must be surrounded by quotation marks,
+        /// e.g. "mystring".</param>
+        /// <returns>A CorReferenceValue representing the input string.</returns>
+        public CorReferenceValue CreateString(string value)
+        {
+            // ensure that input is in the correct format. Input must be surrounded by quotation marks.
+            if (value.Length < 2 || !value.StartsWith("\"") || !value.EndsWith("\""))
+            {
+                throw new MDbgShellException("Cannot create string; input is not in correct format. Input must be surrounded by quotation marks.");
+            }
+            // strip surrounding quotation marks
+            string escapedLiteral = value.Substring(1, value.Length - 2);
+            // the value after processing escape sequences
+            string literal;
+            if (!TryParseCharacterLiteral(escapedLiteral, out literal))
+            {
+                throw new MDbgShellException("Invalid string literal");
+            }
+            CorEval eval = Debugger.Processes.Active.Threads.Active.CorThread.CreateEval();
+            eval.NewString(literal);
+            Debugger.Processes.Active.Go().WaitOne();
+            Debug.Assert(Debugger.Processes.Active.StopReason != null);
+            if (!(Debugger.Processes.Active.StopReason is EvalCompleteStopReason))
+            {
+                throw new MDbgShellException("Wrong stop reason when creating string!");
+            }
+            CorValue corValue = (Debugger.Processes.Active.StopReason as EvalCompleteStopReason).Eval.Result;
+            return corValue.CastToReferenceValue();
+        }
+
+        /// <summary>
+        /// Parses an input string containing escaped literal characters. Most C escape sequences
+        /// are supported, however trigraphs, /ooo (octal) and /x## (hex) are not.
+        /// </summary>
+        /// <param name="input">Expression representing the escaped literal string</param>
+        /// <param name="value">The unescaped value of the literal string</param>
+        /// <returns>True iff the string could be parsed correctly</returns>
+        private static bool TryParseCharacterLiteral(string input, out string value)
+        {
+            value = null;
+            if (input == null)
+            {
+                return false;
+            }
+            StringBuilder result = new StringBuilder();
+
+            // iterate over each character or escape sequence
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] != '\\') // not an escape sequence
+                {
+                    result.Append(input[i]);
+                }
+                else
+                {
+                    i++; // go past the slash character
+                    if (input.Length <= i)
+                    {
+                        return false; // slash missing following character
+                    }
+                    if (input[i] == 'a')
+                    {
+                        result.Append('\a');
+                    }
+                    else if (input[i] == 'b')
+                    {
+                        result.Append('\b');
+                    }
+                    else if (input[i] == 'f')
+                    {
+                        result.Append('\f');
+                    }
+                    else if (input[i] == 'n')
+                    {
+                        result.Append('\n');
+                    }
+                    else if (input[i] == 'r')
+                    {
+                        result.Append('\r');
+                    }
+                    else if (input[i] == 't')
+                    {
+                        result.Append('\t');
+                    }
+                    else if (input[i] == 'v')
+                    {
+                        result.Append('\v');
+                    }
+                    else if (input[i] == '\'')
+                    {
+                        result.Append('\'');
+                    }
+                    else if (input[i] == '\"')
+                    {
+                        result.Append('\"');
+                    }
+                    else if (input[i] == '\\')
+                    {
+                        result.Append('\\');
+                    }
+                    else if (input[i] == '?')
+                    {
+                        result.Append('?');
+                    }
+                    else if (input[i] == 'x')
+                    {
+                        if (input.Length <= i + 4) // a 4 digit hex number should be here
+                        {
+                            return false;
+                        }
+                        int charCode;
+                        if (!int.TryParse(input.Substring(i + 1, 4), NumberStyles.AllowHexSpecifier,
+                            CultureInfo.InvariantCulture, out charCode))
+                        {
+                            return false;
+                        }
+                        result.Append((char)charCode);
+                        i += 4;
+                    }
+                    else // C also supports trigraphs, /### (octal) and /x## (hex) but
+                    // we don't parse them. Any other unrecognized escape sequence falls
+                    // in here too
+                    {
+                        return false;
+                    }
+                }
+            }
+            value = result.ToString();
+            return true;
+        }
+
+        /// <summary>
+        /// Parses an input string representing a literal primitive value.
+        /// </summary>
+        /// <param name="input">Expression representing a literal primitive value.</param>
+        /// <param name="type">The type of the primitive value that the input expression represents.</param>
+        /// <param name="value">A boxed primitive that the input expression represents.</param>
+        /// <returns>True iff the input was parsed succesfully</returns>
+        private bool TryParsePrimitiveLiteral(string input, out PrimitiveType type, out object value)
+        {
+            type = m_primitiveTypes["bool"];
+            value = null;
+            double doubleResult;
+            int intResult;
+            bool boolResult;
+            if (input.Length == 0)
+            {
+                return false;
+            }
+
+            // if the string starts and ends with ' and has something in the middle, assume it is a char
+            else if (input[0] == '\'' && input[input.Length - 1] == '\'' && input.Length >= 3)
+            {
+                string literal = input.Substring(1, input.Length - 2);
+                string literalResult;
+                if (TryParseCharacterLiteral(literal, out literalResult))
+                {
+                    if (literalResult != null && literalResult.Length == 1)
+                    {
+                        type = m_primitiveTypes["char"];
+                        value = (object)literalResult[0];
+                        return true;
+                    }
+                }
+                return false;
+
+            }
+            // if the value is parsable as an int, assume it represents one
+            else if (int.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out intResult))
+            {
+                type = m_primitiveTypes["int"];
+                value = (object)intResult;
+                return true;
+            }
+            // if the value is parsable as a double, assume it represents one
+            else if (double.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out doubleResult))
+            {
+                type = m_primitiveTypes["double"];
+                value = (object)doubleResult;
+                return true;
+            }
+            // if the value is parsable as a bool, assume it represents one
+            else if (bool.TryParse(input, out boolResult))
+            {
+                type = m_primitiveTypes["bool"];
+                value = (object)boolResult;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void InitPrimitiveTypes()
+        {
+            m_primitiveTypes = new Dictionary<string, PrimitiveType>();
+
+            PrimitiveType sbyteType = new PrimitiveType(typeof(SByte), CorElementType.ELEMENT_TYPE_I1);
+            m_primitiveTypes.Add("sbyte", sbyteType);
+            m_primitiveTypes.Add("System.SByte", sbyteType);
+
+            PrimitiveType byteType = new PrimitiveType(typeof(Byte), CorElementType.ELEMENT_TYPE_U1);
+            m_primitiveTypes.Add("byte", byteType);
+            m_primitiveTypes.Add("System.Byte", byteType);
+
+            PrimitiveType shortType = new PrimitiveType(typeof(Int16), CorElementType.ELEMENT_TYPE_I2);
+            m_primitiveTypes.Add("short", shortType);
+            m_primitiveTypes.Add("System.Int16", shortType);
+
+            PrimitiveType intType = new PrimitiveType(typeof(Int32), CorElementType.ELEMENT_TYPE_I4);
+            m_primitiveTypes.Add("int", intType);
+            m_primitiveTypes.Add("System.Int32", intType);
+
+            PrimitiveType longType = new PrimitiveType(typeof(Int64), CorElementType.ELEMENT_TYPE_I8);
+            m_primitiveTypes.Add("long", longType);
+            m_primitiveTypes.Add("System.Int64", longType);
+
+            PrimitiveType ushortType = new PrimitiveType(typeof(UInt16), CorElementType.ELEMENT_TYPE_U2);
+            m_primitiveTypes.Add("ushort", ushortType);
+            m_primitiveTypes.Add("System.UInt16", ushortType);
+
+            PrimitiveType uintType = new PrimitiveType(typeof(UInt32), CorElementType.ELEMENT_TYPE_U4);
+            m_primitiveTypes.Add("uint", uintType);
+            m_primitiveTypes.Add("System.UInt32", uintType);
+
+            PrimitiveType ulongType = new PrimitiveType(typeof(UInt64), CorElementType.ELEMENT_TYPE_U8);
+            m_primitiveTypes.Add("ulong", ulongType);
+            m_primitiveTypes.Add("System.UInt64", ulongType);
+
+            PrimitiveType floatType = new PrimitiveType(typeof(Single), CorElementType.ELEMENT_TYPE_R4);
+            m_primitiveTypes.Add("float", floatType);
+            m_primitiveTypes.Add("System.Single", floatType);
+
+            PrimitiveType doubleType = new PrimitiveType(typeof(Double), CorElementType.ELEMENT_TYPE_R8);
+            m_primitiveTypes.Add("double", doubleType);
+            m_primitiveTypes.Add("System.Double", doubleType);
+
+            PrimitiveType boolType = new PrimitiveType(typeof(Boolean), CorElementType.ELEMENT_TYPE_BOOLEAN);
+            m_primitiveTypes.Add("bool", boolType);
+            m_primitiveTypes.Add("System.Boolean", boolType);
+
+            PrimitiveType charType = new PrimitiveType(typeof(Char), CorElementType.ELEMENT_TYPE_CHAR);
+            m_primitiveTypes.Add("char", charType);
+            m_primitiveTypes.Add("System.Char", charType);
+        }
+
+        private struct PrimitiveType
+        {
+            public Type type;
+            public CorElementType elementType;
+
+            public PrimitiveType(Type type, CorElementType elementType)
+            {
+                this.type = type;
+                this.elementType = elementType;
+            }
+        }
+
+        // Dictionary mapping primitive type names to PrimitiveValue objects
+        private Dictionary<string, PrimitiveType> m_primitiveTypes;
     }
 }

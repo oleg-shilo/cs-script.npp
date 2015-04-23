@@ -121,7 +121,7 @@ namespace CSScriptNpp
                 {
                     //Npp.ShowCalltip(nc.position, "\u0001  1 of 3 \u0002  test tooltip " + Environment.TickCount);
                     //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
-                    //                    tooltip = @"Creates all directories and subdirectories as specified by path.
+                    //tooltip = @"Creates all directories and subdirectories as specified by path.
 
                     Npp.OnCalltipRequest(nc.position);
                 }
@@ -162,7 +162,7 @@ namespace CSScriptNpp
                     string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
                     Debugger.RefreshBreakPointsFromContent();
                     Debugger.SaveBreakPointsFor(file);
-                    
+
                     if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
                         Plugin.OnDocumentSaved();
                 }

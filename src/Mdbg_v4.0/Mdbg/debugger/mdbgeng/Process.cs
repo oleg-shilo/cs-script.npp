@@ -2064,10 +2064,9 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
 
         public MDbgValue ResolveExpression(string expression, MDbgFrame scope) //zos; CSScript.Npp related changes
         {
-            //temporary disable
-            //if (expression.Contains("("))
-            //    return FuncEvaluate(expression, scope);
-            //else
+            if (expression.Contains("("))
+                return FuncEvaluate(expression, scope);
+            else
                 return ResolveVariable(expression, scope);
         }
 
