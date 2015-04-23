@@ -90,10 +90,26 @@ namespace CSScriptNpp
                 if (currentFile.IsScriptFile())
                 {
                     string code;
-                    if (codeToAnalyse != null)
-                        code = codeToAnalyse;
+                    if (currentFile.Contains("CSScriptNpp\\ReflctedType"))
+                    {
+                        var safeCode = new StringBuilder();
+
+                        File.ReadAllLines(currentFile).ForEach(line =>
+                            {
+                                if (line.Contains("sealed struct") && line.Contains(": ValueType"))
+                                    safeCode.AppendLine(line.Replace("sealed struct", "class").Replace(": ValueType", "//: ValueType"));
+                                else
+                                    safeCode.AppendLine(line);
+                            });
+                        code = safeCode.ToString();
+                    }
                     else
-                        code = File.ReadAllText(currentFile);
+                    {
+                        if (codeToAnalyse != null)
+                            code = codeToAnalyse;
+                        else
+                            code = File.ReadAllText(currentFile);
+                    }
                     var members = Reflector.GetMapOf(code).OrderBy(x => x.ParentDisplayName).ToArray();
 
                     var builder = new StringBuilder();
@@ -143,7 +159,7 @@ namespace CSScriptNpp
                 mapTxt.Text = "";
                 ErrorMessage = e.Message;
             }
-            catch 
+            catch
             {
             }
         }

@@ -230,7 +230,7 @@ namespace UltraSharp.Cecil
                 foreach (IMethod item in constructors)
                     ReconstructMethod(item);
 
-            foreach (IMethod item in type.GetMethods())
+            foreach (IMethod item in type.GetMethods(null, GetMemberOptions.IgnoreInheritedMembers))
                 ReconstructMethod(item);
 
             intend--;
