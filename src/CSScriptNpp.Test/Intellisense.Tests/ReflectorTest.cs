@@ -658,8 +658,8 @@ class TestCls<T>
 {
 }", 267, "test.cs");
             Assert.True(result.FileName.EndsWith(".cs"));
-            Assert.Equal(201, result.BeginLine);
-            Assert.Equal(201, result.EndLine);
+            Assert.Equal(165, result.BeginLine);
+            Assert.Equal(165, result.EndLine);
         }
 
         [Fact]

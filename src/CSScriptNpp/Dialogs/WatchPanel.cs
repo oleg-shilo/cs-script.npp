@@ -29,6 +29,15 @@ namespace CSScriptNpp.Dialogs
             content.OnDagDropText += content_OnDagDropText;
             content.OnEditCellComplete += content_OnEditCellComplete;
             Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
+            DebuggerServer.OnDebuggerStateChanged += DebuggerServer_OnDebuggerStateChanged;
+        }
+
+        void DebuggerServer_OnDebuggerStateChanged()
+        {
+            if (!Debugger.IsInBreak)
+            {
+                content.InvalidateExpressions();
+            }
         }
 
         void content_OnPinClicked(DbgObject dbgObject)
@@ -38,7 +47,8 @@ namespace CSScriptNpp.Dialogs
 
         void content_OnEditCellComplete(int column, string oldValue, string newValue)
         {
-            if (oldValue != newValue)
+            bool evalRefreshRequest = (newValue != null && newValue.Contains("("));
+            if (oldValue != newValue || evalRefreshRequest)
             {
                 if (!string.IsNullOrEmpty(oldValue))
                     Debugger.RemoveWatch(oldValue);

@@ -213,6 +213,16 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dbg_refresh {
+            get {
+                object obj = ResourceManager.GetObject("dbg_refresh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dbg_remove_stoponexc {
             get {
                 object obj = ResourceManager.GetObject("dbg_remove_stoponexc", resourceCulture);
@@ -608,11 +618,12 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to v1.0.39.0
-        ///* Changed priority of the assembly probing steps. Now Namespaces are resolved the last.
-        ///* Improved referenced assembly analysis in &apos;script project&apos; and intellisense
-        ///* Fixed Issue#11: Wrong path for scripts in search dirs
-        ///* Added support for debugging surrogate hosting process (//css_host).
+        ///   Looks up a localized string similar to v1.0.42.0
+        ///* Implemented funceval in the QuickWatch panel
+        ///* Reduced Toolip flickering in BreakPoint mode
+        ///* Improved CodeMap for reflected types (does not fail on syntax errors)
+        ///* Added formatting bracket-less if..else statements
+        ///.
         /// </summary>
         internal static string WhatsNew {
             get {

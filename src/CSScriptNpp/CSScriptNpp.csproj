@@ -542,6 +542,7 @@
     <None Include="Resources\DebugScript.sln" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\dbg_refresh.png" />
     <None Include="CSScriptNpp\MDbg\DbgAgent.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

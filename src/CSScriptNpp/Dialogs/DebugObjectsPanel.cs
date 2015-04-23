@@ -110,7 +110,6 @@ namespace CSScriptNpp.Dialogs
 
         private new void LostFocus(object sender, System.EventArgs e)
         {
-            System.Diagnostics.Trace.WriteLine("editBox_KeyDown->EndEditing");
             EndEditing();
         }
 
@@ -119,7 +118,6 @@ namespace CSScriptNpp.Dialogs
             if (editBox.IsEditing)
             {
                 editBox.IsEditing = false;
-                System.Diagnostics.Trace.WriteLine("EndEditing->DO");
                 string oldValue;
                 string newValue = editBox.Text;
                 if (focucedItem.GetDbgObject() != AddNewPlaceholder)
@@ -137,7 +135,7 @@ namespace CSScriptNpp.Dialogs
                 else
                 {
                     oldValue = null;
-                    AddWatchExpression(newValue);
+                    AddWatchExpression(newValue, false);
                 }
                 editBox.Hide();
 
@@ -160,7 +158,7 @@ namespace CSScriptNpp.Dialogs
             StartEditing(focucedItem, selectedSubItem);
         }
 
-        public void AddWatchExpression(string expression)
+        public void AddWatchExpression(string expression, bool sendToDebugger = true)
         {
             expression = expression.Trim();
             if (!string.IsNullOrEmpty(expression))
@@ -174,7 +172,8 @@ namespace CSScriptNpp.Dialogs
                         Type = "<N/A>",
                     });
 
-                Debugger.AddWatch(expression);
+                if (sendToDebugger)
+                    Debugger.AddWatch(expression);
             }
         }
 
@@ -187,15 +186,17 @@ namespace CSScriptNpp.Dialogs
         public void UpdateData(string data)
         {
             DbgObject[] freshObjects = ToWatchObjects(data);
-            freshObjects = freshObjects.Concat(freshObjects.SelectMany(x => x.Children)).ToArray(); //some can be nested
-            
+
+            var nestedObjects = freshObjects.Where(x => x.Children != null).SelectMany(x => x.Children).ToArray();
+            freshObjects = freshObjects.Concat(nestedObjects).ToArray(); //some can be nested
+
             var nonRootItems = new List<ListViewItem>();
 
             bool updated = false;
 
             foreach (ListViewItem item in listView1.Items)
             {
-                var itemObject = item.Tag as DbgObject;
+                var itemObject = item.GetDbgObject();
                 if (itemObject != null)
                 {
                     itemObject.IsExpanded = false; //if is to be maintained then children need to be required immediately 
@@ -369,7 +370,16 @@ namespace CSScriptNpp.Dialogs
                 return result.ToArray();
         }
 
-        protected void AddWatchObject(DbgObject item)
+        public void InvalidateExpressions()
+        {
+            foreach (var item in listView1.GetAllObjects())
+                if (item.IsRefreshable)
+                    item.IsCurrent = false;
+
+            listView1.Invalidate();
+        }
+
+        public void AddWatchObject(DbgObject item)
         {
             int insertionPosition = listView1.Items.Count;
 
@@ -600,7 +610,13 @@ namespace CSScriptNpp.Dialogs
 
                 }
 
-                if (e.ColumnIndex == 1 && dbgObject.IsVisualizable)
+                if (e.ColumnIndex == 1 && dbgObject.IsRefreshable && !dbgObject.IsCurrent)
+                {
+                    int x = e.Bounds.X + e.Bounds.Width - visualizerOffset;
+                    int y = e.Bounds.Y;
+                    e.Graphics.DrawImage(Resources.Resources.dbg_refresh, x, y);
+                }
+                else if (e.ColumnIndex == 1 && dbgObject.IsVisualizable)
                 {
                     int x = e.Bounds.X + e.Bounds.Width - visualizerOffset;
                     int y = e.Bounds.Y;
@@ -640,15 +656,25 @@ namespace CSScriptNpp.Dialogs
                 else if (colIndex == 1)
                 {
                     var dbgObject = (DbgObject)info.Item.Tag;
-                    if (dbgObject != null && dbgObject.IsVisualizable)
+                    if (dbgObject != null)
                     {
                         if (GetItemVisualizerClickableRange().Contains(e.X))
-                            using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value.StripQuotation().Replace("\r", "").Replace("\n", "\r\n")))
+                        {
+                            if (dbgObject.IsRefreshable && !dbgObject.IsCurrent)
                             {
-                                if (dbgObject.IsCollection)
-                                    panel.InitAsCollection(dbgObject.DbgId);
-                                panel.ShowDialog();
+                                if (Debugger.IsInBreak)
+                                    Debugger.AddWatch(dbgObject.Name);
                             }
+                            else if (dbgObject.IsVisualizable)
+                            {
+                                using (var panel = new TextVisualizer(dbgObject.Name, dbgObject.Value.StripQuotation().Replace("\r", "").Replace("\n", "\r\n")))
+                                {
+                                    if (dbgObject.IsCollection)
+                                        panel.InitAsCollection(dbgObject.DbgId);
+                                    panel.ShowDialog();
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -798,9 +824,13 @@ namespace CSScriptNpp.Dialogs
             string toolTipText = e.Item.ToolTipText;
             if (this.IsPinnable && dbgObject.IsPinable && GetItemPinClickableRange().Contains(cursor.X))
                 toolTipText = "Click to pin this expression.";
-            else if (dbgObject.IsVisualizable && GetItemVisualizerClickableRange().Contains(cursor.X))
-                toolTipText = "Click to visualize this value.";
-
+            else if (GetItemVisualizerClickableRange().Contains(cursor.X))
+            {
+                if (dbgObject.IsRefreshable && !dbgObject.IsCurrent)
+                    toolTipText = "Click to refresh this value.";
+                else if (dbgObject.IsVisualizable)
+                    toolTipText = "Click to visualize this value.";
+            }
             toolTip.Show(toolTipText, this, cursor.X, cursor.Y - 30, 1000);
         }
     }

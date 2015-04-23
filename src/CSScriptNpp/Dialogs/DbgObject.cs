@@ -31,6 +31,8 @@ namespace CSScriptNpp.Dialogs
                     Array.ForEach(Children, x => x.Parent = this);
             }
         }
+        public bool IsCurrent = true;
+
         public DbgObject Parent { get; set; }
         public bool HasChildren { get; set; }
         public bool IsExpanded { get; set; }
@@ -109,6 +111,14 @@ namespace CSScriptNpp.Dialogs
                         (_value.StartsWith("\"") || IsCollection); //non empty text or collection value
             }
         }
+        
+        public bool IsRefreshable
+        {
+            get
+            {
+                return Name.Contains("("); //expression with brackets
+            }
+        }
 
         public bool IsPinable
         {
@@ -131,6 +141,7 @@ namespace CSScriptNpp.Dialogs
             this.IsFake = source.IsFake;
             this.IsField = source.IsField;
             this.IsPublic = source.IsPublic;
+            this.IsCurrent = source.IsCurrent;
             this.Tooltip = source.Tooltip;
             this.IsModified = source.IsModified;
             this.HasChildren = source.HasChildren;

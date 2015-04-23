@@ -1,6 +1,5 @@
-v1.0.41.0
-* Improved reliability of the current step marker rendering 
-* Fixed "Add using" menu focus management
-* Improved 'add usings' autoresolving
-* Implemented cleaning of the plpugin temp directory
-* Improved formatting of the inline initializers (Dictionary<T1,T2>)
+v1.0.42.0
+* Implemented expression evaluation (funceval) in the QuickWatch panel
+* Reduced Toolip flickering in BreakPoint mode
+* Improved CodeMap for reflected types (does not fail on syntax errors)
+* Added formatting bracket-less if..else statements

@@ -13,7 +13,7 @@ using Microsoft.Samples.Debugging.CorDebug.NativeApi;
 using Microsoft.Samples.Debugging.MdbgEngine;
 using Microsoft.Samples.Tools.Mdbg;
 using npp.CSScriptNpp;
-using css=CSScriptNpp;
+using css = CSScriptNpp;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -54,7 +54,7 @@ namespace npp
             //Debug.Assert(false);
             //Environment.SetEnvironmentVariable("CSSNPP_DBG_AGENTASSEMBLY", Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dbgagent.dll"));
             css.RemoteInspector.AssemblyFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dbgagent.dll");
-            
+
             this.shell = shell;
             this.shell.Debugger.ParseExpression = new DefaultExpressionParser(shell.Debugger).ParseExpression2;
             this.shell.OnCommandError += shell_OnCommandError;
@@ -126,7 +126,7 @@ namespace npp
 
             //if (command.StartsWith("run"))
             {
-            //    //Debug.Assert(false);
+                //    //Debug.Assert(false);
             }
 
 
@@ -258,11 +258,12 @@ namespace npp
 
             if (operation == "watch+")
             {
-                if (!WatchExpressions.Contains(expression))
-                {
-                    //Console.WriteLine(">> WatchAdd: " + expression);
-                    WatchExpressions.Add(expression);
-                }
+                if (!expression.Contains("(")) //do not store evals
+                    if (!WatchExpressions.Contains(expression))
+                    {
+                        //Console.WriteLine(">> WatchAdd: " + expression);
+                        WatchExpressions.Add(expression);
+                    }
 
                 if (IsInBreakMode)
                     ReportSingleWatch(expression);
@@ -577,7 +578,7 @@ namespace npp
                     // It will also include all base class fields.
                     //string stValue = val.InvokeToString();
                     result.Add(new XAttribute("isComplex", true),
-                      //         new XAttribute("value", stValue),
+                        //         new XAttribute("value", stValue),
                                new XAttribute("isArray", false));
                 }
                 else
