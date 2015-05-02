@@ -2855,6 +2855,13 @@
             <typeparam name="T">Te type which is implemented in the assembly to be referenced.</typeparam>
             <returns>The instance of the <see cref="T:CSScriptLibrary.Evluator"/>.</returns>
         </member>
+        <member name="M:CSScriptLibrary.Evaluator.GetReferencedAssemblies">
+            <summary>
+            Gets the referenced assemblies. The set of assemblies is get cleared 
+            on Reset.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:CSScriptLibrary.Evaluator.LoadCode(System.String)">
              <summary>
              Evaluates C# code and loads (returns instance) the first class defined in the code to the current AppDomain.

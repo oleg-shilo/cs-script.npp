@@ -44,6 +44,7 @@ namespace CSScriptNpp
         public bool RunExternalInDebugMode = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
+        public string CsSConsoleEncoding = "utf-8";
         public string LastExternalProcess = "";
         public string LastExternalProcessArgs = "";
         public int LastExternalProcessCpu = 0;
@@ -103,6 +104,7 @@ namespace CSScriptNpp
                 SetValue(Section, "LastExternalProcessArgs", LastExternalProcessArgs);
                 SetValue(Section, "LastExternalProcessCpu", LastExternalProcessCpu);
                 SetValue(Section, "TargetVersion", TargetVersion);
+                SetValue(Section, "CsSConsoleEncoding", CsSConsoleEncoding);
                 SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
                 SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
                 SetValue(Section, "DistributeScriptAsWindowApp", DistributeScriptAsWindowApp);
@@ -139,6 +141,7 @@ namespace CSScriptNpp
                 //QuickViewAutoRefreshAvailable = GetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
                 LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
                 TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);
+                TargetVersion = GetValue(Section, "CsSConsoleEncoding", CsSConsoleEncoding);
                 LastExternalProcess = GetValue(Section, "LastExternalProcess", LastExternalProcess);
                 LastExternalProcessArgs = GetValue(Section, "LastExternalProcessArgs", LastExternalProcessArgs);
                 LastExternalProcessCpu = GetValue(Section, "LastExternalProcessCpu", LastExternalProcessCpu);

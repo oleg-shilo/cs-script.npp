@@ -20,6 +20,7 @@ namespace CSScriptNpp.Deployment
 
         static void Main(string[] args)
         {
+            //Debug.Assert(false);
             bool createdNew;
             appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
 
@@ -143,6 +144,8 @@ namespace CSScriptNpp.Deployment
 
         static bool EnsureNppNotRunning(bool backgroundWait)
         {
+            Thread.Sleep(2000);
+
             int count = 0;
             while (Process.GetProcessesByName("notepad++").Any())
             {

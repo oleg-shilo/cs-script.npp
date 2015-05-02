@@ -61,6 +61,8 @@ namespace CSScriptNpp
 
         static internal void CommandMenuInit()
         {
+            Environment.SetEnvironmentVariable("CSSCRIPT_CONSOLE_ENCODING_OVERWRITE", Config.Instance.CsSConsoleEncoding);
+            
             int index = 0;
 
             //'_' prefix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"

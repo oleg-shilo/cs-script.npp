@@ -119,7 +119,15 @@ namespace CSScriptNpp.Dialogs
                                     Process.Start(updater, string.Format("\"{0}\" \"{1}\" /asynch_update", version, targetDir));
                                 }
                                 else
-                                    Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
+                                {
+                                    if (DialogResult.Yes == MessageBox.Show(@"Same installation steps still need an to be completed. Notepad++ needs to be restarted in older to complete thse steps. Would you like to restart now?",
+                                                                              "CS-Script", MessageBoxButtons.YesNo))
+                                    {
+                                        Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
+                                        Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
+                                    }
+                                }
+
                             }
 
                             Config.Instance.Save();
