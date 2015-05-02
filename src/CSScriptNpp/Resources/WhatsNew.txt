@@ -1,5 +1,3 @@
-v1.0.42.0
-* Implemented expression evaluation (funceval) in the QuickWatch panel
-* Reduced Toolip flickering in BreakPoint mode
-* Improved CodeMap for reflected types (does not fail on syntax errors)
-* Added formatting bracket-less if..else statements
+v1.0.43.0
+* Preparation of the plugin for integration with CS-Script from Chocolatey
+* Added auto closing N++ on CSScript.Npp 'immediate' update
