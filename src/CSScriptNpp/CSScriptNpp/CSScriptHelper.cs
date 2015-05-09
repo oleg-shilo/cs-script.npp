@@ -464,7 +464,7 @@ namespace CSScriptNpp
         {
             try
             {
-                string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+                string downloadDir = KnownFolders.UserDownloads; 
 
                 string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + distroExtension);
 

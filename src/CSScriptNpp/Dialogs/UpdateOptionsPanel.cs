@@ -108,7 +108,7 @@ namespace CSScriptNpp.Dialogs
                             {
                                 Config.Instance.UpdateMode = (string)customDeployment.Tag;
 
-                                string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+                                string downloadDir = KnownFolders.UserDownloads;
 
                                 string targetDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                                 string updater = DeployUpdater(targetDir, downloadDir);

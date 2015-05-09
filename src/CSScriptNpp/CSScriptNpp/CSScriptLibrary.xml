@@ -1472,6 +1472,24 @@
             </summary>
             <returns>Temporary folder name.</returns>
         </member>
+        <member name="M:CSScriptLibrary.CSScript.CompileFiles(System.String[],System.String,System.Boolean,System.String[])">
+            <summary>
+            Compiles multiple C# files into a single assembly with CSExecutor
+            </summary>
+            <param name="sourceFiles">Collection of the files to be compiled.</param>
+            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
+            <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
+            <returns>Compiled assembly file name.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.CSScript.CompileFiles(System.String[],System.String[])">
+            <summary>
+            Compiles multiple C# files into a single assembly with CSExecutor
+            </summary>
+            <param name="sourceFiles">Collection of the files to be compiled.</param>
+            <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
+            <returns>Compiled assembly file name.</returns>
+        </member>
         <member name="M:CSScriptLibrary.CSScript.Compile(System.String,System.String,System.Boolean,System.String[])">
             <summary>
             Compiles script file into assembly with CSExecutor
@@ -1543,7 +1561,7 @@
              Surrounds the method implementation code into a class and compiles it code into assembly with CSExecutor and loads it in current AppDomain.
              The most convenient way of using dynamic methods is to declare them as static methods. In this case they can be invoked with wild card character as a class name (e.g. asmHelper.Invoke("*.SayHello")). Otherwise you will need to instantiate class "DyamicClass.Script" in order to call dynamic method.
             
-             You can have multiple methods implementations in the single methodCode. Also you can specify namespaces at the begining of the code:
+             You can have multiple methods implementations in the single methodCode. Also you can specify namespaces at the beginning of the code:
             
              CSScript.LoadMethod(
                  @"using System.Windows.Forms;
@@ -1724,6 +1742,28 @@
             not specified as a call argument but read from the file instead.</para>
             </summary>
             <param name="scriptFile">The script file.</param>
+            <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
+            <returns>Compiled assembly.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.CSScript.LoadFiles(System.String[],System.String,System.Boolean,System.String[])">
+            <summary>
+            Compiles code from the specified files into assembly with CSExecutor and loads it in current AppDomain.
+            <para>This method is a logical equivalent of the corresponding <c>LoadCode</c> method except the code is
+            not specified as a call argument but read from the file instead.</para>
+            </summary>
+            <param name="sourceFiles">The source files to be compiled.</param>
+            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
+            <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
+            <returns>Compiled assembly.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.CSScript.LoadFiles(System.String[],System.String[])">
+            <summary>
+            Compiles code from the specified files into assembly with CSExecutor and loads it in current AppDomain.
+            <para>This method is a logical equivalent of the corresponding <c>LoadCode</c> method except the code is
+            not specified as a call argument but read from the file instead.</para>
+            </summary>
+            <param name="sourceFiles">The source files to be compiled.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly.</returns>
         </member>

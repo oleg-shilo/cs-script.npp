@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace CSScriptNpp.Deployment
@@ -12,7 +13,7 @@ namespace CSScriptNpp.Deployment
         {
             try
             {
-                string downloadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+                string downloadDir = KnownFolders.UserDownloads;
 
                 string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + distroExtension);
 

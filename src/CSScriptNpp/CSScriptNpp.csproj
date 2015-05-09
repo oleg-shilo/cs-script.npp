@@ -178,6 +178,7 @@
     </Compile>
     <Compile Include="Interop\Intellisense.cs" />
     <Compile Include="Interop\IniFile.cs" />
+    <Compile Include="Interop\KnownFolders.cs" />
     <Compile Include="Interop\LocalWindowsHook.cs" />
     <Compile Include="Interop\Npp.cs" />
     <Compile Include="Interop\WinHook.cs" />
