@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace CSScriptNpp
 {
+    //based on work of Ray Koopa: http://www.codeproject.com/Articles/878605/Getting-all-Special-Folders-in-NET
     public class KnownFolders
     {
         [Flags]
