@@ -12,18 +12,19 @@ namespace CSScriptIntellisense
             {
                 switch (c)
                 {
-                    case '\n': OnNewLine(); break;
+                    //case '\n': OnNewLine(); break; //it conflicts with N++ auto-indent
                     case '{': OnOpenBracket(); break;
                     case '}': OnCloseBracket(); break;
                 }
             }
-            else if (Config.Instance.FormatAsYouType)
-            {
-                switch (c)
-                {
-                    case '\n': OnNewLine(); break;
-                }
-            }
+            //it conflicts with N++ auto-indent
+            //else if (Config.Instance.FormatAsYouType)
+            //{
+            //    switch (c)
+            //    {
+            //        case '\n': OnNewLine(); break; 
+            //    }
+            //}
         }
 
         static void OnNewLine()

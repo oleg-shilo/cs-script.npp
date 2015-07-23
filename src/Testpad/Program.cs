@@ -19,7 +19,7 @@ namespace Testpad
         {
             FormattingTest();
             new FavoritesPanel().ShowDialog(); return;
-            DebugExternal.ShowModal(); return;
+            //DebugExternal.ShowModal(); return;
             //new UpdateOptionsPanel("1.0.1.1").ShowDialog(); return;
 
             //var tt = typeof(List<int>).GetProperties();

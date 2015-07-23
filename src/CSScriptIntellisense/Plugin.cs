@@ -946,6 +946,14 @@ namespace CSScriptIntellisense
             int currentPosOffset = currentPos - start; //note the diff between cuurrPos and start of the line
             int[] probingOffsets = WordEndsOf(line); //note the all end positions of the words
 
+            probingOffsets = probingOffsets.OrderBy(x=>x-currentPosOffset).ToArray();
+
+            //start from currentPosOffset and go left, then go to the right
+            probingOffsets = probingOffsets.Where(x => x <= currentPosOffset)
+                                           .Reverse()
+                                           .Concat(probingOffsets.Where(x => x > currentPosOffset))
+                                           .ToArray();
+
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
             EnsureCurrentFileParsed();

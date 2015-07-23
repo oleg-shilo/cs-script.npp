@@ -667,20 +667,21 @@ return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-00
             Assert.Equal(code, newCode); //no changes
         }
 
-        [Fact]
-        public void ShouldFormattWithFRefactory()
+        //[Fact]
+        public void ShouldFormattWithNRefactory()
         {
-            var code = @"using System;
-
-class Test
-{
-    public static void Main(string[] args)
-    {
-        if (args != null ) {
+            //NRefactory is not ready yet
+//            var code = @"using System;
+//
+//class Test
+//{
+//    public static void Main(string[] args)
+//    {
+//        if (args != null ) {
+//        }
+//    }
+//}";
+            // new CSharpFormatter (FormattingOptionsFactory.CreateAllman ()).Format (code));
         }
-    }
-}";
-           // new CSharpFormatter (FormattingOptionsFactory.CreateAllman ()).Format (code));
-            }
     }
 }
