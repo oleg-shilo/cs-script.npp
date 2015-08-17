@@ -32,12 +32,13 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.checkUpdates = new System.Windows.Forms.CheckBox();
+            this.useCS6 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(12, 116);
+            this.linkLabel1.Location = new System.Drawing.Point(10, 142);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 5;
@@ -55,11 +56,22 @@
             this.checkUpdates.Text = "Check for updates at startup";
             this.checkUpdates.UseVisualStyleBackColor = true;
             // 
+            // useCS6
+            // 
+            this.useCS6.AutoSize = true;
+            this.useCS6.Location = new System.Drawing.Point(13, 105);
+            this.useCS6.Name = "useCS6";
+            this.useCS6.Size = new System.Drawing.Size(136, 17);
+            this.useCS6.TabIndex = 7;
+            this.useCS6.Text = "Handle C# 6.0 (Roslyn)";
+            this.useCS6.UseVisualStyleBackColor = true;
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 138);
+            this.ClientSize = new System.Drawing.Size(315, 164);
+            this.Controls.Add(this.useCS6);
             this.Controls.Add(this.checkUpdates);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -79,5 +91,6 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.CheckBox checkUpdates;
+        private System.Windows.Forms.CheckBox useCS6;
     }
 }

@@ -149,15 +149,6 @@
             ApartmentState of a script during the execution (default: ApartmentState.Unknown)
             </summary>
         </member>
-        <member name="M:CSScriptLibrary.ScriptParser.ResolvePackages">
-            <summary>
-            Resolves the NuGet packages into assemblies to be referenced by the script.
-            <para>If the package was never installed/downloaded yet CS-Script runtime will try to download it.</para>
-            <para>CS-Script will also analyze the installed package structure in try to reference compatible assemblies
-            from the package.</para>
-            </summary>
-            <returns>Collection of the referenced assembly files.</returns>
-        </member>
         <member name="M:CSScriptLibrary.ScriptParser.ResolvePackages(System.Boolean)">
             <summary>
             Resolves the NuGet packages into assemblies to be referenced by the script.
@@ -1035,7 +1026,7 @@
             Gets or sets a value indicating whether custom string hashing algorithm should be used.
             <para>
             String hashing is used by the script engine for allocating temporary and cached paths. 
-            However default string hashing is platform dependant (x32 vs. x64) what makes impossible 
+            However default string hashing is platform dependent (x32 vs. x64) what makes impossible 
             truly deterministic string hashing. This in turns complicates the integration of the 
             CS-Script infrastructure with the third-party applications (e.g. Notepad++ CS-Script plugin).
             </para>
@@ -1315,6 +1306,13 @@
             </summary>
             <param name="domain">The <see cref="T:System.AppDomain"/> to be cloned.</param>
             <returns>The newly created <see cref="T:System.AppDomain"/>.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.AppDomainHelper.GetStrongName(System.Reflection.Assembly)">
+            <summary>
+            Gets the strong name of the assembly.
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <returns>Assembly strong name.</returns>
         </member>
         <member name="M:CSScriptLibrary.AppDomainHelper.Clone(System.AppDomain,System.String,System.Security.PermissionSet,System.Security.Policy.StrongName[])">
             <summary>

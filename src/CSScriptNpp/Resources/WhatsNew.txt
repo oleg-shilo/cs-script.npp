@@ -1,3 +1,9 @@
-v1.0.43.0
-* Preparation of the plugin for integration with CS-Script from Chocolatey
-* Added auto closing N++ on CSScript.Npp 'immediate' update
+v1.0.44.0
+* Added support for C# 6.0 via Roslyn provider. It is disabled by default. You can enable it from the Settings dialog.
+
+* Fixed collision between Npp and CSScript.Npp auto-indent
+
+* Improved "add missing 'usings'"
+
+* Implemented reliable KnownFolders.UserDownloads in response to discussions/637474
+

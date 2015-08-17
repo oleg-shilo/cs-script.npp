@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -471,6 +472,8 @@ namespace CSScriptNpp
             }
             catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
         }
+
+
     }
 
     public class OutputInfo
@@ -582,6 +585,14 @@ namespace CSScriptNpp
         {
             this.control = control;
             this.control.HideSelection = false;
+            this.control.WordWrap = false;
+            timer.Interval = 100;
+            timer.Tick += Timer_Tick;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            Flash();
         }
 
         internal bool Visible
@@ -636,7 +647,7 @@ namespace CSScriptNpp
                     if (!string.IsNullOrEmpty(text))
                     {
                         caretPos += text.Length;
-                        control.Text += text;
+                        control.AppendText(text);
                         EnsureCapacity();
                         ScrollToView();
                     }
@@ -655,6 +666,25 @@ namespace CSScriptNpp
             return WriteText(newText);
         }
 
+        Timer timer = new Timer();
+        StringBuilder buffer = new StringBuilder();
+
+        void Flash()
+        {
+            if (buffer.Length > 0)
+                control.AppendText(buffer.ToString());
+            buffer.Clear();
+            timer.Enabled = false;
+        }
+
+        void AppendChar(char c)
+        {
+            buffer.Append(c);
+            timer.Enabled = false;
+            timer.Enabled = true;
+        }
+
+        bool isBuffered = false;
         int caretPos = 0;
         public Output WriteConsoleChar(char c)
         {
@@ -662,7 +692,15 @@ namespace CSScriptNpp
             {
                 if (c == '\n')
                 {
-                    control.AppendText(Environment.NewLine);
+                    if (!isBuffered)
+                    {
+                        control.AppendText(Environment.NewLine);
+                    }
+                    else
+                    {
+                        AppendChar(c);
+                        Flash();
+                    }
 
                     EnsureCapacity();
                     ScrollToView();
@@ -670,6 +708,7 @@ namespace CSScriptNpp
                 }
                 else if (c == '\r')
                 {
+                    Flash();
                     for (; caretPos > 0; caretPos--)
                         if (control.Text[caretPos - 1] == '\n')
                             break;
@@ -678,14 +717,18 @@ namespace CSScriptNpp
                 {
                     if (caretPos == control.Text.Length)
                     {
-                        control.AppendText(c.ToString());
+
+                        if (!isBuffered)
+                            control.AppendText(c.ToString());
+                        else
+                            AppendChar(c);
                     }
                     else
                     {
                         control.SelectionStart = caretPos;
                         control.SelectionLength = 1;
                         var newChar = c.ToString();
-                        if(newChar != control.SelectedText)
+                        if (newChar != control.SelectedText)
                             control.SelectedText = newChar;
                         else
                             control.SelectionLength = 0;

@@ -793,7 +793,19 @@ namespace CSScriptNpp
 
         internal static string GenerateDefaultArgs()
         {
-            return GenerateConfigFileExecutionArg() + GenerateProbingDirArg();
+            return GenerateConfigFileExecutionArg() + GenerateProbingDirArg() + GenerateNppExecutionArg();
+        }
+
+        static string GenerateNppExecutionArg()
+        {
+            string result = "";
+
+            if (Config.Instance.UseRoslynProvider)
+            {
+                var provider = Path.Combine(Plugin.PluginDir, "Roslyn", "CSSCodeProvider.v4.6.dll");
+                result = " \"/provider:" + provider + "\"";
+            }
+            return result;
         }
 
         static string GenerateConfigFileExecutionArg()

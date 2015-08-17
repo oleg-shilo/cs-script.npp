@@ -6,6 +6,7 @@ using CSScriptNpp.Dialogs;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Refactoring;
 using ICSharpCode.NRefactory.Editor;
+using System.Windows.Forms;
 
 namespace Testpad
 {
@@ -17,8 +18,8 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
-            FormattingTest();
-            new FavoritesPanel().ShowDialog(); return;
+            //FormattingTest();
+            //new FavoritesPanel().ShowDialog(); return;
             //DebugExternal.ShowModal(); return;
             //new UpdateOptionsPanel("1.0.1.1").ShowDialog(); return;
 
@@ -53,7 +54,7 @@ namespace Testpad
             //panel.UpdateCallstack("+1|Script.cs.compiled!Script.Main(string[] args) Line 13|{$NL}+2|[External Code]|{$NL}");
             //panel.ShowDialog();
 
-            //Application.Run(new Form1());
+            Application.Run(new Form1());
         }
 
         static void FormattingTest()

@@ -39,6 +39,7 @@ namespace CSScriptNpp
         public bool UpdateAfterExit = false;
         public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
+        public bool UseRoslynProvider = false;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
         public bool RunExternalInDebugMode = true;
@@ -98,6 +99,7 @@ namespace CSScriptNpp
                 SetValue(Section, "UpdateAfterExit", UpdateAfterExit);
                 SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
                 SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
+                SetValue(Section, "UseRoslynProvider", UseRoslynProvider);
                 SetValue(Section, "UpdateMode", UpdateMode);
                 SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
                 SetValue(Section, "LastExternalProcess", LastExternalProcess);
@@ -150,6 +152,7 @@ namespace CSScriptNpp
                 UpdateAfterExit = GetValue(Section, "UpdateAfterExit", UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
                 CheckUpdatesOnStartup = GetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
+                UseRoslynProvider = GetValue(Section, "UseRoslynProvider", UseRoslynProvider);
                 UpdateMode = GetValue(Section, "UpdateMode", UpdateMode);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
                 ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);

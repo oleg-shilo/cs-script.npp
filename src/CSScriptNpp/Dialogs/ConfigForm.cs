@@ -25,6 +25,13 @@ namespace CSScriptNpp
             this.Controls.Add(panel);
 
             checkUpdates.Checked = data.CheckUpdatesOnStartup;
+            useCS6.Checked = data.UseRoslynProvider;
+        }
+
+        private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            data.CheckUpdatesOnStartup = checkUpdates.Checked;
+            data.UseRoslynProvider = useCS6.Checked;
         }
 
         private void ConfigForm_KeyDown(object sender, KeyEventArgs e)
@@ -54,9 +61,5 @@ namespace CSScriptNpp
             Close();
         }
 
-        private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            data.CheckUpdatesOnStartup = checkUpdates.Checked;
-        }
     }
 }

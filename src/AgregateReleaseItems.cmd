@@ -1,8 +1,11 @@
 echo off
+set programfiles=%PROGRAMFILES(X86)%
 md "..\bin\Plugins\CSScriptNpp"
 md "..\bin\Plugins\CSScriptNpp\Mdbg"
+md "..\bin\Plugins\CSScriptNpp\Roslyn"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
+md "%programfiles%\Notepad++\plugins\CSScriptNpp\Roslyn"
 
 rem CSScriptIntellisense.dll cannot be copied from build events as it would copy the assembly before DllExport is performed
 rem so it needs to be done manually.
@@ -20,6 +23,7 @@ copy "CSScriptNpp\CSScriptNpp\7z.dll" "%programfiles%\Notepad++\plugins\CSScript
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
+copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "%programfiles%\Notepad++\plugins\CSScriptNpp\Roslyn"
 
 copy "CSScriptIntellisense\bin\Release\CSScriptIntellisense.dll"  "..\bin\Plugins\CSScriptNpp"
 copy "CSScriptIntellisense\bin\Release\CSharpIntellisense\*.dll" "..\bin\Plugins\CSScriptNpp"
@@ -29,6 +33,7 @@ copy "CSScriptNpp\bin\release\CSScriptNpp\*.exe" "..\bin\Plugins\CSScriptNpp"
 copy "CSScriptNpp\bin\release\CSScriptNpp\*.pdb" "..\bin\Plugins\CSScriptNpp"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.dll" "..\bin\Plugins\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.exe" "..\bin\Plugins\CSScriptNpp\Mdbg"
+copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "..\bin\Plugins\CSScriptNpp\Roslyn\"
 
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "..\bin\Plugins\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
@@ -39,5 +44,8 @@ copy "CSScriptNpp\CSScriptNpp\7z.dll" "..\bin\Plugins\CSScriptNpp\7z.dll"
 
 copy "..\readme.txt" "..\bin\readme.txt"
 copy "..\license.txt" "..\bin\license.txt"
+
+echo ----------------------------
+
 
 pause
