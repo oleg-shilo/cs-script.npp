@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
 using System.Collections.Generic;
+using System.Reflection;
+using System.IO;
+using System.Windows.Forms;
 
 namespace CSScriptIntellisense
 {
@@ -70,12 +73,52 @@ namespace CSScriptIntellisense
 
         public static string FormatCode(string code, ref int pos)
         {
+            //return FormatCodeWithRoslyn(code, ref pos);
+
             if (Config.Instance.FallbackFormatting)
                 return FallbackSourceCodeFormatter.FormatCodeManually(code, ref pos);
             else
-                return FormatCodeManually(code, ref pos);
+            {
+                if (Config.Instance.RoslynFormatting)
+                    return FormatCodeWithRoslyn(code, ref pos);
+                else
+                    return FormatCodeManually(code, ref pos);
+
+            }
 
             //return FormatCodeWithNRefactory(code, ref pos);
+        }
+
+        private delegate string FormatMethod(string code, ref int pos);
+
+        static FormatMethod RoslynFormat;
+
+        static string FormatCodeWithRoslyn(string code, ref int pos)
+        {
+            try
+            {
+                if (RoslynFormat == null)
+                {
+                    //need to load dynamically as static loading can only be achieved via compilation and plugin target CLR is older than 
+                    //the one is Roslyn based on
+                    string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                    var asm = Assembly.LoadFrom(Path.Combine(rootDir, @"Roslyn\Formatter.exe"));
+                    MethodInfo method = asm.GetType("CSScriptNpp.Roslyn.Formatter").GetMethod("Format");
+                    RoslynFormat = (FormatMethod)Delegate.CreateDelegate(typeof(FormatMethod), method);
+                }
+
+                if (RoslynFormat != null)
+                    return RoslynFormat(code, ref pos);
+
+            }
+            catch (Exception e)
+            {
+                Config.Instance.RoslynFormatting = false;
+                Config.Instance.Save();
+                MessageBox.Show("Cannot use Roslyn Formatter.\nError: " + e.Message + "\n\nThis can be caused by the absence of .NET 4.6.\n\nRoslyn Formatter will be disabled and the default formatter enabled instead. You can always reenable RoslynFormatter from the settings dialog.", "CS-Script");
+            }
+            return code;
         }
 
         public static string FormatCodeManually(string code, ref int pos)

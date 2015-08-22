@@ -39,7 +39,16 @@ class Script
                             new File(@"Plugins\CSScriptNpp\Mdbg\mdbgext.dll"),
                             new File(@"Plugins\CSScriptNpp\Mdbg\NativeDebugWrappers.dll"),
                             new File(@"Plugins\CSScriptNpp\Mdbg\npp.dll"),
-                            new File(@"Plugins\CSScriptNpp\Mdbg\raw.dll")))));
+                            new File(@"Plugins\CSScriptNpp\Mdbg\raw.dll")),
+                        new Dir("Roslyn",
+                            new File(@"Plugins\CSScriptNpp\Roslyn\csc.exe"),
+                            new File(@"Plugins\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"),
+                            new File(@"Plugins\CSScriptNpp\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll"),
+                            new File(@"Plugins\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.dll"),
+                            new File(@"Plugins\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.dll"),
+                            new File(@"Plugins\CSScriptNpp\Roslyn\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll"),
+                            new File(@"Plugins\CSScriptNpp\Roslyn\System.Collections.Immutable.dll"),
+                            new File(@"Plugins\CSScriptNpp\Roslyn\System.Reflection.Metadata.dll")))));
 
         project.Actions = new WixSharp.Action[]
         {

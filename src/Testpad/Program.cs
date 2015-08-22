@@ -55,6 +55,18 @@ namespace Testpad
             //panel.ShowDialog();
 
             Application.Run(new Form1());
+
+
+//            Error: Specified file could not be compiled.
+
+//System.MissingMethodException: Method not found:
+//            'System.String System.CodeDom.Compiler.CompilerParameters.get_CoreAssemblyFileName()'.
+//at Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCompiler.CmdArgsFromParameters(CompilerParameters parameters)
+//   at Microsoft.CodeDom.Providers.DotNetCompilerPlatform.Compiler.FromFileBatch(CompilerParameters options, String[] fileNames)
+//   at Microsoft.CodeDom.Providers.DotNetCompilerPlatform.Compiler.CompileAssemblyFromFileBatch(CompilerParameters options, String[] fileNames)
+//   at csscript.CSExecutor.CompileAssembly(ICodeCompiler compiler, CompilerParameters compilerParams, String[] filesToCompile)
+//   at csscript.CSExecutor.Compile(String scriptFileName)
+//   at csscript.CSExecutor.ExecuteImpl()
         }
 
         static void FormattingTest()

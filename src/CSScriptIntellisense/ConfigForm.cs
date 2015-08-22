@@ -26,15 +26,22 @@ namespace CSScriptIntellisense
             intercept.Checked = data.InterceptCtrlSpace;
             ignoreDocExceptions.Checked = data.IgnoreDocExceptions;
             formatAsYouType.Checked = data.FormatAsYouType;
+            roslynFormatter.Checked = data.RoslynFormatting;
 
             this.FormClosed += (s, e) =>
                 {
-                    data.UseArrowToAccept = useArrow.Checked;
-                    data.InterceptCtrlSpace = intercept.Checked;
-                    data.UseMethodBrackets = useMethodBrackets.Checked;
-                    data.IgnoreDocExceptions = ignoreDocExceptions.Checked;
-                    data.FormatAsYouType = formatAsYouType.Checked;
+                    OnClosing();
                 };
+        }
+
+        public void OnClosing()
+        {
+            data.UseArrowToAccept = useArrow.Checked;
+            data.InterceptCtrlSpace = intercept.Checked;
+            data.UseMethodBrackets = useMethodBrackets.Checked;
+            data.IgnoreDocExceptions = ignoreDocExceptions.Checked;
+            data.FormatAsYouType = formatAsYouType.Checked;
+            data.RoslynFormatting = roslynFormatter.Checked;
         }
 
         void ConfigForm_Load(object sender, EventArgs e)

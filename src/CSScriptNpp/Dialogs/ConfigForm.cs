@@ -10,6 +10,8 @@ namespace CSScriptNpp
     {
         Config data;
 
+        CSScriptIntellisense.ConfigForm panel;
+
         public ConfigForm()
         {
             InitializeComponent();
@@ -21,8 +23,8 @@ namespace CSScriptNpp
 
             InitializeComponent();
 
-            var panel = new CSScriptIntellisense.ConfigForm(CSScriptIntellisense.Config.Instance).ContentPanel;
-            this.Controls.Add(panel);
+            panel = new CSScriptIntellisense.ConfigForm(CSScriptIntellisense.Config.Instance);
+            this.Controls.Add(panel.ContentPanel);
 
             checkUpdates.Checked = data.CheckUpdatesOnStartup;
             useCS6.Checked = data.UseRoslynProvider;
@@ -30,6 +32,7 @@ namespace CSScriptNpp
 
         private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            panel.OnClosing();
             data.CheckUpdatesOnStartup = checkUpdates.Checked;
             data.UseRoslynProvider = useCS6.Checked;
         }

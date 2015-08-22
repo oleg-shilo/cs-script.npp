@@ -44,6 +44,7 @@ namespace CSScriptIntellisense
         public bool UseMethodBrackets = false;
         public bool DisableMethodInfo = false;
         public bool FallbackFormatting = false;
+        public bool RoslynFormatting = true;
         public bool FormatAsYouType = true;
         public int MemberInfoMaxCharWidth = 100;
         public int MemberInfoMaxLines = 15;
@@ -68,6 +69,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "SmartIndenting", SmartIndenting);
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
+                SetValue(Section, "RoslynFormatting", RoslynFormatting);
                 SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 SetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 SetValue(Section, "FormatAsYouType", FormatAsYouType);
@@ -91,6 +93,7 @@ namespace CSScriptIntellisense
                 MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
+                RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);
             }
         }
     }

@@ -37,8 +37,9 @@
             // 
             // linkLabel1
             // 
+            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(10, 142);
+            this.linkLabel1.Location = new System.Drawing.Point(10, 164);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 5;
@@ -48,8 +49,9 @@
             // 
             // checkUpdates
             // 
+            this.checkUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkUpdates.AutoSize = true;
-            this.checkUpdates.Location = new System.Drawing.Point(13, 82);
+            this.checkUpdates.Location = new System.Drawing.Point(13, 104);
             this.checkUpdates.Name = "checkUpdates";
             this.checkUpdates.Size = new System.Drawing.Size(160, 17);
             this.checkUpdates.TabIndex = 7;
@@ -58,8 +60,9 @@
             // 
             // useCS6
             // 
+            this.useCS6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.useCS6.AutoSize = true;
-            this.useCS6.Location = new System.Drawing.Point(13, 105);
+            this.useCS6.Location = new System.Drawing.Point(13, 127);
             this.useCS6.Name = "useCS6";
             this.useCS6.Size = new System.Drawing.Size(136, 17);
             this.useCS6.TabIndex = 7;
@@ -70,7 +73,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 164);
+            this.ClientSize = new System.Drawing.Size(315, 186);
             this.Controls.Add(this.useCS6);
             this.Controls.Add(this.checkUpdates);
             this.Controls.Add(this.linkLabel1);
