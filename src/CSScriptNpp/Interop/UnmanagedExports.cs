@@ -1,5 +1,6 @@
 ﻿using NppPlugin.DllExport;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -84,6 +85,9 @@ namespace CSScriptNpp
                 CSScriptIntellisense.Interop.NppUI.OnNppTick();
 
                 SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
+
+                //Debug.WriteLine(">>>>>   ncnc.nmhdr.code={0}, {1}", nc.nmhdr.code, (int)nc.nmhdr.code);
+
                 if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
@@ -95,7 +99,7 @@ namespace CSScriptNpp
                     CSScriptNpp.Plugin.OnToolbarUpdate();
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPM_SAVECURRENTFILEAS ||
-                         (Config.Instance.HandleSaveAs && nc.nmhdr.code == (uint)2002)) //for some strange reason NPP doesn't fire NPPM_SAVECURRENTFILEAS but does 2002 instead.
+                         (Config.Instance.HandleSaveAs && nc.nmhdr.code == (uint)SciMsg.SCN_SAVEPOINTREACHED)) //for some strange reason NPP doesn't fire NPPM_SAVECURRENTFILEAS but does 2002 instead.
                 {
                     string file = Npp.GetCurrentFile();
                     if (file != lastActivatedBuffer)
@@ -171,6 +175,11 @@ namespace CSScriptNpp
                     Marshal.FreeHGlobal(_ptrPluginName);
 
                     Plugin.CleanUp();
+                }
+
+                if (nc.nmhdr.code == (uint)SciMsg.SCI_ENDUNDOACTION)
+                {
+                    //CSScriptIntellisense.Plugin.OnSavedOrUndo();
                 }
 
                 Plugin.OnNotification(nc);

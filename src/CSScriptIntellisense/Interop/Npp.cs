@@ -405,12 +405,24 @@ namespace CSScriptIntellisense
             Win32.SendMessage(sci, SciMsg.SCI_SETCURRENTPOS, pos, 0);
         }
 
+        public static void Undo()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_UNDO, 0, 0);
+        }
+
+        public static bool CanUndo()
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            return 0 != (int)Win32.SendMessage(sci, SciMsg.SCI_CANUNDO, 0, 0);
+        }
+
         public static void ClearSelection()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0); ;
+            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0);
         }
 
         public static void SetSelection(int start, int end)

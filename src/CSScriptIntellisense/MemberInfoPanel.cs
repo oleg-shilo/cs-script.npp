@@ -178,7 +178,7 @@ namespace CSScriptIntellisense
                 if (key == Keys.Up)
                     Decrement();
 
-                if (key == Keys.Down && !Simple)
+                if (key == Keys.Down)
                     Increment();
             }
         }

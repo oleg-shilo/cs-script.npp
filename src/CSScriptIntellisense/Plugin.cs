@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UltraSharp.Cecil;
@@ -98,6 +99,7 @@ namespace CSScriptIntellisense
                 KeyInterceptor.Instance.Add(Keys.Tab);
                 KeyInterceptor.Instance.Add(Keys.Return);
                 KeyInterceptor.Instance.Add(Keys.Escape);
+                KeyInterceptor.Instance.Add(Keys.Z);
                 KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
             }
             else
@@ -125,29 +127,32 @@ namespace CSScriptIntellisense
 
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
-            if (IsShowingInteractivePopup && (key == Keys.Up || key == Keys.Down || key == Keys.Right || key == Keys.Tab || key == Keys.Return || key == Keys.Escape))
+            if (IsShowingInteractivePopup)
             {
-                if (autocompleteForm != null && autocompleteForm.Visible)
+                if (key == Keys.Up || key == Keys.Down || key == Keys.Right || key == Keys.Tab || key == Keys.Return || key == Keys.Escape)
                 {
-                    autocompleteForm.OnKeyDown(key);
-                    handled = true;
-                }
-
-                if (memberInfoPopup != null && memberInfoPopup.IsShowing)
-                {
-                    memberInfoPopup.popupForm.kbdHook_KeyDown(key, 1);
-                    if (key != Keys.Right) //right only processed in autocompleteForm
+                    if (autocompleteForm != null && autocompleteForm.Visible)
+                    {
+                        autocompleteForm.OnKeyDown(key);
                         handled = true;
-                }
+                    }
 
-                if (namespaceMenu != null && namespaceMenu.Visible)
-                {
-                    namespaceMenu.OnKeyDown(key);
-                    if (key != Keys.Right)//right only processed in autocompleteForm
-                        handled = true;
-                }
+                    if (memberInfoPopup != null && memberInfoPopup.IsShowing)
+                    {
+                        memberInfoPopup.popupForm.kbdHook_KeyDown(key, 1);
+                        if (key != Keys.Right) //right only processed in autocompleteForm
+                            handled = true;
+                    }
 
-                return;
+                    if (namespaceMenu != null && namespaceMenu.Visible)
+                    {
+                        namespaceMenu.OnKeyDown(key);
+                        if (key != Keys.Right)//right only processed in autocompleteForm
+                            handled = true;
+                    }
+
+                    return;
+                }
             }
 
             if (Config.Instance.CodeSnippetsEnabled && !IsShowingInteractivePopup)
@@ -189,25 +194,52 @@ namespace CSScriptIntellisense
                 }
             }
 
-            if (Config.Instance.InterceptCtrlSpace)
+            if (key == Keys.Z && Config.Instance.PostFormattingUndoCaretReset && Npp.IsCurrentScriptFile() && SourceCodeFormatter.CaretBeforeLastFormatting != -1)
             {
-                if (Npp.IsCurrentScriptFile())
+                Modifiers modifiers = KeyInterceptor.GetModifiers();
+                if (modifiers.IsCtrl && !modifiers.IsShift && !modifiers.IsAlt)
                 {
-                    foreach (var shortcut in internalShortcuts.Keys)
-                        if ((byte)key == shortcut._key)
-                        {
-                            Modifiers modifiers = KeyInterceptor.GetModifiers();
+                    if (Npp.CanUndo())
+                    {
+                        //Native NPP undo moves caret to the end of text unconditionally if the text was reset completely (e.g. CodeFormatting).
+                        //Thus manual resetting is required after UNDO. Though NPP doesn't have undo notification so we use shortcut for this.
+                        handled = true;
+                        Npp.Undo();
 
-                            if (modifiers.IsCtrl == shortcut.IsCtrl && modifiers.IsShift == shortcut.IsShift && modifiers.IsAlt == shortcut.IsAlt)
-                            {
-                                handled = true;
-                                var handler = internalShortcuts[shortcut];
-                                Dispatcher.Shedule(10, () => InvokeShortcutHandler(handler.Item2));
+                        int newCurrentPos = SourceCodeFormatter.CaretBeforeLastFormatting;
+                        SourceCodeFormatter.CaretBeforeLastFormatting = -1;
 
-                                break;
-                            }
-                        }
+                        Npp.SetCaretPosition(newCurrentPos);
+                        Npp.ClearSelection();
+                        Npp.SetFirstVisibleLine(Npp.GetLineNumber(newCurrentPos) - SourceCodeFormatter.TopScrollOffsetBeforeLastFormatting);
+                    }
                 }
+            }
+
+            if (Config.Instance.InterceptCtrlSpace && Npp.IsCurrentScriptFile())
+            {
+                foreach (var shortcut in internalShortcuts.Keys)
+                    if ((byte)key == shortcut._key)
+                    {
+                        Modifiers modifiers = KeyInterceptor.GetModifiers();
+
+                        if (modifiers.IsCtrl == shortcut.IsCtrl && modifiers.IsShift == shortcut.IsShift && modifiers.IsAlt == shortcut.IsAlt)
+                        {
+                            handled = true;
+                            var handler = internalShortcuts[shortcut];
+                            Dispatcher.Shedule(10, () => InvokeShortcutHandler(handler.Item2));
+
+                            break;
+                        }
+                    }
+            }
+        }
+
+        public static void OnSavedOrUndo()
+        {
+            if (Config.Instance.PostFormattingUndoCaretReset && SourceCodeFormatter.CaretBeforeLastFormatting != -1)
+            {
+
             }
         }
 
@@ -747,6 +779,8 @@ namespace CSScriptIntellisense
         {
             if (Npp.IsCurrentScriptFile())
             {
+                SourceCodeFormatter.CaretBeforeLastFormatting = -1;
+
                 if (c == '.')
                 {
                     ShowSuggestionList();
@@ -946,7 +980,7 @@ namespace CSScriptIntellisense
             int currentPosOffset = currentPos - start; //note the diff between cuurrPos and start of the line
             int[] probingOffsets = WordEndsOf(line); //note the all end positions of the words
 
-            probingOffsets = probingOffsets.OrderBy(x=>x-currentPosOffset).ToArray();
+            probingOffsets = probingOffsets.OrderBy(x => x - currentPosOffset).ToArray();
 
             //start from currentPosOffset and go left, then go to the right
             probingOffsets = probingOffsets.Where(x => x <= currentPosOffset)

@@ -50,7 +50,7 @@ void button1_Click(object sender,EventArg e)
         }
 ";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(
 @"using System;
@@ -112,7 +112,7 @@ line.Split('\t'));
 }
 ";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(
 @"using System;
@@ -151,7 +151,7 @@ void main()
                 Console.WriteLine(""test"");
 }";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(code, newCode);  //the original code was already formatted
         }
@@ -168,7 +168,7 @@ void main()
             Console.WriteLine(""{0}: {1}"", c.First(), c.Last());
 Console.WriteLine(""{0}: {1}"", c.First(), c.Last());";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(code, newCode);  //the original code was already formatted
         }
@@ -195,7 +195,7 @@ Console.WriteLine(""{0}: {1}"", c.First(), c.Last());";
     Console.WriteLine(""{0}: {1}"", c.First(), c.Last());
 }";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(code, newCode);  //the original code was already formatted
         }
@@ -216,7 +216,7 @@ void main()
             print();
 }";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(
 @"using System;
@@ -247,7 +247,7 @@ void main()
 }
 }";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(
 @"using System;
@@ -276,7 +276,7 @@ void main()
         Console.WriteLine(2); //test comment
 }";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(
 @"using System;
@@ -312,7 +312,7 @@ public class Test
 }
 }";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(
 @"using System;
@@ -422,7 +422,7 @@ do
 
 ";
             int pos = 69; //void main(str|ing[] args)
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(
 @"//css_args /ac
@@ -516,7 +516,7 @@ while(false);", newCode);
             string code = @"var t = ""    (\""{0}\"", \""{1}\"", \""{2}\"");"";";
 
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(@"var t = ""    (\""{0}\"", \""{1}\"", \""{2}\"");"";", newCode);
         }
@@ -540,7 +540,7 @@ while(false);", newCode);
                             }";
 
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(
 @"using System;
@@ -576,7 +576,7 @@ class Script
 };";
 
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
         }
@@ -596,7 +596,7 @@ class Script
 });";
 
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
         }
@@ -618,7 +618,7 @@ class Script
 catch{ }";
 
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             //Assert.Equal(code, newCode); //no changes
         }
@@ -634,7 +634,7 @@ catch{ }";
 Console.WriteLine(""这是中文"");";
 
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
         }
@@ -648,7 +648,7 @@ Console.WriteLine(""这是中文"");";
             string code = @"SetKeyValue(@""*\shellex\ContextMenuHandlers\CS-Script"", """", ""{25D84CB0-7345-11D3-A4A1-0080C8ECFED4}"");";
 
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
         }
@@ -662,25 +662,81 @@ Console.WriteLine(""这是中文"");";
             string code = @"""A\\B\\"";
 return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-0080C8ECFED4}.dll"");";
             int pos = 0;
-            string newCode = SourceCodeFormatter.FormatCode(code, ref pos);
+            string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
             Assert.Equal(code, newCode); //no changes
         }
 
+        [Fact]
+        public void ShouldMapPositionInFormattedCode()
+        {
+            string rawCode = 
+@"void main()
+{
+      Cons|ole.WriteLine(""Hello World!"");
+    Debug.WriteLine(""Hello World!"");
+}";
+
+            string formattedCode = 
+@"void main()
+{
+    Cons|ole.WriteLine(""Hello World!"");
+    Debug.WriteLine(""Hello World!"");
+}"; 
+            int pos = rawCode.IndexOf('|');
+            int expectedNewPos = formattedCode.IndexOf('|');
+
+            rawCode = rawCode.Replace("|", "");
+            formattedCode = formattedCode.Replace("|", "");
+
+            int newPos = SyntaxMapper.MapAbsPosition(rawCode, pos, formattedCode);
+
+            Assert.Equal(expectedNewPos, newPos);
+        }
+
+        [Fact]
+        public void ShouldMapPositionInFormattedCodeLineEnd()
+        {
+            string rawCode =
+@"main()
+{
+}";
+            string formattedCode = rawCode;
+
+            int pos = 9;
+            int newPos = SyntaxMapper.MapAbsPosition(rawCode, pos, formattedCode);
+            Assert.Equal(pos, newPos);
+        }
+
+        [Fact]
+        public void ShouldMapPositionInFormattedCodeLineStart()
+        {
+            string rawCode =
+@"void main()
+{
+}";
+            string formattedCode = rawCode;
+
+            int pos = 0;
+            int newPos = SyntaxMapper.MapAbsPosition(rawCode, pos, formattedCode);
+            Assert.Equal(pos, newPos);
+        }
+
+        //NRefactory is not ready yet
         //[Fact]
         public void ShouldFormattWithNRefactory()
         {
-            //NRefactory is not ready yet
-//            var code = @"using System;
-//
-//class Test
-//{
-//    public static void Main(string[] args)
-//    {
-//        if (args != null ) {
-//        }
-//    }
-//}";
+
+            //            var code = @"using System;
+            //
+            //class Test
+            //{
+            //    public static void Main(string[] args)
+            //    {
+            //        if (args != null ) {
+            //        }
+            //    }
+            //}";
             // new CSharpFormatter (FormattingOptionsFactory.CreateAllman ()).Format (code));
         }
     }

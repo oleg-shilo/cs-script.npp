@@ -12,11 +12,16 @@ namespace CSScriptIntellisense
 {
     public class SourceCodeFormatter : NppCodeFormatter
     {
+        public static int CaretBeforeLastFormatting = -1;
+        public static int TopScrollOffsetBeforeLastFormatting = -1;
+
         public static void FormatDocument()
         {
             int currentPos = Npp.GetCaretPosition();
+            CaretBeforeLastFormatting = currentPos;
             string code = Npp.GetTextBetween(0, Npp.DocEnd);
             int topScrollOffset = Npp.GetLineNumber(currentPos) - Npp.GetFirstVisibleLine();
+            TopScrollOffsetBeforeLastFormatting = topScrollOffset;
 
             string newCode = FormatCode(code, ref currentPos);
 
@@ -73,8 +78,6 @@ namespace CSScriptIntellisense
 
         public static string FormatCode(string code, ref int pos)
         {
-            //return FormatCodeWithRoslyn(code, ref pos);
-
             if (Config.Instance.FallbackFormatting)
                 return FallbackSourceCodeFormatter.FormatCodeManually(code, ref pos);
             else
@@ -89,7 +92,7 @@ namespace CSScriptIntellisense
             //return FormatCodeWithNRefactory(code, ref pos);
         }
 
-        private delegate string FormatMethod(string code, ref int pos);
+        private delegate string FormatMethod(string code);
 
         static FormatMethod RoslynFormat;
 
@@ -109,13 +112,21 @@ namespace CSScriptIntellisense
                 }
 
                 if (RoslynFormat != null)
-                    return RoslynFormat(code, ref pos);
+                {
+                    var newCode = RoslynFormat(code);
+
+                    pos = SyntaxMapper.MapAbsPosition(code, pos, newCode);
+
+                    return newCode;
+                }
 
             }
             catch (Exception e)
             {
+#if !DEBUG
                 Config.Instance.RoslynFormatting = false;
                 Config.Instance.Save();
+#endif
                 MessageBox.Show("Cannot use Roslyn Formatter.\nError: " + e.Message + "\n\nThis can be caused by the absence of .NET 4.6.\n\nRoslyn Formatter will be disabled and the default formatter enabled instead. You can always reenable RoslynFormatter from the settings dialog.", "CS-Script");
             }
             return code;

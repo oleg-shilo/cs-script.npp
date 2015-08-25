@@ -442,4 +442,80 @@ namespace CSScriptIntellisense
             return false;
         }
     }
+
+    public static class SyntaxMapper
+    {
+        public static int MapAbsPosition(string textA, int positionA, string textB)
+        {
+            //position is a caret position that is a strong pos+1 for the case when the caret is 
+            //after the char at pos
+            if (positionA == textA.Length)
+                return textB.Length;
+
+            int rightOffset = textA.OffsetToNextToken(positionA); //move to the next token if currently at white space
+
+            int syntaxLength = textA.PosToSyntaxLength(positionA + rightOffset);
+            int positionB = textB.SyntaxLengthToPos(syntaxLength);
+
+            return positionB;
+        }
+
+        internal static int OffsetToNextToken(this string text, int pos)
+        {
+            int offset = 0;
+            for (int i = pos; i < text.Length; i++)
+            {
+                if (IsMeaningfull(text[i]))
+                    break;
+                offset++;
+            }
+            return offset;
+        }
+
+        static bool IsMeaningfull(char c)
+        {
+            return (c == '\r' || c == '\n' || !char.IsWhiteSpace(c));
+        }
+
+        internal static int PosToSyntaxLength(this string text, int pos)
+        {
+            int syntaxLength = 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (IsMeaningfull(text[i]))
+                {
+                    syntaxLength++;
+                }
+
+                if (i == pos)
+                    break;
+
+            }
+
+            return syntaxLength;
+        }
+
+        internal static int SyntaxLengthToPos(this string text, int syntaxLength)
+        {
+            var textBuf = new StringBuilder();
+
+            int absolutePos = -1;
+            int currentSyntaxLength = 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                absolutePos++;
+
+                if (IsMeaningfull(text[i]))
+                {
+                    currentSyntaxLength++;
+                    if (currentSyntaxLength == syntaxLength)
+                        break;
+                }
+            }
+
+            return absolutePos;
+        }
+    }
 }

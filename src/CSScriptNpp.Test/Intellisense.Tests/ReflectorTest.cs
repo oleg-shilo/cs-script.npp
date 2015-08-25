@@ -354,9 +354,9 @@ namespace CSScriptIntellisense.Test
     {
         public partial class TestNestedClass1 { }
         public const int MyFieldConst = 77;
-        public const string MyFieldName = ""test"";
         public static int MyFieldStat;
         public int MyField;
+        public const string MyFieldName = ""test"";
         /// Gets or sets my property.
         /// --------------------------
         /// My property.
@@ -404,8 +404,8 @@ namespace CSScriptIntellisense.Test
             string code = ReconstructAndLookup("").Code;
             int pos = ReconstructAndLookup("PropRW").MemberPosition;
 
+            Assert.Equal(400, ReconstructAndLookup("MyFieldName").MemberPosition);
             Assert.Equal(84, ReconstructAndLookup("").MemberPosition);
-            Assert.Equal(331, ReconstructAndLookup("MyFieldName").MemberPosition);
             Assert.Equal(601, ReconstructAndLookup("PropRW").MemberPosition);
             Assert.Equal(1086, ReconstructAndLookup("TestVoidmethod").MemberPosition);
             Assert.Equal(734, ReconstructAndLookup("OnLoad").MemberPosition);
@@ -611,10 +611,10 @@ namespace CSScriptIntellisense.Test
 {
     public class TestFieldsClass : object
     {
-        public const int Count4 = 44;
         public int Count;
         public int Count2;
         public static int Count3;
+        public const int Count4 = 44;
     }
 }", code);
         }

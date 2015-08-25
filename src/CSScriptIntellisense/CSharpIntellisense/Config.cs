@@ -39,6 +39,7 @@ namespace CSScriptIntellisense
         public bool UseTabToAccept = true;
         public bool CodeSnippetsEnabled = true;
         public bool InterceptCtrlSpace = true;
+        public bool PostFormattingUndoCaretReset = true;
         public bool ShowQuickInfoInStatusBar = false;
         public bool ShowQuickInfoAsNativeNppTooltip = false;
         public bool UseMethodBrackets = false;
@@ -61,6 +62,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "UseArrowToAccept", UseArrowToAccept);
                 SetValue(Section, "UseTabToAccept", UseTabToAccept);
                 SetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
+                SetValue(Section, "PostFormattingUndoCaretReset", PostFormattingUndoCaretReset);
                 SetValue(Section, "UseMethodBrackets", UseMethodBrackets);
                 SetValue(Section, "CodeSnippetsEnabled", CodeSnippetsEnabled);
                 SetValue(Section, "ShowQuickInfoInStatusBar", ShowQuickInfoInStatusBar);
@@ -83,6 +85,7 @@ namespace CSScriptIntellisense
                 UseTabToAccept = GetValue(Section, "UseTabToAccept", UseTabToAccept);
                 UseArrowToAccept = GetValue(Section, "UseArrowToAccept", UseArrowToAccept);
                 InterceptCtrlSpace = GetValue(Section, "InterceptCtrlSpace", InterceptCtrlSpace);
+                PostFormattingUndoCaretReset = GetValue(Section, "PostFormattingUndoCaretReset", PostFormattingUndoCaretReset);
                 UseMethodBrackets = GetValue(Section, "UseMethodBrackets", UseMethodBrackets);
                 SmartIndenting = GetValue(Section, "SmartIndenting", SmartIndenting);
                 CodeSnippetsEnabled = GetValue(Section, "CodeSnippetsEnabled", CodeSnippetsEnabled);

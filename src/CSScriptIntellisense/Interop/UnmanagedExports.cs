@@ -48,9 +48,16 @@ namespace CSScriptIntellisense
             Debug.WriteLine("-------------------------------");
 
             SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
+
+            //Debug.WriteLine("<<<<< ncnc.nmhdr.code={0}, {1}", nc.nmhdr.code, (int)nc.nmhdr.code);
+
             if (Plugin.Enabled && nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
             {
                 Plugin.FuncItems.RefreshItems();
+            }
+            else if (Plugin.Enabled && nc.nmhdr.code == (uint)SciMsg.SCN_SAVEPOINTREACHED)
+            {
+                Plugin.OnSavedOrUndo();
             }
             else if (Plugin.Enabled && nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
             {
