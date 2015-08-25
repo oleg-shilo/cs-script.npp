@@ -36,77 +36,142 @@ namespace CSScriptNpp.Roslyn
             }
         }
 
-        public static string Format(string code, ref int pos)
+        //public static string Format(string code, ref int pos)
+        //{
+        //    var tree = CSharpSyntaxTree.ParseText(code);
+
+        //    var formattedCode = msFormatter.Format(tree.GetRoot(), DummyWorkspace)
+        //                                   .ToFullString();
+
+        //    pos = MapAbsPosition(code, pos, formattedCode);
+
+        //    return formattedCode;
+        //}
+
+        public static string Format(string code)
         {
             var tree = CSharpSyntaxTree.ParseText(code);
 
             var formattedCode = msFormatter.Format(tree.GetRoot(), DummyWorkspace)
                                            .ToFullString();
 
-            pos = MapAbsPosition(code, pos, formattedCode);
-
             return formattedCode;
+        }
+
+        internal class PosInfo
+        {
+            public int Row = -1;
+            public int Column = -1;
+            public int SyntaxLength = -1;
+            public int AbsolutePos = -1;
+
+            public override string ToString()
+            {
+                return string.Format("R={0}, C={1}, S={2}, A={3}",
+                    Row, Column, SyntaxLength, AbsolutePos);
+            }
         }
 
         public static int MapAbsPosition(string textA, int positionA, string textB)
         {
-            bool atWhitespace = false;
+            //bool endOfLine = (textA[positionA] == '\r');
+            //if (endOfLine)
+              //  positionA--;
 
-            int syntaxPos = textA.GetSyntaxPos(positionA, ref atWhitespace);
+            int rightOffset = textA.OffsetToNextToken(positionA);
 
-            if (atWhitespace)
-                return textB.GetAbsolutePos(syntaxPos);
-            else
-                return textB.GetAbsolutePos(syntaxPos) - 1;
+            int syntaxLength = textA.PosToSyntaxLength(positionA + rightOffset);
+            int positionB = textB.SyntaxLengthToPos(syntaxLength);
+
+            string s1 = textA.Substring(0, positionA);
+            string s2 = textA.Substring(0, positionA + rightOffset);
+            string s3 = textB.Substring(0, positionB);
+
+            //if (endOfLine)
+            //    positionB++;
+
+            return positionB;
         }
 
-        internal static int GetSyntaxPos(this string text, int absolutePosition, ref bool atWhitespace)
+        internal static int OffsetToNextToken(this string text, int pos)
         {
-            int result = 0;
+            int offset = 0;
+            for (int i = pos; i < text.Length; i++)
+            {
+                if (IsMeaningfull(text[i]))
+                    break;
+                offset++;
+            }
+            return offset;
+        }
+
+        static bool IsMeaningfull(char c)
+        {
+            return (c == '\r' || c == '\n' || !char.IsWhiteSpace(c));
+        }
+
+        internal static int PosToSyntaxLength(this string text, int pos)
+        {
+            var syntaxBuf = new StringBuilder();
+            var textBuf = new StringBuilder();
+
+            int syntaxLength = 0;
 
             for (int i = 0; i < text.Length; i++)
             {
-                if (i == absolutePosition)
-                    atWhitespace = (text[i] == ' ' || text[i] == '\t'); //printable whitespace
-
-                if (!char.IsWhiteSpace(text[i]))
+                textBuf.Append(text[i]);
+                if (IsMeaningfull(text[i]))
                 {
-                    if (absolutePosition < i)
-                        break;
-                    result++;
+                    syntaxLength++;
+                    syntaxBuf.Append(text[i]);
                 }
+
+                if (i == pos)
+                    break;
+
             }
-            return result;
+
+            var tempS = syntaxBuf.ToString();
+            return syntaxLength;
         }
 
-        internal static int GetAbsolutePos(this string text, int syntaxPosition)
+        internal static int SyntaxLengthToPos(this string text, int syntaxLength)
         {
-            int result = 0;
-            int i = 0;
-            for (; i < text.Length && syntaxPosition > 0; i++)
+            var syntaxBuf = new StringBuilder();
+            var textBuf = new StringBuilder();
+
+            int absolutePos = 0;
+            int currentSyntaxLength = 0;
+
+            for (int i = 0; i < text.Length; i++)
             {
-                result++;
-                if (!char.IsWhiteSpace(text[i]))
+                textBuf.Append(text[i]);
+
+                if (IsMeaningfull(text[i]))
                 {
-                    syntaxPosition--;
+                    currentSyntaxLength++;
+                    syntaxBuf.Append(text[i]);
+                    if (currentSyntaxLength == syntaxLength)
+                        break;
                 }
             }
 
-            if (text[i] == '\n' && (i + 1) < text.Length)
-                result++;
+            absolutePos = textBuf.Length - 1;
 
-            return result;
+            var tempA = syntaxBuf.ToString();
+
+            return absolutePos;
         }
 
         static void Main(string[] args)
         {
             //string file = @"E:\Dev\BackupDir.cs";
-            var code = File.ReadAllText(args.First());
+            //var code = File.ReadAllText(args.First());
 
-            int pos = 0;
-            string formattedCode = Format(code, ref pos);
+            //int pos = 0;
+            //string formattedCode = Format(code, ref pos);
 
-            Console.WriteLine(formattedCode);
+            //Console.WriteLine(formattedCode);
         }
     }
 }
