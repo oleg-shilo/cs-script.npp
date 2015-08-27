@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using ICSharpCode.NRefactory.CSharp;
+using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace CSScriptIntellisense
@@ -86,13 +85,12 @@ namespace CSScriptIntellisense
                     return FormatCodeWithRoslyn(code, ref pos);
                 else
                     return FormatCodeManually(code, ref pos);
-
             }
 
             //return FormatCodeWithNRefactory(code, ref pos);
         }
 
-        private delegate string FormatMethod(string code);
+        delegate string FormatMethod(string code);
 
         static FormatMethod RoslynFormat;
 
@@ -102,8 +100,8 @@ namespace CSScriptIntellisense
             {
                 if (RoslynFormat == null)
                 {
-                    //need to load dynamically as static loading can only be achieved via compilation and plugin target CLR is older than 
-                    //the one is Roslyn based on
+                    //need to load dynamically as static loading can only be achieved via compilation and plugin target CLR is older than
+                    //the one is Roslyn based on.
                     string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                     var asm = Assembly.LoadFrom(Path.Combine(rootDir, @"Roslyn\Formatter.exe"));
@@ -119,7 +117,6 @@ namespace CSScriptIntellisense
 
                     return newCode;
                 }
-
             }
             catch (Exception e)
             {
@@ -159,7 +156,6 @@ namespace CSScriptIntellisense
             Func<char> nextChar = () => (i < code.Length ? code[i] : char.MinValue);
             Func<char> getNext = () => code[i++];
 
-
             var siMap = new List<int>();
 
             Action DecrementSingleLineIndent = () =>
@@ -180,7 +176,6 @@ namespace CSScriptIntellisense
 
                 isInSingleLineControl = false;
             };
-
 
             Action IncrementSingleLineIndent = () =>
             {
@@ -308,7 +303,7 @@ namespace CSScriptIntellisense
                                     {
                                         int lastPos = formatted.LastNonWhiteSpace();
                                         if (lastPos != -1 && formatted[lastPos] == '{')
-                                            if (!formatted.IsSameLine(lastPos, formatted.Length - 1)) //do not indent if it is not fluent API 
+                                            if (!formatted.IsSameLine(lastPos, formatted.Length - 1)) //do not indent if it is not fluent API
                                                 formatted.TrimEmptyEndLines(0);
 
                                         formatted.TrimLineEnd()
@@ -376,7 +371,6 @@ namespace CSScriptIntellisense
                                     }
                                     else
                                     {
-
                                         //formatted.TrimEnd() //for JS style bracketing
                                         formatted.TrimEmptyEndLines(0)
                                                     .TrimLineEnd()
@@ -419,7 +413,7 @@ namespace CSScriptIntellisense
                                              .Append(IndentText, blockLevel)
                                              .Append(current);
 
-                                    if (!nextChar().IsOneOf(')', ';', ',')) //not an inline lambda exp in the method call and not an if...else 
+                                    if (!nextChar().IsOneOf(')', ';', ',')) //not an inline lambda exp in the method call and not an if...else
                                     {
                                         if (code.IsNonWhitespaceNext("else", i))
                                         {
@@ -489,7 +483,6 @@ namespace CSScriptIntellisense
                                     formatted.Append(' ');
 
                                 continue;
-
                             }
                             else if (!char.IsWhiteSpace(current))
                             {

@@ -130,7 +130,8 @@ namespace CSScriptNpp
                     {
                         if (item.Output == output)
                         {
-                            outputType.SelectedItem = item;
+                            if (outputType.SelectedItem != item)
+                                outputType.SelectedItem = item;
                             outputType.Text = item.Name;
                             retval = item.Output;
 
@@ -229,7 +230,7 @@ namespace CSScriptNpp
 
         public Output ConsoleOutput { get { return GetOutputType(ConsoleOutputName); } }
 
-        private void outputType_SelectedIndexChanged(object sender, EventArgs e)
+        void outputType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (outputType.SelectedItem is OutputInfo)
             {
@@ -238,7 +239,7 @@ namespace CSScriptNpp
             }
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        void toolStripButton1_Click(object sender, EventArgs e)
         {
             var output = GetVisibleOutput();
             if (output != null)
@@ -314,7 +315,7 @@ namespace CSScriptNpp
             }
         }
 
-        private void DebugViewBtn_Click(object sender, EventArgs e)
+        void DebugViewBtn_Click(object sender, EventArgs e)
         {
             DebugViewBtn.Enabled = false;
 
@@ -402,7 +403,7 @@ namespace CSScriptNpp
 
         bool initialised = false;
 
-        private void OutputPanel_VisibleChanged(object sender, EventArgs e)
+        void OutputPanel_VisibleChanged(object sender, EventArgs e)
         {
             if (!initialised && this.Visible)
             {
@@ -414,7 +415,7 @@ namespace CSScriptNpp
             }
         }
 
-        private void debugFilterBtn_Click(object sender, EventArgs e)
+        void debugFilterBtn_Click(object sender, EventArgs e)
         {
             Config.Instance.LocalDebug = !Config.Instance.LocalDebug;
             RefreshControls();
@@ -473,7 +474,43 @@ namespace CSScriptNpp
             catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
         }
 
+        bool reset = false;
 
+        /// <summary>
+        /// This is a work around that nasty-nasty defect associated with comboboxes hosted by OutputPanel.
+        /// The problem manifests itself in the freshly inserted empty combobox being populated after startup with 
+        /// exactly two items:
+        /// "English (Great Britain) [!For All Users]"
+        /// "English (United States) [!For All Users]"
+        /// And the user code has NO code that inserts ANY item at all!!!!! It inly instantiates the combobox and 
+        /// places it on the form. That is it.
+        /// 
+        /// This happens on NPP startup in ~50% of cases. Hard to tell who does the insertion but the user experience 
+        /// is severely affected. Thus the work around is to clear and repopulate the combobox items when we detect that
+        /// the Items content is not what we expect (e.g. Text is none of the Items).      
+        /// </summary>
+        void CheckAndFixCombobox()
+        {
+            var items = outputType.Items.Cast<OutputInfo>().ToArray();
+
+            if (!reset && items.Where(x => x.Name == outputType.Text).Count() == 0)//  == "" || outputType.Text.Contains("English (Great Britain) [!For All Users]")))
+            {
+                reset = true;
+
+                var item = outputType.SelectedItem;
+
+                outputType.Items.Clear();
+                outputType.Items.AddRange(items);
+                outputType.SelectedItem = item;
+            }
+            else
+                reset = false;
+        }
+
+        void outputType_DropDown(object sender, EventArgs e)
+        {
+            CheckAndFixCombobox();
+        }
     }
 
     public class OutputInfo
@@ -590,7 +627,7 @@ namespace CSScriptNpp
             timer.Tick += Timer_Tick;
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        void Timer_Tick(object sender, EventArgs e)
         {
             Flash();
         }
@@ -686,6 +723,7 @@ namespace CSScriptNpp
 
         bool isBuffered = false;
         int caretPos = 0;
+
         public Output WriteConsoleChar(char c)
         {
             control.InUiThread(() =>
@@ -717,7 +755,6 @@ namespace CSScriptNpp
                 {
                     if (caretPos == control.Text.Length)
                     {
-
                         if (!isBuffered)
                             control.AppendText(c.ToString());
                         else
@@ -732,7 +769,6 @@ namespace CSScriptNpp
                             control.SelectedText = newChar;
                         else
                             control.SelectionLength = 0;
-
                     }
                     caretPos++;
                 }

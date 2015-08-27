@@ -41,6 +41,7 @@
             this.debugFilterBtn = new System.Windows.Forms.ToolStripButton();
             this.designTimeTextBox = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,7 +59,7 @@
             this.debugFilterBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(575, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(765, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -73,6 +74,7 @@
             this.outputType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.outputType.Name = "outputType";
             this.outputType.Size = new System.Drawing.Size(121, 25);
+            this.outputType.DropDown += new System.EventHandler(this.outputType_DropDown);
             this.outputType.SelectedIndexChanged += new System.EventHandler(this.outputType_SelectedIndexChanged);
             // 
             // toolStripSeparator3
@@ -131,15 +133,25 @@
             this.designTimeTextBox.Multiline = true;
             this.designTimeTextBox.Name = "designTimeTextBox";
             this.designTimeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.designTimeTextBox.Size = new System.Drawing.Size(211, 243);
+            this.designTimeTextBox.Size = new System.Drawing.Size(401, 243);
             this.designTimeTextBox.TabIndex = 3;
             this.designTimeTextBox.Visible = false;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(590, 4);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(163, 21);
+            this.comboBox1.TabIndex = 4;
+            this.comboBox1.Visible = false;
             // 
             // OutputPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(575, 268);
+            this.ClientSize = new System.Drawing.Size(765, 268);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.designTimeTextBox);
             this.Controls.Add(this.toolStrip1);
             this.Name = "OutputPanel";
@@ -165,5 +177,6 @@
         private System.Windows.Forms.ToolStripButton debugFilterBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
