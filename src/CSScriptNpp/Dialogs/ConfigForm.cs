@@ -24,10 +24,28 @@ namespace CSScriptNpp
             InitializeComponent();
 
             panel = new CSScriptIntellisense.ConfigForm(CSScriptIntellisense.Config.Instance);
-            this.Controls.Add(panel.ContentPanel);
+            generalPage.Controls.Add(panel.ContentPanel);
+
 
             checkUpdates.Checked = data.CheckUpdatesOnStartup;
             useCS6.Checked = data.UseRoslynProvider;
+
+            installedEngineLocation.Text = CSScriptHelper.SystemCSScriptDir ?? "<not detected>";
+            installedEngineLocation.SelectionStart = installedEngineLocation.Text.Length - 1;
+
+            embeddedEngine.Checked = data.UseEmbeddedEngine;
+            if (!data.UseEmbeddedEngine)
+            {
+                if (data.UseCustomEngine.IsEmpty())
+                {
+                    installedEngine.Checked = true;
+                }
+                else
+                {
+                    customEngine.Checked = true;
+                    customEngineLocation.Text = data.UseCustomEngine;
+                }
+            }
         }
 
         private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -35,6 +53,15 @@ namespace CSScriptNpp
             panel.OnClosing();
             data.CheckUpdatesOnStartup = checkUpdates.Checked;
             data.UseRoslynProvider = useCS6.Checked;
+            data.UseEmbeddedEngine = embeddedEngine.Checked;
+            if (customEngine.Checked)
+            {
+                data.UseCustomEngine = customEngineLocation.Text;
+            }
+            else
+            {
+                data.UseCustomEngine = "";
+            }
         }
 
         private void ConfigForm_KeyDown(object sender, KeyEventArgs e)
@@ -64,5 +91,9 @@ namespace CSScriptNpp
             Close();
         }
 
+        void engine_CheckedChanged(object sender, EventArgs e)
+        {
+            customEngineLocation.ReadOnly = !customEngine.Checked;
+        }
     }
 }

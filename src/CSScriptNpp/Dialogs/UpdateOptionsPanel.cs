@@ -193,5 +193,10 @@ namespace CSScriptNpp.Dialogs
         {
             Config.Instance.UpdateAfterExit = updateAfterExit.Checked;
         }
+
+        private void UpdateOptionsPanel_Load(object sender, EventArgs e)
+        {
+            Win32.SetForegroundWindow(this.Handle);
+        }
     }
 }

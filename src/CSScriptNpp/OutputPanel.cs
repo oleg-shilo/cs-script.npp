@@ -205,7 +205,7 @@ namespace CSScriptNpp
             textBox.HideSelection = false;
             textBox.Location = new Point(0, toolStrip1.Height);
             textBox.Size = new Size(this.ClientRectangle.Width, this.ClientRectangle.Height - toolStrip1.Height);
-            textBox.ScrollBars = ScrollBars.Vertical;
+            textBox.ScrollBars = ScrollBars.Both;
             textBox.ReadOnly = true;
             toolTip1.SetToolTip(textBox, "F4 - Navigate to the next file location\nCtrl+F4 - Navigate to the previous file location\nCtrl+DblClick - Navigate to the raw file location (e.g. auto-generated files)");
             textBox.BackColor = Color.White;
@@ -708,9 +708,12 @@ namespace CSScriptNpp
 
         void Flash()
         {
-            if (buffer.Length > 0)
+            //if (buffer.Length > 0)
+            if (!isBuffered || (buffer[buffer.Length - 1] == '\n'))
+            {
                 control.AppendText(buffer.ToString());
-            buffer.Clear();
+                buffer.Clear();
+            }
             timer.Enabled = false;
         }
 
@@ -721,7 +724,7 @@ namespace CSScriptNpp
             timer.Enabled = true;
         }
 
-        bool isBuffered = false;
+        bool isBuffered = true;
         int caretPos = 0;
 
         public Output WriteConsoleChar(char c)
@@ -747,13 +750,14 @@ namespace CSScriptNpp
                 else if (c == '\r')
                 {
                     Flash();
-                    for (; caretPos > 0; caretPos--)
-                        if (control.Text[caretPos - 1] == '\n')
-                            break;
+                    if (!isBuffered)
+                        for (; caretPos > 0; caretPos--)
+                            if (control.Text[caretPos - 1] == '\n')
+                                break;
                 }
                 else
                 {
-                    if (caretPos == control.Text.Length)
+                    if (caretPos == control.Text.Length || isBuffered)
                     {
                         if (!isBuffered)
                             control.AppendText(c.ToString());

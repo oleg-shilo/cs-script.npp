@@ -32,6 +32,8 @@ namespace CSScriptNpp
         public bool DistributeScriptAsScriptByDefault = true;
         public bool DistributeScriptAsWindowApp = false;
         public bool InterceptConsole = false;
+        public bool UseEmbeddedEngine = true;
+        public string UseCustomEngine = "";
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
         //public bool BuildOnF7 = true;
@@ -86,6 +88,8 @@ namespace CSScriptNpp
                 SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
                 SetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
                 SetValue(Section, "InterceptConsole", InterceptConsole);
+                SetValue(Section, "UseEmbeddedEngine", UseEmbeddedEngine);
+                SetValue(Section, "UseCustomEngine", UseCustomEngine);
                 SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
                 SetValue(Section, "SciptHistory", SciptHistory);
                 SetValue(Section, "DebugStepPointColor", DebugStepPointColor);
@@ -140,6 +144,8 @@ namespace CSScriptNpp
                 OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
                 NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
                 InterceptConsole = GetValue(Section, "InterceptConsole", InterceptConsole);
+                UseEmbeddedEngine = GetValue(Section, "UseEmbeddedEngine", UseEmbeddedEngine);
+                UseCustomEngine = GetValue(Section, "UseCustomEngine", UseCustomEngine);
                 //QuickViewAutoRefreshAvailable = GetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
                 LocalDebug = GetValue(Section, "LocalDebug", LocalDebug);
                 TargetVersion = GetValue(Section, "TargetVersion", TargetVersion);

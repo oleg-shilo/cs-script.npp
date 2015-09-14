@@ -146,6 +146,11 @@ namespace CSScriptNpp
             return string.Compare(text, textToCompare, ignoreCase) == 0;
         }
 
+        public static bool IsEmpty(this string text)
+        {
+            return string.IsNullOrEmpty(text);
+        }
+
         public static string StripQuotation(this string text)
         {
             if (text.StartsWith("\"") && text.EndsWith("\""))

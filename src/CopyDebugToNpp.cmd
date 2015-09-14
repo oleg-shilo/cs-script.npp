@@ -36,4 +36,5 @@ copy "CSScriptNpp\bin\Debug\CSScriptNpp\Mdbg\*.exe" "%programfiles%\Notepad++\pl
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "%programfiles%\Notepad++\plugins\CSScriptNpp\Roslyn\"
-rem pause
+
+pause

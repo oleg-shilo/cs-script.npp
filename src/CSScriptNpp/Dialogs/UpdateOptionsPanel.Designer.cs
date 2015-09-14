@@ -216,6 +216,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "CS-Script Update";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.UpdateOptionsPanel_FormClosed);
+            this.Load += new System.EventHandler(this.UpdateOptionsPanel_Load);
             this.optionsGroup.ResumeLayout(false);
             this.optionsGroup.PerformLayout();
             this.ResumeLayout(false);

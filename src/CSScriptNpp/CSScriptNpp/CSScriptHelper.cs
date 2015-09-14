@@ -48,6 +48,14 @@ namespace CSScriptNpp
             }
         }
 
+        public static string SystemCSScriptDir
+        {
+            get
+            {
+                return  Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
+            }
+        }
+
         public static string VsDir
         {
             get
@@ -288,6 +296,12 @@ namespace CSScriptNpp
 
                 if (onStdOut != null && !useFileRedirection)
                 {
+                    //string line;
+                    //while (null != (line=p.StandardOutput.ReadLine()))
+                    //{
+                    //    output.AppendLine(line);
+                    //    onStdOut(line.ToCharArray());
+                    //}
                     char[] buf = new char[1];
                     while (0 != p.StandardOutput.Read(buf, 0, 1))
                     {
