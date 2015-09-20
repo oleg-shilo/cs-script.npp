@@ -18,6 +18,8 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
+            var dir = Environment.ExpandEnvironmentVariables(null);
+
             //FormattingTest();
             //new FavoritesPanel().ShowDialog(); return;
             //DebugExternal.ShowModal(); return;

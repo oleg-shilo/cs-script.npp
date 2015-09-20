@@ -26,7 +26,6 @@ namespace CSScriptNpp
             panel = new CSScriptIntellisense.ConfigForm(CSScriptIntellisense.Config.Instance);
             generalPage.Controls.Add(panel.ContentPanel);
 
-
             checkUpdates.Checked = data.CheckUpdatesOnStartup;
             useCS6.Checked = data.UseRoslynProvider;
 

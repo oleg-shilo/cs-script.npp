@@ -47,6 +47,7 @@ namespace CSScriptNpp
         public bool RunExternalInDebugMode = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
+        //public string ScriptEngineLocation = "";
         public string CsSConsoleEncoding = "utf-8";
         public string LastExternalProcess = "";
         public string LastExternalProcessArgs = "";

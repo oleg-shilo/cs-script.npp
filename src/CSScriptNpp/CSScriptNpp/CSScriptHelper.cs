@@ -52,7 +52,7 @@ namespace CSScriptNpp
         {
             get
             {
-                return  Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
+                return Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
             }
         }
 
@@ -142,6 +142,75 @@ namespace CSScriptNpp
                 return new string[0];
         }
 
+        static string ScriptEngineLocation
+        {
+            get
+            {
+                try
+                {
+                    if (!Config.Instance.UseEmbeddedEngine)
+                    {
+
+                        var dir = Config.Instance.UseCustomEngine;
+                        if (dir.IsEmpty())
+                            dir = "%CSSCRIPT_DIR%";
+
+                        dir = Environment.ExpandEnvironmentVariables(dir);
+
+                        if (Directory.Exists(dir))
+                        {
+                            return dir;
+                        }
+                        else
+                        {
+                            Config.Instance.UseEmbeddedEngine = true;
+                            Config.Instance.Save();
+                        }
+                    }
+                }
+                catch { }
+                return "";
+            }
+        }
+
+        internal static string cscs_exe
+        {
+            get
+            {
+                string name = "cscs.exe";
+                var file = Path.Combine(ScriptEngineLocation, name);
+                if (File.Exists(file))
+                    return file;
+                else
+                    return Path.Combine(Plugin.PluginDir, name);
+            }
+        }
+
+        internal static string csws_exe
+        {
+            get
+            {
+                string name = "csws.exe";
+                var file = Path.Combine(ScriptEngineLocation, name);
+                if (File.Exists(file))
+                    return file;
+                else
+                    return Path.Combine(Plugin.PluginDir, name);
+            }
+        }
+
+        internal static string cscs_v35_exe
+        {
+            get
+            {
+                var file = Path.Combine(ScriptEngineLocation, @"lib\Bin\NET 3.5\cscs.exe");
+                if (File.Exists(file))
+                    return file;
+                else
+                    return Path.Combine(Plugin.PluginDir, "cscs.v3.5.exe");
+            }
+        }
+
         static bool Build(string scriptFileCmd, out string compilerOutput)
         {
             string oldNotificationMessage = null;
@@ -150,7 +219,7 @@ namespace CSScriptNpp
                 Cursor.Current = Cursors.WaitCursor;
 
                 var p = new Process();
-                p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+                p.StartInfo.FileName = cscs_exe;
                 p.StartInfo.Arguments = "/nl /ca " + GenerateDefaultArgs() + " \"" + scriptFileCmd + "\"";
 
                 p.StartInfo.UseShellExecute = false;
@@ -251,7 +320,7 @@ namespace CSScriptNpp
             try
             {
                 var p = new Process();
-                p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+                p.StartInfo.FileName = cscs_exe;
                 p.StartInfo.Arguments = "/nl /l /dbg " + GenerateDefaultArgs() + " \"" + scriptFile + "\"";
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
@@ -338,7 +407,7 @@ namespace CSScriptNpp
 
         static public void ExecuteAsynch(string scriptFile)
         {
-            string cscs = "\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\"";
+            string cscs = "\"" + cscs_exe + "\"";
             string script = "\"" + scriptFile + "\"";
             string debugFlag = "/dbg ";
             if (!Config.Instance.RunExternalInDebugMode)
@@ -354,7 +423,7 @@ namespace CSScriptNpp
 
         static public void ExecuteDebug(string scriptFileCmd)
         {
-            ProcessStart("cmd.exe", "/K \"\"" + Path.Combine(Plugin.PluginDir, "cscs.exe") + "\" /nl /l /dbg " + GenerateDefaultArgs() + " \"" + scriptFileCmd + "\" //x\"");
+            ProcessStart("cmd.exe", "/K \"\"" + cscs_exe + "\" /nl /l /dbg " + GenerateDefaultArgs() + " \"" + scriptFileCmd + "\" //x\"");
         }
 
         static public Func<string, string> NotifyClient;
@@ -478,7 +547,7 @@ namespace CSScriptNpp
         {
             try
             {
-                string downloadDir = KnownFolders.UserDownloads; 
+                string downloadDir = KnownFolders.UserDownloads;
 
                 string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + distroExtension);
 
@@ -586,11 +655,11 @@ namespace CSScriptNpp
 
             EnsureCleanDirectory(dir);
 
-            string engineFileName;
+            string engineFile;
             if (targerRuntimeVersion == "v4.0.30319")
-                engineFileName = "cscs.exe";
+                engineFile = cscs_exe;
             else if (targerRuntimeVersion == "v2.0.50727")
-                engineFileName = "cscs.v3.5.exe";
+                engineFile = cscs_v35_exe;
             else
                 throw new Exception("The requested Target Runtime version (" + targerRuntimeVersion + ") is not supported.");
 
@@ -600,10 +669,8 @@ namespace CSScriptNpp
 
             if (asScript)
             {
-                string engine = Path.Combine(Plugin.PluginDir, engineFileName);
-
                 proj.SourceFiles.Concat(assemblies)
-                                .Concat(engine)
+                                .Concat(engineFile)
                                 .ForEach(file => copy(file, dir));
 
                 string batchFile = Path.Combine(dir, "run.cmd");
@@ -618,7 +685,7 @@ namespace CSScriptNpp
 
                 string script = "\"" + scriptFile + "\"";
 
-                string cscs = Path.Combine(Plugin.PluginDir, engineFileName);
+                string cscs = engineFile;
                 string args = string.Format("/e{2} {0} {1}", GenerateDefaultArgs(), script, (windowApp ? "w" : ""));
 
                 var p = new Process();
@@ -703,13 +770,13 @@ namespace CSScriptNpp
 
         static public string ScriptEngineVersion()
         {
-            return FileVersionInfo.GetVersionInfo(Path.Combine(Plugin.PluginDir, "cscs.exe")).FileVersion.ToString();
+            return FileVersionInfo.GetVersionInfo(cscs_exe).FileVersion.ToString();
         }
 
         static public bool Verify(string scriptFile)
         {
             var p = new Process();
-            p.StartInfo.FileName = Path.Combine(Plugin.PluginDir, "cscs.exe");
+            p.StartInfo.FileName = cscs_exe;
             //NOTE: it is important to always pass /dbg otherwise NPP will not be able to debug.
             //particularly important to do for //css_host scripts
             p.StartInfo.Arguments = "/nl /l /dbg /ca " + GenerateDefaultArgs() + " \"" + scriptFile + "\"";

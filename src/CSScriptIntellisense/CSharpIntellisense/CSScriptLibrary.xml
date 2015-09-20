@@ -734,7 +734,7 @@
         </member>
         <member name="F:csscript.CSharpParser.ImportInfo.file">
             <summary>
-            The file to be imporeted.
+            The file to be imported.
             </summary>
         </member>
         <member name="F:csscript.CSharpParser.ImportInfo.renaming">

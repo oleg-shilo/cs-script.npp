@@ -34,6 +34,7 @@
             this.useCS6 = new System.Windows.Forms.CheckBox();
             this.contentControl = new System.Windows.Forms.TabControl();
             this.generalPage = new System.Windows.Forms.TabPage();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.customEngineLocation = new System.Windows.Forms.TextBox();
@@ -42,7 +43,6 @@
             this.installedEngine = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -94,6 +94,18 @@
             this.generalPage.TabIndex = 0;
             this.generalPage.Text = "General";
             this.generalPage.UseVisualStyleBackColor = true;
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(10, 165);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(120, 13);
+            this.linkLabel1.TabIndex = 5;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Edit settings file  instead";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // tabPage2
             // 
@@ -148,9 +160,9 @@
             this.customEngine.AutoSize = true;
             this.customEngine.Location = new System.Drawing.Point(22, 97);
             this.customEngine.Name = "customEngine";
-            this.customEngine.Size = new System.Drawing.Size(207, 17);
+            this.customEngine.Size = new System.Drawing.Size(104, 17);
             this.customEngine.TabIndex = 0;
-            this.customEngine.Text = "Custom Location (not implemented yet)";
+            this.customEngine.Text = "Custom Location";
             this.customEngine.UseVisualStyleBackColor = true;
             this.customEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
             // 
@@ -185,18 +197,6 @@
             this.embeddedEngine.Text = "Embedded";
             this.embeddedEngine.UseVisualStyleBackColor = true;
             this.embeddedEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(10, 165);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(120, 13);
-            this.linkLabel1.TabIndex = 5;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Edit settings file  instead";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // ConfigForm
             // 
