@@ -747,6 +747,7 @@ namespace CSScriptNpp
             string projectName = Path.GetFileNameWithoutExtension(script);
             string projectFile = Path.Combine(dir, projectName + ".csproj");
             string solutionFile = Path.Combine(dir, projectName + ".sln");
+            string scriptDir = Path.GetDirectoryName(script);
 
             string sourceFilesXml = string.Join(Environment.NewLine,
                                                 sourceFiles.Select(file => "<Compile Include=\"" + file + "\" />").ToArray());
@@ -761,9 +762,15 @@ namespace CSScriptNpp
                                                  .Replace("{$SOURCES}", sourceFilesXml)
                                                  .Replace("{$REFERENCES}", refAsmsXml));
 
+            File.WriteAllText(projectFile + ".user",
+                              Resources.Resources.VS2012UserTemplate
+                                                 .Replace("<StartWorkingDirectory>", 
+                                                          "<StartWorkingDirectory>" + scriptDir));
+
             File.WriteAllText(solutionFile,
                               Encoding.UTF8.GetString(Resources.Resources.VS2012SolutionTemplate)
                                       .Replace("{$PROJECTNAME}", projectName));
+
 
             Process.Start(solutionFile);
         }

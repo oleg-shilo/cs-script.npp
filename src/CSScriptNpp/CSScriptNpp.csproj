@@ -543,6 +543,7 @@
     <None Include="Resources\DebugScript.sln" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\DebugScript .csproj.user" />
     <None Include="CSScriptNpp\Roslyn\csc.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
