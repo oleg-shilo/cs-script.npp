@@ -50,6 +50,7 @@ namespace CSScriptIntellisense
         public int MemberInfoMaxCharWidth = 100;
         public int MemberInfoMaxLines = 15;
         public bool SmartIndenting = true;
+        public bool HybridFormatting = true;
         public bool IgnoreDocExceptions = false;
 
         public void Save()

@@ -39,8 +39,16 @@ namespace CSScriptNpp.Roslyn
 
         public static string Format(string code)
         {
-            bool normaliseLines = true;
+            return Format(code, false);
+        }
 
+        public static string FormatHybrid(string code)
+        {
+            return Format(code, true);
+        }
+
+        static string Format(string code, bool normaliseLines)
+        {
             var result = "";
             var tree = CSharpSyntaxTree.ParseText(code.Trim());
             var root = msFormatter.Format(tree.GetRoot(), DummyWorkspace);
@@ -49,7 +57,9 @@ namespace CSScriptNpp.Roslyn
             {
                 //injecting line-breaks to separate declarations
                 root = root.ReplaceNodes(root.DescendantNodes()
-                                             .Where(n => n.IsKind(SyntaxKind.MethodDeclaration) || n.IsKind(SyntaxKind.ClassDeclaration)),
+                                             .Where(n => n.IsKind(SyntaxKind.MethodDeclaration) ||
+                                                         n.IsKind(SyntaxKind.ClassDeclaration) ||
+                                                         n.IsBlockStatement()),
                                               (_, node) =>
                                               {
                                                   var existingTrivia = node.GetLeadingTrivia().ToFullString();
@@ -76,8 +86,7 @@ namespace CSScriptNpp.Roslyn
                 //                              });
 
                 result = root.ToFullString()
-                             .RemoveDoubleLineBreaks(root)
-                             ;
+                             .NormalizeLine(root);
             }
             else
                 result = root.ToFullString();
@@ -86,28 +95,61 @@ namespace CSScriptNpp.Roslyn
         }
 
 
-        static string RemoveDoubleLineBreaks(this string formattedCode, SyntaxNode root)
+        static string NormalizeLine(this string formattedCode, SyntaxNode root)
         {
             var strings = root.DescendantNodes()
-                                  .Where(n => n.Kind() == SyntaxKind.StringLiteralExpression)
-                                  .Select(x => new { Start = x.FullSpan.Start, End = x.FullSpan.End })
-                                  .ToArray();
+                              .Where(n => n.Kind() == SyntaxKind.StringLiteralExpression)
+                              .Select(x => new { Start = x.FullSpan.Start, End = x.FullSpan.End })
+                              .ToArray();
 
             var sb = new StringBuilder(formattedCode);
 
-            for (int i = formattedCode.Length - 0; i > 0;)
+            for (int pos = formattedCode.Length; pos > 0;)
             {
 
-                i = formattedCode.LastIndexOf("\r\n", i);
-                if (i != -1)
+                pos = formattedCode.LastIndexOf("\r\n", pos);
+                if (pos != -1)
                 {
-                    if (strings.Any(x => x.Start <= i && i <= x.End))
+                    if (strings.Any(x => x.Start <= pos && pos <= x.End))
                         continue;
 
-                    var i2 = formattedCode.LastIndexOf("\r\n\r\n", i);
-                    if (i2 != -1 && (i - i2) == 4)
+                    string prevLine = sb.GetPrevLineFrom(pos);
+                    string currLine = sb.GetLineFrom(pos);
+
+                    if (currLine.EndsWith("}") && prevLine == "") 
                     {
-                        sb.Remove(i, 2);
+                        //remove extra line before 'end-of-block'
+                        int lineStartPos = sb.GetLineOffset(pos);
+                        sb.Remove(lineStartPos, 2);
+                        pos = lineStartPos;
+                    }
+                    else if (prevLine.EndsWith("{") && currLine == "")
+                    {
+                        //remove extra line after 'start-of-block'
+                        sb.Remove(pos, 2);
+                    }
+                    else if (currLine != "" && !currLine.StartsWith("}") && !currLine.StartsWith(")") && !currLine.StartsWith("while") && prevLine.EndsWith("}"))
+                    {
+                        //insert extra line after the 'end-of-block'
+                        int lineStartPos = sb.GetLineOffset(pos);
+                        sb.Insert(lineStartPos, "\r\n");
+                        pos = lineStartPos + 2;
+                    }
+                    else if (currLine.EndsWith("{") && prevLine != "" && prevLine.EndsWith(";")) 
+                    {
+                        //insert extra line before the 'start-of-block'
+                        int lineStartPos = sb.GetLineOffset(pos);
+                        sb.Insert(lineStartPos, "\r\n");
+                        pos = lineStartPos + 2;
+                    }
+                    else
+                    {
+                        int doubleLineBreak = formattedCode.LastIndexOf("\r\n\r\n", pos);
+                        if (doubleLineBreak != -1 && (pos - doubleLineBreak) == 4)  
+                        {
+                            //remove double line-break 
+                            sb.Remove(pos, 2);
+                        }
                     }
                 }
             }
@@ -116,11 +158,105 @@ namespace CSScriptNpp.Roslyn
             return result;
         }
 
+        static int GetLineOffset(this StringBuilder sb, int pos)
+        {
+            int startPos = pos;
+
+            bool atLineEnd = sb[pos] == '\r';
+            if (atLineEnd)
+                startPos = pos - 1;
+
+            for (int i = startPos; i >= 0; i--)
+                if (sb[i] == '\r')
+                    return i;
+            return 0;
+        }
+
+        static string GetLineFrom(this StringBuilder sb, int pos)
+        {
+            var chars = new List<char>();
+            bool atLineEnd = sb[pos] == '\r';
+            int startPos = pos;
+
+            if (atLineEnd)
+                startPos = pos - 1;
+
+            for (int i = startPos; i >= 0; i--)
+            {
+                if (sb[i] == '\n') // || sb[i-1] == '\r')
+                    break;
+                chars.Insert(0, sb[i]);
+            }
+
+            for (int i = startPos + 1; !atLineEnd && i < sb.Length; i++)
+            {
+                if (sb[i] == '\r') // || sb[i] == '\n')
+                    break;
+                chars.Add(sb[i]);
+            }
+            return new string(chars.ToArray()).Trim();
+        }
+
+        static string GetPrevLineFrom(this StringBuilder sb, int pos)
+        {
+            var chars = new List<char>();
+            bool atLineEnd = sb[pos] == '\r';
+            int startPos = pos;
+
+            if (atLineEnd)
+                startPos--;
+
+            for (int i = startPos; i >= 0; i--)
+            {
+                if (sb[i] == '\n') // || sb[i-1] == '\r')
+                {
+                    startPos = i - 1;
+                    break;
+                }
+            }
+
+            for (int i = startPos; i >= 0; i--)
+            {
+                if (sb[i] == '\n') // || sb[i-1] == '\r')
+                    break;
+                chars.Insert(0, sb[i]);
+            }
+
+            for (int i = startPos + 1; !atLineEnd && i < sb.Length; i++)
+            {
+                if (sb[i] == '\r') // || sb[i] == '\n')
+                    break;
+                chars.Add(sb[i]);
+            }
+            return new string(chars.ToArray()).Trim();
+        }
+
+        public static bool IsBlockStatement(this SyntaxNode node)
+        {
+            switch (node.Kind())
+            {
+                case SyntaxKind.WhileStatement:
+                case SyntaxKind.DoStatement:
+                case SyntaxKind.ForStatement:
+                case SyntaxKind.ForEachStatement:
+                case SyntaxKind.UsingStatement:
+                case SyntaxKind.CheckedStatement:
+                case SyntaxKind.UncheckedStatement:
+                case SyntaxKind.UnsafeStatement:
+                case SyntaxKind.LockStatement:
+                case SyntaxKind.IfStatement:
+                case SyntaxKind.SwitchStatement:
+                case SyntaxKind.TryStatement:
+                    return true;
+                default:
+                    return false; 
+            }
+        }
         static void Main(string[] args)
         {
-            //string file = @"C:\Users\%USERNAME%\Documents\C# Scripts\New Script34.cs";
-            //file = Environment.ExpandEnvironmentVariables(file);
-            //args = new[] { file };
+            string file = @"C:\Users\%USERNAME%\Documents\C# Scripts\New Script34.cs";
+            file = Environment.ExpandEnvironmentVariables(file);
+            args = new[] { file };
             var code = File.ReadAllText(args.First());
 
             string formattedCode = Format(code);
