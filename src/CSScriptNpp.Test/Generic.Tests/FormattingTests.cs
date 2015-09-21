@@ -703,7 +703,7 @@ return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-00
 }";
             string formattedCode = rawCode;
 
-            int pos = 9;
+            int pos = 8;
             int newPos = SyntaxMapper.MapAbsPosition(rawCode, pos, formattedCode);
             Assert.Equal(pos, newPos);
         }
@@ -720,6 +720,31 @@ return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-00
             int pos = 0;
             int newPos = SyntaxMapper.MapAbsPosition(rawCode, pos, formattedCode);
             Assert.Equal(pos, newPos);
+        }
+
+        [Fact]
+        public void ShouldMapPositionInFormattedCodeAfterLineInjection()
+        {
+            string rawCode =
+@"using System;
+class Script
+{
+    static public void Main(string[] args)
+    {
+    }
+}";
+            string formattedCode =
+@"using System;
+
+class Script
+{
+    static public void Main(string[] args)
+    {
+    }
+}";
+            int pos = 17; //cl|ass
+            int newPos = SyntaxMapper.MapAbsPosition(rawCode, pos, formattedCode);
+            Assert.Equal(19, newPos);
         }
 
         //NRefactory is not ready yet

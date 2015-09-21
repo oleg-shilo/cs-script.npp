@@ -465,16 +465,19 @@ namespace CSScriptIntellisense
             int offset = 0;
             for (int i = pos; i < text.Length; i++)
             {
-                if (IsMeaningfull(text[i]))
+                if (IsMeaningfull(text[i], true))
                     break;
                 offset++;
             }
             return offset;
         }
 
-        static bool IsMeaningfull(char c)
+        static bool IsMeaningfull(char c, bool countLineBreaks = false)
         {
-            return (c == '\r' || c == '\n' || !char.IsWhiteSpace(c));
+            if (countLineBreaks)
+                return (c == '\r' || c == '\n' || !char.IsWhiteSpace(c));
+            else
+                return !char.IsWhiteSpace(c);
         }
 
         internal static int PosToSyntaxLength(this string text, int pos)
