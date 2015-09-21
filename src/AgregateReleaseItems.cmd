@@ -46,6 +46,7 @@ copy "..\readme.txt" "..\bin\readme.txt"
 copy "..\license.txt" "..\bin\license.txt"
 
 echo ----------------------------
-
+rem need to keep it last so copy errors (if any) are visible
+copy "CSScriptNpp\bin\Release\CSScriptNpp.dll" "%programfiles%\Notepad++\plugins\CSScriptNpp.dll"
 
 pause

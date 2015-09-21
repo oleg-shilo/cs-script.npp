@@ -1,9 +1,8 @@
-v1.0.44.0
-* Added support for C# 6.0 via Roslyn provider. It is disabled by default. You can enable it from the Settings dialog.
+v1.0.45.0
 
-* Fixed collision between Npp and CSScript.Npp auto-indent
+* Added support for a comprehensive (Roslyn based) code formatter. 
 
-* Improved "add missing 'usings'"
+* Added option for CS-Script engine custom location
 
-* Implemented reliable KnownFolders.UserDownloads in response to discussions/637474
+* Added setting working directory to the script folder when opening in Visual Studio
 
