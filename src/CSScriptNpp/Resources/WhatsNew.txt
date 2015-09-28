@@ -1,6 +1,6 @@
 v1.0.45.0
 
-* Added support for a comprehensive (Roslyn based) code formatter. 
+* Added support for a comprehensive (Roslyn based) code formatter. If for whatever reason Roslyn doesn't work on your PC you can disable the formatter form settings dialog.
 
 * Added option for CS-Script engine custom location
 

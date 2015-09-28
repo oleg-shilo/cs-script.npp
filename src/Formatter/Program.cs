@@ -59,7 +59,7 @@ namespace CSScriptNpp.Roslyn
                 root = root.ReplaceNodes(root.DescendantNodes()
                                              .Where(n => n.IsKind(SyntaxKind.MethodDeclaration) ||
                                                          n.IsKind(SyntaxKind.ClassDeclaration) ||
-                                                         n.IsBlockStatement()),
+                                                         n.IsNewBlockStatement()),
                                               (_, node) =>
                                               {
                                                   var existingTrivia = node.GetLeadingTrivia().ToFullString();
@@ -85,6 +85,7 @@ namespace CSScriptNpp.Roslyn
                 //                                      return node;
                 //                              });
 
+
                 result = root.ToFullString()
                              .NormalizeLine(root);
             }
@@ -94,6 +95,20 @@ namespace CSScriptNpp.Roslyn
             return result;
         }
 
+
+        static SyntaxNode NodeAbove(this SyntaxNode node)
+        {
+            if (node.Parent != null)
+            {
+                SyntaxNode result = null;
+                foreach (var item in node.Parent.ChildNodes())
+                    if (item == node)
+                        return result;
+                    else
+                        result = item;
+            }
+            return null;
+        }
 
         static string NormalizeLine(this string formattedCode, SyntaxNode root)
         {
@@ -106,7 +121,6 @@ namespace CSScriptNpp.Roslyn
 
             for (int pos = formattedCode.Length; pos > 0;)
             {
-
                 pos = formattedCode.LastIndexOf("\r\n", pos);
                 if (pos != -1)
                 {
@@ -115,8 +129,9 @@ namespace CSScriptNpp.Roslyn
 
                     string prevLine = sb.GetPrevLineFrom(pos);
                     string currLine = sb.GetLineFrom(pos);
+                    string nextLine = sb.GetNextLineFrom(pos);
 
-                    if (currLine.EndsWith("}") && prevLine == "") 
+                    if (currLine.EndsWith("}") && prevLine == "")
                     {
                         //remove extra line before 'end-of-block'
                         int lineStartPos = sb.GetLineOffset(pos);
@@ -128,16 +143,27 @@ namespace CSScriptNpp.Roslyn
                         //remove extra line after 'start-of-block'
                         sb.Remove(pos, 2);
                     }
-                    else if (currLine != "" && !currLine.StartsWith("}") && !currLine.StartsWith(")") && !currLine.StartsWith("while") && prevLine.EndsWith("}"))
+                    else if (currLine != "" && prevLine.EndsWith("}") && (currLine.DoesntStartsWithAny("}", ")", "while")))
                     {
                         //insert extra line after the 'end-of-block'
+                        //while (i < 0)
+                        //{
+                        //}
+                        // <- insertion point
+                        //var tt = @"";
                         int lineStartPos = sb.GetLineOffset(pos);
                         sb.Insert(lineStartPos, "\r\n");
                         pos = lineStartPos + 2;
                     }
-                    else if (currLine.EndsWith("{") && prevLine != "" && prevLine.EndsWith(";")) 
+                    else if (currLine.EndsWith("{") && prevLine != "" && prevLine.EndsWith(";"))
                     {
                         //insert extra line before the 'start-of-block'
+                        // var tt = @"";
+                        // <- insertion point
+                        //{
+                        //    tt = "1";
+                        //    tt = "2";
+                        //}
                         int lineStartPos = sb.GetLineOffset(pos);
                         sb.Insert(lineStartPos, "\r\n");
                         pos = lineStartPos + 2;
@@ -145,7 +171,7 @@ namespace CSScriptNpp.Roslyn
                     else
                     {
                         int doubleLineBreak = formattedCode.LastIndexOf("\r\n\r\n", pos);
-                        if (doubleLineBreak != -1 && (pos - doubleLineBreak) == 4)  
+                        if (doubleLineBreak != -1 && (pos - doubleLineBreak) == 4)
                         {
                             //remove double line-break 
                             sb.Remove(pos, 2);
@@ -197,6 +223,24 @@ namespace CSScriptNpp.Roslyn
             return new string(chars.ToArray()).Trim();
         }
 
+        static string GetNextLineFrom(this StringBuilder sb, int pos)
+        {
+            var chars = new List<char>();
+            bool atLineEnd = sb[pos] == '\r';
+            int startPos = pos;
+
+            if (atLineEnd)
+                startPos = pos + 2; //advance forward
+
+            for (int i = startPos; i < sb.Length; i++)
+            {
+                if (sb[i] == '\n') // || sb[i-1] == '\r')
+                    break;
+                chars.Insert(0, sb[i]);
+            }
+            return new string(chars.ToArray()).Trim();
+        }
+
         static string GetPrevLineFrom(this StringBuilder sb, int pos)
         {
             var chars = new List<char>();
@@ -231,6 +275,20 @@ namespace CSScriptNpp.Roslyn
             return new string(chars.ToArray()).Trim();
         }
 
+        public static bool DoesntStartsWithAny(this string text, params string[] patterns)
+        {
+            foreach (string item in patterns)
+                if (text.StartsWith(item))
+                    return false;
+            return true;
+        }
+
+        public static bool IsNewBlockStatement(this SyntaxNode node)
+        {
+            var prevNode = node.NodeAbove();
+            return node.IsBlockStatement() && prevNode != null && prevNode.Kind() == SyntaxKind.LocalDeclarationStatement;
+        }
+
         public static bool IsBlockStatement(this SyntaxNode node)
         {
             switch (node.Kind())
@@ -249,7 +307,7 @@ namespace CSScriptNpp.Roslyn
                 case SyntaxKind.TryStatement:
                     return true;
                 default:
-                    return false; 
+                    return false;
             }
         }
         static void Main(string[] args)
