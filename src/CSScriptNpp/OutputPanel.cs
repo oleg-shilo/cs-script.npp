@@ -212,6 +212,7 @@ namespace CSScriptNpp
 
             textBox.Font = new Font("Courier New", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textBox.MouseDoubleClick += textBox_MouseDoubleClick;
+            textBox.KeyDown += TextBox_KeyDown; 
 
             textBox.Visible = true;
 
@@ -220,6 +221,12 @@ namespace CSScriptNpp
             this.Controls.Add(textBox);
 
             outputType.Items.Add(new OutputInfo { Output = new Output(textBox), Name = name });
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.A)
+                (sender as TextBox).SelectAll();
         }
 
         public Output BuildOutput { get { return GetOutputType(BuildOutputName); } }

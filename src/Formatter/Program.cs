@@ -59,7 +59,8 @@ namespace CSScriptNpp.Roslyn
                 root = root.ReplaceNodes(root.DescendantNodes()
                                              .Where(n => n.IsKind(SyntaxKind.MethodDeclaration) ||
                                                          n.IsKind(SyntaxKind.ClassDeclaration) ||
-                                                         n.IsNewBlockStatement()),
+                                                         n.IsNewBlockStatement() ||
+                                                         n.IsNewDeclarationBlock()),
                                               (_, node) =>
                                               {
                                                   var existingTrivia = node.GetLeadingTrivia().ToFullString();
@@ -129,11 +130,13 @@ namespace CSScriptNpp.Roslyn
 
                     string prevLine = sb.GetPrevLineFrom(pos);
                     string currLine = sb.GetLineFrom(pos);
-                    string nextLine = sb.GetNextLineFrom(pos);
 
                     if (currLine.EndsWith("}") && prevLine == "")
                     {
                         //remove extra line before 'end-of-block'
+                        //     var t = "";
+                        // -> remove
+                        //}
                         int lineStartPos = sb.GetLineOffset(pos);
                         sb.Remove(lineStartPos, 2);
                         pos = lineStartPos;
@@ -141,32 +144,10 @@ namespace CSScriptNpp.Roslyn
                     else if (prevLine.EndsWith("{") && currLine == "")
                     {
                         //remove extra line after 'start-of-block'
+                        //{
+                        // -> remove
+                        //    var t = "";
                         sb.Remove(pos, 2);
-                    }
-                    else if (currLine != "" && prevLine.EndsWith("}") && (currLine.DoesntStartsWithAny("}", ")", "while")))
-                    {
-                        //insert extra line after the 'end-of-block'
-                        //while (i < 0)
-                        //{
-                        //}
-                        // <- insertion point
-                        //var tt = @"";
-                        int lineStartPos = sb.GetLineOffset(pos);
-                        sb.Insert(lineStartPos, "\r\n");
-                        pos = lineStartPos + 2;
-                    }
-                    else if (currLine.EndsWith("{") && prevLine != "" && prevLine.EndsWith(";"))
-                    {
-                        //insert extra line before the 'start-of-block'
-                        // var tt = @"";
-                        // <- insertion point
-                        //{
-                        //    tt = "1";
-                        //    tt = "2";
-                        //}
-                        int lineStartPos = sb.GetLineOffset(pos);
-                        sb.Insert(lineStartPos, "\r\n");
-                        pos = lineStartPos + 2;
                     }
                     else
                     {
@@ -289,6 +270,12 @@ namespace CSScriptNpp.Roslyn
             return node.IsBlockStatement() && prevNode != null && prevNode.Kind() == SyntaxKind.LocalDeclarationStatement;
         }
 
+        public static bool IsNewDeclarationBlock(this SyntaxNode node)
+        {
+            var prevNode = node.NodeAbove();
+            return node.Kind() == SyntaxKind.LocalDeclarationStatement && prevNode != null && prevNode.Kind() != SyntaxKind.LocalDeclarationStatement;
+        }
+
         public static bool IsBlockStatement(this SyntaxNode node)
         {
             switch (node.Kind())
@@ -305,6 +292,7 @@ namespace CSScriptNpp.Roslyn
                 case SyntaxKind.IfStatement:
                 case SyntaxKind.SwitchStatement:
                 case SyntaxKind.TryStatement:
+                case SyntaxKind.Block:
                     return true;
                 default:
                     return false;
