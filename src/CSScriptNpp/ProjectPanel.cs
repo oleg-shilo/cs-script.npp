@@ -106,7 +106,7 @@ namespace CSScriptNpp
         void ReloadScriptHistory()
         {
             this.historyBtn.DropDownItems.Clear();
-            string[] files = Config.Instance.SciptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
+            string[] files = Config.Instance.ScriptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
             if (files.Count() == 0)
             {
                 this.historyBtn.DropDownItems.Add(new ToolStripMenuItem("empty") { Enabled = false });
@@ -127,12 +127,12 @@ namespace CSScriptNpp
                             {
                                 this.historyBtn.DropDownItems.Remove(item);
 
-                                var scripts = Config.Instance.SciptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
+                                var scripts = Config.Instance.ScriptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
                                                                           .Distinct()
                                                                           .Where(x => x != script)
                                                                           .ToArray();
 
-                                Config.Instance.SciptHistory = string.Join("|", scripts);
+                                Config.Instance.ScriptHistory = string.Join("|", scripts);
                                 Config.Instance.Save();
                             }
                         };
@@ -145,7 +145,7 @@ namespace CSScriptNpp
                     item.Click += (s, e) =>
                         {
                             this.historyBtn.DropDownItems.Clear();
-                            Config.Instance.SciptHistory = "";
+                            Config.Instance.ScriptHistory = "";
                             Config.Instance.Save();
                             ReloadScriptHistory();
                         };
@@ -780,11 +780,11 @@ void main(string[] args)
                         currentScript = scriptFile;
                         CSScriptIntellisense.Plugin.EnsureCurrentFileParsed();
 
-                        var history = Config.Instance.SciptHistory.Split('|').ToList();
+                        var history = Config.Instance.ScriptHistory.Split('|').ToList();
                         history.Remove(scriptFile);
                         history.Insert(0, scriptFile);
 
-                        Config.Instance.SciptHistory = string.Join("|", history.Take(Config.Instance.SciptHistoryMaxCount).ToArray());
+                        Config.Instance.ScriptHistory = string.Join("|", history.Take(Config.Instance.SciptHistoryMaxCount).ToArray());
                         Config.Instance.Save();
                         ReloadScriptHistory();
                     }

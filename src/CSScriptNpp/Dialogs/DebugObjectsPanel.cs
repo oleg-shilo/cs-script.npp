@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
@@ -75,11 +76,15 @@ namespace CSScriptNpp.Dialogs
             }
 
             //currently allow editing name only
-            if (subItem != 0) //currently allow editing name only
+            if (subItem != 0 && subItem != 1) //allow editing name only or value
                 return;
 
-            //changing the name of the item allows only fro the root DbgObject
+            //changing the name of the item allowed only for the root DbgObject
             if (subItem == 0 && (item.Tag as DbgObject).Parent != null)
+                return;
+
+            //changing the value of the item allowed only for the primitive DbgObject
+            if (subItem == 1 && (item.Tag as DbgObject).HasChildren)
                 return;
 
             int xOffset = 2;
@@ -104,7 +109,7 @@ namespace CSScriptNpp.Dialogs
                 editBox.Hide();
         }
 
-        public delegate void OnEditCellCompleteHandler(int column, string oldValue, string newValue);
+        public delegate void OnEditCellCompleteHandler(int column, string oldValue, string newValue, DbgObject context);
 
         public event OnEditCellCompleteHandler OnEditCellComplete;
 
@@ -140,7 +145,7 @@ namespace CSScriptNpp.Dialogs
                 editBox.Hide();
 
                 if (OnEditCellComplete != null)
-                    OnEditCellComplete(selectedSubItem, oldValue, newValue);
+                    OnEditCellComplete(selectedSubItem, oldValue, newValue, focucedItem.GetDbgObject());
             }
         }
 
@@ -164,13 +169,13 @@ namespace CSScriptNpp.Dialogs
             if (!string.IsNullOrEmpty(expression))
             {
                 AddWatchObject(new DbgObject
-                    {
-                        DbgId = "",
-                        Name = expression,
-                        IsExpression = true,
-                        Value = "<N/A>",
-                        Type = "<N/A>",
-                    });
+                {
+                    DbgId = "",
+                    Name = expression,
+                    IsExpression = true,
+                    Value = "<N/A>",
+                    Type = "<N/A>",
+                });
 
                 if (sendToDebugger)
                     Debugger.AddWatch(expression);
@@ -358,12 +363,12 @@ namespace CSScriptNpp.Dialogs
             {
                 var decoratedResult = new List<DbgObject>(fakeMembers);
                 decoratedResult.Add(new DbgObject
-                                        {
-                                            Name = "Raw View",
-                                            HasChildren = true,
-                                            IsSeparator = true,
-                                            Children = result.ToArray()
-                                        });
+                {
+                    Name = "Raw View",
+                    HasChildren = true,
+                    IsSeparator = true,
+                    Children = result.ToArray()
+                });
                 return decoratedResult.ToArray();
             }
             else
@@ -446,9 +451,14 @@ namespace CSScriptNpp.Dialogs
                 return new Range { Start = valueColumnStartX - visualizerIconSize, End = valueColumnStartX };
         }
 
+        Pen Win10GridPen = new Pen(Color.FromArgb(240, 240, 240));
+
         private void listView1_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
             e.DrawBackground();
+
+            if (e.ItemIndex == 0 && Config.Instance.ImproveWin10ListVeiwRendering && Environment.OSVersion.Version.Major >= 6)
+                e.Graphics.DrawLine(Win10GridPen, new Point(e.Bounds.X, e.Bounds.Y), new Point(e.Bounds.X + e.Bounds.Width, e.Bounds.Y));
 
             var dbgObject = (DbgObject)e.Item.Tag;
 
@@ -607,7 +617,6 @@ namespace CSScriptNpp.Dialogs
                         e.Item.ToolTipText = subItemText;
                     else
                         e.Item.ToolTipText = null;
-
                 }
 
                 if (e.ColumnIndex == 1 && dbgObject.IsRefreshable && !dbgObject.IsCurrent)
@@ -628,6 +637,9 @@ namespace CSScriptNpp.Dialogs
         private void listView1_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
             e.DrawDefault = true;
+            //e.DrawBackground();
+            //e.Graphics.DrawRectangle(Pens.Gray, e.Bounds);
+            // e.DrawText();
         }
 
         public event Action<DbgObject> OnPinClicked;
@@ -832,6 +844,19 @@ namespace CSScriptNpp.Dialogs
                     toolTipText = "Click to visualize this value.";
             }
             toolTip.Show(toolTipText, this, cursor.X, cursor.Y - 30, 1000);
+        }
+
+        void listView1_Resize(object sender, EventArgs e)
+        {
+            //triggers painting artifacts
+            //listView1.Columns[listView1.Columns.Count - 1].Width = -2;
+
+            //doesn't help
+            //ThreadPool.QueueUserWorkItem(x =>
+            //{
+            //    Thread.Sleep(100);
+            //    listView1.Invalidate();
+            //});
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -61,6 +62,8 @@ namespace CSScriptNpp
             {
                 data.UseCustomEngine = "";
             }
+
+            Config.Instance.Save();
         }
 
         private void ConfigForm_KeyDown(object sender, KeyEventArgs e)
@@ -72,10 +75,13 @@ namespace CSScriptNpp
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string file = Config.Instance.GetFileName();
+            Config.Instance.Save();
+
             Task.Factory.StartNew(() =>
             {
                 try
                 {
+                    Thread.Sleep(500);
                     DateTime timestamp = File.GetLastWriteTimeUtc(file);
                     Process.Start("notepad.exe", file).WaitForExit();
                     if (File.GetLastWriteTimeUtc(file) != timestamp)

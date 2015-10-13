@@ -130,7 +130,6 @@ namespace npp
             }
 
 
-
             if (command == "break") //not native Mdbg command
             {
                 Break(true);
@@ -143,6 +142,10 @@ namespace npp
             {
                 ProcessWatch(command);
             }
+            //else if (command.StartsWith("dbg_execute")) //not native Mdbg command
+            //{
+                
+            //}
             else if (command.StartsWith("gotoframe")) //not native Mdbg command
             {
                 ProcessFrameNavigation(command);
@@ -453,7 +456,7 @@ namespace npp
                             result = SerializeValue(value);
                         }
                     }
-                    else if (action == "resolve_primitive") //UI request fro short info for tooltips
+                    else if (action == "resolve_primitive") //UI request for short info for tooltips
                     {
                         try
                         {
@@ -487,6 +490,20 @@ namespace npp
                         }
                     }
                     else if (action == "resolve")
+                    {
+                        try
+                        {
+                            MDbgValue value = ResolveExpression(args);
+
+                            if (value != null)
+                                result = "<items>" + Serialize(value, args) + "</items>";
+                        }
+                        catch
+                        {
+                            result = "<items/>";
+                        }
+                    }
+                    else if (action == "n_set")
                     {
                         try
                         {

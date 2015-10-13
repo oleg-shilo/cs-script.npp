@@ -12,6 +12,7 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
+     *  - Watch values are not updated on "step over" after teh value has been changed
      *  - Debugger 
      *      - Debugger does not treat DateTime members as primitives
      *      - Some objects cannot be inspected:
@@ -62,7 +63,7 @@ namespace CSScriptNpp
         static internal void CommandMenuInit()
         {
             Environment.SetEnvironmentVariable("CSSCRIPT_CONSOLE_ENCODING_OVERWRITE", Config.Instance.CsSConsoleEncoding);
-            
+
             int index = 0;
 
             //'_' prefix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"
@@ -148,7 +149,7 @@ namespace CSScriptNpp
             AddInternalShortcuts("_Debug:Alt+F5",
                                  "Debug", () =>
                                   {
-                                      if (!Debugger.IsRunning)
+                                      if (!Debugger.IsRunning && Npp.IsCurrentScriptFile())
                                           DebugScript();
                                   }, uniqueKeys);
 
@@ -205,7 +206,7 @@ namespace CSScriptNpp
         private static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
             foreach (var shortcut in internalShortcuts.Keys)
-                if ((byte)key == shortcut._key)
+                if ((byte)key == shortcut._key && !IsDocumentHotKeyExcluded())
                 {
                     Modifiers modifiers = KeyInterceptor.GetModifiers();
 
@@ -218,12 +219,20 @@ namespace CSScriptNpp
                 }
         }
 
+        static bool IsDocumentHotKeyExcluded()
+        {
+            foreach (string extension in Config.Instance.HotkeyDocumentsExclusions.Split(';'))
+                if (extension.IsNotEmpty() && Npp.IsCurrentFileHasExtension(extension))
+                    return true;
+            return false;
+        }
+
         static public void ShowConfig()
         {
             using (var form = new ConfigForm(Config.Instance))
             {
                 form.ShowDialog();
-                Config.Instance.Save();
+                //Config.Instance.Save();
                 ReflectorExtensions.IgnoreDocumentationExceptions = CSScriptIntellisense.Config.Instance.IgnoreDocExceptions;
             }
         }
@@ -242,7 +251,7 @@ namespace CSScriptNpp
                 if (OutputPanel.PluginLogOutput != null)
                     OutputPanel.PluginLogOutput.WriteLine(string.Format(format, args));
             }
-            catch{}
+            catch { }
 #endif
         }
 
@@ -261,7 +270,7 @@ namespace CSScriptNpp
                 CSScriptNpp.Plugin.DebugPanel.Refresh();
             if (CSScriptNpp.Plugin.OutputPanel != null)
                 CSScriptNpp.Plugin.OutputPanel.Refresh();
-            
+
         }
 
         static public DebugPanel GetDebugPanel()
@@ -511,7 +520,7 @@ namespace CSScriptNpp
 
             string version = CSScriptHelper.GetLatestAvailableVersion();
 
-            if (version != null)
+            if (version != null && version != Config.Instance.SkipUpdateVersion)
             {
                 var latestVersion = new Version(version);
                 var nppVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -539,7 +548,7 @@ namespace CSScriptNpp
             Plugin.FuncItems.RefreshItems();
             SetToolbarImage(Resources.Resources.css_logo_16x16_tb, projectPanelId);
         }
-        
+
         public static void OnFileSavedAs(string oldName, string newName)
         {
             if (ProjectPanel.currentScript != null && ProjectPanel.currentScript == oldName) //script is loaded and renamed

@@ -18,7 +18,7 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
-            var dir = Environment.ExpandEnvironmentVariables(null);
+            //var dir = Environment.ExpandEnvironmentVariables(null);
 
             //FormattingTest();
             //new FavoritesPanel().ShowDialog(); return;

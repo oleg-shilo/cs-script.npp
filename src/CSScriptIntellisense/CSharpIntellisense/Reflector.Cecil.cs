@@ -1021,6 +1021,11 @@ namespace UltraSharp.Cecil
             return string.IsNullOrEmpty(obj);
         }
 
+        public static bool IsNotEmpty(this string obj)
+        {
+            return !string.IsNullOrEmpty(obj);
+        }
+
         public static string NormalizeAsPath(this string obj)
         {
             return obj.Replace("\\", "_")

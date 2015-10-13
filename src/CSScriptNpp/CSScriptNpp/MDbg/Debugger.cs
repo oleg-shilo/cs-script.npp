@@ -708,6 +708,12 @@ namespace CSScriptNpp
             }
         }
 
+        static public void SetDbgValue(string dbgId, string expression)
+        {
+            if (IsRunning)
+                Debugger.Invoke("n_set", dbgId + "|" + expression);
+        }
+
         static public void AddWatch(string expression)
         {
             if (!watchExtressions.Contains(expression))

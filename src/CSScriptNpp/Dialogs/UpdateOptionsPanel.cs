@@ -9,7 +9,7 @@ namespace CSScriptNpp.Dialogs
 {
     public partial class UpdateOptionsPanel : Form
     {
-        private string version;
+        string version;
 
         public UpdateOptionsPanel(string version)
         {
@@ -26,7 +26,7 @@ namespace CSScriptNpp.Dialogs
             manualDeployment.Checked = (Config.Instance.UpdateMode == (string)manualDeployment.Tag);
         }
 
-        private void UpdateProgress(long currentStep, long totalSteps)
+        void UpdateProgress(long currentStep, long totalSteps)
         {
             if (!Closed)
                 try
@@ -40,10 +40,11 @@ namespace CSScriptNpp.Dialogs
                 catch { }
         }
 
-        private new bool Closed = false;
+        new bool Closed = false;
 
-        private void okBtn_Click(object sender, EventArgs e)
+        void okBtn_Click(object sender, EventArgs e)
         {
+            skipBtn.Enabled =
             okBtn.Enabled =
             optionsGroup.Enabled = false;
 
@@ -143,7 +144,7 @@ namespace CSScriptNpp.Dialogs
                 });
         }
 
-        private string DeployUpdater(string pluginDir, string tempDir)
+        string DeployUpdater(string pluginDir, string tempDir)
         {
             string srcDir = Path.Combine(pluginDir, "CSScriptNpp");
             string deploymentDir = Path.Combine(tempDir, "CSScriptNpp.Updater");
@@ -160,17 +161,17 @@ namespace CSScriptNpp.Dialogs
             return Path.Combine(deploymentDir, "updater.exe");
         }
 
-        private void UpdateOptionsPanel_FormClosed(object sender, FormClosedEventArgs e)
+        void UpdateOptionsPanel_FormClosed(object sender, FormClosedEventArgs e)
         {
             Closed = true;
         }
 
-        private void releaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void releaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("http://csscript.net/npp/CSScriptNpp." + version + ".ReleaseNotes.html");
         }
 
-        private void showOptions_CheckedChanged(object sender, EventArgs e)
+        void showOptions_CheckedChanged(object sender, EventArgs e)
         {
             DoLayout();
         }
@@ -179,24 +180,31 @@ namespace CSScriptNpp.Dialogs
         {
             optionsGroup.Visible = showOptions.Checked;
             if (showOptions.Checked)
-                this.Height = 280;
+                this.Height = 300;
             else
-                this.Height = 110;
+                this.Height = 130;
         }
 
-        private void customDeployment_CheckedChanged(object sender, EventArgs e)
+        void customDeployment_CheckedChanged(object sender, EventArgs e)
         {
             updateAfterExit.Enabled = customDeployment.Checked;
         }
 
-        private void updateAfterExit_CheckedChanged(object sender, EventArgs e)
+        void updateAfterExit_CheckedChanged(object sender, EventArgs e)
         {
             Config.Instance.UpdateAfterExit = updateAfterExit.Checked;
         }
 
-        private void UpdateOptionsPanel_Load(object sender, EventArgs e)
+        void UpdateOptionsPanel_Load(object sender, EventArgs e)
         {
             Win32.SetForegroundWindow(this.Handle);
+        }
+
+        void skipBtn_Click(object sender, EventArgs e)
+        {
+            Config.Instance.SkipUpdateVersion = version;
+            Config.Instance.Save();
+            Close();
         }
     }
 }

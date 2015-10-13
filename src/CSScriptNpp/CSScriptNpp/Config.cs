@@ -42,19 +42,22 @@ namespace CSScriptNpp
         public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
         public bool UseRoslynProvider = false;
+        public bool ImproveWin10ListVeiwRendering = true;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
         public bool RunExternalInDebugMode = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
+        public string SkipUpdateVersion = "";
         //public string ScriptEngineLocation = "";
         public string CsSConsoleEncoding = "utf-8";
+        public string HotkeyDocumentsExclusions = ".cmd;.bat;.test";
         public string LastExternalProcess = "";
         public string LastExternalProcessArgs = "";
         public int LastExternalProcessCpu = 0;
         public string ReleaseNotesViewedFor = "";
         public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
-        public string SciptHistory = "";
+        public string ScriptHistory = "";
         public string DebugStepPointColor = "Yellow";
         public string DebugStepPointForeColor = "Black";
         public int SciptHistoryMaxCount = 10;
@@ -72,60 +75,74 @@ namespace CSScriptNpp
 
         public void Save()
         {
-            lock (this)
+            lock (typeof(Config))
             {
-                File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
+                try
+                {
+                    Debug.WriteLine("---> Config.Save");
+                    File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
-                SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
-                SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
-                SetValue(Section, "DebugAsConsole", DebugAsConsole);
-                SetValue(Section, "HandleSaveAs", HandleSaveAs);
-                SetValue(Section, "ShowLineNuberInCodeMap", ShowLineNuberInCodeMap);
-                SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
-                SetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
-                SetValue(Section, "ListManagedProcessesOnly", ListManagedProcessesOnly);
-                SetValue(Section, "RunExternalInDebugMode", RunExternalInDebugMode);
-                SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
-                SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
-                SetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
-                SetValue(Section, "InterceptConsole", InterceptConsole);
-                SetValue(Section, "UseEmbeddedEngine", UseEmbeddedEngine);
-                SetValue(Section, "UseCustomEngine", UseCustomEngine);
-                SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
-                SetValue(Section, "SciptHistory", SciptHistory);
-                SetValue(Section, "DebugStepPointColor", DebugStepPointColor);
-                SetValue(Section, "DebugStepPointForeColor", DebugStepPointForeColor);
-                SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
-                SetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
-                SetValue(Section, "CollectionItemsInVisualizersMaxCount", CollectionItemsInVisualizersMaxCount);
-                SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
-                SetValue(Section, "LocalDebug", LocalDebug);
-                SetValue(Section, "BreakOnException", BreakOnException);
-                SetValue(Section, "UpdateAfterExit", UpdateAfterExit);
-                SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
-                SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
-                SetValue(Section, "UseRoslynProvider", UseRoslynProvider);
-                SetValue(Section, "UpdateMode", UpdateMode);
-                SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
-                SetValue(Section, "LastExternalProcess", LastExternalProcess);
-                SetValue(Section, "LastExternalProcessArgs", LastExternalProcessArgs);
-                SetValue(Section, "LastExternalProcessCpu", LastExternalProcessCpu);
-                SetValue(Section, "TargetVersion", TargetVersion);
-                SetValue(Section, "CsSConsoleEncoding", CsSConsoleEncoding);
-                SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
-                SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
-                SetValue(Section, "DistributeScriptAsWindowApp", DistributeScriptAsWindowApp);
+                    SetValue(Section, "ShowProjectPanel", ShowProjectPanel);
+                    SetValue(Section, "ShowOutputPanel", ShowOutputPanel);
+                    SetValue(Section, "DebugAsConsole", DebugAsConsole);
+                    SetValue(Section, "HandleSaveAs", HandleSaveAs);
+                    SetValue(Section, "ShowLineNuberInCodeMap", ShowLineNuberInCodeMap);
+                    SetValue(Section, "ShowDebugPanel", ShowDebugPanel);
+                    SetValue(Section, "WordWrapInVisualizer", WordWrapInVisualizer);
+                    SetValue(Section, "ListManagedProcessesOnly", ListManagedProcessesOnly);
+                    SetValue(Section, "RunExternalInDebugMode", RunExternalInDebugMode);
+                    SetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
+                    SetValue(Section, "HotkeyDocumentsExclusions", HotkeyDocumentsExclusions);
+                    SetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
+                    SetValue(Section, "QuickViewAutoRefreshAvailable", QuickViewAutoRefreshAvailable);
+                    SetValue(Section, "InterceptConsole", InterceptConsole);
+                    SetValue(Section, "UseEmbeddedEngine", UseEmbeddedEngine);
+                    SetValue(Section, "UseCustomEngine", UseCustomEngine);
+                    SetValue(Section, "ReleaseNotesViewedFor", ReleaseNotesViewedFor);
+                    SetValue(Section, "SciptHistory", ScriptHistory);
+                    SetValue(Section, "DebugStepPointColor", DebugStepPointColor);
+                    SetValue(Section, "DebugStepPointForeColor", DebugStepPointForeColor);
+                    SetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
+                    SetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
+                    SetValue(Section, "CollectionItemsInVisualizersMaxCount", CollectionItemsInVisualizersMaxCount);
+                    SetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
+                    SetValue(Section, "LocalDebug", LocalDebug);
+                    SetValue(Section, "BreakOnException", BreakOnException);
+                    SetValue(Section, "UpdateAfterExit", UpdateAfterExit);
+                    SetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
+                    SetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
+                    SetValue(Section, "SkipUpdateVersion", SkipUpdateVersion);
+                    SetValue(Section, "UseRoslynProvider", UseRoslynProvider);
+                    SetValue(Section, "ImproveWin10ListVeiwRendering", ImproveWin10ListVeiwRendering);
+                    SetValue(Section, "UpdateMode", UpdateMode);
+                    SetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
+                    SetValue(Section, "LastExternalProcess", LastExternalProcess);
+                    SetValue(Section, "LastExternalProcessArgs", LastExternalProcessArgs);
+                    SetValue(Section, "LastExternalProcessCpu", LastExternalProcessCpu);
+                    SetValue(Section, "TargetVersion", TargetVersion);
+                    SetValue(Section, "CsSConsoleEncoding", CsSConsoleEncoding);
+                    SetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
+                    SetValue(Section, "DistributeScriptAsScriptByDefault", DistributeScriptAsScriptByDefault);
+                    SetValue(Section, "DistributeScriptAsWindowApp", DistributeScriptAsWindowApp);
 
-                CSScriptIntellisense.Config.Instance.Save();
+                    CSScriptIntellisense.Config.Instance.Save();
 
-                Shortcuts.Save();
+                    Shortcuts.Save();
+                }
+                catch (Exception e)
+                {
+                    Debug.Assert(false);
+                    throw;
+                }
+                Debug.WriteLine("<--- Config.Save");
             }
         }
 
         public void Open()
         {
-            lock (this)
+            lock (typeof(Config))
             {
+                Debug.WriteLine("---> Config.Open");
                 ShowLineNuberInCodeMap = GetValue(Section, "ShowLineNuberInCodeMap", ShowLineNuberInCodeMap);
                 ShowProjectPanel = GetValue(Section, "ShowProjectPanel", ShowProjectPanel);
                 ShowOutputPanel = GetValue(Section, "ShowOutputPanel", ShowOutputPanel);
@@ -137,12 +154,13 @@ namespace CSScriptNpp
                 //ShowDebugPanel = GetValue(Section, "ShowDebugPanel", ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
                 DebugStepPointColor = GetValue(Section, "DebugStepPointColor", DebugStepPointColor, 1024 * 4);
                 DebugStepPointForeColor = GetValue(Section, "DebugStepPointForeColor", DebugStepPointForeColor, 1024 * 4);
-                SciptHistory = GetValue(Section, "SciptHistory", SciptHistory, 1024 * 4);
+                ScriptHistory = GetValue(Section, "ScriptHistory", ScriptHistory, 1024 * 4);
                 SciptHistoryMaxCount = GetValue(Section, "SciptHistoryMaxCount", SciptHistoryMaxCount);
                 CollectionItemsInTooltipsMaxCount = GetValue(Section, "CollectionItemsInTooltipsMaxCount", CollectionItemsInTooltipsMaxCount);
                 CollectionItemsInVisualizersMaxCount = GetValue(Section, "CollectionItemsInVisualizersMaxCount", CollectionItemsInVisualizersMaxCount);
                 DebugPanelInitialTab = GetValue(Section, "DebugPanelInitialTab", DebugPanelInitialTab);
                 OutputPanelCapacity = GetValue(Section, "OutputPanelCapacity", OutputPanelCapacity);
+                HotkeyDocumentsExclusions = GetValue(Section, "HotkeyDocumentsExclusions", HotkeyDocumentsExclusions);
                 NavigateToRawCodeOnDblClickInOutput = GetValue(Section, "NavigateToRawCodeOnDblClickInOutput", NavigateToRawCodeOnDblClickInOutput);
                 InterceptConsole = GetValue(Section, "InterceptConsole", InterceptConsole);
                 UseEmbeddedEngine = GetValue(Section, "UseEmbeddedEngine", UseEmbeddedEngine);
@@ -159,7 +177,9 @@ namespace CSScriptNpp
                 UpdateAfterExit = GetValue(Section, "UpdateAfterExit", UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, "LastUpdatesCheckDate", LastUpdatesCheckDate);
                 CheckUpdatesOnStartup = GetValue(Section, "CheckUpdatesOnStartup", CheckUpdatesOnStartup);
+                SkipUpdateVersion = GetValue(Section, "SkipUpdateVersion", SkipUpdateVersion);
                 UseRoslynProvider = GetValue(Section, "UseRoslynProvider", UseRoslynProvider);
+                ImproveWin10ListVeiwRendering = GetValue(Section, "ImproveWin10ListVeiwRendering", ImproveWin10ListVeiwRendering);
                 UpdateMode = GetValue(Section, "UpdateMode", UpdateMode);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, "FloatingPanelsWarningAlreadyPropted", FloatingPanelsWarningAlreadyPropted);
                 ClasslessScriptByDefault = GetValue(Section, "ClasslessScriptByDefault", ClasslessScriptByDefault);
@@ -167,6 +187,7 @@ namespace CSScriptNpp
                 DistributeScriptAsWindowApp = GetValue(Section, "DistributeScriptAsWindowApp", DistributeScriptAsWindowApp);
 
                 CSScriptIntellisense.Config.Instance.Open();
+                Debug.WriteLine("<--- Config.Open");
             }
         }
     }

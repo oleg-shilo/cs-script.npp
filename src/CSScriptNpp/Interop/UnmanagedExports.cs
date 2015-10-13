@@ -29,20 +29,27 @@ namespace CSScriptNpp
 
         static void InitPlugin()
         {
-            CSScriptIntellisense.Plugin.NppData._nppHandle = Plugin.NppData._nppHandle;
-            CSScriptIntellisense.Plugin.NppData._scintillaMainHandle = Plugin.NppData._scintillaMainHandle;
-            CSScriptIntellisense.Plugin.NppData._scintillaSecondHandle = Plugin.NppData._scintillaSecondHandle;
+            try
+            {
+                CSScriptIntellisense.Plugin.NppData._nppHandle = Plugin.NppData._nppHandle;
+                CSScriptIntellisense.Plugin.NppData._scintillaMainHandle = Plugin.NppData._scintillaMainHandle;
+                CSScriptIntellisense.Plugin.NppData._scintillaSecondHandle = Plugin.NppData._scintillaSecondHandle;
 
-            Intellisense.EnsureIntellisenseIntegration();
+                Intellisense.EnsureIntellisenseIntegration();
 
-            CSScriptNpp.Plugin.CommandMenuInit(); //this will also call CSScriptIntellisense.Plugin.CommandMenuInit
+                CSScriptNpp.Plugin.CommandMenuInit(); //this will also call CSScriptIntellisense.Plugin.CommandMenuInit
 
-            foreach (var item in CSScriptIntellisense.Plugin.FuncItems.Items)
-                Plugin.FuncItems.Add(item.ToLocal());
+                foreach (var item in CSScriptIntellisense.Plugin.FuncItems.Items)
+                    Plugin.FuncItems.Add(item.ToLocal());
 
-            CSScriptIntellisense.Plugin.FuncItems.Items.Clear();
+                CSScriptIntellisense.Plugin.FuncItems.Items.Clear();
 
-            Debugger.OnFrameChanged += () => Npp.OnCalltipRequest(-2); //clear_all_cache
+                Debugger.OnFrameChanged += () => Npp.OnCalltipRequest(-2); //clear_all_cache
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Initialization failure: " + e, "CS-Script");
+            }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]

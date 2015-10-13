@@ -45,16 +45,24 @@ namespace CSScriptNpp.Dialogs
             content.AddWatchExpression(dbgObject.Path);
         }
 
-        void content_OnEditCellComplete(int column, string oldValue, string newValue)
+        void content_OnEditCellComplete(int column, string oldValue, string newValue, DbgObject context)
         {
-            bool evalRefreshRequest = (newValue != null && newValue.Contains("("));
-            if (oldValue != newValue || evalRefreshRequest)
+            if (column == 0) //change watch variable name
             {
-                if (!string.IsNullOrEmpty(oldValue))
-                    Debugger.RemoveWatch(oldValue);
+                bool evalRefreshRequest = (newValue != null && newValue.Contains("("));
 
-                if (!string.IsNullOrEmpty(newValue))
-                    Debugger.AddWatch(newValue);
+                if (oldValue != newValue || evalRefreshRequest)
+                {
+                    if (!string.IsNullOrEmpty(oldValue))
+                        Debugger.RemoveWatch(oldValue);
+
+                    if (!string.IsNullOrEmpty(newValue))
+                        Debugger.AddWatch(newValue);
+                }
+            }
+            else if (column == 1) //set value
+            {
+                Debugger.SetDbgValue(context.DbgId, newValue);
             }
         }
 

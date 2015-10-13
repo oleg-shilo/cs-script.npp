@@ -34,7 +34,7 @@
             this.optionsGroup = new System.Windows.Forms.GroupBox();
             this.manualDeployment = new System.Windows.Forms.RadioButton();
             this.okBtn = new System.Windows.Forms.Button();
-            this.cancelBtn = new System.Windows.Forms.Button();
+            this.skipBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.versionLbl = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
@@ -43,6 +43,7 @@
             this.showOptions = new System.Windows.Forms.CheckBox();
             this.updateAfterExit = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.optionsGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,7 +82,7 @@
             this.optionsGroup.Controls.Add(this.customDeployment);
             this.optionsGroup.Controls.Add(this.manualDeployment);
             this.optionsGroup.Controls.Add(this.msiDeployment);
-            this.optionsGroup.Location = new System.Drawing.Point(8, 77);
+            this.optionsGroup.Location = new System.Drawing.Point(8, 90);
             this.optionsGroup.Name = "optionsGroup";
             this.optionsGroup.Size = new System.Drawing.Size(425, 164);
             this.optionsGroup.TabIndex = 2;
@@ -109,15 +110,16 @@
             this.okBtn.UseVisualStyleBackColor = true;
             this.okBtn.Click += new System.EventHandler(this.okBtn_Click);
             // 
-            // cancelBtn
+            // skipBtn
             // 
-            this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelBtn.Location = new System.Drawing.Point(332, 35);
-            this.cancelBtn.Name = "cancelBtn";
-            this.cancelBtn.Size = new System.Drawing.Size(101, 23);
-            this.cancelBtn.TabIndex = 3;
-            this.cancelBtn.Text = "&Cancel";
-            this.cancelBtn.UseVisualStyleBackColor = true;
+            this.skipBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.skipBtn.Location = new System.Drawing.Point(332, 35);
+            this.skipBtn.Name = "skipBtn";
+            this.skipBtn.Size = new System.Drawing.Size(101, 23);
+            this.skipBtn.TabIndex = 3;
+            this.skipBtn.Text = "Skip This Version";
+            this.skipBtn.UseVisualStyleBackColor = true;
+            this.skipBtn.Click += new System.EventHandler(this.skipBtn_Click);
             // 
             // label1
             // 
@@ -142,7 +144,7 @@
             this.progressBar.Location = new System.Drawing.Point(8, 25);
             this.progressBar.MarqueeAnimationSpeed = 50;
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(316, 10);
+            this.progressBar.Size = new System.Drawing.Size(312, 10);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 5;
             // 
@@ -161,7 +163,7 @@
             // releaseNotes
             // 
             this.releaseNotes.AutoSize = true;
-            this.releaseNotes.Location = new System.Drawing.Point(223, 45);
+            this.releaseNotes.Location = new System.Drawing.Point(223, 68);
             this.releaseNotes.Name = "releaseNotes";
             this.releaseNotes.Size = new System.Drawing.Size(103, 13);
             this.releaseNotes.TabIndex = 6;
@@ -172,7 +174,7 @@
             // showOptions
             // 
             this.showOptions.AutoSize = true;
-            this.showOptions.Location = new System.Drawing.Point(8, 61);
+            this.showOptions.Location = new System.Drawing.Point(8, 68);
             this.showOptions.Name = "showOptions";
             this.showOptions.Size = new System.Drawing.Size(138, 17);
             this.showOptions.TabIndex = 7;
@@ -183,7 +185,7 @@
             // updateAfterExit
             // 
             this.updateAfterExit.AutoSize = true;
-            this.updateAfterExit.Location = new System.Drawing.Point(8, 39);
+            this.updateAfterExit.Location = new System.Drawing.Point(8, 44);
             this.updateAfterExit.Name = "updateAfterExit";
             this.updateAfterExit.Size = new System.Drawing.Size(168, 17);
             this.updateAfterExit.TabIndex = 9;
@@ -194,13 +196,23 @@
             this.updateAfterExit.UseVisualStyleBackColor = true;
             this.updateAfterExit.CheckedChanged += new System.EventHandler(this.updateAfterExit_CheckedChanged);
             // 
+            // button1
+            // 
+            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.button1.Location = new System.Drawing.Point(332, 64);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(101, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "&Cancel";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // UpdateOptionsPanel
             // 
             this.AcceptButton = this.okBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancelBtn;
-            this.ClientSize = new System.Drawing.Size(442, 251);
+            this.CancelButton = this.skipBtn;
+            this.ClientSize = new System.Drawing.Size(442, 262);
             this.Controls.Add(this.updateAfterExit);
             this.Controls.Add(this.showOptions);
             this.Controls.Add(this.releaseNotes);
@@ -208,7 +220,8 @@
             this.Controls.Add(this.progressLbl);
             this.Controls.Add(this.versionLbl);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.cancelBtn);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.skipBtn);
             this.Controls.Add(this.okBtn);
             this.Controls.Add(this.optionsGroup);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -231,7 +244,7 @@
         private System.Windows.Forms.GroupBox optionsGroup;
         private System.Windows.Forms.RadioButton manualDeployment;
         private System.Windows.Forms.Button okBtn;
-        private System.Windows.Forms.Button cancelBtn;
+        private System.Windows.Forms.Button skipBtn;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label versionLbl;
         private System.Windows.Forms.ProgressBar progressBar;
@@ -240,5 +253,6 @@
         private System.Windows.Forms.CheckBox showOptions;
         private System.Windows.Forms.CheckBox updateAfterExit;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button button1;
     }
 }

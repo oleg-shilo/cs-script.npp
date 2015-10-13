@@ -31,15 +31,37 @@ namespace CSScriptNpp.Dialogs
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyValuessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listView1 = new CSScriptNpp.Dialogs.BufferedListView();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyValuessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyToolStripMenuItem,
+            this.copyValuessToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(152, 48);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.copyToolStripMenuItem.Text = "Copy &Row(s)";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyRowsMenu_Click);
+            // 
+            // copyValuessToolStripMenuItem
+            // 
+            this.copyValuessToolStripMenuItem.Name = "copyValuessToolStripMenuItem";
+            this.copyValuessToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.copyValuessToolStripMenuItem.Text = "Copy &Values(s)";
+            this.copyValuessToolStripMenuItem.Click += new System.EventHandler(this.copyValuespMenu_Click);
             // 
             // listView1
             // 
@@ -72,6 +94,7 @@ namespace CSScriptNpp.Dialogs
             this.listView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listView1_KeyDown);
             this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
             this.listView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDown);
+            this.listView1.Resize += new System.EventHandler(this.listView1_Resize);
             // 
             // columnHeader4
             // 
@@ -86,29 +109,7 @@ namespace CSScriptNpp.Dialogs
             // columnHeader6
             // 
             this.columnHeader6.Text = "Type";
-            this.columnHeader6.Width = 70;
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyToolStripMenuItem,
-            this.copyValuessToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 48);
-            // 
-            // copyToolStripMenuItem
-            // 
-            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.copyToolStripMenuItem.Text = "Copy &Row(s)";
-            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyRowsMenu_Click);
-            // 
-            // copyValuessToolStripMenuItem
-            // 
-            this.copyValuessToolStripMenuItem.Name = "copyValuessToolStripMenuItem";
-            this.copyValuessToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.copyValuessToolStripMenuItem.Text = "Copy &Values(s)";
-            this.copyValuessToolStripMenuItem.Click += new System.EventHandler(this.copyValuespMenu_Click);
+            this.columnHeader6.Width = 97;
             // 
             // DebugObjectsPanel
             // 
