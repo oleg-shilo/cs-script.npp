@@ -83,6 +83,9 @@ namespace CSScriptNpp.Dialogs
             if (subItem == 0 && (item.Tag as DbgObject).Parent != null)
                 return;
 
+            if (subItem == 1) //temporary do not allow changing the values as the feature is not ready yet 
+                return;
+
             //changing the value of the item allowed only for the primitive DbgObject
             if (subItem == 1 && (item.Tag as DbgObject).HasChildren)
                 return;
@@ -129,7 +132,8 @@ namespace CSScriptNpp.Dialogs
                 {
                     oldValue = focucedItem.SubItems[selectedSubItem].Text;
                     focucedItem.SubItems[selectedSubItem].Text = newValue;
-                    focucedItem.GetDbgObject().Name = newValue;
+                    if(selectedSubItem == 0)
+                        focucedItem.GetDbgObject().Name = newValue; //edited the name
 
                     if (selectedSubItem == 0 && newValue == "")
                     {

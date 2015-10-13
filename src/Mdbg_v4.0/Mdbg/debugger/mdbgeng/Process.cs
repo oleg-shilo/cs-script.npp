@@ -2064,10 +2064,23 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
 
         public MDbgValue ResolveExpression(string expression, MDbgFrame scope) //zos; CSScript.Npp related changes
         {
-            if (expression.Contains("("))
+            if (expression.Contains("(") || expression.Contains("="))
                 return FuncEvaluate(expression, scope);
             else
                 return ResolveVariable(expression, scope);
+        }
+
+        public MDbgValue Inspect(string expression, MDbgFrame scope) //zos; CSScript.Npp related changes
+        {
+            var eval = new EvalHelper(this);
+            var inspector = eval.CreateInspector();
+            
+            var dbgValue = ResolveVariable(expression, scope);
+
+            inspector.AddArg(dbgValue.CorValue);
+
+            CorValue result = inspector.Inspect();
+            return new MDbgValue(this, result);
         }
 
         /// <summary>
@@ -2086,19 +2099,52 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                 return new MDbgValue(this, inspector.TestPrimitives());
             }
 
+            bool setter = expression.Contains("=");
+
             var info = eval.ParseExpression(expression);
 
             foreach (CorValue arg in info.Arguments)
                 inspector.AddArg(arg);
 
             CorValue result;
-            if(info.Instance != null)
-                result = inspector.Invoke(info.Method, info.Instance);
+            if (setter)
+            {
+                if (info.Instance != null)
+                    result = inspector.Set(info.Member, info.Instance);
+                else
+                    result = inspector.Set(info.Member);
+            }
             else
-                result = inspector.Invoke(info.Method);
-
+            {
+                if (info.Instance != null)
+                    result = inspector.Invoke(info.Member, info.Instance);
+                else
+                    result = inspector.Invoke(info.Member);
+            }
             return new MDbgValue(this, result);
         }
+       
+        //public MDbgValue SetEvaluate(string expression, MDbgFrame scope)
+        //{
+        //    var eval = new EvalHelper(this);
+        //    var inspector = eval.CreateInspector();
+            
+        //    var info = eval.ParseExpression(expression);
+
+        //    foreach (CorValue arg in info.Arguments)
+        //    {
+        //        inspector.AddArg(arg);
+        //        break;
+        //    }
+
+        //    CorValue result;
+        //    if(info.Instance != null)
+        //        result = inspector.Set(info.Member, info.Instance);
+        //    else
+        //        result = inspector.Set(info.Member);
+
+        //    return new MDbgValue(this, result);
+        //}
 
         /// <summary>
         /// Resolves a Variable name in a given scope.

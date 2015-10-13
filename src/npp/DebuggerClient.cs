@@ -144,7 +144,7 @@ namespace npp
             }
             //else if (command.StartsWith("dbg_execute")) //not native Mdbg command
             //{
-                
+
             //}
             else if (command.StartsWith("gotoframe")) //not native Mdbg command
             {
@@ -395,10 +395,16 @@ namespace npp
 
         MDbgValue ResolveExpression(string expression)
         {
-            if (expression.Contains("("))
+            if (expression.Contains("(") || expression.Contains("="))
                 return shell.Debugger.Processes.Active.ResolveExpression(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
             else
                 return ResolveVariable(expression);
+        }
+
+        MDbgValue Inspect(string expression)
+        {
+            //not enabled yet
+            return shell.Debugger.Processes.Active.Inspect(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
         }
 
         MDbgValue ResolveVariable(string args)
@@ -503,19 +509,20 @@ namespace npp
                             result = "<items/>";
                         }
                     }
-                    else if (action == "n_set")
+                    else if (action == "inspect")
                     {
-                        try
-                        {
-                            MDbgValue value = ResolveExpression(args);
+                        //not enabled yet
+                        //try
+                        //{
+                        //    MDbgValue value = Inspect(args);
 
-                            if (value != null)
-                                result = "<items>" + Serialize(value, args) + "</items>";
-                        }
-                        catch
-                        {
-                            result = "<items/>";
-                        }
+                        //    if (value != null)
+                        //        result = "<items>" + Serialize(value, args) + "</items>";
+                        //}
+                        //catch
+                        //{
+                        //    result = "<items/>";
+                        //}
                     }
                 }
             }
@@ -595,7 +602,7 @@ namespace npp
                     // It will also include all base class fields.
                     //string stValue = val.InvokeToString();
                     result.Add(new XAttribute("isComplex", true),
-                        //         new XAttribute("value", stValue),
+                               //         new XAttribute("value", stValue),
                                new XAttribute("isArray", false));
                 }
                 else
@@ -603,7 +610,7 @@ namespace npp
                     // This is a catch-all for primitives.
                     string stValue = val.GetStringValue(false);
                     result.Add(new XAttribute("isComplex", false),
-                        //new XAttribute("isArray", false),
+                               //new XAttribute("isArray", false),
                                new XAttribute("value", substituteValue ?? stValue));
                 }
             }

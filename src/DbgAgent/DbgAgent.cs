@@ -35,6 +35,78 @@ namespace DbgAgent
 
         public void StackAdd_OBJECT(Object arg) { stack.Add(arg); }
 
+        public object Set(string memberFullName)
+        {
+            return Invoke(memberFullName, false);
+        }
+
+        public object SetStatic(string memberFullName)
+        {
+            return Invoke(memberFullName, true);
+        }
+
+        object Set(string methodFullName, bool isStatic)
+        {
+            string[] parts = methodFullName.Split('.');
+
+            string memberName = parts.Last();
+            object instance = null;
+            Type type = null;
+
+            object[] args;
+            if (isStatic)
+            {
+                instance = null;
+                string typeName = string.Join(".", parts.Reverse().Skip(1).Reverse().ToArray());
+                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    type = asm.GetType(typeName);
+                    if (type != null)
+                        break;
+                }
+            }
+            else
+            {
+                instance = stack[0];
+                stack.RemoveAt(0);
+                type = instance.GetType();
+            }
+            args = stack.ToArray();
+
+            if (type == null)
+                throw new Exception("Cannot evaluate " + methodFullName);
+
+            return "ttt";
+
+            MethodInfo method = null;
+            foreach (var m in type.GetMethods())
+            {
+                int i = 0;
+                bool missmatch = false;
+                var methodArgs = m.GetParameters();
+
+                if (m.Name == memberName && methodArgs.Length == args.Length)
+                {
+                    foreach (ParameterInfo p in m.GetParameters())
+                    {
+                        if (p.ParameterType != args[i++].GetType())
+                        {
+                            missmatch = true;
+                            break;
+                        }
+                    }
+                    if (!missmatch)
+                        method = m;
+                }
+            }
+
+            if (method == null)
+                throw new Exception("Cannot find method " + methodFullName);
+
+            object result = method.Invoke(instance, args);
+            return result;
+        }
+
         public object Invoke(string methodFullName)
         {
             return Invoke(methodFullName, false);

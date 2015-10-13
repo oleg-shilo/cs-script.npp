@@ -90,6 +90,14 @@ namespace CSScriptNpp
             }
         }
 
+        public CorValue Inspect()
+        {
+            foreach (CorValue arg in args)
+                Push(arg);
+            args.Clear();
+            return eval.Invoke("DbgAgent.ObjectInspector.Inspect", obj);
+        }
+
         public CorValue Invoke(string methodName)
         {
             foreach (CorValue arg in args)
@@ -106,6 +114,24 @@ namespace CSScriptNpp
             args.Clear();
             return eval.Invoke("DbgAgent.ObjectInspector.Invoke", obj, eval.CreateString(methodName));
         }
+
+        public CorValue Set(string memberName)
+        {
+            foreach (CorValue arg in args)
+                Push(arg);
+            args.Clear();
+            return eval.Invoke("DbgAgent.ObjectInspector.SetStatic", obj, eval.CreateString(memberName));
+        }
+
+        public CorValue Set(string memberName, CorValue instance)
+        {
+            Push(instance);
+            foreach (CorValue arg in args)
+                Push(arg);
+            args.Clear();
+            return eval.Invoke("DbgAgent.ObjectInspector.Set", obj, eval.CreateString(memberName));
+        }
+
 
         public CorValue TestPrimitives()
         {
@@ -202,7 +228,7 @@ namespace CSScriptNpp
 
         public class ExpressionParingResult
         {
-            public string Method;
+            public string Member;
             public CorValue[] Arguments;
             public CorValue Instance;
         }
@@ -211,9 +237,9 @@ namespace CSScriptNpp
         {
             var result = new ExpressionParingResult();
 
-            int bracketIndex = expression.IndexOf('(');
+            int bracketIndex = expression.IndexOfAny(new [] { '(', '=' });
             string methodName = expression.Substring(0, bracketIndex).Trim();
-            string args = expression.Substring(bracketIndex).Replace("(", "").Replace(")", "").Trim();
+            string args = expression.Substring(bracketIndex).Replace("(", "").Replace(")", "").Replace("=", "").Trim();
 
             string[] methodParts = methodName.Split('.');
 
@@ -226,7 +252,7 @@ namespace CSScriptNpp
                 if (instance != null)
                 {
                     result.Instance = instance.CorValue;
-                    result.Method = methodParts.Last();
+                    result.Member = methodParts.Last();
 
                 }
             }
@@ -238,7 +264,7 @@ namespace CSScriptNpp
                 //if (null == func)
                 //    throw new Exception(String.Format(CultureInfo.InvariantCulture, "Could not resolve {0}", new Object[] { methodName }));
 
-                result.Method = methodName;
+                result.Member = methodName;
 
             }
 
@@ -285,7 +311,6 @@ namespace CSScriptNpp
             result.Arguments = (CorValue[])vars.ToArray(typeof(CorValue));
             return result;
         }
-
 
         CorValue GetResult()
         {

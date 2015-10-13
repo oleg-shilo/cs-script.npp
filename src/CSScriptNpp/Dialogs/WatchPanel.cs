@@ -62,7 +62,8 @@ namespace CSScriptNpp.Dialogs
             }
             else if (column == 1) //set value
             {
-                Debugger.SetDbgValue(context.DbgId, newValue);
+                string data = Debugger.InvokeResolve("resolve", context.Name +"=" +newValue.Trim());
+                content.UpdateData(data);
             }
         }
 
