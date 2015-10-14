@@ -501,8 +501,41 @@ namespace npp
                         {
                             MDbgValue value = ResolveExpression(args);
 
-                            if (value != null)
-                                result = "<items>" + Serialize(value, args) + "</items>";
+                            string itemName = args;
+                            //args can be variable (t.Index), method call (t.Test()) or set command (t.Index=7)
+                            //set command may also be "watched" in IDE as the var name (t.Index)
+                            bool isSetter = false;
+                            if ((isSetter = args.Contains("=")))
+                                itemName = args.Split('=').First();
+
+                            if (isSetter)
+                            {
+                                //vale may be boxed so resolve the expression to ensure it is not
+                                MDbgValue latestValue = value;
+
+                                if (shell.Debugger.Processes.Active.IsEvalSafe())
+                                    try
+                                    {
+                                        latestValue = ResolveExpression(itemName);
+                                    }
+                                    catch { }
+
+                                result = "<items>" + Serialize(latestValue, itemName) + "</items>";
+
+                                ThreadPool.QueueUserWorkItem(x =>
+                                {
+                                    Thread.Sleep(100);
+                                    MessageQueue.AddNotification(NppCategory.Watch + result);
+                                });
+                            }
+                            else
+                            {
+                                //return the invocation result as it is without boxing/unboxing considerations
+                                if (value != null)
+                                {
+                                    result = "<items>" + Serialize(value, itemName) + "</items>";
+                                }
+                            }
                         }
                         catch
                         {

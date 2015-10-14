@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -37,74 +38,80 @@ namespace DbgAgent
 
         public object Set(string memberFullName)
         {
-            return Invoke(memberFullName, false);
+            return Set(memberFullName, false);
         }
 
         public object SetStatic(string memberFullName)
         {
-            return Invoke(memberFullName, true);
+            return Set(memberFullName, true);
         }
 
-        object Set(string methodFullName, bool isStatic)
+        object Set(string memberFullName, bool isStatic)
         {
-            string[] parts = methodFullName.Split('.');
-
-            string memberName = parts.Last();
-            object instance = null;
-            Type type = null;
-
-            object[] args;
-            if (isStatic)
+            //return 777;
+            try
             {
-                instance = null;
-                string typeName = string.Join(".", parts.Reverse().Skip(1).Reverse().ToArray());
-                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                string[] parts = memberFullName.Split('.');
+
+                string memberName = parts.Last();
+                object instance = null;
+                Type type = null;
+                object newValue;
+
+                if (isStatic)
                 {
-                    type = asm.GetType(typeName);
-                    if (type != null)
-                        break;
-                }
-            }
-            else
-            {
-                instance = stack[0];
-                stack.RemoveAt(0);
-                type = instance.GetType();
-            }
-            args = stack.ToArray();
-
-            if (type == null)
-                throw new Exception("Cannot evaluate " + methodFullName);
-
-            return "ttt";
-
-            MethodInfo method = null;
-            foreach (var m in type.GetMethods())
-            {
-                int i = 0;
-                bool missmatch = false;
-                var methodArgs = m.GetParameters();
-
-                if (m.Name == memberName && methodArgs.Length == args.Length)
-                {
-                    foreach (ParameterInfo p in m.GetParameters())
+                    instance = null;
+                    string typeName = string.Join(".", parts.Reverse().Skip(1).Reverse().ToArray());
+                    foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                     {
-                        if (p.ParameterType != args[i++].GetType())
-                        {
-                            missmatch = true;
+                        type = asm.GetType(typeName);
+                        if (type != null)
                             break;
+                    }
+                }
+                else
+                {
+                    instance = stack[0];
+                    stack.RemoveAt(0);
+                    type = instance.GetType();
+                }
+
+                newValue = stack[0];
+
+                if (type == null)
+                    throw new Exception("Cannot evaluate " + memberFullName);
+
+                foreach (var m in type.GetAllFieldsAndProps())
+                {
+                    if (m.Name == memberName)
+                    {
+                        if (m.MemberType == MemberTypes.Field)
+                        {
+                            var info = (FieldInfo)m;
+                            info.SetValue(instance, newValue);
+
+                            return info.GetValue(instance);
+                        }
+                        else if (m.MemberType == MemberTypes.Property)
+                        {
+                            var info = (PropertyInfo)m;
+
+                            if (info.CanWrite)
+                                info.SetValue(instance, newValue, new object[0]);
+                            else
+                                return "<error>";
+
+                            if (info.CanRead)
+                                return info.GetValue(instance, new object[0]);
+                            else
+                                return null;
                         }
                     }
-                    if (!missmatch)
-                        method = m;
                 }
             }
+            catch { }
 
-            if (method == null)
-                throw new Exception("Cannot find method " + methodFullName);
-
-            object result = method.Invoke(instance, args);
-            return result;
+            return "<error>";
         }
 
         public object Invoke(string methodFullName)
@@ -149,7 +156,7 @@ namespace DbgAgent
                 throw new Exception("Cannot evaluate " + methodFullName);
 
             MethodInfo method = null;
-            foreach (var m in type.GetMethods())
+            foreach (var m in type.GetAllMethods())
             {
                 int i = 0;
                 bool missmatch = false;
@@ -221,5 +228,42 @@ namespace DbgAgent
         {
             return "success";
         }
+    }
+}
+
+public static class RefllectionExtensions
+{
+    static BindingFlags binding = BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+    public static IEnumerable<MemberInfo> GetAllFieldsAndProps(this Type type)
+    {
+        //FlattenHierarchy doesn't return static private members (e.g. fields)
+        return type.GetInheritanceChain()
+                   .SelectMany(t => t.GetMembers(binding))
+                   .Where(x => x.MemberType == MemberTypes.Field || x.MemberType == MemberTypes.Property)
+                   .Cast<MemberInfo>();
+    }
+
+    public static IEnumerable<MethodInfo> GetAllMethods(this Type type)
+    {
+        //FlattenHierarchy doesn't return static private members (e.g. fields)
+        return type.GetInheritanceChain()
+                   .SelectMany(t => t.GetMembers(binding))
+                   .Where(x => x.MemberType == MemberTypes.Method)
+                   .Cast<MethodInfo>();
+    }
+
+    public static IEnumerable<Type> GetInheritanceChain(this Type type)
+    {
+        return Enumerable.Repeat(type, 1)
+                         .Concat(type.GetBaseTypes());
+    }
+
+    public static IEnumerable<Type> GetBaseTypes(this Type type)
+    {
+        if (type.BaseType == null) return new Type[0];
+
+        return Enumerable.Repeat(type.BaseType, 1)
+                         .Concat(type.BaseType.GetBaseTypes());
     }
 }

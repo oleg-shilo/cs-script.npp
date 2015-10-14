@@ -2099,7 +2099,17 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                 return new MDbgValue(this, inspector.TestPrimitives());
             }
 
-            bool setter = expression.Contains("=");
+            //doesn't handle yet set:
+            //instance member of local variable: info.index = 1
+            //static member of local variable: info.index = 1
+            //local variable:  index = 1
+            //static variable of static context/method:  Type.member = 1 or member = 1
+            //member variable of instance context/member: this.member = 1  or member = 1
+
+
+            //ParseExpression does not return instance/type for 
+            //Static method of current static context/method: Type.Method() or Method()
+            //instance method of current instance context/method: this.Method() or Method()
 
             var info = eval.ParseExpression(expression);
 
@@ -2107,44 +2117,14 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                 inspector.AddArg(arg);
 
             CorValue result;
-            if (setter)
-            {
-                if (info.Instance != null)
-                    result = inspector.Set(info.Member, info.Instance);
-                else
-                    result = inspector.Set(info.Member);
-            }
+
+            if (info.IsLocalVariable)
+                result = eval.VariableExpressionInvoke(info);
             else
-            {
-                if (info.Instance != null)
-                    result = inspector.Invoke(info.Member, info.Instance);
-                else
-                    result = inspector.Invoke(info.Member);
-            }
+                result = eval.TypeMemberExpressionInvoke(info);
+
             return new MDbgValue(this, result);
         }
-       
-        //public MDbgValue SetEvaluate(string expression, MDbgFrame scope)
-        //{
-        //    var eval = new EvalHelper(this);
-        //    var inspector = eval.CreateInspector();
-            
-        //    var info = eval.ParseExpression(expression);
-
-        //    foreach (CorValue arg in info.Arguments)
-        //    {
-        //        inspector.AddArg(arg);
-        //        break;
-        //    }
-
-        //    CorValue result;
-        //    if(info.Instance != null)
-        //        result = inspector.Set(info.Member, info.Instance);
-        //    else
-        //        result = inspector.Set(info.Member);
-
-        //    return new MDbgValue(this, result);
-        //}
 
         /// <summary>
         /// Resolves a Variable name in a given scope.

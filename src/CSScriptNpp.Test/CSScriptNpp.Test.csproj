@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Generic.Tests\CodeMapTests.cs" />
+    <Compile Include="Generic.Tests\DbgAgentTests.cs" />
     <Compile Include="Generic.Tests\FormattingTests.cs" />
     <Compile Include="Generic.Tests\GenericTests.cs" />
     <Compile Include="Intellisense.Tests\GenericTest.cs" />
@@ -99,6 +100,10 @@
     <ProjectReference Include="..\CSScriptNpp\CSScriptNpp.csproj">
       <Project>{23b08b10-8297-4a90-9b6d-43dac7416004}</Project>
       <Name>CSScriptNpp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DbgAgent\DbgAgent.csproj">
+      <Project>{339f59db-c481-4cbb-90a5-eb1b97e807cd}</Project>
+      <Name>DbgAgent</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

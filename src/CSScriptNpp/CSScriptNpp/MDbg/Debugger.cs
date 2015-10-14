@@ -777,6 +777,8 @@ namespace CSScriptNpp
 
         private static void ToggleBreakpoint(string file, int line)
         {
+            RefreshBreakPointsFromContent();
+
             string key = BuildBreakpointKey(file, line);
 
             if (breakpoints.ContainsKey(key))
@@ -799,6 +801,8 @@ namespace CSScriptNpp
                     DebuggerServer.AddBreakpoint(actualKey);
                 }
             }
+
+            SaveBreakPointsFor(file);
         }
 
         static public void TranslateCompiledLocation(FileLocation location)

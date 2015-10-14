@@ -226,26 +226,52 @@ namespace CSScriptNpp
             return GetResult();
         }
 
-        public class ExpressionParingResult
+        public class ExpressionParsingResult
         {
             public string Member;
             public CorValue[] Arguments;
             public CorValue Instance;
+            public bool IsLocalVariable;
+            public bool IsSetter;
+            public string Expression;
+            public string ExpressionArgs;
+            public string ExpressionValue;
         }
 
-        public ExpressionParingResult ParseExpression(string expression)
-        {
-            var result = new ExpressionParingResult();
 
-            int bracketIndex = expression.IndexOfAny(new [] { '(', '=' });
+
+        public ExpressionParsingResult ParseExpression(string expression)
+        {
+            var result = new ExpressionParsingResult();
+
+            result.IsSetter = expression.Contains("=");
+            result.Expression = expression;
+
+            int bracketIndex = expression.IndexOfAny(new[] { '(', '=' });
             string methodName = expression.Substring(0, bracketIndex).Trim();
             string args = expression.Substring(bracketIndex).Replace("(", "").Replace(")", "").Replace("=", "").Trim();
 
             string[] methodParts = methodName.Split('.');
 
-            //<<TypeName>|<CodeReference>>.<MethodName>
+            if (methodParts.Length == 1) //myVar=3
+                result.IsLocalVariable = true;
 
-            string reference = string.Join(".", methodParts.Take(methodParts.Length - 1).ToArray());
+            result.ExpressionValue = args;
+
+
+            string reference;
+
+            if (methodParts.Length == 1)
+            {
+                //varName
+                reference = methodParts[0];
+            }
+            else
+            {
+                //<<TypeName>|<CodeReference>>.<MethodName>
+                reference = string.Join(".", methodParts.Take(methodParts.Length - 1).ToArray());
+
+            }
             try
             {
                 var instance = process.ResolveVariable(reference, process.Threads.Active.CurrentFrame);
@@ -310,6 +336,100 @@ namespace CSScriptNpp
 
             result.Arguments = (CorValue[])vars.ToArray(typeof(CorValue));
             return result;
+        }
+
+        public CorValue TypeMemberExpressionInvoke(ExpressionParsingResult info)
+        {
+            var inspector = CreateInspector();
+            foreach (CorValue arg in info.Arguments)
+                inspector.AddArg(arg);
+
+            CorValue result;
+            if (info.IsSetter)
+            {
+                if (info.Instance != null)
+                    result = inspector.Set(info.Member, info.Instance);
+                else
+                    result = inspector.Set(info.Member);
+            }
+            else
+            {
+                if (info.Instance != null)
+                    result = inspector.Invoke(info.Member, info.Instance);
+                else
+                    result = inspector.Invoke(info.Member);
+            }
+            return result;
+        }
+
+        public CorValue VariableExpressionInvoke(ExpressionParsingResult info)
+        {
+            //based on MdbgCommands.SetCmd(string arguments)
+            if (info.Instance == null)
+                throw new Exception("Cannot resolve variable ");
+
+            if (info.Arguments == null || !info.Arguments.Any())
+                throw new Exception("Cannot resolve arguments ");
+
+            // Arguments has to be in the form of variable=varName, variable=value or variable=(<type>)value, 
+            // where we use the ldasm naming convention (e.g. "int", "sbyte", "ushort", etc...) for <type>.
+            // Example inputs: var=myInt, var=45, var=(long)45
+
+            MDbgValue lsMVar = new MDbgValue(process, info.Instance);
+            CorValue val = info.Arguments.First();
+
+            CorGenericValue valGeneric = val as CorGenericValue;
+            bool bIsReferenceValue = val is CorReferenceValue;
+
+            if (lsMVar != null)
+            {
+                if (valGeneric != null)
+                {
+                    CorValue lsVar = lsMVar.CorValue;
+                    if (lsVar == null)
+                        throw new Exception("cannot set constant values to unavailable variables");
+
+                    // val is a primitive value                    
+                    CorGenericValue lsGenVal = lsVar.CastToGenericValue();
+                    if (lsGenVal == null)
+                        throw new Exception("cannot set constant values to non-primitive values");
+
+                    try
+                    {
+                        // We want to allow some type coercion. Eg, casting between integer precisions.
+                        lsMVar.Value = val; // This may do type coercion
+                    }
+                    catch (MDbgValueWrongTypeException)
+                    {
+                        throw new Exception(String.Format("Type mismatch. Can't convert from {0} to {1}", val.Type, lsGenVal.Type));
+                    }
+                }
+                else if (bIsReferenceValue)
+                {
+                    //reget variable
+                    lsMVar = process.ResolveVariable(info.Member, process.Threads.Active.CurrentFrame);
+                    lsMVar.Value = val;
+                }
+                else
+                {
+                    if (val.CastToHeapValue() != null)
+                    {
+                        throw new Exception("Heap values should be assigned only to debugger variables");
+                    }
+                    if (val.CastToGenericValue() != null)
+                    {
+                        lsMVar.Value = val.CastToGenericValue();
+                    }
+                    else
+                    {
+                        lsMVar.Value = val.CastToReferenceValue();
+                    }
+                }
+            }
+
+            // as a last thing we do is to return new value of the variable
+            lsMVar = process.ResolveVariable(info.Member, process.Threads.Active.CurrentFrame);
+            return lsMVar.CorValue;
         }
 
         CorValue GetResult()

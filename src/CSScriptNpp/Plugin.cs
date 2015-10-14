@@ -12,7 +12,10 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *  - Watch values are not updated on "step over" after teh value has been changed
+     *  - Watch values are not updated on "step over" after the value has been changed
+     *  - QuickWatch dialog doesn't allow changing the value in the grid
+     *  - Locals doesn't allow changing the value
+     *  - QuickWatch should not allow changing the name in the grid
      *  - Debugger 
      *      - Debugger does not treat DateTime members as primitives
      *      - Some objects cannot be inspected:

@@ -83,8 +83,8 @@ namespace CSScriptNpp.Dialogs
             if (subItem == 0 && (item.Tag as DbgObject).Parent != null)
                 return;
 
-            if (subItem == 1) //temporary do not allow changing the values as the feature is not ready yet 
-                return;
+            //if (subItem == 1) //temporary do not allow changing the values as the feature is not ready yet 
+              //  return;
 
             //changing the value of the item allowed only for the primitive DbgObject
             if (subItem == 1 && (item.Tag as DbgObject).HasChildren)
@@ -112,7 +112,7 @@ namespace CSScriptNpp.Dialogs
                 editBox.Hide();
         }
 
-        public delegate void OnEditCellCompleteHandler(int column, string oldValue, string newValue, DbgObject context);
+        public delegate void OnEditCellCompleteHandler(int column, string oldValue, string newValue, DbgObject context, ref bool cancel);
 
         public event OnEditCellCompleteHandler OnEditCellComplete;
 
@@ -128,11 +128,12 @@ namespace CSScriptNpp.Dialogs
                 editBox.IsEditing = false;
                 string oldValue;
                 string newValue = editBox.Text;
+                string newText = null;
                 if (focucedItem.GetDbgObject() != AddNewPlaceholder)
                 {
                     oldValue = focucedItem.SubItems[selectedSubItem].Text;
-                    focucedItem.SubItems[selectedSubItem].Text = newValue;
-                    if(selectedSubItem == 0)
+                    newText = newValue;
+                    if (selectedSubItem == 0)
                         focucedItem.GetDbgObject().Name = newValue; //edited the name
 
                     if (selectedSubItem == 0 && newValue == "")
@@ -148,8 +149,15 @@ namespace CSScriptNpp.Dialogs
                 }
                 editBox.Hide();
 
+                bool cancel = false;
                 if (OnEditCellComplete != null)
-                    OnEditCellComplete(selectedSubItem, oldValue, newValue, focucedItem.GetDbgObject());
+                {
+                    OnEditCellComplete(selectedSubItem, oldValue, newValue, focucedItem.GetDbgObject(), ref cancel);
+                }
+
+                if(newText != null && !cancel)
+                    focucedItem.SubItems[selectedSubItem].Text = newText;
+
             }
         }
 

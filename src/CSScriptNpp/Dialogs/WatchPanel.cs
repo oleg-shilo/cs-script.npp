@@ -45,7 +45,7 @@ namespace CSScriptNpp.Dialogs
             content.AddWatchExpression(dbgObject.Path);
         }
 
-        void content_OnEditCellComplete(int column, string oldValue, string newValue, DbgObject context)
+        void content_OnEditCellComplete(int column, string oldValue, string newValue, DbgObject context, ref bool cancel)
         {
             if (column == 0) //change watch variable name
             {
@@ -63,7 +63,8 @@ namespace CSScriptNpp.Dialogs
             else if (column == 1) //set value
             {
                 string data = Debugger.InvokeResolve("resolve", context.Name +"=" +newValue.Trim());
-                content.UpdateData(data);
+                cancel = true;
+                //content.UpdateData(data);
             }
         }
 
