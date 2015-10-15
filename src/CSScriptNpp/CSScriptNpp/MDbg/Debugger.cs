@@ -57,8 +57,11 @@ namespace CSScriptNpp
             {
                 string dbg = CSScriptHelper.GetDbgInfoFile(file);
                 if (File.Exists(dbg))
-                    foreach (var key in File.ReadAllLines(dbg).Skip(1))
+                {
+                    string[] lines = File.ReadAllLines(dbg);
+                    foreach (var key in lines.Skip(1))
                         breakpoints.Add(key, IntPtr.Zero);
+                }
             }
             catch { }
         }
@@ -116,8 +119,13 @@ namespace CSScriptNpp
         {
             var chengedFiles = new List<string>();
 
+            var currFile = Npp.GetCurrentFile();
+
             foreach (string key in breakpoints.Keys.ToArray())
             {
+                if (!key.StartsWith(currFile, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 IntPtr marker = breakpoints[key];
                 if (marker != IntPtr.Zero)
                 {
