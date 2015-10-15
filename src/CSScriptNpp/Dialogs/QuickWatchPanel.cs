@@ -97,9 +97,16 @@ namespace CSScriptNpp.Dialogs
             contentPanel.Controls.Add(content);
             content.Dock = DockStyle.Fill;
             content.Visible = true;
+            //content.
 
+            Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
             Debugger.OnFrameChanged += Debugger_OnFrameChanged;
-            Debugger.OnDebuggerStateChanged += Debugger_OnDebuggerStateChanged;
+            DebuggerServer.OnDebuggerStateChanged += Debugger_OnDebuggerStateChanged;
+        }
+
+        void Debugger_OnWatchUpdate(string data)
+        {
+            content.UpdateData(data);
         }
 
         void Debugger_OnDebuggerStateChanged()
@@ -126,10 +133,11 @@ namespace CSScriptNpp.Dialogs
         {
             if (Debugger.IsInBreak)
             {
-                string data = Debugger.InvokeResolve("resolve", textBox1.Text.Trim());
+                string expression = textBox1.Text.Trim();
+                string data = Debugger.InvokeResolve("resolve", expression);
 
-                if (data != null)
-                    content.SetData(data);
+                if (!expression.IsSetExpression() || !content.HasWatchObjects)
+                    content.SetData(data); //let watch notification to be received if it is a set expression
             }
             else
                 content.Refresh();

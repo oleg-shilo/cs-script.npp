@@ -84,7 +84,7 @@ namespace CSScriptNpp.Dialogs
                 return;
 
             //if (subItem == 1) //temporary do not allow changing the values as the feature is not ready yet 
-              //  return;
+            //  return;
 
             //changing the value of the item allowed only for the primitive DbgObject
             if (subItem == 1 && (item.Tag as DbgObject).HasChildren)
@@ -155,7 +155,7 @@ namespace CSScriptNpp.Dialogs
                     OnEditCellComplete(selectedSubItem, oldValue, newValue, focucedItem.GetDbgObject(), ref cancel);
                 }
 
-                if(newText != null && !cancel)
+                if (newText != null && !cancel)
                     focucedItem.SubItems[selectedSubItem].Text = newText;
 
             }
@@ -194,12 +194,22 @@ namespace CSScriptNpp.Dialogs
             }
         }
 
-        public void SetData(string data)
+        public bool HasWatchObjects
         {
-            ResetWatchObjects(ToWatchObjects(data));
-            ResizeValueColumn();
+            get
+            {
+                return listView1.Items.Cast<ListViewItem>().Any(x => !x.GetDbgObject().IsEditPlaceholder);
+            }
         }
 
+        public void SetData(string data)
+        {
+            if (data != null)
+            {
+                ResetWatchObjects(ToWatchObjects(data));
+                ResizeValueColumn();
+            }
+        }
         public void UpdateData(string data)
         {
             DbgObject[] freshObjects = ToWatchObjects(data);
@@ -211,34 +221,23 @@ namespace CSScriptNpp.Dialogs
 
             bool updated = false;
 
+
             foreach (ListViewItem item in listView1.Items)
             {
                 var itemObject = item.GetDbgObject();
                 if (itemObject != null)
                 {
-                    itemObject.IsExpanded = false; //if is to be maintained then children need to be required immediately 
-                    itemObject.Children = null;
                     itemObject.IsModified = false;
-                    if (itemObject.Parent != null)
-                    {
-                        nonRootItems.Add(item);
-                    }
-                    else
-                    {
-                        DbgObject update = freshObjects.Where(x => x.Name == itemObject.Name).FirstOrDefault();
+                    DbgObject update = freshObjects.Where(x => x.Path == itemObject.Path).FirstOrDefault();
 
-                        //if (update != null)
-                        //    DateTime.Now
-
-                        if (update != null)
-                        {
-                            itemObject.CopyDbgDataFrom(update);
-                            itemObject.IsModified = (item.SubItems[1].Text != update.Value);
-                            item.SubItems[1].Text = update.DispayValue;
-                            item.SubItems[2].Text = update.Type;
-                            item.ToolTipText = update.Tooltip;
-                            updated = true;
-                        }
+                    if (update != null)
+                    {
+                        itemObject.CopyDbgDataFrom(update);
+                        itemObject.IsModified = (item.SubItems[1].Text != update.Value);
+                        item.SubItems[1].Text = update.DispayValue;
+                        item.SubItems[2].Text = update.Type;
+                        item.ToolTipText = update.Tooltip;
+                        updated = true;
                     }
                 }
             }
@@ -788,16 +787,19 @@ namespace CSScriptNpp.Dialogs
             leafsToRemove.ForEach(x => listView1.Items.Remove(x));
             rootsToRemove.ForEach(x =>
                 {
-                    listView1.Items.Remove(x);
+                    if (!x.GetDbgObject().IsEditPlaceholder)
+                    {
+                        listView1.Items.Remove(x);
 
-                    string expressionToRemove = x.GetDbgObject().Name;
+                        string expressionToRemove = x.GetDbgObject().Name;
 
-                    //there can be duplicated expressions left, which is a valid situation and the expressions need to be preserved
-                    var identicalExpressions = listView1.Items
-                                                        .Cast<ListViewItem>()
-                                                        .Where(y => y.GetDbgObject().Name == expressionToRemove);
-                    if (!identicalExpressions.Any())
-                        Debugger.RemoveWatch(expressionToRemove);
+                        //there can be duplicated expressions left, which is a valid situation and the expressions need to be preserved
+                        var identicalExpressions = listView1.Items
+                                                            .Cast<ListViewItem>()
+                                                            .Where(y => y.GetDbgObject().Name == expressionToRemove);
+                        if (!identicalExpressions.Any())
+                            Debugger.RemoveWatch(expressionToRemove);
+                    }
                 });
         }
 
@@ -946,6 +948,11 @@ namespace CSScriptNpp.Dialogs
         {
             return listView.Items.Cast<ListViewItem>().Select(x => x.Tag as DbgObject);
         }
+
+        //public static IEnumerable<ListViewItem> AllItems(this ListViewItem listView)
+        //{
+        //    return listView.Items.Cast<ListViewItem>().Select(x => x.Tag as DbgObject);
+        //}
 
         public static int IndexOfObject(this ListView listView, DbgObject item)
         {

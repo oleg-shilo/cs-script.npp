@@ -388,7 +388,7 @@ namespace CSScriptNpp
 
         static public event Action OnFrameChanged; //breakpoint, step advance, process exit
 
-        static public event Action<string> OnNotification;
+        static public event Action<string> OnNotification; //breakpoint location, process exit
 
         private static int stepsCount = 0;
         private static bool resumeOnNextBreakPoint = false;

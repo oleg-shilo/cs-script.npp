@@ -151,6 +151,34 @@ namespace CSScriptNpp
             return string.IsNullOrEmpty(text);
         }
 
+        //type.member       - resolve
+        //method("=(test)") - invoke
+        //variable="(test)" - setter
+        internal static bool IsInvokeExpression(this string text)
+        {
+            int bracketPos = text.IndexOf("(");
+            int equalPos = text.IndexOf("=");
+            if (bracketPos != -1 && (equalPos == -1 || bracketPos < equalPos))
+                return true;
+            return false;
+        }
+        internal static bool IsSetExpression(this string text)
+        {
+            int bracketPos = text.IndexOf("(");
+            int equalPos = text.IndexOf("=");
+            if (equalPos != -1 && (bracketPos == -1 || equalPos < bracketPos))
+                return true;
+            return false;
+        }
+        internal static bool IsResolveExpression(this string text)
+        {
+            int bracketPos = text.IndexOf("(");
+            int equalPos = text.IndexOf("=");
+            if (bracketPos == -1 && equalPos == -1)
+                return true;
+            return false;
+        }
+
         public static string StripQuotation(this string text)
         {
             if (text.StartsWith("\"") && text.EndsWith("\""))
@@ -193,23 +221,23 @@ namespace CSScriptNpp
             else
                 return false;
         }
-       
+
         public static CSScriptNpp.FuncItem ToLocal(this CSScriptIntellisense.FuncItem item)
         {
             return new CSScriptNpp.FuncItem
+            {
+                _cmdID = item._cmdID,
+                _init2Check = item._init2Check,
+                _itemName = item._itemName,
+                _pFunc = item._pFunc,
+                _pShKey = new ShortcutKey
                 {
-                    _cmdID = item._cmdID,
-                    _init2Check = item._init2Check,
-                    _itemName = item._itemName,
-                    _pFunc = item._pFunc,
-                    _pShKey = new ShortcutKey
-                                  {
-                                      _isCtrl = item._pShKey._isCtrl,
-                                      _isAlt = item._pShKey._isAlt,
-                                      _isShift = item._pShKey._isShift,
-                                      _key = item._pShKey._key
-                                  }
-                };
+                    _isCtrl = item._pShKey._isCtrl,
+                    _isAlt = item._pShKey._isAlt,
+                    _isShift = item._pShKey._isShift,
+                    _key = item._pShKey._key
+                }
+            };
         }
 
         public static Icon NppBitmapToIcon(Bitmap bitmap)

@@ -161,5 +161,10 @@ namespace CSScriptNpp.Dialogs
                 return level;
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}: {1} ({2})", Name, Value??DispayValue, Type);
+        }
     }
 }

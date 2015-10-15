@@ -22,6 +22,13 @@ namespace CSScriptNpp.Dialogs
             this.Controls.Add(content);
             content.Dock = DockStyle.Fill;
             content.Visible = true;
+
+            Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
+        }
+
+        void Debugger_OnWatchUpdate(string data)
+        {
+            content.UpdateData(data);
         }
 
         public void SetData(string data)
