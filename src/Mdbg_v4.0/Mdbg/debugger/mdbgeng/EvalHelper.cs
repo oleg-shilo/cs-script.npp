@@ -242,9 +242,10 @@ namespace CSScriptNpp
 
         public ExpressionParsingResult ParseExpression(string expression)
         {
+            //the expression is either setter of method invoke
             var result = new ExpressionParsingResult();
 
-            result.IsSetter = expression.Contains("=");
+            result.IsSetter = expression.IsSetExpression();
             result.Expression = expression;
 
             int bracketIndex = expression.IndexOfAny(new[] { '(', '=' });
@@ -253,7 +254,7 @@ namespace CSScriptNpp
 
             string[] methodParts = methodName.Split('.');
 
-            if (methodParts.Length == 1) //myVar=3
+            if (methodParts.Length == 1 && result.IsSetter) //myVar=3
                 result.IsLocalVariable = true;
 
             result.ExpressionValue = args;
@@ -270,26 +271,33 @@ namespace CSScriptNpp
             {
                 //<<TypeName>|<CodeReference>>.<MethodName>
                 reference = string.Join(".", methodParts.Take(methodParts.Length - 1).ToArray());
-
             }
+
             try
             {
+                if (expression.IsInvokeExpression() && methodParts.Length == 1)
+                {
+                    var mName = methodParts[0];  //either instance or static do() 
+
+                    bool isStatic = false;
+                    MDbgFunction func = process.ResolveFunctionNameFromScope(mName);
+                    if (func != null && func.MethodInfo.IsStatic)
+                        methodName = process.Threads.Active.CurrentFrame.Function.MethodInfo.DeclaringType.FullName + "." + mName;
+                    else
+                        reference = "this"; //let methodName/Member to be resolved later
+                }
+
                 var instance = process.ResolveVariable(reference, process.Threads.Active.CurrentFrame);
                 if (instance != null)
                 {
                     result.Instance = instance.CorValue;
                     result.Member = methodParts.Last();
-
                 }
             }
             catch { }
 
             if (result.Instance == null)
             {
-                //MDbgFunction func = this.ResolveFunctionNameFromScope(methodName);
-                //if (null == func)
-                //    throw new Exception(String.Format(CultureInfo.InvariantCulture, "Could not resolve {0}", new Object[] { methodName }));
-
                 result.Member = methodName;
 
             }
@@ -359,6 +367,7 @@ namespace CSScriptNpp
                 else
                     result = inspector.Invoke(info.Member);
             }
+
             return result;
         }
 
@@ -449,6 +458,36 @@ namespace CSScriptNpp
     }
 }
 
+static class ExpressionExtensions
+{
+    //type.member       - resolve
+    //method("=(test)") - invoke
+    //variable="(test)" - setter
+    internal static bool IsInvokeExpression(this string text)
+    {
+        int bracketPos = text.IndexOf("(");
+        int equalPos = text.IndexOf("=");
+        if (bracketPos != -1 && (equalPos == -1 || bracketPos < equalPos))
+            return true;
+        return false;
+    }
+    internal static bool IsSetExpression(this string text)
+    {
+        int bracketPos = text.IndexOf("(");
+        int equalPos = text.IndexOf("=");
+        if (equalPos != -1 && (bracketPos == -1 || equalPos < bracketPos))
+            return true;
+        return false;
+    }
+    internal static bool IsResolveExpression(this string text)
+    {
+        int bracketPos = text.IndexOf("(");
+        int equalPos = text.IndexOf("=");
+        if (bracketPos == -1 && equalPos == -1)
+            return true;
+        return false;
+    }
+}
 //public CorValue BoxCorValue(CorValue value)
 //{
 //    //Value.cs - zoom-decompiler

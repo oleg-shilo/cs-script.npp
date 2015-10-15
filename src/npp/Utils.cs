@@ -57,6 +57,34 @@ namespace npp
             return string.Join(delimiter, items.ToArray());
         }
 
+        //type.member       - resolve
+        //method("=(test)") - invoke
+        //variable="(test)" - setter
+        internal static bool IsInvokeExpression(this string text)
+        {
+            int bracketPos = text.IndexOf("(");
+            int equalPos = text.IndexOf("=");
+            if (bracketPos != -1 && (equalPos == -1 || bracketPos < equalPos))
+                return true;
+            return false;
+        }
+        internal static bool IsSetExpression(this string text)
+        {
+            int bracketPos = text.IndexOf("(");
+            int equalPos = text.IndexOf("=");
+            if (equalPos != -1 && (bracketPos == -1 || equalPos < bracketPos))
+                return true;
+            return false;
+        }
+        internal static bool IsResolveExpression(this string text)
+        {
+            int bracketPos = text.IndexOf("(");
+            int equalPos = text.IndexOf("=");
+            if (bracketPos == -1 && equalPos == -1)
+                return true;
+            return false;
+        }
+
         static public string[] GetCodeUsings(string csFile)
         {
             return GetCodeUsingsSimple(csFile);

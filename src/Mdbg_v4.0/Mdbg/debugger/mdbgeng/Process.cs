@@ -2064,7 +2064,7 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
 
         public MDbgValue ResolveExpression(string expression, MDbgFrame scope) //zos; CSScript.Npp related changes
         {
-            if (expression.Contains("(") || expression.Contains("="))
+            if (expression.IsSetExpression() || expression.IsInvokeExpression())
                 return FuncEvaluate(expression, scope);
             else
                 return ResolveVariable(expression, scope);
@@ -2094,23 +2094,6 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
             var eval = new EvalHelper(this);
             var inspector = eval.CreateInspector();
             
-            if (expression == "cssnpp.test()")
-            {
-                return new MDbgValue(this, inspector.TestPrimitives());
-            }
-
-            //doesn't handle yet set:
-            //instance member of local variable: info.index = 1
-            //static member of local variable: info.index = 1
-            //local variable:  index = 1
-            //static variable of static context/method:  Type.member = 1 or member = 1
-            //member variable of instance context/member: this.member = 1  or member = 1
-
-
-            //ParseExpression does not return instance/type for 
-            //Static method of current static context/method: Type.Method() or Method()
-            //instance method of current instance context/method: this.Method() or Method()
-
             var info = eval.ParseExpression(expression);
 
             foreach (CorValue arg in info.Arguments)
@@ -2124,6 +2107,29 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
                 result = eval.TypeMemberExpressionInvoke(info);
 
             return new MDbgValue(this, result);
+        }
+
+        public MDbgValue ResolveToken(string name, MDbgFrame scope, params string[] namespaces)
+        {
+            var expressions = new List<string>();
+
+            expressions.Add(name);
+            expressions.Add(scope.Function.MethodInfo.DeclaringType.FullName + "." + name);
+            expressions.Add("this." + name);
+
+            foreach (var item in namespaces)
+                expressions.Add(item + "." + name);
+
+            MDbgValue value = null;
+
+            foreach (string item in expressions)
+            {
+                value = this.ResolveVariable(item, scope);
+
+                if (value != null)
+                    return value;
+            }
+            return null;
         }
 
         /// <summary>

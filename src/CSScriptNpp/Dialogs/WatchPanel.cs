@@ -49,7 +49,7 @@ namespace CSScriptNpp.Dialogs
         {
             if (column == 0) //change watch variable name
             {
-                bool evalRefreshRequest = (newValue != null && newValue.Contains("("));
+                bool evalRefreshRequest = (newValue != null && newValue.IsInvokeExpression());
 
                 if (oldValue != newValue || evalRefreshRequest)
                 {

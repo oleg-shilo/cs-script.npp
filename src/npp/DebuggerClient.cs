@@ -395,7 +395,7 @@ namespace npp
 
         MDbgValue ResolveExpression(string expression)
         {
-            if (expression.Contains("(") || expression.Contains("="))
+            if (expression.IsInvokeExpression() || expression.IsSetExpression())
                 return shell.Debugger.Processes.Active.ResolveExpression(expression, shell.Debugger.Processes.Active.Threads.Active.CurrentFrame);
             else
                 return ResolveVariable(expression);
@@ -413,6 +413,7 @@ namespace npp
 
             expressions.Add(args);
             expressions.Add(shell.Debugger.Processes.Active.Threads.Active.CurrentFrame.Function.MethodInfo.DeclaringType.FullName + "." + args);
+            expressions.Add("this." + args);
 
             foreach (var item in currentNamespaces)
                 expressions.Add(item + "." + args);
@@ -504,8 +505,8 @@ namespace npp
                             string itemName = args;
                             //args can be variable (t.Index), method call (t.Test()) or set command (t.Index=7)
                             //set command may also be "watched" in IDE as the var name (t.Index)
-                            bool isSetter = false;
-                            if ((isSetter = args.Contains("=")))
+                            bool isSetter = args.IsSetExpression();
+                            if (isSetter)
                                 itemName = args.Split('=').First();
 
                             if (isSetter)
