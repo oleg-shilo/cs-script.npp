@@ -55,6 +55,7 @@ namespace CSScriptNpp.Dialogs
 
         void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+
             focucedItem = listView1.GetItemAt(e.X, e.Y);
 
             // Check the subitem clicked .
@@ -62,7 +63,13 @@ namespace CSScriptNpp.Dialogs
             if (index != -1)
             {
                 selectedSubItem = index;
-                StartEditing(focucedItem, selectedSubItem);
+
+                bool cancel = false;
+                if (OnEditCellStart != null)
+                    OnEditCellStart(index, focucedItem.Text, focucedItem.GetDbgObject(), ref cancel);
+
+                if (!cancel)
+                    StartEditing(focucedItem, selectedSubItem);
             }
         }
 
@@ -113,8 +120,10 @@ namespace CSScriptNpp.Dialogs
         }
 
         public delegate void OnEditCellCompleteHandler(int column, string oldValue, string newValue, DbgObject context, ref bool cancel);
+        public delegate void OnEditCellStartHandler(int column, string value, DbgObject context, ref bool cancel);
 
         public event OnEditCellCompleteHandler OnEditCellComplete;
+        public event OnEditCellStartHandler OnEditCellStart;
 
         private new void LostFocus(object sender, System.EventArgs e)
         {

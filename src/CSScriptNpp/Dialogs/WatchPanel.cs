@@ -62,9 +62,8 @@ namespace CSScriptNpp.Dialogs
             }
             else if (column == 1) //set value
             {
-                string data = Debugger.InvokeResolve("resolve", context.Name +"=" +newValue.Trim());
-                cancel = true;
-                //content.UpdateData(data);
+                Debugger.InvokeResolve("resolve", context.Name + "=" + newValue.Trim());
+                cancel = true; //debugger will send the update with the fresh actual value
             }
         }
 

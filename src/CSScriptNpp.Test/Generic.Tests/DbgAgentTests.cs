@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
+#pragma warning disable 414
+
 namespace CSScriptIntellisense.Test
 {
     public class DbgAgentTests

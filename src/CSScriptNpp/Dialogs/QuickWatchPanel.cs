@@ -97,11 +97,27 @@ namespace CSScriptNpp.Dialogs
             contentPanel.Controls.Add(content);
             content.Dock = DockStyle.Fill;
             content.Visible = true;
-            //content.
+            content.OnEditCellComplete += Content_OnEditCellComplete;
+            content.OnEditCellStart += Content_OnEditCellStart; 
 
             Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
             Debugger.OnFrameChanged += Debugger_OnFrameChanged;
             DebuggerServer.OnDebuggerStateChanged += Debugger_OnDebuggerStateChanged;
+        }
+
+        void Content_OnEditCellStart(int column, string value, DbgObject context, ref bool cancel)
+        {
+            if (column != 1)
+                cancel = true;
+        }
+
+        void Content_OnEditCellComplete(int column, string oldValue, string newValue, DbgObject context, ref bool cancel)
+        {
+            if (column == 1) //set value
+            {
+                Debugger.InvokeResolve("resolve", context.Name + "=" + newValue.Trim());
+                cancel = true; //debugger will send the update with the fresh actual value
+            }
         }
 
         void Debugger_OnWatchUpdate(string data)
