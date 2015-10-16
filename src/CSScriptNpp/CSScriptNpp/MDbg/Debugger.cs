@@ -123,6 +123,13 @@ namespace CSScriptNpp
 
             foreach (string key in breakpoints.Keys.ToArray())
             {
+                //IMPORTANT: GetLineOfMarker returns line form the handle of the marker within a 
+                //current file. Value of handles are file specific and reused between the files/documents.
+                //This is because marker handles are just marker indexes within a document.
+                //Thus resolving a given handle for a non current document can in fact return a proper line
+                //of the current doc if it has the marker with the same handle value. This already led to
+                //the break points drifting.  
+
                 if (!key.StartsWith(currFile, StringComparison.OrdinalIgnoreCase))
                     continue;
 

@@ -24,12 +24,20 @@ namespace CSScriptNpp.Dialogs
             content.Visible = true;
             content.IsReadOnly = false;
             content.IsPinnable = true;
+            content.IsEvaluatable = true;
             content.OnPinClicked += content_OnPinClicked;
             content.ClearWatchExpressions();
             content.OnDagDropText += content_OnDagDropText;
             content.OnEditCellComplete += content_OnEditCellComplete;
+            content.ReevaluateRequest += Content_ReevaluateRequest;
             Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
             DebuggerServer.OnDebuggerStateChanged += DebuggerServer_OnDebuggerStateChanged;
+        }
+
+        private void Content_ReevaluateRequest(DbgObject context)
+        {
+            Debugger.RemoveWatch(context.Name);
+            Debugger.AddWatch(context.Name);
         }
 
         void DebuggerServer_OnDebuggerStateChanged()

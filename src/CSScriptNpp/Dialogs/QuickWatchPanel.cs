@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using UltraSharp.Cecil;
 
 namespace CSScriptNpp.Dialogs
 {
@@ -24,7 +23,8 @@ namespace CSScriptNpp.Dialogs
             {
                 var dialog = new QuickWatchPanel();
                 Instance = dialog;
-                string expression = Utils.GetStatementAtCaret();
+                //string expression = Utils.GetStatementAtCaret();
+                string expression = Npp.GetSelectedText(); 
 
                 dialog.SetExpression(expression)
                       .SetAutoRefreshAvailable(Config.Instance.QuickViewAutoRefreshAvailable);
@@ -67,7 +67,7 @@ namespace CSScriptNpp.Dialogs
 
         QuickWatchPanel SetExpression(string data)
         {
-            textBox1.Text = data;
+            expressionBox.Text = data;
             Reevaluate();
             return this;
         }
@@ -149,11 +149,21 @@ namespace CSScriptNpp.Dialogs
         {
             if (Debugger.IsInBreak)
             {
-                string expression = textBox1.Text.Trim();
+                string expression = expressionBox.Text.NormalizeExpression();
                 string data = Debugger.InvokeResolve("resolve", expression);
 
-                if (!expression.IsSetExpression() || !content.HasWatchObjects)
-                    content.SetData(data); //let watch notification to be received if it is a set expression
+                bool repopulate = true;
+
+                if (expression.IsSetExpression() )
+                {
+                    string name = expression.Split('=').First().Trim();
+
+                    if (content.FindDbgObject(name) != null)
+                        repopulate = false; //let watch notification to be received if it is a set expression
+                }
+
+                if (repopulate)
+                    content.SetData(data); 
             }
             else
                 content.Refresh();

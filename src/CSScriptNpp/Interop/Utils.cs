@@ -178,6 +178,15 @@ namespace CSScriptNpp
                 return true;
             return false;
         }
+        internal static string NormalizeExpression(this string text)
+        {
+            if (text.IsSetExpression())
+                return string.Join("=", text.Split(new[] { '=' }, 2).Select(x => x.Trim()).ToArray());
+            else if (text.IsInvokeExpression())
+                return string.Join("(", text.Split(new[] { '(' }, 2).Select(x => x.Trim()).ToArray());
+            else
+                return text;
+        }
 
         public static string StripQuotation(this string text)
         {

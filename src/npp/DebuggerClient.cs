@@ -312,6 +312,24 @@ namespace npp
             return SerializeValue(value, itemsOnly, maxCollectionItemsInResolve);
         }
 
+        bool IsPrimitiveType(MDbgValue value)
+        {
+            return value.TypeName == "bool" ||
+                   value.TypeName == "byte" ||
+                   value.TypeName == "sbyte" ||
+                   value.TypeName == "char" ||
+                   value.TypeName == "decimal" ||
+                   value.TypeName == "double" ||
+                   value.TypeName == "float" ||
+                   value.TypeName == "int" ||
+                   value.TypeName == "uint" ||
+                   value.TypeName == "long" ||
+                   value.TypeName == "ulong" ||
+                   value.TypeName == "object" ||
+                   value.TypeName == "short" ||
+                   value.TypeName == "ushort";
+        }
+
         string SerializeValue(MDbgValue value, bool itemsOnly, int itemsMaxCount)
         {
             string result = "";
@@ -336,12 +354,15 @@ namespace npp
 
             if (!itemsOnly && value.IsComplexType)
             {
-                items = value.GetFields().ToArray();
-                try
+                if (!IsPrimitiveType(value)) //boxed primitive type have their MDbgValue set to ComplexType
                 {
-                    items = items.Concat(value.GetProperties()).ToArray();
+                    items = value.GetFields().ToArray();
+                    try
+                    {
+                        items = items.Concat(value.GetProperties()).ToArray();
+                    }
+                    catch { }
                 }
-                catch { }
             }
 
             if (items != null || itemsOnly)
@@ -632,12 +653,22 @@ namespace npp
                 }
                 else if (val.IsComplexType)
                 {
-                    // This will include both instance and static fields
-                    // It will also include all base class fields.
-                    //string stValue = val.InvokeToString();
-                    result.Add(new XAttribute("isComplex", true),
-                               //         new XAttribute("value", stValue),
-                               new XAttribute("isArray", false));
+                    if (IsPrimitiveType(val)) //boxed primitive types will appear a ComplexTypes
+                    {
+                        string stValue = val.DisplayValue.Trim('{', '}');
+                        result.Add(new XAttribute("isComplex", false),
+                                   new XAttribute("value", substituteValue ?? stValue));
+
+                    }
+                    else
+                    {
+                        // This will include both instance and static fields
+                        // It will also include all base class fields.
+                        //string stValue = val.InvokeToString();
+                        result.Add(new XAttribute("isComplex", true),
+                                   //         new XAttribute("value", stValue),
+                                   new XAttribute("isArray", false));
+                    }
                 }
                 else
                 {

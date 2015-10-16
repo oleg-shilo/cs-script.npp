@@ -1,18 +1,17 @@
-﻿using CSScriptIntellisense;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using CSScriptIntellisense;
 
 namespace CSScriptNpp.Dialogs
 {
     public partial class DebugObjectsPanel : Form
     {
-        private ListViewItem focucedItem;
+        ListViewItem focucedItem;
 
         public DebugObjectsPanel()
         {
@@ -20,7 +19,7 @@ namespace CSScriptNpp.Dialogs
             InitInPlaceEditor();
         }
 
-        private int selectedSubItem = 0;
+        int selectedSubItem = 0;
 
         int GetColumnFromOffset(int xOffset)
         {
@@ -121,11 +120,13 @@ namespace CSScriptNpp.Dialogs
 
         public delegate void OnEditCellCompleteHandler(int column, string oldValue, string newValue, DbgObject context, ref bool cancel);
         public delegate void OnEditCellStartHandler(int column, string value, DbgObject context, ref bool cancel);
+        public delegate void OnReevaluateRequestHandler(DbgObject context);
 
+        public event OnReevaluateRequestHandler ReevaluateRequest;
         public event OnEditCellCompleteHandler OnEditCellComplete;
         public event OnEditCellStartHandler OnEditCellStart;
 
-        private new void LostFocus(object sender, System.EventArgs e)
+        new void LostFocus(object sender, System.EventArgs e)
         {
             EndEditing();
         }
@@ -209,6 +210,11 @@ namespace CSScriptNpp.Dialogs
             {
                 return listView1.Items.Cast<ListViewItem>().Any(x => !x.GetDbgObject().IsEditPlaceholder);
             }
+        }
+
+        public DbgObject FindDbgObject(string name)
+        {
+            return listView1.Items.Cast<ListViewItem>().Where(x => x.GetDbgObject().Name == name).Select(x => x.GetDbgObject()).FirstOrDefault();
         }
 
         public void SetData(string data)
@@ -473,7 +479,7 @@ namespace CSScriptNpp.Dialogs
 
         Pen Win10GridPen = new Pen(Color.FromArgb(240, 240, 240));
 
-        private void listView1_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        void listView1_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
             e.DrawBackground();
 
@@ -654,7 +660,7 @@ namespace CSScriptNpp.Dialogs
             }
         }
 
-        private void listView1_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        void listView1_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
             e.DrawDefault = true;
             //e.DrawBackground();
@@ -664,7 +670,7 @@ namespace CSScriptNpp.Dialogs
 
         public event Action<DbgObject> OnPinClicked;
 
-        private void listView1_MouseDown(object sender, MouseEventArgs e)
+        void listView1_MouseDown(object sender, MouseEventArgs e)
         {
             ListViewHitTestInfo info = listView1.HitTest(e.X, e.Y);
             if (info.Item != null)
@@ -752,7 +758,7 @@ namespace CSScriptNpp.Dialogs
             }
         }
 
-        private ListViewItem GetItemFromPoint(ListView listView, Point mousePosition)
+        ListViewItem GetItemFromPoint(ListView listView, Point mousePosition)
         {
             // translate the mouse position from screen coordinates to
             // client coordinates within the given ListView
@@ -762,8 +768,9 @@ namespace CSScriptNpp.Dialogs
 
         public bool IsReadOnly = true;
         public bool IsPinnable = false;
+        public bool IsEvaluatable = false;
 
-        private void listView1_DragEnter(object sender, DragEventArgs e)
+        void listView1_DragEnter(object sender, DragEventArgs e)
         {
             if (!IsReadOnly && e.Data.GetDataPresent(DataFormats.StringFormat))
                 e.Effect = DragDropEffects.Copy;
@@ -771,7 +778,7 @@ namespace CSScriptNpp.Dialogs
                 e.Effect = DragDropEffects.None;
         }
 
-        private void listView1_DragDrop(object sender, DragEventArgs e)
+        void listView1_DragDrop(object sender, DragEventArgs e)
         {
             if (OnDagDropText != null)
                 OnDagDropText((string)e.Data.GetData(DataFormats.StringFormat));
@@ -779,7 +786,7 @@ namespace CSScriptNpp.Dialogs
 
         public event Action<string> OnDagDropText;
 
-        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        void listView1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Delete)
                 DeleteSelected();
@@ -812,7 +819,7 @@ namespace CSScriptNpp.Dialogs
                 });
         }
 
-        private void copyValuespMenu_Click(object sender, EventArgs e)
+        void copyValuespMenu_Click(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count > 0)
             {
@@ -829,7 +836,7 @@ namespace CSScriptNpp.Dialogs
             }
         }
 
-        private void copyRowsMenu_Click(object sender, EventArgs e)
+        void copyRowsMenu_Click(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count > 0)
             {
@@ -848,9 +855,23 @@ namespace CSScriptNpp.Dialogs
             }
         }
 
+        void reevaluateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                foreach (ListViewItem item in listView1.SelectedItems)
+                    try
+                    {
+                        if (ReevaluateRequest != null)
+                            ReevaluateRequest(item.GetDbgObject());
+                    }
+                    catch { }
+            }
+        }
+
         ToolTip toolTip = new ToolTip();
 
-        private void listView1_ItemMouseHover(object sender, ListViewItemMouseHoverEventArgs e)
+        void listView1_ItemMouseHover(object sender, ListViewItemMouseHoverEventArgs e)
         {
             var cursor = listView1.PointToClient(MousePosition);
 
@@ -880,6 +901,12 @@ namespace CSScriptNpp.Dialogs
             //    Thread.Sleep(100);
             //    listView1.Invalidate();
             //});
+        }
+
+        private void DebugObjectsPanel_Load(object sender, EventArgs e)
+        {
+            if (!IsEvaluatable)
+                reevaluateToolStripMenuItem.Visible = false;
         }
     }
 

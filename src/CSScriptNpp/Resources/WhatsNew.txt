@@ -3,5 +3,5 @@ v1.0.45.1
 * Added config option for Key Interception exclusions for specific file types
 * Added option for skipping the version on "update available" prompt
 * Improved ListView rendering on Win10 (to overcome Win10 rendering flaw)
-* Fixed accidental shifting of break points.
+* Fixed accidental break points drifting within a document.
 

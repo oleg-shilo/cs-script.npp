@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.expressionBox = new System.Windows.Forms.TextBox();
             this.contentPanel = new System.Windows.Forms.Panel();
             this.reevalBtn = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -38,14 +38,14 @@
             // 
             // textBox1
             // 
-            this.textBox1.AllowDrop = true;
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.expressionBox.AllowDrop = true;
+            this.expressionBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(3, 5);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(201, 20);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
+            this.expressionBox.Location = new System.Drawing.Point(3, 5);
+            this.expressionBox.Name = "textBox1";
+            this.expressionBox.Size = new System.Drawing.Size(201, 20);
+            this.expressionBox.TabIndex = 0;
+            this.expressionBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // contentPanel
             // 
@@ -93,7 +93,7 @@
             this.Controls.Add(this.autoupdate);
             this.Controls.Add(this.reevalBtn);
             this.Controls.Add(this.contentPanel);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.expressionBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "QuickWatchPanel";
             this.Text = "CS-Script Quick Watch";
@@ -105,7 +105,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox expressionBox;
         private System.Windows.Forms.Panel contentPanel;
         private System.Windows.Forms.Button reevalBtn;
         private System.Windows.Forms.Timer timer1;

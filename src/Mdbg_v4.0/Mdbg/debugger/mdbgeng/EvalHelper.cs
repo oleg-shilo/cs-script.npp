@@ -275,32 +275,69 @@ namespace CSScriptNpp
 
             try
             {
-                if (expression.IsInvokeExpression() && methodParts.Length == 1)
-                {
-                    var mName = methodParts[0];  //either instance or static do() 
 
-                    bool isStatic = false;
+                if ((expression.IsInvokeExpression() || expression.IsSetExpression()) && methodParts.Length == 1)
+                {
+                    MDbgValue callingObject = process.ResolveVariable("this", process.Threads.Active.CurrentFrame);
+
+                    var mName = methodParts[0];  //either instance or static (e.g. "do()")
+
                     MDbgFunction func = process.ResolveFunctionNameFromScope(mName);
-                    if (func != null && func.MethodInfo.IsStatic)
-                        methodName = process.Threads.Active.CurrentFrame.Function.MethodInfo.DeclaringType.FullName + "." + mName;
-                    else
-                        reference = "this"; //let methodName/Member to be resolved later
-                }
+                    if (func != null) //method call
+                    {
+                        result.IsLocalVariable = false;
 
-                var instance = process.ResolveVariable(reference, process.Threads.Active.CurrentFrame);
-                if (instance != null)
+                        if (func.MethodInfo.IsStatic) //static method call
+                        {
+                            result.Instance = null;
+                            result.Member = process.Threads.Active.CurrentFrame.Function.MethodInfo.DeclaringType.FullName + "." + mName;
+                        }
+                        else
+                        {
+                            result.Instance = callingObject.CorValue;
+                            result.Member = mName;
+                        }
+                    }
+                    else //variable assignment
+                    {
+                        var variable = process.ResolveVariable(reference, process.Threads.Active.CurrentFrame);
+                        if (variable != null)//local variable assignment
+                        {
+                            result.IsLocalVariable = true;
+                            result.Instance = variable.CorValue;
+                            result.Member = reference;
+                        }
+                        else
+                        {
+                            if (callingObject == null) //static member assignment
+                            {
+                                result.IsLocalVariable = false;
+                                result.Instance = null;
+                                result.Member = process.Threads.Active.CurrentFrame.Function.MethodInfo.DeclaringType.FullName + "." + mName;
+                            }
+                            else //instance member assignment
+                            {
+                                result.IsLocalVariable = false;
+                                result.Instance = callingObject.CorValue;
+                                result.Member = methodParts.Last();
+                            }
+                        }
+                    }
+                }
+                else
                 {
-                    result.Instance = instance.CorValue;
-                    result.Member = methodParts.Last();
+                    var instance = process.ResolveVariable(reference, process.Threads.Active.CurrentFrame);
+                    if (instance != null)
+                    {
+                        result.Instance = instance.CorValue;
+                        result.Member = methodParts.Last();
+                    }
                 }
             }
             catch { }
 
-            if (result.Instance == null)
-            {
+            if (result.Instance == null && result.Member == null)
                 result.Member = methodName;
-
-            }
 
             CorEval eval = process.Threads.Active.CorThread.CreateEval();
 
@@ -315,15 +352,12 @@ namespace CSScriptNpp
                     CorValue v = process.m_engine.ParseExpression(arg, process, process.Threads.Active.CurrentFrame);
 
                     if (v == null)
-                    {
                         throw new Exception("Cannot resolve expression or variable " + arg);
-                    }
 
                     if (v is CorGenericValue)
                     {
                         vars.Add(v as CorValue);
                     }
-
                     else
                     {
                         CorHeapValue hv = v.CastToHeapValue();
