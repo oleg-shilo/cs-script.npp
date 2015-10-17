@@ -10,10 +10,9 @@ void main(string[] args)
 
     Console.WriteLine("Injecting version into file names: " + version);
 
-    File.WriteAllText(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", version);
-
-    File.Copy(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", @".\latest_version.txt");
-    File.Copy(@".\latest_version.txt", @".\latest_version_dbg.txt");
+    //File.WriteAllText(@"E:\cs-script\cs-scriptWEB\npp\latest_version.txt", version);
+    File.WriteAllText(@".\latest_version.txt", version);
+    File.Copy(@".\latest_version.txt", @".\latest_version_dbg.txt", true);
 
     string releaseNotesFile = @"..\src\CSScriptNpp\Resources\WhatsNew.txt";
     File.Copy(releaseNotesFile, @".\CSScriptNpp."+version+".ReleaseNotes.txt", true);

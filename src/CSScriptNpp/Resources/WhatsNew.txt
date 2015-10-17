@@ -1,7 +1,9 @@
-v1.0.45.1
+v1.0.46.0
 
-* Added config option for Key Interception exclusions for specific file types
+* Implemented Setting Local variables and instance/static members in break mode.
+* Added "Re-evaluate" context menu for Watch panel. 
+* Fixed accidental break points drifting within a document.
 * Added option for skipping the version on "update available" prompt
 * Improved ListView rendering on Win10 (to overcome Win10 rendering flaw)
-* Fixed accidental break points drifting within a document.
+* Added config option for Key Interception exclusions for specific file types
 
