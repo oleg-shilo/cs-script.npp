@@ -2173,14 +2173,27 @@
              You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
              <returns>Instance of the 'Type'. Returns null if the instance cannot be created.</returns>
         </member>
-        <member name="M:CSScriptLibraryExtensionMethods.CreateObject(System.Reflection.Assembly,System.String)">
+        <member name="M:CSScriptLibraryExtensionMethods.CreateObject(System.Reflection.Assembly,System.String,System.Object[])">
             <summary>
             Creates instance of a class from underlying assembly.
             </summary>
             <param name="obj">Instance of the type to be extended</param>
             <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
             You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+            <param name="args">The non default constructor arguments.</param>
             <returns>Instance of the 'Type'. Throws an ApplicationException if the instance cannot be created.</returns>
+        </member>
+        <member name="M:CSScriptLibraryExtensionMethods.CreateInstance(System.Reflection.Assembly,System.String,System.Object[])">
+            <summary>
+            Creates the instance of the Type.
+            <para>It is nothing else but a more convenient version of Assembly. CreateInstance(string typeName, bool ignoreCase, BindingFlags...) method.
+            It's objective is to simplify invoking the constructors with parameters.
+            </para>
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <param name="typeName">Name of the type.</param>
+            <param name="args">The arguments.</param>
+            <returns></returns>
         </member>
         <member name="M:CSScriptLibraryExtensionMethods.ExtendLife(System.MarshalByRefObject,System.TimeSpan)">
             <summary>
@@ -2366,7 +2379,7 @@
             <param name="useAppDomainAssemblies">If set to <c>true</c> uses all loaded assemblies of the current <see cref="T:System.AppDomain"/></param>
             <returns>Interface object.</returns>
         </member>
-        <member name="M:CSScriptLibrary.AsmHelper.CreateAndAlignToInterface``1(System.String)">
+        <member name="M:CSScriptLibrary.AsmHelper.CreateAndAlignToInterface``1(System.String,System.Object[])">
             <summary>
             Creates object in remote or current <see cref="T:System.AppDomain"/> and aligns (pseudo typecasts) it to the specified interface.
             <para>Semantically it is an equivalent of calling
@@ -2376,6 +2389,7 @@
             <typeparam name="T">Interface definition to align with.</typeparam>
             <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
             You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+            <param name="args">The non default constructor arguments.</param>
             <returns>Interface object.</returns>
         </member>
         <member name="M:CSScriptLibrary.AsmHelper.GetMethodInvoker(System.String,System.Object[])">
@@ -2537,21 +2551,22 @@
             </para>
             </returns>
         </member>
-        <member name="M:CSScriptLibrary.AsmHelper.TryCreateObject(System.String)">
-             <summary>
-             Attempts to create instance of a class from underlying assembly.
-             </summary>
-             <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
-            
-             You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
-             <returns>Instance of the 'Type'. Returns null if the instance cannot be created.</returns>
+        <member name="M:CSScriptLibrary.AsmHelper.TryCreateObject(System.String,System.Object[])">
+            <summary>
+            Attempts to create instance of a class from underlying assembly.
+            </summary>
+            <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
+            You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+            <param name="args">The non default constructor arguments.</param>
+            <returns>Instance of the 'Type'. Returns null if the instance cannot be created.</returns>
         </member>
-        <member name="M:CSScriptLibrary.AsmHelper.CreateObject(System.String)">
+        <member name="M:CSScriptLibrary.AsmHelper.CreateObject(System.String,System.Object[])">
             <summary>
             Creates instance of a class from underlying assembly.
             </summary>
             <param name="typeName">The 'Type' full name of the type to create. (see Assembly.CreateInstance()).
             You can use wild card meaning the first type found. However only full wild card "*" is supported.</param>
+            <param name="args">The non default constructor arguments.</param>
             <returns>Instance of the 'Type'. Throws an ApplicationException if the instance cannot be created.</returns>
         </member>
         <member name="M:CSScriptLibrary.AsmHelper.Unload">
@@ -2614,11 +2629,12 @@
             Defines method for calling assembly methods and instantiating assembly types.
             </summary>
         </member>
-        <member name="M:CSScriptLibrary.AsmBrowser.CreateInstance(System.String)">
+        <member name="M:CSScriptLibrary.AsmBrowser.CreateInstance(System.String,System.Object[])">
             <summary>
             Creates instance of a Type from underlying assembly.
             </summary>
             <param name="typeName">Name of the type to be instantiated. Allows wild card character (e.g. *.MyClass can be used to instantiate MyNamespace.MyClass).</param>
+            <param name="args">The non default constructor arguments.</param>
             <returns>Created instance of the type.</returns>
         </member>
         <member name="T:CSScriptLibrary.FastInvoker">
@@ -2900,7 +2916,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:CSScriptLibrary.Evaluator.LoadCode(System.String)">
+        <member name="M:CSScriptLibrary.Evaluator.LoadCode(System.String,System.Object[])">
              <summary>
              Evaluates C# code and loads (returns instance) the first class defined in the code to the current AppDomain.
              </summary>
@@ -2919,6 +2935,7 @@
              </code>
              </example>
              <param name="scriptText">The C# script text.</param>
+             <param name="args">The non default constructor arguments.</param>
              <returns>Instance of the class defined in the script.</returns>
         </member>
         <member name="M:CSScriptLibrary.Evaluator.LoadFile(System.String)">
@@ -2935,7 +2952,7 @@
              </example>/// <param name="scriptFile">The C# script file.</param>
              <returns>Instance of the class defined in the script file.</returns>
         </member>
-        <member name="M:CSScriptLibrary.Evaluator.LoadCode``1(System.String)">
+        <member name="M:CSScriptLibrary.Evaluator.LoadCode``1(System.String,System.Object[])">
              <summary>
              Evaluates C# code and loads (returns instance) the first class defined in the code to the current AppDomain.
              After initializing the class instance it is aligned to the interface specified by the parameter <c>T</c>.
@@ -2963,6 +2980,7 @@
              </example>
              <typeparam name="T">The type of the interface type the script class instance should be aligned to.</typeparam>
              <param name="scriptText">The C# script text.</param>
+             <param name="args">The non default type <c>T</c> constructor arguments.</param>
              <returns>Aligned to the <c>T</c> interface instance of the class defined in the script.</returns>
         </member>
         <member name="M:CSScriptLibrary.Evaluator.GetReferencedAssemblies(System.String,System.String[])">

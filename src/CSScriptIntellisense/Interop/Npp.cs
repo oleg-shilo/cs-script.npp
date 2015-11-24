@@ -384,6 +384,12 @@ namespace CSScriptIntellisense
             get { return Plugin.NppData._nppHandle; }
         }
 
+        public static int CaretToTextPosition(int position)
+        {
+            string text = GetTextBetween(0, position);
+            return Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(text)).Length;
+        }
+
         public static int GetCaretPosition()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();

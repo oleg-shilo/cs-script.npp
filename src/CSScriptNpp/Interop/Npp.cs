@@ -103,22 +103,23 @@ namespace CSScriptNpp
 
                         if (!string.IsNullOrEmpty(underMouseExpression))
                         {
-                            //also need to check expression start position (if not debugging) as the same expression can lead to differet tooltip
+                            //also need to check expression start position (if not debugging) as the same expression can lead to different tooltip
                             //NOTE: if DBG frame is changed the LastExpression is cleared 
                             if (underMouseExpression == Calltip.LastExpression && Calltip.LastDocument == document)
                             {
-                                if(Debugger.IsInBreak) 
+                                if (Debugger.IsInBreak)
                                     tooltip = Calltip.LastEval;
                             }
 
-                            if (underMouseExpression != Calltip.LastExpression)
-                            {
-                                System.Diagnostics.Debug.WriteLine("GetDebugTooltipValue -> expression is changed...");
-                                System.Diagnostics.Debug.WriteLine("old: " + Calltip.LastExpression);
-                                System.Diagnostics.Debug.WriteLine("new: " + underMouseExpression);
-                            }
-                            if(Calltip.LastDocument != document)
-                                    System.Diagnostics.Debug.WriteLine("GetDebugTooltipValue -> document is changed...");
+                            //if (underMouseExpression != Calltip.LastExpression)
+                            //{
+                            //    System.Diagnostics.Debug.WriteLine("GetDebugTooltipValue -> expression is changed...");
+                            //    System.Diagnostics.Debug.WriteLine("old: " + Calltip.LastExpression);
+                            //    System.Diagnostics.Debug.WriteLine("new: " + underMouseExpression);
+                            //}
+
+                            //if (Calltip.LastDocument != document)
+                            //    System.Diagnostics.Debug.WriteLine("GetDebugTooltipValue -> document is changed...");
 
                             if (tooltip == null)
                             {

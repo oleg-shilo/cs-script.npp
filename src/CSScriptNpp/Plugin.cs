@@ -12,10 +12,11 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *  - Watch values are not updated on "step over" after the value has been changed
-     *  - QuickWatch dialog doesn't allow changing the value in the grid
-     *  - Locals doesn't allow changing the value
-     *  - QuickWatch should not allow changing the name in the grid
+     *  + Watch values are not updated on "step over" after the value has been changed
+     *  + QuickWatch dialog doesn't allow changing the value in the grid
+     *  + Locals doesn't allow changing the value
+     *  - Button to update doc. breakpoints from the .dbg file content
+     *  + QuickWatch should not allow changing the name in the grid
      *  - Debugger 
      *      - Debugger does not treat DateTime members as primitives
      *      - Some objects cannot be inspected:
@@ -40,18 +41,9 @@ namespace CSScriptNpp
      *          - Locals panel cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
      *              - reconstruct the tree branch by branch
-     *          - Debug Objects panel
-     *              - Refresh value on demand
      *          - QuickWatch panel
-     *              - auto update
-     *              - Setting the variable/expression value
-     *                   ( MdbgCommands.SetCmd should ResolveVariable even if it is an expression e.g. 'name.length'
-     *
-     *                             lsMVar = Debugger.Processes.Active.ResolveVariable(varName,
-     *                                         Debugger.Processes.Active.Threads.Active.CurrentFrame); )
-     *             - Handle method expressions like Console.WriteLine("test")
+     *             - Handle method expressions like Console.WriteLine("test"). Currently only System.Console.WriteLine("test") works
      *     - Debugger: make handling Debug.Assert user friendlier
-     *
      */
 
     public partial class Plugin

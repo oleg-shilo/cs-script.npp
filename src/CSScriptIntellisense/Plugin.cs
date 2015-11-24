@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -1020,6 +1021,14 @@ namespace CSScriptIntellisense
             string file = Npp.GetCurrentFile();
             string text = Npp.GetTextBetween(0, Npp.DocEnd);
             int currentPos = Npp.GetCaretPosition();
+
+            try
+            {
+                //just to handle NPP strange concept of caret position being not a point of the text 
+                //but an index of the byte array
+                currentPos = Npp.CaretToTextPosition(currentPos); 
+            }
+            catch { }
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
