@@ -1,9 +1,8 @@
-v1.0.46.0
-
-* Implemented Setting Local variables and instance/static members in break mode.
-* Added "Re-evaluate" context menu for Watch panel. 
-* Fixed accidental break points drifting within a document.
-* Added option for skipping the version on "update available" prompt
-* Improved ListView rendering on Win10 (to overcome Win10 rendering flaw)
-* Added config option for Key Interception exclusions for specific file types
+v1.0.47.0
+* ResolveMemberAtCaret (intellisense) now handles the NPP 'unorthodox' concept of caret position.
+* Fixed problem with referencing NuGet nested packages.
+* Migrated on lates CS-Script version (v3.9.19.0)
+  - Fixed probelm with referencing nested NuGet packages (e.g. ServiceStack)
+  - //css_searchdir extended to support multiple wildcards
+  - Added support -force and -ver:<version>; switch in //css_nuget 
 
