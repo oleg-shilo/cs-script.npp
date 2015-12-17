@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.IO;
 
 namespace CSScriptNpp
 {
@@ -10,6 +10,19 @@ namespace CSScriptIntellisense
 {
     static partial class Plugin
     {
+        public static string LogDir
+        {
+            get
+            {
+                var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Notepad++\plugins\logs\CSScriptIntellisense");
+
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                return dir;
+            }
+        }
+
         #region " Fields "
 
         public static NppData NppData;

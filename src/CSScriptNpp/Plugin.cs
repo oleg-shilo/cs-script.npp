@@ -94,7 +94,7 @@ namespace CSScriptNpp
         static public Action DebugScript;
 
         //must be in a separate method to allow proper assembly probing
-        private static void LoadIntellisenseCommands(ref int cmdIndex)
+         static void LoadIntellisenseCommands(ref int cmdIndex)
         {
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
                  (index, name, handler, shortcut) =>
@@ -106,7 +106,7 @@ namespace CSScriptNpp
                  });
         }
 
-        private static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
+         static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
         {
             ShortcutKey shortcut = shortcutSpec.ParseAsShortcutKey(displayName);
 
@@ -117,7 +117,7 @@ namespace CSScriptNpp
                 uniqueKeys.Add(key, 0);
         }
 
-        private static IEnumerable<Keys> BindInteranalShortcuts()
+         static IEnumerable<Keys> BindInteranalShortcuts()
         {
             var uniqueKeys = new Dictionary<Keys, int>();
 
@@ -198,7 +198,7 @@ namespace CSScriptNpp
             return uniqueKeys.Keys;
         }
 
-        private static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
+         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
             foreach (var shortcut in internalShortcuts.Keys)
                 if ((byte)key == shortcut._key && !IsDocumentHotKeyExcluded())
@@ -434,7 +434,7 @@ namespace CSScriptNpp
             return Plugin.OutputPanel;
         }
 
-        private static Process runningScript;
+         static Process runningScript;
 
         public static Process RunningScript
         {
@@ -449,7 +449,7 @@ namespace CSScriptNpp
             }
         }
 
-        private static void UpdateLocalDebugInfo()
+         static void UpdateLocalDebugInfo()
         {
             if (runningScript == null)
                 Plugin.OutputPanel.localDebugPrefix = null;
@@ -491,7 +491,7 @@ namespace CSScriptNpp
 
         internal static string HomeUrl = "https://csscriptnpp.codeplex.com/";
 
-        private static void StartCheckForUpdates()
+         static void StartCheckForUpdates()
         {
             lock (typeof(Plugin))
             {
@@ -509,7 +509,7 @@ namespace CSScriptNpp
             }
         }
 
-        private static void CheckForUpdates()
+         static void CheckForUpdates()
         {
             Thread.Sleep(2000); //let Notepad++ to complete all initialization
 

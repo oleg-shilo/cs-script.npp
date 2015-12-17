@@ -2,7 +2,7 @@
     <nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <targets>
             <target name="logfile" xsi:type="File"
-              layout="${longdate} ${processid} ${logger} ${message}"
+              layout="${longdate} ${callsite} - ${message}"
               fileName="${basedir}\app-log.txt"
               archiveFileName="${basedir}\app-log.{#}.txt"
               archiveEvery="Day"

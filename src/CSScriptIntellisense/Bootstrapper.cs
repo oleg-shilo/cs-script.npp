@@ -3,8 +3,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
@@ -25,11 +28,45 @@ namespace CSScriptIntellisense
                 {
                     Task.Factory.StartNew(ClearReflectionCache);
                     AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                    InitLogging();
                 }
                 return inConflict;
             }
 
             return true;
+        }
+
+        static void InitLogging()
+        {
+            if (LogManager.Configuration != null)
+            {
+                FileTarget target = LogManager.Configuration.FindTargetByName("logfile") as FileTarget;
+                target.FileName = Path.Combine(Plugin.LogDir, "app-log.txt");
+                target.ArchiveFileName = Path.Combine(Plugin.LogDir, "app-log.old.txt");
+            }
+            else
+            {
+                var config = new LoggingConfiguration();
+
+                var target = new FileTarget
+                {
+                    FileName = Path.Combine(Plugin.LogDir, "app-log.txt"),
+                    ArchiveFileName = Path.Combine(Plugin.LogDir, "app-log.old.txt"),
+                    Layout = "${longdate} ${processid} ${logger} ${message}",
+                    ArchiveEvery = FileArchivePeriod.Day,
+                    ConcurrentWrites = true,
+                    MaxArchiveFiles = 1,
+                    KeepFileOpen = false,
+                    Encoding = Encoding.Default,
+                    ArchiveNumbering = ArchiveNumberingMode.Rolling
+                };
+                var dbRule = new LoggingRule("*", LogLevel.Debug, target);
+
+                config.AddTarget("logfile", target);
+                config.LoggingRules.Add(dbRule);
+
+                LogManager.Configuration = config;
+            }
         }
 
         static void ClearReflectionCache()

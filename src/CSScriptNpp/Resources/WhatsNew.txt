@@ -1,8 +1,3 @@
-v1.0.47.0
-* ResolveMemberAtCaret (intellisense) now handles the NPP 'unorthodox' concept of caret position.
-* Fixed problem with referencing NuGet nested packages.
-* Migrated on lates CS-Script version (v3.9.19.0)
-  - Fixed probelm with referencing nested NuGet packages (e.g. ServiceStack)
-  - //css_searchdir extended to support multiple wildcards
-  - Added support -force and -ver:<version>; switch in //css_nuget 
+v1.0.47.0+
+* Added plugin error logging. It can be accessed from About box.
 

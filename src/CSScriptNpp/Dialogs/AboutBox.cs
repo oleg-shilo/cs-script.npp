@@ -104,7 +104,7 @@ namespace CSScriptNpp
 
         #endregion Assembly Attribute Accessors
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace CSScriptNpp
             catch { }
         }
 
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
@@ -187,7 +187,7 @@ namespace CSScriptNpp
             }
         }
 
-        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace CSScriptNpp
         }
 
         int blinkingCount = 0;
-        private void timer1_Tick(object sender, EventArgs e)
+        void timer1_Tick(object sender, EventArgs e)
         {
             if (updateCheckBtn.Text.StartsWith("Downloading"))
             {
@@ -207,6 +207,15 @@ namespace CSScriptNpp
 
                 updateCheckBtn.Text = "Downloading" + new string('.', blinkingCount);
             }
+        }
+
+        void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                Process.Start(Plugin.LogDir);
+            }
+            catch { }
         }
     }
 }

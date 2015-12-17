@@ -12,11 +12,9 @@ namespace CSScriptNpp
 
     class Bootstrapper
     {
-        static Logger logger;
-
         public static void Init()
         {
-            Debug.Assert(false);
+            //Debug.Assert(false);
 
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             InitLogging();
@@ -55,8 +53,7 @@ namespace CSScriptNpp
                 LogManager.Configuration = config;
             }
 
-            logger = LogManager.GetCurrentClassLogger();
-            logger.Debug("Started");
+            LogManager.GetLogger("").Debug("Started");
         }
 
         static void ConnectPlugins()
