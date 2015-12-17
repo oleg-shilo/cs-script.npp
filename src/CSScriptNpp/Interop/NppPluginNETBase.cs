@@ -74,6 +74,19 @@ namespace CSScriptNpp
             }
         }
 
+        public static string LogDir
+        {
+            get
+            {
+                var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Notepad++\plugins\logs\CSScriptNpp");
+
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                return dir;
+            }
+        }
+
         public static string PluginDir
         {
             get

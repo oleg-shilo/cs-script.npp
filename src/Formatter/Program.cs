@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace CSScriptNpp.Roslyn
 {
+
     public static class Formatter
     {
         static MSBuildWorkspace dummyWorkspace;

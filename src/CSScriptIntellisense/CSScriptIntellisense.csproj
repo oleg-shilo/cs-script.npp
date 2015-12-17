@@ -71,6 +71,7 @@
     <Compile Include="Formatter\SourceCodeFormatterOld.cs" />
     <Compile Include="Formatter\SourceCodeFormatter.cs" />
     <Compile Include="Formatter\StringExtesnions.cs" />
+    <Compile Include="Interop\Logger.cs" />
     <Compile Include="Interop\WinHook.cs" />
     <Compile Include="Interop\Dispatcher.cs">
       <SubType>Form</SubType>
