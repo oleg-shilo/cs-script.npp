@@ -32,6 +32,9 @@ namespace CSScriptNpp.Deployment
 
             try
             {
+
+                StopVBCSCompilers();
+
                 if (args[0] == "/restart") //restart
                 {
                     // /restart [/asadmin] <prevInstanceProcId> <appPath> [/background_wait]
@@ -121,6 +124,20 @@ namespace CSScriptNpp.Deployment
             WindowsIdentity id = WindowsIdentity.GetCurrent();
             WindowsPrincipal p = new WindowsPrincipal(id);
             return p.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        /// <summary>
+        /// Stop any running instances of the compiler server if any. 
+        /// <para>
+        /// Stopping is needed in order to prevent any problems with copying/moving CS-Script binary files (e.g. Roslyn compilers). 
+        /// Servers restart automatically on any attempt to compile any C#/VB.NET code by any client (e.g. Visual Studio, MSBuild, CS-Script).
+        /// </para>
+        /// </summary>
+        public static void StopVBCSCompilers()
+        {
+            foreach (var p in Process.GetProcessesByName("VBCSCompiler"))
+                try { p.Kill(); }
+                catch { } //cannot analyse main module as it may not be accessible for x86 vs. x64 reasons
         }
 
         static bool RestartElevated(string[] arguments)

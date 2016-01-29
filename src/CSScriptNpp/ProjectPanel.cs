@@ -1,15 +1,14 @@
-﻿using CSScriptIntellisense;
-using CSScriptLibrary;
-using CSScriptNpp.Dialogs;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense;
+using CSScriptLibrary;
+using CSScriptNpp.Dialogs;
+
 
 namespace CSScriptNpp
 {
@@ -618,7 +617,10 @@ void main(string[] args)
 
                     treeView1.EndUpdate();
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    e.LogAsError();
+                }
             }
         }
 
@@ -792,6 +794,7 @@ void main(string[] args)
                     {
                         //it is not a major use-case so doesn't matter why we failed
                         MessageBox.Show("Cannot load script.\nError: " + e.Message, "CS-Script");
+                        e.LogAsError();
                     }
                 }
             }

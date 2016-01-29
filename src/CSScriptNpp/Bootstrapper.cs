@@ -1,15 +1,14 @@
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using NLog;
-using NLog.Config;
-using NLog.Targets;
 
 namespace CSScriptNpp
 {
-
     class Bootstrapper
     {
         public static void Init()
@@ -52,8 +51,6 @@ namespace CSScriptNpp
 
                 LogManager.Configuration = config;
             }
-
-            LogManager.GetLogger("").Debug("Started");
         }
 
         static void ConnectPlugins()

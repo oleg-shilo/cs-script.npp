@@ -301,6 +301,10 @@ namespace CSScriptNpp.Roslyn
         }
         static void Main(string[] args)
         {
+            
+            //var ttt = Autocompleter.GetAutpocompletionFor("", 1);
+            //Console.ReadLine();return;
+
             string file = @"C:\Users\%USERNAME%\Documents\C# Scripts\New Script34.cs";
             file = Environment.ExpandEnvironmentVariables(file);
             args = new[] { file };

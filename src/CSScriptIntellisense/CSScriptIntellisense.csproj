@@ -154,9 +154,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\LineMan\LineMan\CSharpIntellisence\ICSharpCode.NRefactory.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+    <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\LineMan\LineMan\CSharpIntellisence\Mono.Cecil.dll</HintPath>
+      <HintPath>..\..\..\gittest\csscriptnpp\src\CSScriptIntellisense\CSharpIntellisense\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.2.2\lib\net40\NLog.dll</HintPath>
