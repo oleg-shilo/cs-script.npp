@@ -1,5 +1,11 @@
 using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.Semantics;
+using ICSharpCode.NRefactory.TypeSystem;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace CSScriptIntellisense
 {
@@ -81,5 +87,73 @@ Examples:
     //css_nuget -ver:""4.1.1-rc1"" -ng:""-Pre -NoCache"" NLog;"
             },
         };
+
+
+        static string GetHelpFile()
+        {
+            if (CSScriptHelper.GetEngineExe() == null)
+                return null;
+
+            string file = Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes", "cs-script." + typeof(CSScriptLibrary.CSScript).Assembly.GetName().Version + ".help.txt");
+
+            if (!File.Exists(file))
+            {
+                var dir = Path.GetDirectoryName(file);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                foreach (string oldFile in Directory.GetFiles(dir, "cs-script.*.help.txt"))
+                    try { File.Delete(oldFile); } catch { }
+
+                try
+                {
+                    string cmdText = string.Format("\"{0}\" > \"{1}\"", CSScriptHelper.GetEngineExe(), file);
+
+                    var p = new Process();
+                    p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    p.StartInfo.FileName = "cmd.exe";
+                    p.StartInfo.Arguments = string.Format("/C \"{0}\"", cmdText);
+                    p.Start();
+                    p.WaitForExit();
+                }
+                catch { }
+
+                if (!File.Exists(file))
+                    return null;
+            }
+
+            return file;
+        }
+
+        public static DomRegion? ResolveDefinition(string directive)
+        {
+            string helpFile = GetHelpFile();
+
+            if (helpFile != null)
+            {
+                string[] lines = File.ReadAllLines(helpFile);
+
+                var matchingLine = FindSection(directive, lines);
+
+                if (matchingLine == -1 && (directive == "//css_inc" || directive == "//css_include"))
+                {
+                    directive = "//css_import"; //'include' aliases are described under main 'import' section in older documentation
+                    matchingLine = FindSection(directive, lines);
+                }
+
+                if (matchingLine != -1)
+                    return new DomRegion(helpFile, matchingLine + 1, 0); //DomRegion is one based
+            }
+
+            return null;
+        }
+
+        static int FindSection(string directive, string[] lines )
+        {
+            string pattern1 = directive;
+            string pattern2 = "Alias - " + directive;
+
+            return lines.FindIndex(x => x.StartsWith(pattern1) || x.StartsWith(pattern2));
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace CSScriptNpp
         public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
         public bool UseRoslynProvider = false;
-        public bool StartRoslynServerAtStartup = true;
+        public bool StartRoslynServerAtStartup = false;
         public bool ImproveWin10ListVeiwRendering = true;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;

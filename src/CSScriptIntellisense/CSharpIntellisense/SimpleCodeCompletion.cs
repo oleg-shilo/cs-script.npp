@@ -105,26 +105,12 @@ namespace CSScriptIntellisense
 
         static IEnumerable<ICompletionData> GetCSharpScriptCompletionData(string editorText, int offset, bool prepareForDisplay = true)
         {
-            int i = 0;
+            var textOnRight = GetCSharpScriptDirectiveLine(editorText, offset);
 
-            if (editorText[offset] != '.') //we may be at the partially complete word
-                for (i = offset - 1; i >= 0; i--)
-                    if (SimpleCodeCompletion.CSS_Delimiters.Contains(editorText[i]))
-                    {
-                        offset = i + 1;
-                        break;
-                    }
-
-            if (i == -1)
-                offset = 0;
-
-            var textOnRight = editorText.Substring(offset);
-
-            //if "//css_...."
             if (textOnRight.StartsWith("//css_"))
                 return CssCompletionData.AllDirectives;
             else
-                return new ICompletionData[0];
+                return null;
         }
 
         static IEnumerable<ICompletionData> GetCSharpCompletionData(ReadOnlyDocument doc, string editorText, int offset, string fileName, bool isControlSpace = true, bool prepareForDisplay = true) // not the best way to put in the whole string every time
@@ -185,13 +171,8 @@ namespace CSScriptIntellisense
                 if (editorText.Length <= offset)
                     offset = editorText.Length - 1;
 
-                //test for CS-Script completion
-                IEnumerable<ICompletionData> data = GetCSharpScriptCompletionData(editorText, offset, prepareForDisplay);
-                if (data.Any())
-                    return data;
-                else
-                    return GetCSharpCompletionData(doc, editorText, offset, fileName, isControlSpace, prepareForDisplay);
-
+                return GetCSharpScriptCompletionData(editorText, offset, prepareForDisplay) ??
+                       GetCSharpCompletionData(doc, editorText, offset, fileName, isControlSpace, prepareForDisplay);
             }
             catch
             {
@@ -228,9 +209,9 @@ namespace CSScriptIntellisense
                                            .Select(x => new TypeInfo { Namespace = x.Namespace, FullName = x.FullName });
 
                 var asmNamespaces = Project.AssemblyReferences
-                                           .SelectMany(x => ((DefaultUnresolvedAssembly)x).TopLevelTypeDefinitions)
+                                           .SelectMany(x => ((DefaultUnresolvedAssembly) x).TopLevelTypeDefinitions)
                                            .Union(Project.AssemblyReferences
-                                                         .SelectMany(x => ((DefaultUnresolvedAssembly)x).TopLevelTypeDefinitions)
+                                                         .SelectMany(x => ((DefaultUnresolvedAssembly) x).TopLevelTypeDefinitions)
                                                          .SelectMany(x => x.NestedTypes))
                                            .Where(x => x.Name == nameToResolve)
                                            .Distinct()
@@ -477,6 +458,38 @@ namespace CSScriptIntellisense
             return retval.ToArray();
         }
 
+        static string GetCSharpScriptDirectiveLine(string editorText, int offset)
+        {
+            int i = 0;
+
+            if (editorText[offset] != '.') //we may be at the partially complete word
+                for (i = offset - 1; i >= 0; i--)
+                    if (SimpleCodeCompletion.CSS_Delimiters.Contains(editorText[i]))
+                    {
+                        offset = i + 1;
+                        break;
+                    }
+
+            if (i == -1)
+                offset = 0;
+
+            var textOnRight = editorText.Substring(offset);
+            return textOnRight;
+        }
+
+        static DomRegion? ResolveCSharpScriptMember(string editorText, int offset)
+        {
+            var textOnRight = GetCSharpScriptDirectiveLine(editorText, offset);
+
+            if (textOnRight.StartsWith("//css_"))
+            {
+                var css_directive = textOnRight.Split(SimpleCodeCompletion.CSS_Delimiters).FirstOrDefault();
+                return CssCompletionData.ResolveDefinition(css_directive);
+            }
+            else
+                return null;
+        }
+
         static public ResolveResult ResolveFromPosition(string editorText, int offset, string fileName)
         {
             if (Project == null)
@@ -496,6 +509,11 @@ namespace CSScriptIntellisense
         }
 
         static public DomRegion ResolveMember(string editorText, int offset, string fileName)
+        {
+            return ResolveCSharpScriptMember(editorText, offset) ?? ResolveCSharpMember(editorText, offset, fileName);
+        }
+
+        static DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
         {
             if (Project == null)
                 return DomRegion.Empty;

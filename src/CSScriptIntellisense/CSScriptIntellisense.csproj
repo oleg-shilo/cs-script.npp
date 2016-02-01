@@ -205,6 +205,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\CS-Script.help.txt" />
     <None Include="Images\snippet.png" />
     <None Include="Images\unresolved.png" />
     <None Include="Interop\DllExport\Mono.Cecil.dll" />

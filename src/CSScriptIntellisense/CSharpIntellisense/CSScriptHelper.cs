@@ -37,6 +37,8 @@ namespace CSScriptIntellisense
                 return null;
         }
 
+        public static Func<string> GetEngineExe = () => null;
+
         static public string[] GetGlobalSearchDirs()
         {
             var dirs = new List<string>();

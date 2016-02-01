@@ -418,20 +418,12 @@ class Script
     } 
 }");
                 var p = new Process();
-                p.StartInfo.FileName = cscs_exe;
+                p.StartInfo.FileName = csws_exe;
                 p.StartInfo.Arguments = GenerateDefaultArgs() + " \"" + scriptFile + "\"";
                 p.Start();
                 p.WaitForExit();
             }
             catch { }
-            finally
-            {
-                try
-                {
-                    //File.Delete(scriptFile);
-                }
-                catch { }
-            }
         }
 
         static public void ExecuteAsynch(string scriptFile)
