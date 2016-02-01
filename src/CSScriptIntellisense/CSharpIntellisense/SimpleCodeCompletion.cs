@@ -47,6 +47,7 @@ namespace CSScriptIntellisense
         }
 
         public static char[] Delimiters = "\\\t\n\r .,:;'\"[]{}()-/!?@$%^&*«»><#|~`".ToCharArray();
+        public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
 
         static public XmlDocumentationProvider GetXmlDocumentation(string dllPath)
         {
@@ -102,6 +103,76 @@ namespace CSScriptIntellisense
 
         static IProjectContent Project;
 
+        static IEnumerable<ICompletionData> GetCSharpScriptCompletionData(string editorText, int offset, bool prepareForDisplay = true)
+        {
+            int i = 0;
+
+            if (editorText[offset] != '.') //we may be at the partially complete word
+                for (i = offset - 1; i >= 0; i--)
+                    if (SimpleCodeCompletion.CSS_Delimiters.Contains(editorText[i]))
+                    {
+                        offset = i + 1;
+                        break;
+                    }
+
+            if (i == -1)
+                offset = 0;
+
+            var textOnRight = editorText.Substring(offset);
+
+            //if "//css_...."
+            if (textOnRight.StartsWith("//css_"))
+                return CssCompletionData.AllDirectives;
+            else
+                return new ICompletionData[0];
+        }
+
+        static IEnumerable<ICompletionData> GetCSharpCompletionData(ReadOnlyDocument doc, string editorText, int offset, string fileName, bool isControlSpace = true, bool prepareForDisplay = true) // not the best way to put in the whole string every time
+        {
+
+            if (editorText[offset] != '.') //we may be at the partially complete word
+                for (int i = offset - 1; i >= 0; i--)
+                    if (SimpleCodeCompletion.Delimiters.Contains(editorText[i]))
+                    {
+                        offset = i + 1;
+                        break;
+                    }
+
+            //test for C# completion
+            var location = doc.GetLocation(offset);
+
+            var syntaxTree = new CSharpParser().Parse(editorText, fileName);
+            syntaxTree.Freeze();
+            var unresolvedFile = syntaxTree.ToTypeSystem();
+
+            Project = Project.AddOrUpdateFiles(unresolvedFile);
+
+            //note project should be reassigned/recreated every time we add asms or file
+
+            //IProjectContent project = new CSharpProjectContent();
+            //project = project.AddAssemblyReferences(builtInLibs.Value);
+            //project = project.AddOrUpdateFiles(unresolvedFile);
+
+            //IProjectContent project = new CSharpProjectContent().AddAssemblyReferences(builtInLibs.Value).AddOrUpdateFiles(unresolvedFile);
+
+            var completionContextProvider = new DefaultCompletionContextProvider(doc, unresolvedFile);
+
+            var compilation = Project.CreateCompilation();
+            var resolver = unresolvedFile.GetResolver(compilation, location);
+
+            var engine = new CSharpCompletionEngine(doc,
+                                                    completionContextProvider,
+                                                    new SimpleCompletionDataFactory(resolver),
+                                                    Project,
+                                                    resolver.CurrentTypeResolveContext);
+
+            var data = engine.GetCompletionData(offset, isControlSpace);
+
+            if (prepareForDisplay)
+                return data.PrepareForDisplay();
+            else
+                return data;
+        }
         public static IEnumerable<ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true, bool prepareForDisplay = true) // not the best way to put in the whole string every time
         {
             try
@@ -114,47 +185,13 @@ namespace CSScriptIntellisense
                 if (editorText.Length <= offset)
                     offset = editorText.Length - 1;
 
-                if (editorText[offset] != '.') //we may be at the partially complete word
-                    for (int i = offset - 1; i >= 0; i--)
-                        if (SimpleCodeCompletion.Delimiters.Contains(editorText[i]))
-                        {
-                            offset = i + 1;
-                            break;
-                        }
-
-                var location = doc.GetLocation(offset);
-
-                var syntaxTree = new CSharpParser().Parse(editorText, fileName);
-                syntaxTree.Freeze();
-                var unresolvedFile = syntaxTree.ToTypeSystem();
-
-                Project = Project.AddOrUpdateFiles(unresolvedFile);
-
-                //note project should be reassigned/recreated every time we add asms or file
-
-                //IProjectContent project = new CSharpProjectContent();
-                //project = project.AddAssemblyReferences(builtInLibs.Value);
-                //project = project.AddOrUpdateFiles(unresolvedFile);
-
-                //IProjectContent project = new CSharpProjectContent().AddAssemblyReferences(builtInLibs.Value).AddOrUpdateFiles(unresolvedFile);
-
-                var completionContextProvider = new DefaultCompletionContextProvider(doc, unresolvedFile);
-
-                var compilation = Project.CreateCompilation();
-                var resolver = unresolvedFile.GetResolver(compilation, location);
-
-                var engine = new CSharpCompletionEngine(doc,
-                                                        completionContextProvider,
-                                                        new SimpleCompletionDataFactory(resolver),
-                                                        Project,
-                                                        resolver.CurrentTypeResolveContext);
-
-                var data = engine.GetCompletionData(offset, isControlSpace);
-
-                if (prepareForDisplay)
-                    return data.PrepareForDisplay();
-                else
+                //test for CS-Script completion
+                IEnumerable<ICompletionData> data = GetCSharpScriptCompletionData(editorText, offset, prepareForDisplay);
+                if (data.Any())
                     return data;
+                else
+                    return GetCSharpCompletionData(doc, editorText, offset, fileName, isControlSpace, prepareForDisplay);
+
             }
             catch
             {
@@ -250,7 +287,7 @@ namespace CSScriptIntellisense
                 string[] usedNamespaces = new CSharpParser().Parse(editorText, fileName)
                                                             .GetUsingNamepseces();
 
-                var match = data.Where(x => x.DisplayText == nameToResolve).FirstOrDefault();//it will be either one or no records
+                var match = data.Where(x => x.matchesToken(nameToResolve)).FirstOrDefault();//it will be either one or no records
 
                 if (match != null)
                 {

@@ -405,6 +405,35 @@ namespace CSScriptNpp
             }
         }
 
+        static public void InitRoslyn()
+        {
+            string scriptFile = Path.Combine(Path.GetTempPath(), "load_roslyn.cs");
+            try
+            {
+                File.WriteAllText(scriptFile, @"using System; 
+class Script 
+{ 
+    static public void Main() 
+    { 
+    } 
+}");
+                var p = new Process();
+                p.StartInfo.FileName = cscs_exe;
+                p.StartInfo.Arguments = GenerateDefaultArgs() + " \"" + scriptFile + "\"";
+                p.Start();
+                p.WaitForExit();
+            }
+            catch { }
+            finally
+            {
+                try
+                {
+                    //File.Delete(scriptFile);
+                }
+                catch { }
+            }
+        }
+
         static public void ExecuteAsynch(string scriptFile)
         {
             string cscs = "\"" + cscs_exe + "\"";
@@ -764,7 +793,7 @@ namespace CSScriptNpp
 
             File.WriteAllText(projectFile + ".user",
                               Resources.Resources.VS2012UserTemplate
-                                                 .Replace("<StartWorkingDirectory>", 
+                                                 .Replace("<StartWorkingDirectory>",
                                                           "<StartWorkingDirectory>" + scriptDir));
 
             File.WriteAllText(solutionFile,
@@ -819,7 +848,7 @@ namespace CSScriptNpp
                 WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
 
             var request = WebRequest.Create(url);
-            var response = (HttpWebResponse)request.GetResponse();
+            var response = (HttpWebResponse) request.GetResponse();
 
             if (File.Exists(destinationPath))
                 File.Delete(destinationPath);
@@ -850,7 +879,7 @@ namespace CSScriptNpp
                 WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
 
             var request = WebRequest.Create(url);
-            var response = (HttpWebResponse)request.GetResponse();
+            var response = (HttpWebResponse) request.GetResponse();
 
             using (var resStream = response.GetResponseStream())
             {

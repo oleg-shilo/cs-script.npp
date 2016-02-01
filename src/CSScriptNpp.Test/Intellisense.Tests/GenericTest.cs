@@ -61,6 +61,15 @@ namespace NSTest
         }
 
         [Fact]
+        public void GetCssCompletion()
+        {
+            SimpleCodeCompletion.ResetProject();
+            // "//css_|args "
+            var data = SimpleCodeCompletion.GetCompletionData(@"//css_args /provider:E:\Galos\Pro...", 6, "test.cs");
+        }
+
+
+        [Fact]
         public void CompletePartialWord()
         {
             SimpleCodeCompletion.ResetProject();

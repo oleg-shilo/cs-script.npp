@@ -471,6 +471,12 @@ namespace CSScriptNpp
             StartCheckForUpdates();
 
             OpenAutomationChannel();
+
+            if (Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtStartup)
+            {
+                //unfortunately InitRoslyn is ineffective
+                Task.Factory.StartNew(CSScriptHelper.InitRoslyn);
+            }
         }
 
         static internal void OnDocumentSaved()

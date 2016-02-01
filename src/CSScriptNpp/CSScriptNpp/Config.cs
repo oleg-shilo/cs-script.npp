@@ -42,6 +42,7 @@ namespace CSScriptNpp
         public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
         public bool UseRoslynProvider = false;
+        public bool StartRoslynServerAtStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
@@ -113,6 +114,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
+                    SetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
                     SetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
@@ -142,6 +144,7 @@ namespace CSScriptNpp
         {
             lock (typeof(Config))
             {
+                //Debug.Assert(false);
                 Debug.WriteLine("---> Config.Open");
                 ShowLineNuberInCodeMap = GetValue(Section, nameof(ShowLineNuberInCodeMap), ShowLineNuberInCodeMap);
                 ShowProjectPanel = GetValue(Section, nameof(ShowProjectPanel), ShowProjectPanel);
@@ -179,6 +182,7 @@ namespace CSScriptNpp
                 CheckUpdatesOnStartup = GetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                 UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
+                StartRoslynServerAtStartup = GetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);

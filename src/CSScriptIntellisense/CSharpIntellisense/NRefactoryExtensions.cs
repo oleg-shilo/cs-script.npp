@@ -1,3 +1,7 @@
+using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Editor;
+using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,10 +10,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
-using ICSharpCode.NRefactory.Editor;
 
 namespace CSScriptIntellisense
 {
@@ -149,7 +149,7 @@ namespace CSScriptIntellisense
 
                 if (entity.Documentation != null)
                 {
-                    /* 
+                    /*
                      * <summary>Writes the current line terminator to the standard output stream.</summary>
                         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
                         <filterpriority>1</filterpriority>
@@ -181,6 +181,7 @@ namespace CSScriptIntellisense
                 return null;
             }
         }
+
         public static string GetCrefAttribute(this XmlTextReader reader)
         {
             try
@@ -193,7 +194,7 @@ namespace CSScriptIntellisense
                 }
                 else
                 {
-                    return reader.GetAttribute(0); 
+                    return reader.GetAttribute(0);
                 }
                 return typeName;
             }
@@ -207,7 +208,7 @@ namespace CSScriptIntellisense
         {
             //should be replaced with RegEx (eventually)
             string retval = text.Replace(" \r\n", " ").Replace("\r\n ", " ").Replace("\r\n", " ").Replace("\t", " ");
-            //Sandcastle has problem processing <para/> with the content having line breaks. This leads to the 
+            //Sandcastle has problem processing <para/> with the content having line breaks. This leads to the
             //multiple joined spaces. The following is a simplistic solution for this.
 
             string newRetval;
@@ -258,11 +259,12 @@ namespace CSScriptIntellisense
                                     {
                                         //if (reflectionDocument)
                                         //    b.Append(reader.Value.NormalizeLines()); //need to preserve line breaks but not indents
-                                        //else 
+                                        //else
                                         b.Append(reader.Value.Shrink());
                                     }
                                 }
                                 break;
+
                             case XmlNodeType.Element:
                                 {
                                     bool silentElement = false;
@@ -272,33 +274,40 @@ namespace CSScriptIntellisense
                                         case "filterpriority":
                                             reader.Skip();
                                             break;
+
                                         case "root":
                                         case "summary":
                                         case "c":
                                             silentElement = true;
                                             break;
+
                                         case "paramref":
                                             silentElement = true;
                                             b.Append(reader.GetAttribute("name"));
                                             break;
+
                                         case "param":
                                             silentElement = true;
                                             b.AppendLine();
                                             b.Append(reader.GetAttribute("name") + ": ");
                                             break;
+
                                         case "para":
                                             silentElement = true;
                                             b.AppendLine();
                                             break;
+
                                         case "remarks":
                                             b.AppendLine();
                                             b.Append("Remarks: ");
                                             break;
+
                                         case "returns":
                                             silentElement = true;
                                             b.AppendLine();
                                             b.Append("Returns: ");
                                             break;
+
                                         case "exception":
                                             {
                                                 if (!exceptionsStarted)
@@ -408,6 +417,7 @@ namespace CSScriptIntellisense
                                     b.Append(reader.Value);
                                 }
                                 break;
+
                             case XmlNodeType.Element:
                                 {
                                     switch (reader.Name)
@@ -415,22 +425,27 @@ namespace CSScriptIntellisense
                                         case "filterpriority":
                                             reader.Skip();
                                             break;
+
                                         case "returns":
                                             b.AppendLine();
                                             b.Append("Returns: ");
                                             break;
+
                                         case "param":
                                             b.AppendLine();
                                             b.Append(reader.GetAttribute("name") + ": ");
                                             break;
+
                                         case "remarks":
                                             b.AppendLine();
                                             b.Append("Remarks: ");
                                             break;
+
                                         case "exception":
                                             b.AppendLine();
                                             b.Append("Exceptions: ");
                                             break;
+
                                         case "see":
                                             if (reader.IsEmptyElement)
                                             {
@@ -465,7 +480,7 @@ namespace CSScriptIntellisense
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
@@ -513,6 +528,7 @@ namespace CSScriptIntellisense
         }
 
         static string[] lineDelimiters = new string[] { Environment.NewLine };
+
         static public string[] GetLines(this string text, int count = -1)
         {
             if (count != -1)
@@ -541,7 +557,7 @@ namespace CSScriptIntellisense
 
         static public string NormalizeLines(this string linesText)
         {
-            //some of the API XML documentation has "\n" and other "\r\n" as line breaks 
+            //some of the API XML documentation has "\n" and other "\r\n" as line breaks
             return Regex.Split(linesText, @"\r?\n|\r").LeftAlign().JoinLines(Environment.NewLine).Trim();
         }
 
@@ -731,10 +747,28 @@ namespace CSScriptIntellisense
             return text.Substring(line.Offset, line.Length);
         }
 
+        public static bool matchesToken(this ICompletionData data, string nameToResolve)
+        {
+            if (data is CssCompletionData)
+            {
+                // CS-Script DisplayText does include delimiters that are not part of C# tokens  
+                // CompletionText:'css_rags'
+                // DisplayText:'//css_rags'
+                return data.CompletionText == nameToResolve; 
+            }
+            else
+                return data.DisplayText == nameToResolve;
+        }
+
         public static string GetDisplayInfo(this ICompletionData data, bool full, bool isInstantiation = false)
         {
             //TODO - needs to be revisited to implement non-EntityCompltiondata (e.g. enums) eventually
-            if (data is EntityCompletionData)
+            if (data is CssCompletionData)
+            {
+                var d = (data as CssCompletionData);
+                return d.Description;
+            }
+            else if (data is EntityCompletionData)
             {
                 var d = (data as EntityCompletionData);
                 return d.Entity.ToTooltip(full);

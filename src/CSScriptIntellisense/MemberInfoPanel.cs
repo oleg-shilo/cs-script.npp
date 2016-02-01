@@ -128,6 +128,9 @@ namespace CSScriptIntellisense
                 if (formRightX > (screenRightX - 20)) //too close to the right edge of the screen so shift it to left
                     this.Left -= formRightX - (screenRightX - 20);
 
+                if (this.Top < (screen.Top - 20)) //too close to the top edge of the screen so shift it down
+                    this.Top += this.Height + 20;
+
                 Invalidate();
             }
             catch { }

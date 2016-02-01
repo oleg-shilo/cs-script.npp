@@ -750,7 +750,12 @@ namespace CSScriptIntellisense
             string text = Npp.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
             string hint = null;
 
-            int pos = text.LastIndexOfAny(SimpleCodeCompletion.Delimiters);
+            char[] delimiters = SimpleCodeCompletion.Delimiters;
+            string word =  Npp.GetWordAtPosition(currentPos);
+            if(word.StartsWith("css_")) //CS-Script directive
+                delimiters = SimpleCodeCompletion.CSS_Delimiters;
+
+            int pos = text.LastIndexOfAny(delimiters);
             if (pos != -1)
             {
                 hint = text.Substring(pos + 1).Trim();
@@ -782,7 +787,7 @@ namespace CSScriptIntellisense
             {
                 SourceCodeFormatter.CaretBeforeLastFormatting = -1;
 
-                if (c == '.')
+                if (c == '.' || c == '_')
                 {
                     ShowSuggestionList();
                 }
