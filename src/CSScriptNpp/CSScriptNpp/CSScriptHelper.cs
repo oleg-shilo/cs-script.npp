@@ -407,6 +407,10 @@ namespace CSScriptNpp
 
         static public void InitRoslyn()
         {
+            //disabled as unreliable; it can even potentially crash csc.exe if MS CodeAnalysis asms are probed incorrectly 
+            return;
+
+            //Debug.Assert(false);
             string scriptFile = Path.Combine(Path.GetTempPath(), "load_roslyn.cs");
             try
             {
@@ -419,7 +423,7 @@ class Script
 }");
                 var p = new Process();
                 p.StartInfo.FileName = csws_exe;
-                p.StartInfo.Arguments = GenerateDefaultArgs() + " \"" + scriptFile + "\"";
+                p.StartInfo.Arguments = GenerateDefaultArgs() + " /cd \"" + scriptFile + "\"";
                 p.Start();
                 p.WaitForExit();
             }

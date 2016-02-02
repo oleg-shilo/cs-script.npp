@@ -15,6 +15,12 @@ set plugins=%programfiles%\Notepad++\plugins
 copy "CSScriptIntellisense\bin\Release\CSScriptIntellisense.dll" "%plugins%\CSScriptNpp\CSScriptIntellisense.dll"
 copy "CSScriptIntellisense\bin\Release\CSharpIntellisense\*.dll" "%plugins%\CSScriptNpp"
 
+copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
+copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
+
+copy "CSScriptNpp\bin\Release\NLog.dll" "%plugins%\CSScriptNpp\NLog.dll"
+copy "CSScriptNpp\bin\Release\NLog.dll.nlog" "%plugins%\CSScriptNpp\NLog.dll.nlog"
+
 copy "CSScriptNpp\bin\Release\CSScriptNpp.dll" "%plugins%\CSScriptNpp.dll"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\*.exe" "%plugins%\CSScriptNpp"
 copy "CSScriptNpp\bin\release\CSScriptNpp\*.pdb" "%plugins%\CSScriptNpp"
@@ -29,6 +35,9 @@ copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.exe" "%plugins%\CSScriptNpp\Mdb
 copy "CSScriptNpp\CSScriptNpp\roslyn\csc.exe" "%plugins%\CSScriptNpp\Roslyn\csc.exe"
 copy "CSScriptNpp\CSScriptNpp\roslyn\CSSCodeProvider.v4.6.dll" "%plugins%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\Formatter.exe" "%plugins%\CSScriptNpp\Roslyn\Formatter.exe"
+
+copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe"
+copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe.config" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe.config"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll"
@@ -52,6 +61,8 @@ set bin=..\bin\Plugins
 
 copy "CSScriptIntellisense\bin\Release\CSScriptIntellisense.dll"  "%bin%\CSScriptNpp"
 copy "CSScriptIntellisense\bin\Release\CSharpIntellisense\*.dll" "%bin%\CSScriptNpp"
+copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
+copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
 
 copy "CSScriptNpp\bin\release\CSScriptNpp.dll" "%bin%\CSScriptNpp.dll"
 copy "CSScriptNpp\bin\release\CSScriptNpp\*.exe" "%bin%\CSScriptNpp"
@@ -60,9 +71,16 @@ copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.dll" "%bin%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.exe" "%bin%\CSScriptNpp\Mdbg"
 rem copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "%bin%\CSScriptNpp\Roslyn\"
 
+copy "CSScriptNpp\bin\Release\NLog.dll" "%bin%\CSScriptNpp\NLog.dll"
+copy "CSScriptNpp\bin\Release\NLog.dll.nlog" "%bin%\CSScriptNpp\NLog.dll.nlog"
+
+
 copy "CSScriptNpp\CSScriptNpp\roslyn\csc.exe" "%bin%\CSScriptNpp\Roslyn\csc.exe"
 copy "CSScriptNpp\CSScriptNpp\roslyn\CSSCodeProvider.v4.6.dll" "%bin%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\Formatter.exe" "%bin%\CSScriptNpp\Roslyn\Formatter.exe"
+
+copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe" "%bin%\CSScriptNpp\Roslyn\VBCSCompiler.exe"
+copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe.config" "%bin%\CSScriptNpp\Roslyn\VBCSCompiler.exe.config"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll" "%bin%\CSScriptNpp\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll" "%bin%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll"
