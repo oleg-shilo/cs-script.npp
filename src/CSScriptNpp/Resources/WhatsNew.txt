@@ -3,4 +3,6 @@ v1.0.48.0
 * Added Roslyn server to keep Roslyn compilers loaded between script executions. Significantly improves Roslyn performance.
 * Added Intellisense support for all CS-Script directives
 * Added 'help' for all CS-Script directives
-
+* Updated CS-Script engine (v3.11.0.0)
+** Added support //css_nuget package dependency resolving.
+** Fixed problem with -force[:delay] switch colliding with other //css_nuget switches.
