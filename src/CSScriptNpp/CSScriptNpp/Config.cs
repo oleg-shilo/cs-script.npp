@@ -171,7 +171,7 @@ namespace CSScriptNpp
                 //QuickViewAutoRefreshAvailable = GetValue(Section, nameof(QuickViewAutoRefreshAvailable), QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
                 LocalDebug = GetValue(Section, nameof(LocalDebug), LocalDebug);
                 TargetVersion = GetValue(Section, nameof(TargetVersion), TargetVersion);
-                TargetVersion = GetValue(Section, nameof(CsSConsoleEncoding), CsSConsoleEncoding);
+                CsSConsoleEncoding = GetValue(Section, nameof(CsSConsoleEncoding), CsSConsoleEncoding);
                 LastExternalProcess = GetValue(Section, nameof(LastExternalProcess), LastExternalProcess);
                 LastExternalProcessArgs = GetValue(Section, nameof(LastExternalProcessArgs), LastExternalProcessArgs);
                 LastExternalProcessCpu = GetValue(Section, nameof(LastExternalProcessCpu), LastExternalProcessCpu);
