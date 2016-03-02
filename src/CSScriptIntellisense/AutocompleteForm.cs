@@ -46,18 +46,20 @@ namespace CSScriptIntellisense
             IEnumerable<ICompletionData> items = ProcessSuggestionHint(partialName, rawItems);
 
             listBox1.Items.AddRange(items.ToArray());
-            listBox1.SelectedItem = items.FirstOrDefault();
+            //listBox1.SelectedItem = items.FirstOrDefault(); //inconvenient and inconsistent with VS UX
 
             //extras are for the better appearance and they are discovered via experiment
             int extraHeight = 10;
             int extraWidth = 20;
 
             var g = listBox1.CreateGraphics();
-            var wideItem = items.Select(x => (int)g.MeasureString(x.DisplayText, listBox1.Font).Width).Max(x => x);
+            var wideItem = items.Select(x => (int) g.MeasureString(x.DisplayText, listBox1.Font).Width).Max(x => x);
             this.Width = Math.Min(wideItem + 40 + extraWidth, 250);//40 = 20 for icon on left and 20 for scrollbar on right
 
             this.Height = ((itemHeight + verticalSpacing) * Math.Min(listBox1.Items.Count, 10)) + extraHeight;
 
+            if (items.Count() == 1 && items.First().DisplayText == partialName)
+                Dispatcher.Shedule(10, Close); //no need to suggest as the token is already completed
             //this.Width = 120;
         }
 
@@ -87,14 +89,14 @@ namespace CSScriptIntellisense
 
         void listBox1_MeasureItem(object sender, MeasureItemEventArgs e)
         {
-            var item = (ICompletionData)listBox1.Items[e.Index];
+            var item = (ICompletionData) listBox1.Items[e.Index];
 
             string itemString = item.DisplayText;
 
             SizeF size = e.Graphics.MeasureString(item.DisplayText, listBox1.Font);
-            e.ItemHeight = (int)size.Height + verticalSpacing;
+            e.ItemHeight = (int) size.Height + verticalSpacing;
 
-            e.ItemWidth = (int)size.Width + 16 + 10 + 10; //ensure enough space for the icon and the scrollbar
+            e.ItemWidth = (int) size.Width + 16 + 10 + 10; //ensure enough space for the icon and the scrollbar
             listBox1.HorizontalExtent = e.ItemWidth;
         }
 
@@ -182,7 +184,7 @@ namespace CSScriptIntellisense
             if (e.Index == -1)
                 return;
 
-            var item = (ICompletionData)listBox1.Items[e.Index];
+            var item = (ICompletionData) listBox1.Items[e.Index];
 
             e.DrawBackground();
 
@@ -218,33 +220,61 @@ namespace CSScriptIntellisense
             OnKeyDown(e.KeyCode);
         }
 
-        public void OnKeyDown(Keys key)
+        public bool OnKeyDown(Keys key)
         {
+            bool handled = false;
             if (Visible)
             {
                 if (key == Keys.Up)
                 {
-                    if (listBox1.SelectedIndex > 0)
+                    if (listBox1.SelectedIndex == -1)
+                        listBox1.SelectedIndex = 0;
+                    else if (listBox1.SelectedIndex > 0)
                         listBox1.SelectedIndex--;
+
+                    handled = true;
                 }
 
                 if (key == Keys.Down)
                 {
-                    if (listBox1.SelectedIndex < (listBox1.Items.Count - 1))
+                    if (listBox1.SelectedIndex == -1)
+                        listBox1.SelectedIndex = 0;
+                    else if (listBox1.SelectedIndex < (listBox1.Items.Count - 1))
                         listBox1.SelectedIndex++;
+
+                    handled = true;
                 }
 
                 if (key == Keys.Escape)
-                    Close();
-
-                if (key == Keys.Enter ||
-                   (key == Keys.Right && Config.Instance.UseArrowToAccept) ||
-                   (key == Keys.Tab && Config.Instance.UseTabToAccept))
                 {
-                    OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
-                    Dispatcher.Shedule(10, Close);
+                    handled = true;
+                    Close();
+                }
+
+                if (listBox1.SelectedItem == null)
+                {
+                    if (key == Keys.Right || key == Keys.Left)
+                    {
+                        //handled = false; //let the editor to move the caret
+                        //Close();
+                    }
+                    Dispatcher.Shedule(10, () => Plugin.OnAutocompleteKeyPress());
+                }
+                else
+                {
+                    if (key == Keys.Enter ||
+                       (key == Keys.Right && Config.Instance.UseArrowToAccept) ||
+                       (key == Keys.Tab && Config.Instance.UseTabToAccept))
+                    {
+                        OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+                        Dispatcher.Shedule(10, Close);
+
+                        handled = true;
+                    }
                 }
             }
+
+            return handled;
         }
 
         private void AutocompleteForm_Deactivate(object sender, EventArgs e)
@@ -260,22 +290,32 @@ namespace CSScriptIntellisense
 
         private void AutocompleteForm_Load(object sender, EventArgs e)
         {
-            var g = listBox1.CreateGraphics();
-            itemHeight = (int)g.MeasureString("T", listBox1.Font).Height;
+            try
+            {
+                var g = listBox1.CreateGraphics();
+                itemHeight = (int) g.MeasureString("T", listBox1.Font).Height;
 
-            listBox1.Sorted = false;
-            listBox1.DrawMode = DrawMode.OwnerDrawVariable;
-            listBox1.DrawItem += listBox1_DrawItem;
-            listBox1.MeasureItem += listBox1_MeasureItem;
-            listBox1.HorizontalScrollbar = true;
+                listBox1.Sorted = false;
+                listBox1.DrawMode = DrawMode.OwnerDrawVariable;
+                listBox1.DrawItem += listBox1_DrawItem;
+                listBox1.MeasureItem += listBox1_MeasureItem;
+                listBox1.HorizontalScrollbar = true;
 
-            FilterFor(initialPartialName);
-            // ListenToKeyStroks(true);
+                FilterFor(initialPartialName);
+                // ListenToKeyStroks(true);
 
-            Capture = true;
-            MouseDown += AutocompleteForm_MouseDown;
+                Capture = true;
+                MouseDown += AutocompleteForm_MouseDown;
 
-            timer1.Enabled = true;
+                timer1.Enabled = true;
+
+                if (listBox1.Items.Count == 1)
+                {
+                    listBox1.SelectedIndex = 0;
+                    OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+                }
+            }
+            catch { } //FilterFor may close the form
         }
 
         void AutocompleteForm_MouseDown(object sender, MouseEventArgs e)

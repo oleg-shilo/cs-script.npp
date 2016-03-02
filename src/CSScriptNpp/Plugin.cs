@@ -472,11 +472,11 @@ namespace CSScriptNpp
 
             OpenAutomationChannel();
 
-            if (Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtStartup)
-            {
-                //unfortunately InitRoslyn is ineffective
-                Task.Factory.StartNew(CSScriptHelper.InitRoslyn);
-            }
+            //if (Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtStartup)
+            //{
+            //    //unfortunately InitRoslyn is ineffective
+            //    Task.Factory.StartNew(CSScriptHelper.InitRoslyn);
+            //}
         }
 
         static internal void OnDocumentSaved()
@@ -542,6 +542,11 @@ namespace CSScriptNpp
         {
             if (CodeMapPanel != null)
                 CodeMapPanel.RefreshContent();
+
+            if (Npp.IsCurrentScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtStartup)
+            {
+                CSScriptHelper.InitRoslyn();
+            }
         }
 
         public static void OnToolbarUpdate()

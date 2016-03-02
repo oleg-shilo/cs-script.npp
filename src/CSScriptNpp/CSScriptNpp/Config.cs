@@ -80,7 +80,7 @@ namespace CSScriptNpp
             {
                 try
                 {
-                    Debug.WriteLine("---> Config.Save");
+                   // Debug.WriteLine("---> Config.Save");
                     File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
                     SetValue(Section, nameof(ShowProjectPanel), ShowProjectPanel);

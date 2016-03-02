@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -405,11 +406,30 @@ namespace CSScriptNpp
             }
         }
 
+        static System.Windows.Forms.Timer keepRoslynLoadedTimer;
         static public void InitRoslyn()
+        {
+            if (keepRoslynLoadedTimer == null)
+            {
+                LoadRoslyn();
+
+                keepRoslynLoadedTimer = new Timer();
+                keepRoslynLoadedTimer.Interval = 1000 * 60 * 9; //9 min 
+                keepRoslynLoadedTimer.Tick += (s, e) =>
+                                                {
+                                                    LoadRoslyn();
+                                                };
+                keepRoslynLoadedTimer.Enabled = true;
+                keepRoslynLoadedTimer.Start();
+            }
+        }
+
+        static public void LoadRoslyn()
         {
             //disabled as unreliable; it can even potentially crash csc.exe if MS CodeAnalysis asms are probed incorrectly 
             try
             {
+
                 string file = Path.Combine(Path.GetTempPath(), "load_roslyn.cs");
 
                 File.WriteAllText(file,
@@ -431,7 +451,13 @@ class Script
                 File.SetLastWriteTimeUtc(file, DateTime.Now.ToUniversalTime());
 
                 string args = string.Format("/dbg /l {0} \"{1}\"", GenerateDefaultArgs(), file);
-                Process.Start(csws_exe, args);
+                //Process.Start(csws_exe, args);
+                var p = new Process();
+                p.StartInfo.FileName = cscs_exe;
+                p.StartInfo.Arguments = args;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.UseShellExecute = false;
+                p.Start();
             }
             catch { }
 

@@ -97,6 +97,7 @@ namespace CSScriptIntellisense
                 KeyInterceptor.Instance.Add(Keys.Up);
                 KeyInterceptor.Instance.Add(Keys.Down);
                 KeyInterceptor.Instance.Add(Keys.Right);
+                KeyInterceptor.Instance.Add(Keys.Left);
                 KeyInterceptor.Instance.Add(Keys.Tab);
                 KeyInterceptor.Instance.Add(Keys.Return);
                 KeyInterceptor.Instance.Add(Keys.Escape);
@@ -130,12 +131,11 @@ namespace CSScriptIntellisense
         {
             if (IsShowingInteractivePopup)
             {
-                if (key == Keys.Up || key == Keys.Down || key == Keys.Right || key == Keys.Tab || key == Keys.Return || key == Keys.Escape)
+                if (key == Keys.Up || key == Keys.Down || key == Keys.Right || key == Keys.Left || key == Keys.Tab || key == Keys.Return || key == Keys.Escape)
                 {
                     if (autocompleteForm != null && autocompleteForm.Visible)
                     {
-                        autocompleteForm.OnKeyDown(key);
-                        handled = true;
+                        handled = autocompleteForm.OnKeyDown(key);
                     }
 
                     if (memberInfoPopup != null && memberInfoPopup.IsShowing)
@@ -220,7 +220,7 @@ namespace CSScriptIntellisense
             if (Config.Instance.InterceptCtrlSpace && Npp.IsCurrentScriptFile())
             {
                 foreach (var shortcut in internalShortcuts.Keys)
-                    if ((byte)key == shortcut._key)
+                    if ((byte) key == shortcut._key)
                     {
                         Modifiers modifiers = KeyInterceptor.GetModifiers();
 
@@ -250,7 +250,7 @@ namespace CSScriptIntellisense
 
             internalShortcuts.Add(shortcut, new Tuple<string, Action>(displayName, handler));
 
-            var key = (Keys)shortcut._key;
+            var key = (Keys) shortcut._key;
             if (!uniqueKeys.ContainsKey(key))
                 uniqueKeys.Add(key, 0);
         }
@@ -643,7 +643,7 @@ namespace CSScriptIntellisense
                 }
                 else if (Config.Instance.InterceptCtrlSpace)
                 {
-                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_FUNCCALLTIP, 0);
+                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg) WinMsg.WM_COMMAND, (int) NppMenuCmd.IDM_EDIT_FUNCCALLTIP, 0);
                 }
             });
         }
@@ -658,7 +658,7 @@ namespace CSScriptIntellisense
                 }
                 else if (Config.Instance.InterceptCtrlSpace)
                 {
-                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_AUTOCOMPLETE, 0);
+                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg) WinMsg.WM_COMMAND, (int) NppMenuCmd.IDM_EDIT_AUTOCOMPLETE, 0);
                 }
             });
         }
@@ -743,34 +743,57 @@ namespace CSScriptIntellisense
             }
         }
 
-        static void OnAutocompleteKeyPress(char keyChar = char.MinValue, bool allowNoText = false)
+        static public void OnAutocompleteKeyPress(char keyChar = char.MinValue, bool allowNoText = false)
         {
-            int currentPos = Npp.GetCaretPosition();
-
-            string text = Npp.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
-            string hint = null;
-
-            char[] delimiters = SimpleCodeCompletion.Delimiters;
-            string word =  Npp.GetWordAtPosition(currentPos);
-            if(word.StartsWith("css_")) //CS-Script directive
-                delimiters = SimpleCodeCompletion.CSS_Delimiters;
-
-            int pos = text.LastIndexOfAny(delimiters);
-            if (pos != -1)
+            try
             {
-                hint = text.Substring(pos + 1).Trim();
+                int currentPos = Npp.GetCaretPosition();
+
+                string text = Npp.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
+                string hint = null;
+
+                char[] delimiters = SimpleCodeCompletion.Delimiters;
+                string word = Npp.GetWordAtPosition(currentPos);
+                if (word.StartsWith("css_")) //CS-Script directive
+                    delimiters = SimpleCodeCompletion.CSS_Delimiters;
+
+
+                int pos = text.LastIndexOfAny(delimiters);
+                if (pos != -1)
+                {
+                    hint = text.Substring(pos + 1).Trim();
+                }
+                else if (text.Length == currentPos) //start of the doc
+                    hint = text;
+
+                var charOnRigt = Npp.GetTextBetween(currentPos, currentPos + 1);
+                var charOnLeft = Npp.GetTextBetween(currentPos - 1, currentPos);
+                Debug.WriteLine("charOnLeft ({0}); charOnRigth ({1})", charOnLeft, charOnRigt);
+                if (char.IsWhiteSpace(charOnLeft[0])) // Console.Wr |
+                    hint = null;
+                else if (charOnRigt[0].IsOneOf('.','[', '<', '(', '{' )) // Console|.Wr
+                    hint = null;
+
+                if (autocompleteForm != null)
+                {
+                    if (hint != null)
+                    {
+                        //Debug.WriteLine("Autocomplete hint: " + hint);
+                        autocompleteForm.FilterFor(hint);
+                    }
+                    else
+                    {
+                        if (!allowNoText)
+                        {
+                            autocompleteForm.Close();
+                            autocompleteForm = null;
+                        }
+                    }
+                }
             }
-            else if (text.Length == currentPos) //start of the doc
-                hint = text;
-
-            if (hint != null)
+            catch (Exception e)
             {
-                autocompleteForm.FilterFor(hint);
-            }
-            else
-            {
-                if (!allowNoText)
-                    autocompleteForm.Close();
+                Debug.WriteLine(e); //there can be legitimate failures
             }
         }
 
@@ -803,7 +826,14 @@ namespace CSScriptIntellisense
                 else if (autocompleteForm != null && autocompleteForm.Visible)
                 {
                     if (c >= ' ' || c == 8) //8 is backspace
+                    {
                         OnAutocompleteKeyPress(c);
+                    }
+                    //else
+                    //{
+                    //    autocompleteForm.Close();
+                    //    autocompleteForm = null;
+                    //}
                 }
                 else
                     SourceCodeFormatter.OnCharTyped(c);
@@ -1031,7 +1061,7 @@ namespace CSScriptIntellisense
             {
                 //just to handle NPP strange concept of caret position being not a point of the text 
                 //but an index of the byte array
-                currentPos = Npp.CaretToTextPosition(currentPos); 
+                currentPos = Npp.CaretToTextPosition(currentPos);
             }
             catch { }
 

@@ -560,98 +560,104 @@ void main(string[] args)
 
         public void RefreshProjectStructure()
         {
-            if (Npp.GetCurrentFile() == currentScript)
+            this.InUiThread(() =>
             {
-                try
+                if (Npp.GetCurrentFile() == currentScript)
                 {
-                    Project project = CSScriptHelper.GenerateProjectFor(currentScript);
+                    try
+                    {
+                        Project project = CSScriptHelper.GenerateProjectFor(currentScript);
 
-                    treeView1.BeginUpdate();
+                        treeView1.BeginUpdate();
 
-                    /*
-                     root
-                     references
-                        assembly_1 
-                        assembly_2 
-                        assembly_n 
-                     script_1 
-                     script_2 
-                     script_N 
-                     */
+                        /*
+                         root
+                         references
+                            assembly_1 
+                            assembly_2 
+                            assembly_n 
+                         script_1 
+                         script_2 
+                         script_N 
+                         */
 
-                    TreeNode root = treeView1.Nodes[0];
-                    TreeNode references = root.Nodes[0];
+                        TreeNode root = treeView1.Nodes[0];
+                        TreeNode references = root.Nodes[0];
 
-                    Action<TreeNode, string[]> updateNode =
-                        (node, files) =>
-                        {
-                            string[] currentFiles = node.Nodes
-                                                        .Cast<TreeNode>()
-                                                        .Where(x => x.Tag is ProjectItem)
-                                                        .Select(x => (x.Tag as ProjectItem).File)
-                                                        .ToArray();
-
-                            string[] newItems = files.Except(currentFiles).ToArray();
-
-                            var orphantItems = node.Nodes
-                                                   .Cast<TreeNode>()
-                                                   .Where(x => x.Tag is ProjectItem)
-                                                   .Where(x => !files.Contains((x.Tag as ProjectItem).File))
-                                                   .Where(x => x != root && x != references)
-                                                   .ToArray();
-
-                            orphantItems.ForEach(x => node.Nodes.Remove(x));
-                            newItems.ForEach(file =>
+                        Action<TreeNode, string[]> updateNode =
+                            (node, files) =>
                             {
-                                int imageIndex = includeImage;
-                                var info = new ProjectItem(file) { IsPrimary = (file == project.PrimaryScript) };
-                                if (info.IsAssembly)
-                                    imageIndex = assemblyImage;
-                                node.Nodes.Add(new TreeNode(info.Name) { ImageIndex = imageIndex, SelectedImageIndex = imageIndex, Tag = info, ToolTipText = file, ContextMenuStrip = itemContextMenu });
-                            });
-                        };
+                                string[] currentFiles = node.Nodes
+                                                            .Cast<TreeNode>()
+                                                            .Where(x => x.Tag is ProjectItem)
+                                                            .Select(x => (x.Tag as ProjectItem).File)
+                                                            .ToArray();
 
-                    updateNode(references, project.Assemblies);
-                    updateNode(root, project.SourceFiles);
-                    root.Expand();
+                                string[] newItems = files.Except(currentFiles).ToArray();
 
-                    treeView1.EndUpdate();
+                                var orphantItems = node.Nodes
+                                                       .Cast<TreeNode>()
+                                                       .Where(x => x.Tag is ProjectItem)
+                                                       .Where(x => !files.Contains((x.Tag as ProjectItem).File))
+                                                       .Where(x => x != root && x != references)
+                                                       .ToArray();
+
+                                orphantItems.ForEach(x => node.Nodes.Remove(x));
+                                newItems.ForEach(file =>
+                                {
+                                    int imageIndex = includeImage;
+                                    var info = new ProjectItem(file) { IsPrimary = (file == project.PrimaryScript) };
+                                    if (info.IsAssembly)
+                                        imageIndex = assemblyImage;
+                                    node.Nodes.Add(new TreeNode(info.Name) { ImageIndex = imageIndex, SelectedImageIndex = imageIndex, Tag = info, ToolTipText = file, ContextMenuStrip = itemContextMenu });
+                                });
+                            };
+
+                        updateNode(references, project.Assemblies);
+                        updateNode(root, project.SourceFiles);
+                        root.Expand();
+
+                        treeView1.EndUpdate();
+                    }
+                    catch (Exception e)
+                    {
+                        e.LogAsError();
+                    }
                 }
-                catch (Exception e)
-                {
-                    e.LogAsError();
-                }
-            }
+            });
         }
 
         void RefreshControls()
         {
-            openInVsBtn.Visible = Utils.IsVS2010PlusAvailable;
-
-            newBtn.Enabled = true;
-
-            validateBtn.Enabled =
-            reloadBtn.Enabled =
-            debugBtn.Enabled =
-            openInVsBtn.Enabled =
-            synchBtn.Enabled =
-            runBtn.Enabled = (treeView1.Nodes.Count > 0);
-
-            bool running = (Plugin.RunningScript != null);
-            runBtn.Enabled = !running || Debugger.IsRunning;
-            stopBtn.Enabled = running || Debugger.IsRunning;
-
-            if (running)
+            this.InUiThread(() =>
             {
+                openInVsBtn.Visible = Utils.IsVS2010PlusAvailable;
+
+                newBtn.Enabled = true;
+
                 validateBtn.Enabled =
+                reloadBtn.Enabled =
                 debugBtn.Enabled =
                 openInVsBtn.Enabled =
-                loadBtn.Enabled =
-                newBtn.Enabled =
-                reloadBtn.Enabled = false;
-            }
-            else
-                loadBtn.Enabled = true;
+                synchBtn.Enabled =
+                runBtn.Enabled = (treeView1.Nodes.Count > 0);
+
+                bool running = (Plugin.RunningScript != null);
+                runBtn.Enabled = !running || Debugger.IsRunning;
+                stopBtn.Enabled = running || Debugger.IsRunning;
+
+                if (running)
+                {
+                    validateBtn.Enabled =
+                    debugBtn.Enabled =
+                    openInVsBtn.Enabled =
+                    loadBtn.Enabled =
+                    newBtn.Enabled =
+                    reloadBtn.Enabled = false;
+                }
+                else
+                    loadBtn.Enabled = true;
+            });
         }
 
         ProjectItem SelectedItem

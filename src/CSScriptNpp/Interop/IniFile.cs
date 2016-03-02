@@ -29,7 +29,9 @@ namespace CSScriptNpp
         {
             try
             {
-                WritePrivateProfileString(section, key.Trim(), value.ToString().Trim(), file);
+                var val = value.ToString().Trim();
+                if(!val.IsEmpty())
+                    WritePrivateProfileString(section, key.Trim(), value.ToString().Trim(), file);
             }
             catch { }
         }
