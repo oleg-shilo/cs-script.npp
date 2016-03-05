@@ -140,9 +140,7 @@ namespace CSScriptIntellisense
 
                     if (memberInfoPopup != null && memberInfoPopup.IsShowing)
                     {
-                        memberInfoPopup.popupForm.kbdHook_KeyDown(key, 1);
-                        if (key != Keys.Right) //right only processed in autocompleteForm
-                            handled = true;
+                        // memberInfoPopup handles its own keyboard hook events
                     }
 
                     if (namespaceMenu != null && namespaceMenu.Visible)
