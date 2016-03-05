@@ -578,6 +578,8 @@ namespace UltraSharp.Cecil
 
         private static CodeMapItem[] GetMapOfImpl(string code, bool decorated)
         {
+            code = code.Replace("using static", "using ");  //NRefactory cannot handle C#6
+
             var syntaxTree = new CSharpParser().Parse(code, "demo.cs");
 
             if (syntaxTree.Errors.Any())
@@ -586,7 +588,8 @@ namespace UltraSharp.Cecil
             var map = new List<CodeMapItem>();
 
             var types = syntaxTree.Children.DeepAll(x => x.NodeType == NodeType.TypeDeclaration)
-                                           .Cast<TypeDeclaration>()
+                                           .OfType<TypeDeclaration>()
+                                           //.Cast<TypeDeclaration>()
                                            .ToArray();
 
             foreach (var element in types)
