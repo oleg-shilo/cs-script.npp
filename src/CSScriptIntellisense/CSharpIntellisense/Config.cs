@@ -47,6 +47,8 @@ namespace CSScriptIntellisense
         public bool FallbackFormatting = false;
         public bool RoslynFormatting = true;
         public bool FormatAsYouType = true;
+        public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
+        public string DefaultRefAsms = "System.Linq, System.Xml, System.Xml.Linq, System.Windows.Forms, System.Drawing, System.Core, Microsoft.CSharp";
         public int MemberInfoMaxCharWidth = 100;
         public int MemberInfoMaxLines = 15;
         public bool SmartIndenting = true;
@@ -74,6 +76,8 @@ namespace CSScriptIntellisense
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
                 SetValue(Section, "RoslynFormatting", RoslynFormatting);
                 SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
+                SetValue(Section, "DefaultRefAsms", DefaultRefAsms);
+                SetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 SetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 SetValue(Section, "FormatAsYouType", FormatAsYouType);
             }
@@ -94,6 +98,8 @@ namespace CSScriptIntellisense
                 ShowQuickInfoAsNativeNppTooltip = GetValue(Section, "ShowQuickInfoAsNativeNppTooltip", ShowQuickInfoAsNativeNppTooltip);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 MemberInfoMaxCharWidth = GetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
+                DefaultRefAsms = GetValue(Section, "DefaultRefAsms", DefaultRefAsms);
+                DefaultNamespaces = GetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);

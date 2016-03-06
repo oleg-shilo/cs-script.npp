@@ -105,17 +105,28 @@ namespace CSScriptIntellisense
 
         static IEnumerable<ICompletionData> GetCSharpScriptCompletionData(string editorText, int offset, bool prepareForDisplay = true)
         {
-            var textOnRight = GetCSharpScriptDirectiveLine(editorText, offset);
+            var directiveLine = GetCSharpScriptDirectiveLine(editorText, offset);
 
-            if (textOnRight.StartsWith("//css_"))
-                return CssCompletionData.AllDirectives;
-            else
-                return null;
+            if (directiveLine.StartsWith("//css_")) //e.g. '//css_ref'
+            {
+                var word = Npp.GetWordAtCursor(); //e.g. 'css_ref'
+
+                if (word.StartsWith("css_")) //directive itself
+                {
+                    return CssCompletionData.AllDirectives;
+                }
+                else //directive is complete and user is typing the next word (directive argument)
+                {
+                    if (directiveLine.StartsWith("//css_ref"))
+                        return CssCompletionData.DefaultRefAsms;
+                }
+            }
+
+            return null;
         }
 
         static IEnumerable<ICompletionData> GetCSharpCompletionData(ReadOnlyDocument doc, string editorText, int offset, string fileName, bool isControlSpace = true, bool prepareForDisplay = true) // not the best way to put in the whole string every time
         {
-
             if (editorText[offset] != '.') //we may be at the partially complete word
                 for (int i = offset - 1; i >= 0; i--)
                     if (SimpleCodeCompletion.Delimiters.Contains(editorText[i]))
@@ -154,10 +165,18 @@ namespace CSScriptIntellisense
 
             var data = engine.GetCompletionData(offset, isControlSpace);
 
+            //suggest default CS-Script usings as well
+            var extraItems = new List<ICompletionData>();
+            var line = Npp.GetLine(Npp.GetLineNumber(offset)).Trim();
+            if (line == "using")
+            {
+                extraItems.AddRange(CssCompletionData.DefaultNAmespaces);
+            }
+
             if (prepareForDisplay)
-                return data.PrepareForDisplay();
+                return data.PrepareForDisplay().Concat(extraItems);
             else
-                return data;
+                return data.Concat(extraItems);
         }
         public static IEnumerable<ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true, bool prepareForDisplay = true) // not the best way to put in the whole string every time
         {
@@ -462,9 +481,12 @@ namespace CSScriptIntellisense
         {
             int i = 0;
 
+            //need to allow 'space' as we are looking for a CS-Script line not a token
+            var delimiters = SimpleCodeCompletion.CSS_Delimiters.Where(x => x != ' ');
+
             if (editorText[offset] != '.') //we may be at the partially complete word
                 for (i = offset - 1; i >= 0; i--)
-                    if (SimpleCodeCompletion.CSS_Delimiters.Contains(editorText[i]))
+                    if (delimiters.Contains(editorText[i]))
                     {
                         offset = i + 1;
                         break;
@@ -474,16 +496,19 @@ namespace CSScriptIntellisense
                 offset = 0;
 
             var textOnRight = editorText.Substring(offset);
+            var endPos = textOnRight.IndexOf('\n');
+            if (endPos != -1)
+                textOnRight = textOnRight.Substring(0, endPos - 1).TrimEnd('\r');
             return textOnRight;
         }
 
         static DomRegion? ResolveCSharpScriptMember(string editorText, int offset)
         {
-            var textOnRight = GetCSharpScriptDirectiveLine(editorText, offset);
+            var directiveLine = GetCSharpScriptDirectiveLine(editorText, offset);
 
-            if (textOnRight.StartsWith("//css_"))
+            if (directiveLine.StartsWith("//css_"))
             {
-                var css_directive = textOnRight.Split(SimpleCodeCompletion.CSS_Delimiters).FirstOrDefault();
+                var css_directive = directiveLine.Split(SimpleCodeCompletion.CSS_Delimiters).FirstOrDefault();
                 return CssCompletionData.ResolveDefinition(css_directive);
             }
             else

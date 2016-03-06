@@ -715,8 +715,7 @@ namespace CSScriptNpp
 
         void Flash()
         {
-            //if (buffer.Length > 0)
-            if (!isBuffered || (buffer[buffer.Length - 1] == '\n'))
+            if (!isBuffered || (buffer.Length > 0 && buffer[buffer.Length - 1] == '\n'))
             {
                 control.AppendText(buffer.ToString());
                 buffer.Clear();

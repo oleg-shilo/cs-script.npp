@@ -673,8 +673,18 @@ namespace CSScriptIntellisense
             {
                 items = GetSuggestionItemsAtCaret();
 
-                if (!Npp.TextBeforeCursor(2).EndsWith(".")) //do not suggest snippets if expecting a member
-                    items = items.Concat(GetSnippetsItems());
+                bool memberSugesstion = Npp.TextBeforeCursor(2).EndsWith(".");
+
+                if (!memberSugesstion)
+                {
+                    bool cssSugesstion = Npp.TextBeforeCursor(300).Split('\n').Last().TrimStart().StartsWith("//css_");
+                    if (!cssSugesstion)
+                    {
+                        bool usingSuggestion = Npp.GetLine(Npp.GetCaretLineNumber()).Trim() == "using";
+                        if(!usingSuggestion)
+                            items = items.Concat(GetSnippetsItems());
+                    }
+                }
             }
 
             if (items.Count() > 0)
@@ -769,24 +779,28 @@ namespace CSScriptIntellisense
                 Debug.WriteLine("charOnLeft ({0}); charOnRigth ({1})", charOnLeft, charOnRigt);
                 if (char.IsWhiteSpace(charOnLeft[0])) // Console.Wr |
                     hint = null;
-                else if (charOnRigt[0].IsOneOf('.','[', '<', '(', '{' )) // Console|.Wr
+                else if (charOnRigt[0].IsOneOf('.', '[', '<', '(', '{')) // Console|.Wr
                     hint = null;
 
                 if (autocompleteForm != null)
                 {
-                    if (hint != null)
+                    try
                     {
-                        //Debug.WriteLine("Autocomplete hint: " + hint);
-                        autocompleteForm.FilterFor(hint);
-                    }
-                    else
-                    {
-                        if (!allowNoText)
+                        if (hint != null)
                         {
-                            autocompleteForm.Close();
-                            autocompleteForm = null;
+                            //Debug.WriteLine("Autocomplete hint: " + hint);
+                            autocompleteForm.FilterFor(hint);
+                        }
+                        else
+                        {
+                            if (!allowNoText)
+                            {
+                                autocompleteForm.Close();
+                                autocompleteForm = null;
+                            }
                         }
                     }
+                    catch { } //possible to be called after disposing the form
                 }
             }
             catch (Exception e)

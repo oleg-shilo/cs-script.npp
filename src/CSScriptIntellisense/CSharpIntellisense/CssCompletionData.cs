@@ -1,11 +1,9 @@
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.Semantics;
-using ICSharpCode.NRefactory.TypeSystem;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace CSScriptIntellisense
 {
@@ -23,6 +21,31 @@ namespace CSScriptIntellisense
         {
         }
 
+        public static ICompletionData[] DefaultRefAsms
+        {
+            get
+            {
+                return Config.Instance.DefaultRefAsms
+                                           .Split(';', ',')
+                                           .Where(x => !string.IsNullOrWhiteSpace(x))
+                                           .Select(x => x.Trim())
+                                           .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x })
+                                           .ToArray();
+            }
+        }
+        public static ICompletionData[] DefaultNAmespaces
+        {
+            get
+            {
+                return Config.Instance.DefaultNamespaces
+                                        .Split(';', ',')
+                                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                                        .Select(x => x.Trim())
+                                        .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x })
+                                        .ToArray();
+            }
+        }
+
         public static ICompletionData[] AllDirectives =
         new ICompletionData[]
         {
@@ -35,7 +58,7 @@ namespace CSScriptIntellisense
 //css_inc <file>;
 //css_include <file>;
 
-Example: 
+Example:
     //css_inc utils.cs;"
             },
 
@@ -47,7 +70,7 @@ Example:
 //css_ref <file>;
 //css_reference <file>;
 
-Example: 
+Example:
     //css_ref ystem.Data.ComponentModel.dll;"
             },
 
@@ -57,8 +80,8 @@ Example:
                 Description =
 @"'Set command-line arguments' CS-Script directive
 //css_args arg0[,arg1]..[,argN];
-                
-Example: 
+
+Example:
     //css_args /dbg, /ac, ""argument one"";"
             },
 
@@ -70,7 +93,7 @@ Example:
 //css_dir <path>;
 //css_searchdir <path>;
 
-Examples: 
+Examples:
     //css_dir ..\\..\\MyAssemblies;
     //css_dir packages\\**"
             },
@@ -80,8 +103,8 @@ Examples:
                 Description =
 @"'Reference NuGet package' CS-Script directive
 //css_nuget [-noref] [-force[:delay]] [-ver:<version>] [-ng:<nuget arguments>] package0[..[,packageN];
-                
-Examples: 
+
+Examples:
     //css_nuget cs-script;
     //css_nuget -ver:4.1.2 NLog;
     //css_nuget -ver:""4.1.1-rc1"" -ng:""-Pre -NoCache"" NLog;"
@@ -148,7 +171,7 @@ Examples:
             return null;
         }
 
-        static int FindSection(string directive, string[] lines )
+        static int FindSection(string directive, string[] lines)
         {
             string pattern1 = directive;
             string pattern2 = "Alias - " + directive;

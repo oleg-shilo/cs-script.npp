@@ -39,6 +39,8 @@ namespace CSScriptIntellisense
 
         public void FilterFor(string partialName)
         {
+            if (this.IsDisposed) return;
+
             listBox1.Items.Clear();
 
             //Debug.WriteLine("hint: " + partialName);
