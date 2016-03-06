@@ -578,7 +578,9 @@ namespace UltraSharp.Cecil
 
         private static CodeMapItem[] GetMapOfImpl(string code, bool decorated)
         {
-            code = code.Replace("using static", "using ");  //NRefactory cannot handle C#6
+            //NRefactory cannot handle C#6
+            code = code.Replace("using static", "using ")
+                       .Replace("$\"", "\"");
 
             var syntaxTree = new CSharpParser().Parse(code, "demo.cs");
 

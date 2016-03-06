@@ -622,15 +622,45 @@ class Script
                 return null;
             }
         }
-
         static public string GetLatestAvailableVersion()
+        {
+            string url = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL") ?? "http://csscript.net/npp/latest_version.txt";
+#if DEBUG
+            //url = "http://csscript.net/npp/latest_version_dbg.txt";
+#endif
+            string stableVersion = GetLatestAvailableVersion(url);
+
+            if (Config.Instance.CheckPrereleaseUpdates)
+            {
+                string prereleaseVersion = GetLatestAvailableVersion(url.Replace(".txt", ".pre.txt") );
+                if (stableVersion.IsEmpty())
+                {
+                    return prereleaseVersion;
+                }
+                if (prereleaseVersion.IsEmpty())
+                {
+                    return stableVersion;
+                }
+                else
+                {
+                    try
+                    {
+                        if (Version.Parse(prereleaseVersion) > Version.Parse(stableVersion))
+                            return prereleaseVersion;
+                        else
+                            return stableVersion;
+                    }
+                    catch { }
+                }
+            }
+
+            return stableVersion;
+        }
+
+        static public string GetLatestAvailableVersion(string url)
         {
             try
             {
-                string url = "http://csscript.net/npp/latest_version.txt";
-#if DEBUG
-                url = "http://csscript.net/npp/latest_version_dbg.txt";
-#endif
                 return DownloadText(url);
             }
             catch

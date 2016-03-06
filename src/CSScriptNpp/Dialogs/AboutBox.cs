@@ -16,7 +16,7 @@ namespace CSScriptNpp
             this.label3.Text = "Version: " + AssemblyVersion;
             this.label5.Text = AssemblyCopyright;
             this.textBoxDescription.Text = AssemblyDescription;
-
+            this.includePrereleases.Checked = Config.Instance.CheckPrereleaseUpdates;
             if (downloadingMsi)
                 SetUpdateStatus("Downloading...");
         }
@@ -216,6 +216,15 @@ namespace CSScriptNpp
                 Process.Start(Plugin.LogDir);
             }
             catch { }
+        }
+
+        private void includePrereleases_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.includePrereleases.Checked != Config.Instance.CheckPrereleaseUpdates)
+            {
+                Config.Instance.CheckPrereleaseUpdates = this.includePrereleases.Checked;
+                Config.Instance.Save();
+            }
         }
     }
 }

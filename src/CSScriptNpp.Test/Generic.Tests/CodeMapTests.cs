@@ -19,6 +19,7 @@ namespace CSScriptIntellisense.Test
             string file = Path.Combine(dataDir, @"..\Local\Temp\CSScriptNpp\ReflctedTypes\Npp.2092620872.cs");
             //string file = Path.Combine(dataDir, @"..\Local\Temp\CSScriptNpp\ReflctedTypes\Int32.-1466498946.cs");
             //string file = Path.Combine(dataDir, @"E:\cs-script\lib\debugVS12.0.cs");
+            //file = Path.Combine(dataDir, @"E:\cs-script\inc\WebApi.cs");
             if (File.Exists(file)) //test during dev only
             {
                 string code = File.ReadAllText(file);

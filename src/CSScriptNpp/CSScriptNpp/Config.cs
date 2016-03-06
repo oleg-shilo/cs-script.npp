@@ -41,6 +41,7 @@ namespace CSScriptNpp
         public bool UpdateAfterExit = false;
         public string UpdateMode = "custom";
         public bool CheckUpdatesOnStartup = true;
+        public bool CheckPrereleaseUpdates = false;
         public bool UseRoslynProvider = false;
         public bool StartRoslynServerAtStartup = false;
         public bool ImproveWin10ListVeiwRendering = true;
@@ -112,6 +113,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                     SetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
                     SetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
+                    SetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                     SetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
@@ -180,6 +182,7 @@ namespace CSScriptNpp
                 UpdateAfterExit = GetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
                 CheckUpdatesOnStartup = GetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
+                CheckPrereleaseUpdates = GetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                 UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                 StartRoslynServerAtStartup = GetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);

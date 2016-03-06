@@ -42,6 +42,7 @@
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.linkLabel4 = new System.Windows.Forms.LinkLabel();
+            this.includePrereleases = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,7 +104,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(138, 117);
+            this.linkLabel1.Location = new System.Drawing.Point(138, 126);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(66, 13);
             this.linkLabel1.TabIndex = 26;
@@ -123,7 +124,7 @@
             // linkLabel2
             // 
             this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Location = new System.Drawing.Point(139, 96);
+            this.linkLabel2.Location = new System.Drawing.Point(139, 105);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(63, 13);
             this.linkLabel2.TabIndex = 26;
@@ -143,7 +144,7 @@
             // 
             // updateCheckBtn
             // 
-            this.updateCheckBtn.Location = new System.Drawing.Point(366, 112);
+            this.updateCheckBtn.Location = new System.Drawing.Point(366, 95);
             this.updateCheckBtn.Name = "updateCheckBtn";
             this.updateCheckBtn.Size = new System.Drawing.Size(122, 23);
             this.updateCheckBtn.TabIndex = 27;
@@ -154,7 +155,7 @@
             // linkLabel3
             // 
             this.linkLabel3.AutoSize = true;
-            this.linkLabel3.Location = new System.Drawing.Point(363, 86);
+            this.linkLabel3.Location = new System.Drawing.Point(265, 105);
             this.linkLabel3.Name = "linkLabel3";
             this.linkLabel3.Size = new System.Drawing.Size(44, 13);
             this.linkLabel3.TabIndex = 26;
@@ -171,7 +172,7 @@
             // linkLabel4
             // 
             this.linkLabel4.AutoSize = true;
-            this.linkLabel4.Location = new System.Drawing.Point(444, 86);
+            this.linkLabel4.Location = new System.Drawing.Point(265, 126);
             this.linkLabel4.Name = "linkLabel4";
             this.linkLabel4.Size = new System.Drawing.Size(30, 13);
             this.linkLabel4.TabIndex = 26;
@@ -179,12 +180,24 @@
             this.linkLabel4.Text = "Logs";
             this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
             // 
+            // includePrereleases
+            // 
+            this.includePrereleases.AutoSize = true;
+            this.includePrereleases.Location = new System.Drawing.Point(366, 121);
+            this.includePrereleases.Name = "includePrereleases";
+            this.includePrereleases.Size = new System.Drawing.Size(119, 17);
+            this.includePrereleases.TabIndex = 28;
+            this.includePrereleases.Text = "Include Prereleases";
+            this.includePrereleases.UseVisualStyleBackColor = true;
+            this.includePrereleases.CheckedChanged += new System.EventHandler(this.includePrereleases_CheckedChanged);
+            // 
             // AboutBox
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(500, 282);
+            this.Controls.Add(this.includePrereleases);
             this.Controls.Add(this.updateCheckBtn);
             this.Controls.Add(this.linkLabel4);
             this.Controls.Add(this.linkLabel3);
@@ -227,5 +240,6 @@
         private System.Windows.Forms.LinkLabel linkLabel3;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.LinkLabel linkLabel4;
+        private System.Windows.Forms.CheckBox includePrereleases;
     }
 }
