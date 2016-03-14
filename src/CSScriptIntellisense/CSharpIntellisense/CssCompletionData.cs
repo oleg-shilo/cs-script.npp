@@ -1,9 +1,8 @@
+using Intellisense.Common;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
 
 namespace CSScriptIntellisense
 {
@@ -13,6 +12,7 @@ namespace CSScriptIntellisense
         public string CompletionText { get; set; }
         public string Description { get; set; }
         public DisplayFlags DisplayFlags { get; set; }
+        public IconType Icon { get; set; }
         public string DisplayText { get; set; }
         public bool HasOverloads { get; set; }
         public IEnumerable<ICompletionData> OverloadedData { get { return new ICompletionData[0]; } }
@@ -111,6 +111,10 @@ Examples:
             },
         };
 
+        public CssCompletionData()
+        {
+            Icon = IconType.unresolved;
+        }
 
         static string GetHelpFile()
         {
@@ -148,7 +152,7 @@ Examples:
             return file;
         }
 
-        public static DomRegion? ResolveDefinition(string directive)
+        public static ICSharpCode.NRefactory.TypeSystem.DomRegion? ResolveDefinition(string directive)
         {
             string helpFile = GetHelpFile();
 
@@ -165,7 +169,7 @@ Examples:
                 }
 
                 if (matchingLine != -1)
-                    return new DomRegion(helpFile, matchingLine + 1, 0); //DomRegion is one based
+                    return new ICSharpCode.NRefactory.TypeSystem.DomRegion(helpFile, matchingLine + 1, 0); //DomRegion is one based
             }
 
             return null;

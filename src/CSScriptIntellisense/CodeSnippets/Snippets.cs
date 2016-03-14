@@ -1,4 +1,4 @@
-using ICSharpCode.NRefactory.Completion;
+using Intellisense.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,9 +22,15 @@ namespace CSScriptIntellisense
 
     public class SnippetCompletionData : ICompletionData
     {
+        public SnippetCompletionData()
+        {
+            Icon = IconType.snippet;
+        }
+
         public CompletionCategory CompletionCategory { get; set; }
         public string CompletionText { get; set; }
         public string Description { get; set; }
+        public IconType Icon { get; set; }
         public DisplayFlags DisplayFlags { get; set; }
         public string DisplayText { get; set; }
 

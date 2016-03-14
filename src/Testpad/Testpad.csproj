@@ -104,6 +104,10 @@
       <Project>{23B08B10-8297-4A90-9B6D-43DAC7416004}</Project>
       <Name>CSScriptNpp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
+      <Project>{c67d7ed7-f350-4fd4-81b5-5e635fb08765}</Project>
+      <Name>Intellisense.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

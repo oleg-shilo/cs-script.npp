@@ -65,6 +65,8 @@ copy "CSScriptNpp\CSScriptNpp\roslyn\System.Reflection.Metadata.dll" "%plugins%\
 copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe"
 copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe.config" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe.config"
 
+copy "E:\Galos\Projects\CS-Script.Npp\CSScript.Npp\src\Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\*.*" "C:\Program Files (x86)\Notepad++\plugins\CSScriptNpp\Roslyn.Intellisense"
+
 
 rem need to keep it last so copy errors (if any) are visible
 copy "CSScriptNpp\bin\Debug\CSScriptNpp.dll" "%plugins%\CSScriptNpp.dll"

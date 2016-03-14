@@ -62,6 +62,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Formatter", "Formatter\Form
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roslyn.Intellisense", "Roslyn.Intellisesne\Roslyn.Intellisense\Roslyn.Intellisense.csproj", "{68062B6A-67E4-459D-9A42-97E798356C6E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intellisense.Common", "Intellisense.Interface\Intellisense.Common.csproj", "{C67D7ED7-F350-4FD4-81B5-5E635FB08765}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -128,6 +130,10 @@ Global
 		{68062B6A-67E4-459D-9A42-97E798356C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68062B6A-67E4-459D-9A42-97E798356C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68062B6A-67E4-459D-9A42-97E798356C6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C67D7ED7-F350-4FD4-81B5-5E635FB08765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C67D7ED7-F350-4FD4-81B5-5E635FB08765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C67D7ED7-F350-4FD4-81B5-5E635FB08765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C67D7ED7-F350-4FD4-81B5-5E635FB08765}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,5 +150,6 @@ Global
 		{339F59DB-C481-4CBB-90A5-EB1B97E807CD} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{87812442-8682-4B82-97FF-A0E2B96FEF7E} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{68062B6A-67E4-459D-9A42-97E798356C6E} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
+		{C67D7ED7-F350-4FD4-81B5-5E635FB08765} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 	EndGlobalSection
 EndGlobal

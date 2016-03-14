@@ -105,6 +105,10 @@
       <Project>{339f59db-c481-4cbb-90a5-eb1b97e807cd}</Project>
       <Name>DbgAgent</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
+      <Project>{c67d7ed7-f350-4fd4-81b5-5e635fb08765}</Project>
+      <Name>Intellisense.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

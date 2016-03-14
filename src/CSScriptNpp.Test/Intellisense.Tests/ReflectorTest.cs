@@ -53,7 +53,7 @@ namespace CSScriptIntellisense.Test
 
             string xmlFile = Path.GetFullPath(Path.GetFileNameWithoutExtension(asmFile) + ".xml");
 
-            XmlDocumentationProvider doc = SimpleCodeCompletion.GetXmlDocumentation(asmFile);
+            XmlDocumentationProvider doc = MonoCompletionEngine.GetXmlDocumentation(asmFile);
             if (doc == null && File.Exists(xmlFile))
                 doc = new XmlDocumentationProvider(xmlFile);
 
@@ -72,7 +72,7 @@ namespace CSScriptIntellisense.Test
             var asmFile = typeof(T).Assembly.Location;
             string xmlFile = Path.GetFullPath(Path.GetFileNameWithoutExtension(asmFile) + ".xml");
 
-            XmlDocumentationProvider doc = SimpleCodeCompletion.GetXmlDocumentation(asmFile);
+            XmlDocumentationProvider doc = MonoCompletionEngine.GetXmlDocumentation(asmFile);
             if (doc == null && File.Exists(xmlFile))
                 doc = new XmlDocumentationProvider(xmlFile);
 

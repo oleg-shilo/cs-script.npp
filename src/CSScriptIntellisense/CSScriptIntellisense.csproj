@@ -65,8 +65,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="CSharpIntellisense\MonoCompletionEngine.cs" />
     <Compile Include="CSharpIntellisense\CssCompletionData.cs" />
     <Compile Include="CSharpIntellisense\NRefactoryExtensions.cs" />
+    <Compile Include="CSharpIntellisense\RoslynCompletionEngine.cs" />
     <Compile Include="CSharpIntellisense\Shortcuts.cs" />
     <Compile Include="Formatter\NppCodeFormatter.cs" />
     <Compile Include="Formatter\SourceCodeFormatterOld.cs" />
@@ -225,6 +227,9 @@
       <Link>CSharpIntellisense\CSScriptLibrary.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="CSharpIntellisense\Intellisense.Common.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\constructor.png" />
     <Content Include="Images\event.png" />
     <None Include="Images\extension_method.png" />
@@ -237,7 +242,12 @@
   <ItemGroup>
     <None Include="Interop\DllExport\NppPlugin.DllExport.targets" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
+      <Project>{c67d7ed7-f350-4fd4-81b5-5e635fb08765}</Project>
+      <Name>Intellisense.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

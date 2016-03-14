@@ -1,6 +1,5 @@
-﻿using CSScriptIntellisense.Interop;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
+﻿using Intellisense.Common;
+using CSScriptIntellisense.Interop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -106,76 +105,18 @@ namespace CSScriptIntellisense
 
         Image GetImageFor(ICompletionData item)
         {
-            var itemType = EntityType.None;
-            var declarationType = DeclarationType.None;
-            bool isExtensionMethod = false;
-
-            if (item is IEntityCompletionData)
+            switch (item.Icon)
             {
-                itemType = (item as IEntityCompletionData).Entity.EntityType;
-            }
-
-            if (item is SnippetCompletionData)
-            {
-                return Res.Images.snippet;
-            }
-
-            if (item is CompletionData)
-            {
-                var data = (item as CompletionData);
-                declarationType = data.DeclarationType;
-                isExtensionMethod = data.IsExtensionMethod;
-            }
-
-            switch (itemType)
-            {
-                case EntityType.Constructor:
-                case EntityType.Destructor:
-                    return Res.Images.constructor;
-
-                case EntityType.Method:
-                    {
-                        if (isExtensionMethod)
-                            return Res.Images.extension_method;
-                        else
-                            return Res.Images.method;
-                    }
-                case EntityType.Event:
-                    return Res.Images._event;
-
-                case EntityType.Field:
-                    return Res.Images.field;
-
-                case EntityType.Property:
-                    return Res.Images.property;
-
-                default:
-                    break;
-            }
-
-            switch (declarationType)
-            {
-                case DeclarationType.None:
-                    break;
-
-                case DeclarationType.Namespace:
-                    return Res.Images._namespace;
-
-                case DeclarationType.Type:
-                    return Res.Images.constructor;
-
-                case DeclarationType.Variable:
-                case DeclarationType.Parameter:
-                    return Res.Images.field;
-
-                case DeclarationType.Event:
-                    return Res.Images._event;
-
-                case DeclarationType.Unresolved:
-                    return Res.Images.unresolved;
-
-                default:
-                    break;
+                case IconType.none: return null;
+                case IconType.snippet: return Res.Images.snippet;
+                case IconType.constructor: return Res.Images.constructor;
+                case IconType.extension_method: return Res.Images.extension_method;
+                case IconType.method: return Res.Images.method;
+                case IconType._event: return Res.Images._event;
+                case IconType.field: return Res.Images.field;
+                case IconType.property: return Res.Images.property;
+                case IconType._namespace: return Res.Images._namespace;
+                case IconType.unresolved: return Res.Images.unresolved;
             }
 
             return null;

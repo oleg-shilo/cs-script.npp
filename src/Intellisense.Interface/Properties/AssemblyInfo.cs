@@ -5,15 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("C# Intellisense for Notepad++")]
+[assembly: AssemblyTitle("Intellisense.Interface")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("CS-Script")]
-[assembly: AssemblyProduct("CS-Script Intellisense for Notepad++")]
-[assembly: AssemblyCopyright("Copyright © Oleg Shilo 2013")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Intellisense.Interface")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyDescription("'CS-Script Intellisense' is a real C# intellisense solution based on CS-Script and ICSharpCode.NRefactory/Mono.Cecil. \r\n" +
-                                "It is a part of the complete CS-Script Notepad++ plugin 'CSScriptNpp'")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -21,9 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("2f8c343a-22a0-473a-b3b5-23a5757f8d99")]
-
-[assembly: InternalsVisibleTo("CSScriptNpp.Test")]
+[assembly: Guid("c67d7ed7-f350-4fd4-81b5-5e635fb08765")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +29,8 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.14.0")]
-[assembly: AssemblyFileVersion("1.0.14.0")]
+// You can specify all the values or you can default the Build and Revision Numbers 
+// by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

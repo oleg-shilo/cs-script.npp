@@ -1,6 +1,5 @@
+using Intellisense.Common;
 using CSScriptIntellisense.Interop;
-using ICSharpCode.NRefactory.Completion;
-using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -385,9 +384,9 @@ namespace CSScriptIntellisense
             {
                 if (Npp.IsCurrentScriptFile())
                 {
-                    DomRegion region = ResolveMemberAtCaret();
+                    ICSharpCode.NRefactory.TypeSystem.DomRegion region = ResolveMemberAtCaret();
 
-                    if (region != DomRegion.Empty)
+                    if (region != ICSharpCode.NRefactory.TypeSystem.DomRegion.Empty)
                     {
                         Npp.OpenFile(region.FileName);
                         Npp.GoToLine(region.BeginLine);
@@ -1063,7 +1062,7 @@ namespace CSScriptIntellisense
             return SimpleCodeCompletion.GetMissingUsings(text, currentPos, file);
         }
 
-        static DomRegion ResolveMemberAtCaret()
+        static ICSharpCode.NRefactory.TypeSystem.DomRegion ResolveMemberAtCaret()
         {
             string file = Npp.GetCurrentFile();
             string text = Npp.GetTextBetween(0, Npp.DocEnd);
