@@ -152,7 +152,7 @@ Examples:
             return file;
         }
 
-        public static ICSharpCode.NRefactory.TypeSystem.DomRegion? ResolveDefinition(string directive)
+        public static DomRegion? ResolveDefinition(string directive)
         {
             string helpFile = GetHelpFile();
 
@@ -169,7 +169,7 @@ Examples:
                 }
 
                 if (matchingLine != -1)
-                    return new ICSharpCode.NRefactory.TypeSystem.DomRegion(helpFile, matchingLine + 1, 0); //DomRegion is one based
+                    return new DomRegion { FileName = helpFile, BeginLine = matchingLine + 1, BeginColumn = 0 }; //DomRegion is one based
             }
 
             return null;

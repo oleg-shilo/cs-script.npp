@@ -99,12 +99,12 @@ namespace CSScriptIntellisense
         }
 
         //----------------------------------
-        static public ICSharpCode.NRefactory.TypeSystem.DomRegion ResolveMember(string editorText, int offset, string fileName)
+        static public DomRegion ResolveMember(string editorText, int offset, string fileName)
         {
             return ResolveCSharpScriptMember(editorText, offset) ?? ResolveCSharpMember(editorText, offset, fileName);
         }
 
-        static ICSharpCode.NRefactory.TypeSystem.DomRegion? ResolveCSharpScriptMember(string editorText, int offset)
+        static DomRegion? ResolveCSharpScriptMember(string editorText, int offset)
         {
             var directiveLine = GetCSharpScriptDirectiveLine(editorText, offset);
 
@@ -117,7 +117,7 @@ namespace CSScriptIntellisense
                 return null;
         }
 
-        static ICSharpCode.NRefactory.TypeSystem.DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
+        static DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
         {
             return monoEngine.ResolveCSharpMember(editorText, offset, fileName);
         }

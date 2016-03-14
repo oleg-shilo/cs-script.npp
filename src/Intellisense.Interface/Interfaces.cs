@@ -86,6 +86,17 @@ namespace Intellisense.Common
         public IEntity Entity { get; set; }
     }
 
+    public struct DomRegion
+    {
+        public static readonly DomRegion Empty = new DomRegion { IsEmpty = true };
+
+        public int BeginColumn { get; set; }
+        public int BeginLine { get; set; }
+        public int EndLine { get; set; }
+        public string FileName { get; set; }
+        public bool IsEmpty { get; set; }
+    }
+
     public class CompletionData : ICompletionData
     {
         public CompletionCategory CompletionCategory { get; set; }

@@ -384,9 +384,9 @@ namespace CSScriptIntellisense
             {
                 if (Npp.IsCurrentScriptFile())
                 {
-                    ICSharpCode.NRefactory.TypeSystem.DomRegion region = ResolveMemberAtCaret();
+                    DomRegion region = ResolveMemberAtCaret();
 
-                    if (region != ICSharpCode.NRefactory.TypeSystem.DomRegion.Empty)
+                    if (!region.IsEmpty)
                     {
                         Npp.OpenFile(region.FileName);
                         Npp.GoToLine(region.BeginLine);
@@ -1062,7 +1062,7 @@ namespace CSScriptIntellisense
             return SimpleCodeCompletion.GetMissingUsings(text, currentPos, file);
         }
 
-        static ICSharpCode.NRefactory.TypeSystem.DomRegion ResolveMemberAtCaret()
+        static DomRegion ResolveMemberAtCaret()
         {
             string file = Npp.GetCurrentFile();
             string text = Npp.GetTextBetween(0, Npp.DocEnd);
