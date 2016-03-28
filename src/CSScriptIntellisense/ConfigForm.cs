@@ -27,6 +27,7 @@ namespace CSScriptIntellisense
             ignoreDocExceptions.Checked = data.IgnoreDocExceptions;
             formatAsYouType.Checked = data.FormatAsYouType;
             roslynFormatter.Checked = data.RoslynFormatting;
+            roslynIntellisense.Checked = data.RoslynIntellisense;
 
             this.FormClosed += (s, e) =>
                 {
@@ -42,6 +43,7 @@ namespace CSScriptIntellisense
             data.IgnoreDocExceptions = ignoreDocExceptions.Checked;
             data.FormatAsYouType = formatAsYouType.Checked;
             data.RoslynFormatting = roslynFormatter.Checked;
+            data.RoslynIntellisense = roslynIntellisense.Checked;
         }
 
         void ConfigForm_Load(object sender, EventArgs e)

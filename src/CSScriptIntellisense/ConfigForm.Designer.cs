@@ -38,6 +38,7 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.ContentPanel = new System.Windows.Forms.Panel();
             this.roslynFormatter = new System.Windows.Forms.CheckBox();
+            this.roslynIntellisense = new System.Windows.Forms.CheckBox();
             this.ContentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,7 +97,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(12, 106);
+            this.linkLabel1.Location = new System.Drawing.Point(12, 124);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 4;
@@ -108,13 +109,14 @@
             // 
             this.ContentPanel.Controls.Add(this.useMethodBrackets);
             this.ContentPanel.Controls.Add(this.useArrow);
+            this.ContentPanel.Controls.Add(this.roslynIntellisense);
             this.ContentPanel.Controls.Add(this.roslynFormatter);
             this.ContentPanel.Controls.Add(this.ignoreDocExceptions);
             this.ContentPanel.Controls.Add(this.intercept);
             this.ContentPanel.Controls.Add(this.formatAsYouType);
             this.ContentPanel.Location = new System.Drawing.Point(13, 3);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 100);
+            this.ContentPanel.Size = new System.Drawing.Size(290, 118);
             this.ContentPanel.TabIndex = 5;
             // 
             // roslynFormatter
@@ -127,11 +129,21 @@
             this.roslynFormatter.Text = "Use Roslyn Formatter";
             this.roslynFormatter.UseVisualStyleBackColor = true;
             // 
+            // roslynIntellisense
+            // 
+            this.roslynIntellisense.AutoSize = true;
+            this.roslynIntellisense.Location = new System.Drawing.Point(0, 101);
+            this.roslynIntellisense.Name = "roslynIntellisense";
+            this.roslynIntellisense.Size = new System.Drawing.Size(135, 17);
+            this.roslynIntellisense.TabIndex = 2;
+            this.roslynIntellisense.Text = "Use Roslyn Intellisense";
+            this.roslynIntellisense.UseVisualStyleBackColor = true;
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 135);
+            this.ClientSize = new System.Drawing.Size(315, 159);
             this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -159,5 +171,6 @@
         private System.Windows.Forms.LinkLabel linkLabel1;
         public System.Windows.Forms.Panel ContentPanel;
         private System.Windows.Forms.CheckBox roslynFormatter;
+        private System.Windows.Forms.CheckBox roslynIntellisense;
     }
 }

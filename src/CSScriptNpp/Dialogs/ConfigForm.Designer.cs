@@ -53,7 +53,7 @@
             // 
             this.checkUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkUpdates.AutoSize = true;
-            this.checkUpdates.Location = new System.Drawing.Point(13, 105);
+            this.checkUpdates.Location = new System.Drawing.Point(13, 131);
             this.checkUpdates.Name = "checkUpdates";
             this.checkUpdates.Size = new System.Drawing.Size(160, 17);
             this.checkUpdates.TabIndex = 7;
@@ -64,11 +64,11 @@
             // 
             this.useCS6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.useCS6.AutoSize = true;
-            this.useCS6.Location = new System.Drawing.Point(13, 128);
+            this.useCS6.Location = new System.Drawing.Point(13, 154);
             this.useCS6.Name = "useCS6";
-            this.useCS6.Size = new System.Drawing.Size(136, 17);
+            this.useCS6.Size = new System.Drawing.Size(222, 17);
             this.useCS6.TabIndex = 7;
-            this.useCS6.Text = "Handle C# 6.0 (Roslyn)";
+            this.useCS6.Text = "Script execution - handle C# 6.0  (Roslyn)";
             this.useCS6.UseVisualStyleBackColor = true;
             // 
             // contentControl
@@ -79,7 +79,7 @@
             this.contentControl.Location = new System.Drawing.Point(0, 0);
             this.contentControl.Name = "contentControl";
             this.contentControl.SelectedIndex = 0;
-            this.contentControl.Size = new System.Drawing.Size(423, 211);
+            this.contentControl.Size = new System.Drawing.Size(423, 237);
             this.contentControl.TabIndex = 8;
             // 
             // generalPage
@@ -90,7 +90,7 @@
             this.generalPage.Location = new System.Drawing.Point(4, 22);
             this.generalPage.Name = "generalPage";
             this.generalPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalPage.Size = new System.Drawing.Size(415, 185);
+            this.generalPage.Size = new System.Drawing.Size(415, 211);
             this.generalPage.TabIndex = 0;
             this.generalPage.Text = "General";
             this.generalPage.UseVisualStyleBackColor = true;
@@ -99,7 +99,7 @@
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(10, 165);
+            this.linkLabel1.Location = new System.Drawing.Point(10, 191);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 5;
@@ -202,7 +202,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(423, 211);
+            this.ClientSize = new System.Drawing.Size(423, 237);
             this.Controls.Add(this.contentControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.KeyPreview = true;

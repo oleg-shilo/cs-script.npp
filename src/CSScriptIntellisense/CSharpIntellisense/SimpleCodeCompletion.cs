@@ -78,11 +78,14 @@ namespace CSScriptIntellisense
                     {
                         x.CompletionText = x.CompletionText + ";";
                     }
-                    else if (x.Icon == IconType.method || x.Icon == IconType.extension_method)
+                    else if (Config.Instance.UseMethodBrackets)
                     {
-                        //"Console.WriteLi| " but not "Console.Write|(" 
-                        if (rightHalfOfLine == null || rightHalfOfLine.StartsWith(" "))
-                            x.CompletionText = x.CompletionText + "(";
+                        if (x.Icon == IconType.method || x.Icon == IconType.extension_method)
+                        {
+                            //"Console.WriteLi| " but not "Console.Write|(" 
+                            if (rightHalfOfLine == null || rightHalfOfLine.StartsWith(" "))
+                                x.CompletionText = x.CompletionText + "(";
+                        }
                     }
                 });
 
