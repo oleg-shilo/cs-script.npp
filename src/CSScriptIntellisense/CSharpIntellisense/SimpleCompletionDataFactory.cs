@@ -19,22 +19,6 @@ public enum DeclarationType : byte
     Unresolved
 }
 
-public class TypeInfo
-{
-    public string FullName = "";
-    public string Namespace = "";
-
-    public bool IsNested
-    {
-        get
-        {
-            //"System.IO"
-            //"System.IO.File"
-            return FullName.IndexOf('.', Namespace.Length + 1) != -1;
-        }
-    }
-}
-
 public class CompletionData : ICompletionData
 {
     public void AddOverload(ICompletionData data)

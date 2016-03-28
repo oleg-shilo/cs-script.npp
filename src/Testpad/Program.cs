@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using ICSharpCode.NRefactory.CSharp;
 
 namespace Testpad
 {
@@ -94,7 +93,7 @@ class Test
         }
     }
 }";
-            var option = FormattingOptionsFactory.CreateAllman();
+            var option = ICSharpCode.NRefactory.CSharp.FormattingOptionsFactory.CreateAllman();
             //option.BlankLinesAfterUsings = 2;
             //BraceStyle.NextLine
             //option.SpaceWithinMethodCallParentheses = true;
@@ -106,7 +105,7 @@ class Test
             //option.BlankLinesInsideRegion = 1;
             //option.InterfaceBraceStyle = BraceStyle.NextLineShifted;
 
-            var syntaxTree = new CSharpParser().Parse(code, "test.cs");
+            var syntaxTree = new ICSharpCode.NRefactory.CSharp.CSharpParser().Parse(code, "test.cs");
             var newCode = syntaxTree.GetText(option);
 
             //var document = new StringBuilderDocument(code);

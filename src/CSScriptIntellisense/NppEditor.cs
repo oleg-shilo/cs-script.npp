@@ -89,7 +89,7 @@ namespace CSScriptIntellisense
             IntPtr sci = Npp.CurrentScintilla;
 
             string text = Npp.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
-            int pos = Math.Max(text.LastIndexOf("."), text.LastIndexOf("\n"));
+            int pos = text.LastIndexOfAny(SimpleCodeCompletion.Delimiters);
             if (pos != -1)
             {
                 string token = text.Substring(pos + 1);// +justTypedText;

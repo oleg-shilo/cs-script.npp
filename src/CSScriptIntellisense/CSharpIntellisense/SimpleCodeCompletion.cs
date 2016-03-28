@@ -13,14 +13,12 @@ namespace CSScriptIntellisense
             RoslynCompletionEngine.Init();
         }
 
-        static MonoCompletionEngine monoEngine = new MonoCompletionEngine();
-        static RoslynCompletionEngine roslynEngine = new RoslynCompletionEngine();
+        static IEngine monoEngine = new MonoCompletionEngine();
+        static IEngine roslynEngine = RoslynCompletionEngine.GetInstance();
 
         public static char[] Delimiters = "\\\t\n\r .,:;'\"[]{}()-/!?@$%^&*«»><#|~`".ToCharArray();
-        public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
+        public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"[]{}()-!?@$%^&*«»><#|~`".ToCharArray(    );
         static char[] lineDelimiters = new char[] { '\n', '\r' };
-
-        static bool useRoslyn = false;
 
         static IEnumerable<ICompletionData> GetCSharpScriptCompletionData(string editorText, int offset)
         {
@@ -51,10 +49,44 @@ namespace CSScriptIntellisense
                 if (string.IsNullOrEmpty(editorText))
                     return new ICompletionData[0];
 
-                return GetCSharpScriptCompletionData(editorText, offset) ??
-                       (useRoslyn ?
+                var data = (GetCSharpScriptCompletionData(editorText, offset) ??
+                            (Config.Instance.RoslynIntellisense ?
                             roslynEngine.GetCompletionData(editorText, offset, fileName, isControlSpace) :
-                            monoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace));
+                            monoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace))
+                            ).ToList();
+
+                //suggest default CS-Script usings as well
+                var extraItems = new List<ICompletionData>();
+                var line = Npp.GetLine(Npp.GetLineNumber(offset)).Trim();
+
+                bool isUsing = (line == "using");
+
+                if (isUsing)
+                {
+                    extraItems.AddRange(CssCompletionData.DefaultNamespaces);
+                    extraItems.ForEach(x => x.CompletionText = x.CompletionText + ";");
+
+                }
+
+                int length = Math.Min(editorText.Length - offset, 20);
+                string rightHalfOfLine = editorText.Substring(offset, length)
+                                                   .Split(new[] { '\n' }, 2).FirstOrDefault();
+
+                data.ForEach(x =>
+                {
+                    if (isUsing)
+                    {
+                        x.CompletionText = x.CompletionText + ";";
+                    }
+                    else if (x.Icon == IconType.method || x.Icon == IconType.extension_method)
+                    {
+                        //"Console.WriteLi| " but not "Console.Write|(" 
+                        if (rightHalfOfLine == null || rightHalfOfLine.StartsWith(" "))
+                            x.CompletionText = x.CompletionText + "(";
+                    }
+                });
+
+                return data.Concat(extraItems); 
             }
             catch
             {
@@ -65,17 +97,20 @@ namespace CSScriptIntellisense
         //----------------------------------
         public static void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies)
         {
-            monoEngine.ResetProject(sourceFiles, assemblies);
+            if (Config.Instance.RoslynIntellisense)
+                roslynEngine.ResetProject(sourceFiles, assemblies);
+            else
+                monoEngine.ResetProject(sourceFiles, assemblies);
         }
 
         //----------------------------------
-        public static IEnumerable<TypeInfo> GetMissingUsings(string editorText, int offset, string fileName) // not the best way to put in the whole string every time
+        public static IEnumerable<Intellisense.Common.TypeInfo> GetMissingUsings(string editorText, int offset, string fileName) // not the best way to put in the whole string every time
         {
             string nameToResolve = GetWordAt(editorText, offset);
             return GetPossibleNamespaces(editorText, nameToResolve, fileName);
         }
 
-        internal static IEnumerable<TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName) // not the best way to put in the whole string every time
+        internal static IEnumerable<Intellisense.Common.TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName) // not the best way to put in the whole string every time
         {
             return monoEngine.GetPossibleNamespaces(editorText, nameToResolve, fileName);
         }

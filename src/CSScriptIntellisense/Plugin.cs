@@ -542,7 +542,7 @@ namespace CSScriptIntellisense
                                 foreach (FileReference item in missingNamespaceErrors)
                                 {
                                     int errorPosition = Npp.GetLineStart(item.Line - 1) + item.Column - 1;
-                                    IEnumerable<TypeInfo> items = ResolveNamespacesAtPosition(errorPosition);
+                                    IEnumerable<Intellisense.Common.TypeInfo> items = ResolveNamespacesAtPosition(errorPosition);
 
                                     if (items.Count() == 1) //do only if there is no ambiguity about what namespace it is
                                     {
@@ -577,7 +577,7 @@ namespace CSScriptIntellisense
                 {
                     string[] presentUsings = UltraSharp.Cecil.Reflector.GetCodeUsings(Npp.GetTextBetween(0, -1));
 
-                    IEnumerable<TypeInfo> items = ResolveNamespacesAtCaret().Where(x => !presentUsings.Contains(x.Namespace)).ToArray();
+                    IEnumerable<Intellisense.Common.TypeInfo> items = ResolveNamespacesAtCaret().Where(x => !presentUsings.Contains(x.Namespace)).ToArray();
 
                     if (items.Count() > 0)
                     {
@@ -671,10 +671,10 @@ namespace CSScriptIntellisense
             else
             {
                 items = GetSuggestionItemsAtCaret();
-
+                bool namespaceSuggestion = items.All(x => x.Icon == IconType._namespace);
                 bool memberSugesstion = Npp.TextBeforeCursor(2).EndsWith(".");
 
-                if (!memberSugesstion)
+                if (!memberSugesstion && !namespaceSuggestion)
                 {
                     bool cssSugesstion = Npp.TextBeforeCursor(300).Split('\n').Last().TrimStart().StartsWith("//css_");
                     if (!cssSugesstion)
@@ -945,12 +945,12 @@ namespace CSScriptIntellisense
                             }
                             else
                             {
-                                foreach (string item in sourceFiles)
+                                foreach (string srcFile in sourceFiles)
                                 {
-                                    string code = File.ReadAllText(item);
-                                    if (item == currentFile)
+                                    string code = File.ReadAllText(srcFile);
+                                    if (srcFile == currentFile)
                                         CSScriptHelper.DecorateIfRequired(ref code);
-                                    sourcesInfos.Add(new Tuple<string, string>(code, item));
+                                    sourcesInfos.Add(new Tuple<string, string>(code, srcFile));
                                 }
                             }
 
@@ -988,7 +988,7 @@ namespace CSScriptIntellisense
             return retval;
         }
 
-        static IEnumerable<TypeInfo> ResolveNamespacesAtCaret()
+        static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtCaret()
         {
             int currentPos = Npp.GetCaretPosition();
             return ResolveNamespacesAtPosition(currentPos);
@@ -1015,7 +1015,7 @@ namespace CSScriptIntellisense
             return result.ToArray();
         }
 
-        static IEnumerable<TypeInfo> ResolveNamespacesAtPosition(int currentPos)
+        static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtPosition(int currentPos)
         {
             string file = Npp.GetCurrentFile();
             string text = Npp.GetTextBetween(0, Npp.DocEnd);
@@ -1047,10 +1047,10 @@ namespace CSScriptIntellisense
                 if (result.Any())
                     return result;
             }
-            return new TypeInfo[0];
+            return new Intellisense.Common.TypeInfo[0];
         }
 
-        static IEnumerable<TypeInfo> ResolveNamespacesAtPositionOld(int currentPos)
+        static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtPositionOld(int currentPos)
         {
             string file = Npp.GetCurrentFile();
             string text = Npp.GetTextBetween(0, Npp.DocEnd);

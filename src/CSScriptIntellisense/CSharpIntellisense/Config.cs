@@ -43,9 +43,10 @@ namespace CSScriptIntellisense
         public bool ShowQuickInfoInStatusBar = false;
         public bool ShowQuickInfoAsNativeNppTooltip = false;
         public bool UseMethodBrackets = false;
+        public bool RoslynIntellisense = true;
+        public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
         public bool FallbackFormatting = false;
-        public bool RoslynFormatting = true;
         public bool FormatAsYouType = true;
         public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
         public string DefaultRefAsms = "System.Linq, System.Xml, System.Xml.Linq, System.Windows.Forms, System.Drawing, System.Core, Microsoft.CSharp";
@@ -75,6 +76,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
                 SetValue(Section, "RoslynFormatting", RoslynFormatting);
+                SetValue(Section, "RoslynIntellisense", RoslynIntellisense);
                 SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 SetValue(Section, "DefaultRefAsms", DefaultRefAsms);
                 SetValue(Section, "DefaultNamespaces", DefaultNamespaces);
@@ -104,6 +106,8 @@ namespace CSScriptIntellisense
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
                 RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);
+                RoslynIntellisense = GetValue(Section, "RoslynIntellisense", RoslynIntellisense);
+                
             }
         }
     }

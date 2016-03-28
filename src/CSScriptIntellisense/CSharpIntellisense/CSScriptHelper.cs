@@ -94,6 +94,7 @@ namespace CSScriptIntellisense
                 var asmNames = refAsms.Select(x=>Path.GetFileNameWithoutExtension(x).ToUpper()).ToArray();
 
                 var refNsAsms = parser.ReferencedNamespaces
+                                      .Where(name => !string.IsNullOrEmpty(name))
                                       .Where(name => !parser.IgnoreNamespaces.Contains(name))
                                       .Where(name => !asmNames.Contains(name.ToUpper()))
                                       .SelectMany(name => AssemblyResolver.FindAssembly(name, probingDirs))

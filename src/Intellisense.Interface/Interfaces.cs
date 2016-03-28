@@ -1,10 +1,21 @@
+using System;
+using System.Reflection;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Collections.Generic;
 
 namespace Intellisense.Common
 {
     public interface IEngine
     {
-        IEnumerable<ICompletionData> GetAutocompletionFor(string code, int position, string[] references, string[] includes);
+        void Preload();
+        IEnumerable<Common.ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true);
+        string[] FindReferences(string editorText, int offset, string fileName);
+        string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos);
+        IEnumerable<TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName);
+        DomRegion ResolveCSharpMember(string editorText, int offset, string fileName);
+        void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies);
     }
 
     public interface ICompletionData
@@ -16,11 +27,23 @@ namespace Intellisense.Common
         string DisplayText { get; set; }
         bool HasOverloads { get; }
 
-        IconType Icon {get;}
+        IconType Icon { get; }
 
         IEnumerable<ICompletionData> OverloadedData { get; }
 
         void AddOverload(ICompletionData data);
+    }
+
+    public class TypeInfo
+    {
+        public string FullName = "";
+        public string Namespace = "";
+
+        public bool IsNested
+        {
+            //"System.IO" or "System.IO.File"
+            get { return FullName.IndexOf('.', Namespace.Length + 1) != -1; }
+        }
     }
 
     public enum DisplayFlags
@@ -99,6 +122,11 @@ namespace Intellisense.Common
 
     public class CompletionData : ICompletionData
     {
+        public CompletionData()
+        {
+            OverloadedData = new List<ICompletionData>();
+        }
+
         public CompletionCategory CompletionCategory { get; set; }
         public string CompletionText { get; set; }
         public string Description { get; set; }
@@ -110,6 +138,7 @@ namespace Intellisense.Common
 
         public void AddOverload(ICompletionData data)
         {
+            (OverloadedData as List<ICompletionData>).Add(data);
         }
 
         public object RawData { get; set; }

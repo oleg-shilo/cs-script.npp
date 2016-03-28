@@ -29,11 +29,11 @@ namespace CSScriptIntellisense
                                            .Split(';', ',')
                                            .Where(x => !string.IsNullOrWhiteSpace(x))
                                            .Select(x => x.Trim())
-                                           .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x })
+                                           .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, Icon = IconType._namespace })
                                            .ToArray();
             }
         }
-        public static ICompletionData[] DefaultNAmespaces
+        public static ICompletionData[] DefaultNamespaces
         {
             get
             {
@@ -41,7 +41,7 @@ namespace CSScriptIntellisense
                                         .Split(';', ',')
                                         .Where(x => !string.IsNullOrWhiteSpace(x))
                                         .Select(x => x.Trim())
-                                        .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x })
+                                        .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, Icon = IconType._namespace })
                                         .ToArray();
             }
         }
