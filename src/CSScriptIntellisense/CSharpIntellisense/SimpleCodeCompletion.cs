@@ -83,7 +83,7 @@ namespace CSScriptIntellisense
                         if (x.Icon == IconType.method || x.Icon == IconType.extension_method)
                         {
                             //"Console.WriteLi| " but not "Console.Write|(" 
-                            if (rightHalfOfLine == null || rightHalfOfLine.StartsWith(" "))
+                            if (rightHalfOfLine == null || rightHalfOfLine.StartsWith(" ") || rightHalfOfLine.StartsWith("\r") || rightHalfOfLine.StartsWith("\n"))
                                 x.CompletionText = x.CompletionText + "(";
                         }
                     }
