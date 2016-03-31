@@ -7,6 +7,7 @@ echo "%programfiles%\Notepad++\plugins\CSScriptNpp"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp\MDbg"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp\Roslyn"
+md "%programfiles%\Notepad++\plugins\CSScriptNpp\Roslyn.Intellisense"
 
 rem CSScriptIntellisense.dll cannot be copied from build events as it would copy the assembly before DllExport is performed
 rem so it needs to be done manually.
@@ -42,7 +43,9 @@ copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%plugins%\CSScriptNpp\Mdbg"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\csc.exe" "%plugins%\CSScriptNpp\Roslyn\csc.exe"
 copy "CSScriptNpp\CSScriptNpp\roslyn\CSSCodeProvider.v4.6.dll" "%plugins%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\Formatter.exe" "%plugins%\CSScriptNpp\Roslyn\Formatter.exe"
+
+copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe"
+copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe.config" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe.config"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll"
@@ -62,11 +65,7 @@ copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeDom.Providers.DotNetCompilerP
 copy "CSScriptNpp\CSScriptNpp\roslyn\System.Collections.Immutable.dll" "%plugins%\CSScriptNpp\Roslyn\System.Collections.Immutable.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\System.Reflection.Metadata.dll" "%plugins%\CSScriptNpp\Roslyn\System.Reflection.Metadata.dll"
 
-copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe"
-copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe.config" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe.config"
-
-copy "E:\Galos\Projects\CS-Script.Npp\CSScript.Npp\src\Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\*.*" "C:\Program Files (x86)\Notepad++\plugins\CSScriptNpp\Roslyn.Intellisense"
-
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\*.*" "%plugins%\CSScriptNpp\Roslyn.Intellisense"
 
 rem need to keep it last so copy errors (if any) are visible
 copy "CSScriptNpp\bin\Debug\CSScriptNpp.dll" "%plugins%\CSScriptNpp.dll"

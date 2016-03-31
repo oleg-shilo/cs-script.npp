@@ -104,12 +104,12 @@ namespace CSScriptIntellisense
                     //the one is Roslyn based on.
                     string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-                    var asm = Assembly.LoadFrom(Path.Combine(rootDir, @"Roslyn\Formatter.exe"));
+                    var asm = Assembly.LoadFrom(Path.Combine(rootDir, @"Roslyn.Intellisense\RoslynIntellisense.exe"));
                     MethodInfo method;
                     if (Config.Instance.HybridFormatting)
-                        method = asm.GetType("CSScriptNpp.Roslyn.Formatter").GetMethod("FormatHybrid");
+                        method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("FormatHybrid");
                     else
-                        method = asm.GetType("CSScriptNpp.Roslyn.Formatter").GetMethod("Format");
+                        method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("Format");
                     RoslynFormat = (FormatMethod)Delegate.CreateDelegate(typeof(FormatMethod), method);
                 }
 

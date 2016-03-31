@@ -13,6 +13,20 @@ using Microsoft.CodeAnalysis.CSharp.Formatting;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
+/***************************************
+*
+*
+*
+*     OBSOLETE. HAS BEEN REPLACED WITH "Roslyn.Intellisense".
+*
+*
+*
+*
+****************************************/
+
+
+
+
 namespace CSScriptNpp.Roslyn
 {
 

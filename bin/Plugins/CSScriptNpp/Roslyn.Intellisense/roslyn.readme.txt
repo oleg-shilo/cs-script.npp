@@ -1,0 +1,12 @@
+NOTE: There are two very distinctive use-cases of Roslyn integration with CS-Script:
+
+* CS-Script stand alone executables (e.g. cscs.exe) use Roslyn compiler platform v1.1.0.51202 binaries for handling C#6.0 syntax. The binaries are hosted by the script engine via CSSCodeProvider.v4.6.dll code provider.
+The Roslyn binaries are distributed via downloadable release packages from GitHub or via the latest CS-Script Chocolatey package. These Roslyn binaries are the only Roslyn distro available at the time. 
+
+* CSScriptLibrary class library uses Roslyn scripting binaries v1.2.0.51211 (beta) for handling C#6.0 syntax when hosting the script engine. These binaries are not included into CS-Script deployment and only distributed via NuGet packages 'CS-Script' and 'CS-Script.bin'.
+These pre-release Roslyn binaries are the only adequate Roslyn distro available at the time. 
+
+The discrepancy in the Roslyn packages is unfortunate but something that has to be tolerated. Sadly MS desired to have the latest distributables for Roslyn.Scripting(v1.2) and Roslyn.Compilers (v1.1) in their incompatible versions. This is particularly annoying because the both packages depend on the same inheritably incompatible assemblies (Microsoft.CodeAnalysis.dll v1.1 and v1.2)
+
+31/03/2016
+

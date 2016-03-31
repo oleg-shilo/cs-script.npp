@@ -1,9 +1,4 @@
-v1.0.49.0
-* Autocompletion focus/selection management brought inline with Visual Studio user experience.
-* Added CS-Script specific auto-completion for "//css_ref *" and "using *"
-* Added pre-loading Roslyn compilers on N++ startup and keep it loaded while N++ is active 
-* Added support for updating to pre-release versions
-* Fixed CodeMap problem with delegates declarations breaking the parsing
-* Fixed problem with CssConsoleEncoding not being read correctly from the config file
-* Fixed inaccurate Up/Down key navigation in MethodInfo popup
-* Fixed accidental saving empty config values
+v1.0.50.0
+* Added support for C# 6.0 Intellisense (auto-completion). Previously only formatting and script execution was available.
+  It is a serious milestone, which opens the road for gradual phasing out the NRefactory parsers in favor of Roslyn. 
+* Updated embedded SC-Script engine to the latest v3.12.1.0 (NuGet and misc usability improvements)

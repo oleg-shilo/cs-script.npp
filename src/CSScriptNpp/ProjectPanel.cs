@@ -501,7 +501,7 @@ void main(string[] args)
         {
             try
             {
-                CSScript.Compile(currentScript, null, false);
+                CSScript.CompileFile(currentScript, null, false);
             }
             catch (Exception ex)
             {
