@@ -17,7 +17,7 @@ namespace CSScriptIntellisense
         static IEngine roslynEngine = RoslynCompletionEngine.GetInstance();
 
         public static char[] Delimiters = "\\\t\n\r .,:;'\"[]{}()-/!?@$%^&*«»><#|~`".ToCharArray();
-        public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"[]{}()-!?@$%^&*«»><#|~`".ToCharArray(    );
+        public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
         static char[] lineDelimiters = new char[] { '\n', '\r' };
 
         static IEnumerable<ICompletionData> GetCSharpScriptCompletionData(string editorText, int offset)
@@ -89,7 +89,7 @@ namespace CSScriptIntellisense
                     }
                 });
 
-                return data.Concat(extraItems); 
+                return data.Concat(extraItems);
             }
             catch
             {
@@ -233,7 +233,12 @@ namespace CSScriptIntellisense
             var textOnRight = editorText.Substring(offset);
             var endPos = textOnRight.IndexOf('\n');
             if (endPos != -1)
+            {
+                if (endPos == 0)
+                    return "";
+
                 textOnRight = textOnRight.Substring(0, endPos - 1).TrimEnd('\r');
+            }
             return textOnRight;
         }
     }
