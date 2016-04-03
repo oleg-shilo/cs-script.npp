@@ -1,3 +1,5 @@
+v1.0.50.1
+* Fixed problem for autocompletion at the very end of the code line.
 v1.0.50.0
 * Added support for C# 6.0 Intellisense (auto-completion). Previously only formatting and script execution was available.
   It is a serious milestone, which opens the road for gradual phasing out the NRefactory parsers in favor of Roslyn. 
