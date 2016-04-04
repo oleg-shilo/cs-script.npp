@@ -20,11 +20,21 @@ namespace CSScriptNpp
         static void setInfo(NppData notepadPlusData)
         {
             //System.Diagnostics.Debug.Assert(false);
-            Bootstrapper.Init();
+            try
+            {
+                Bootstrapper.Init();
 
-            Plugin.NppData = notepadPlusData;
+                Plugin.NppData = notepadPlusData;
 
-            InitPlugin();
+                InitPlugin();
+            }
+            catch (Exception e)
+            {
+                var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Notepad++\plugins\logs\CSScriptNpp");
+
+                MessageBox.Show("Cannot load the plugin.\nThe error information has been logged into '"+ dir + "' directory", "CS-Script");
+                throw;
+            }
         }
 
         static void InitPlugin()

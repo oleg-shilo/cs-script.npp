@@ -10,11 +10,11 @@ public static class Logger
         NLog.LogManager.GetLogger(method.DeclaringType.ToString()).Error(method.Name + "|" + error ?? "<null>");
     }
 
-    public static void LogAsDebug(this object error)
+    public static void LogAsDebug(this object message)
     {
         var method = new StackFrame(1).GetMethod();
         string caller = method.DeclaringType.ToString() + "." + method.Name;
-        NLog.LogManager.GetLogger(method.DeclaringType.ToString()).Debug(method.Name + "|" + error ?? "<null>");
+        NLog.LogManager.GetLogger(method.DeclaringType.ToString()).Debug(method.Name + "|" + message ?? "<null>");
     }
 
     public static void Error(object error)

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
@@ -13,11 +14,19 @@ namespace CSScriptNpp
     {
         public static void Init()
         {
-            //Debug.Assert(false);
-
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-            InitLogging();
-            ConnectPlugins(); //must be a separate method to allow assembly probing
+            try
+            {
+                //Debug.Assert(false);
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                InitLogging();
+                ConnectPlugins(); //must be a separate method to allow assembly probing
+            }
+            catch(Exception e)
+            {
+                var customLog = Path.Combine(Plugin.LogDir, "last_startup_error.txt");
+                File.WriteAllText(customLog, e.ToString());
+                throw;
+            }
         }
 
         static void InitLogging()
@@ -51,13 +60,22 @@ namespace CSScriptNpp
 
                 LogManager.Configuration = config;
             }
+
+            Logger.LogAsDebug("Logger has been initialized");
         }
 
         static void ConnectPlugins()
         {
-            CSScriptHelper.NotifyClient = CSScriptIntellisense.Npp.SetStatusbarLabel;
-            CSScriptIntellisense.CSScriptHelper.GetEngineExe = () => CSScriptHelper.cscs_exe;
-            UltraSharp.Cecil.Reflector.GetCodeCompileOutput = CSScriptHelper.GetCodeCompileOutput;
+            try
+            {
+                CSScriptHelper.NotifyClient = CSScriptIntellisense.Npp.SetStatusbarLabel;
+                CSScriptIntellisense.CSScriptHelper.GetEngineExe = () => CSScriptHelper.cscs_exe;
+                UltraSharp.Cecil.Reflector.GetCodeCompileOutput = CSScriptHelper.GetCodeCompileOutput;
+            }
+            catch(Exception e)
+            {
+                e.LogAsError();
+            }
         }
 
         static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
