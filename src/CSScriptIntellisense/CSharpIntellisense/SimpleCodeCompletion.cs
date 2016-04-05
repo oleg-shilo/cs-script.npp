@@ -102,8 +102,8 @@ namespace CSScriptIntellisense
         {
             if (Config.Instance.RoslynIntellisense)
                 roslynEngine.ResetProject(sourceFiles, assemblies);
-            else
-                monoEngine.ResetProject(sourceFiles, assemblies);
+            //else
+            monoEngine.ResetProject(sourceFiles, assemblies); //at this stage always reset mono project as it is always used for other then autocomplete operations
         }
 
         //----------------------------------

@@ -542,17 +542,15 @@ namespace CSScriptIntellisense
                                 foreach (FileReference item in missingNamespaceErrors)
                                 {
                                     int errorPosition = Npp.GetLineStart(item.Line - 1) + item.Column - 1;
-                                    IEnumerable<Intellisense.Common.TypeInfo> items = ResolveNamespacesAtPosition(errorPosition);
+                                    IEnumerable<TypeInfo> items = ResolveNamespacesAtPosition(errorPosition)
+                                                                    .Where(x => !presentUsings.Contains(x.Namespace));
 
                                     if (items.Count() == 1) //do only if there is no ambiguity about what namespace it is
                                     {
                                         string resolvedNamespace = items.First().Namespace;
-                                        if (!presentUsings.Contains(resolvedNamespace))
-                                        {
-                                            namespacesToInsert.Add("using " + resolvedNamespace + ";");
-                                            presentUsings.Add(resolvedNamespace);
-                                            usingInserted = true;
-                                        }
+                                        namespacesToInsert.Add("using " + resolvedNamespace + ";");
+                                        presentUsings.Add(resolvedNamespace);
+                                        usingInserted = true;
                                     }
                                 }
 
@@ -680,7 +678,7 @@ namespace CSScriptIntellisense
                     if (!cssSugesstion)
                     {
                         bool usingSuggestion = Npp.GetLine(Npp.GetCaretLineNumber()).Trim() == "using";
-                        if(!usingSuggestion)
+                        if (!usingSuggestion)
                             items = items.Concat(GetSnippetsItems());
                     }
                 }
@@ -996,7 +994,7 @@ namespace CSScriptIntellisense
 
         static int[] WordEndsOf(string text)
         {
-            var delimiters = ".,\t ;<>{}()|\\/?=-*+&^%!";
+            var delimiters = ".,\t ;<>{}()|\\/?=-*+&^%!\r\n";
             var result = new List<int>();
             bool wordStarted = false;
             for (int i = 0; i < text.Length; i++)
@@ -1028,12 +1026,15 @@ namespace CSScriptIntellisense
             int[] probingOffsets = WordEndsOf(line); //note the all end positions of the words
 
             probingOffsets = probingOffsets.OrderBy(x => x - currentPosOffset).ToArray();
+            var words = probingOffsets.Select(x => line.Substring(x)).ToArray();
 
             //start from currentPosOffset and go left, then go to the right
-            probingOffsets = probingOffsets.Where(x => x <= currentPosOffset)
-                                           .Reverse()
-                                           .Concat(probingOffsets.Where(x => x > currentPosOffset))
-                                           .ToArray();
+            //probingOffsets = probingOffsets.Where(x => x <= currentPosOffset)
+            //                               .Reverse()
+            //                               .Concat(probingOffsets.Where(x => x > currentPosOffset))
+            //                               .ToArray();
+
+            words = probingOffsets.Select(x => line.Substring(x)).ToArray();
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
@@ -1041,13 +1042,16 @@ namespace CSScriptIntellisense
 
             var actualStart = currentPos - currentPosOffset; //after the decoration currentPos is changed so the line start
 
+            var allUsings = new List<TypeInfo>();
             foreach (int offset in probingOffsets) //try to resolve any 'word' in the line
             {
                 var result = SimpleCodeCompletion.GetMissingUsings(text, actualStart + offset, file);
                 if (result.Any())
-                    return result;
+                    allUsings.AddRange(result);
+                //return result;
             }
-            return new Intellisense.Common.TypeInfo[0];
+
+            return allUsings.DistinctBy(x => x.Namespace).ToArray();
         }
 
         static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtPositionOld(int currentPos)
