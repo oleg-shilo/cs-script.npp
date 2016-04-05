@@ -1,3 +1,7 @@
+v1.0.50.3
+* NLog based logging replaced with more reliable custom logging (to address Issue#14).
+v1.0.50.2
+* Added extra foll back custom logging at startup
 v1.0.50.1
 * Fixed problem for autocompletion at the very end of the code line.
 v1.0.50.0

@@ -229,10 +229,6 @@
     <Reference Include="CSScriptLibrary">
       <HintPath>CSScriptNpp\CSScriptLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.2.2\lib\net40\NLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -329,9 +325,6 @@
     <None Include="Interop\DllExport\NppPlugin.DllExport.targets" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NLog.dll.nlog">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

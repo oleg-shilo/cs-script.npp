@@ -14,6 +14,9 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
+            var logData = string.Format("{0:s}|{1:00000000}|{2}|{3}", DateTime.Now, Process.GetCurrentProcess().Id, "type", "message");
+
+
             Encoding enc = Encoding.UTF8;
             var text = "g–Version";
             var data = enc.GetBytes(text);

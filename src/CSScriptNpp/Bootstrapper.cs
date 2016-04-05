@@ -1,6 +1,3 @@
-using NLog;
-using NLog.Config;
-using NLog.Targets;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -18,8 +15,9 @@ namespace CSScriptNpp
             {
                 //Debug.Assert(false);
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-                InitLogging();
-                ConnectPlugins(); //must be a separate method to allow assembly probing
+                
+                //must be a separate method to allow assembly probing
+                ConnectPlugins(); 
             }
             catch(Exception e)
             {
@@ -27,41 +25,6 @@ namespace CSScriptNpp
                 File.WriteAllText(customLog, e.ToString());
                 throw;
             }
-        }
-
-        static void InitLogging()
-        {
-            if (LogManager.Configuration != null)
-            {
-                FileTarget target = LogManager.Configuration.FindTargetByName("logfile") as FileTarget;
-                target.FileName = Path.Combine(Plugin.LogDir, "app-log.txt");
-                target.ArchiveFileName = Path.Combine(Plugin.LogDir, "app-log.old.txt");
-            }
-            else
-            {
-                var config = new LoggingConfiguration();
-
-                var target = new FileTarget
-                {
-                    FileName = Path.Combine(Plugin.LogDir, "app-log.txt"),
-                    ArchiveFileName = Path.Combine(Plugin.LogDir, "app-log.old.txt"),
-                    Layout = "${longdate} ${processid} ${logger} ${message}",
-                    ArchiveEvery = FileArchivePeriod.Day,
-                    ConcurrentWrites = true,
-                    MaxArchiveFiles = 1,
-                    KeepFileOpen = false,
-                    Encoding = Encoding.Default,
-                    ArchiveNumbering = ArchiveNumberingMode.Rolling
-                };
-                var dbRule = new LoggingRule("*", LogLevel.Debug, target);
-
-                config.AddTarget("logfile", target);
-                config.LoggingRules.Add(dbRule);
-
-                LogManager.Configuration = config;
-            }
-
-            Logger.LogAsDebug("Logger has been initialized");
         }
 
         static void ConnectPlugins()
@@ -76,6 +39,10 @@ namespace CSScriptNpp
             {
                 e.LogAsError();
             }
+
+            CSScriptIntellisense.Logger.Error = PluginLogger.Error;
+            CSScriptIntellisense.Logger.Debug = PluginLogger.Debug;
+            Logger.LogAsDebug("Plugin has been loaded");
         }
 
         static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)

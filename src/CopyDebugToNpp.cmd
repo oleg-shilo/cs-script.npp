@@ -34,9 +34,6 @@ copy "CSScriptNpp\CSScriptNpp\cscs.v3.5.exe" "%plugins%\CSScriptNpp\cscs.v3.5.ex
 copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
 copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
 
-copy "CSScriptNpp\bin\Debug\NLog.dll" "%plugins%\CSScriptNpp\NLog.dll"
-copy "CSScriptNpp\bin\Debug\NLog.dll.nlog" "%plugins%\CSScriptNpp\NLog.dll.nlog"
-
 copy "CSScriptNpp\CSScriptNpp\MDbg\*.pdb" "%plugins%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Debug\CSScriptNpp\Mdbg\*.exe" "%plugins%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%plugins%\CSScriptNpp\Mdbg"

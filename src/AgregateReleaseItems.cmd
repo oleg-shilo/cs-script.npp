@@ -20,9 +20,6 @@ copy "CSScriptIntellisense\bin\Release\CSharpIntellisense\*.dll" "%plugins%\CSSc
 copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
 copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
 
-copy "CSScriptNpp\bin\Release\NLog.dll" "%plugins%\CSScriptNpp\NLog.dll"
-copy "CSScriptNpp\bin\Release\NLog.dll.nlog" "%plugins%\CSScriptNpp\NLog.dll.nlog"
-
 copy "CSScriptNpp\bin\Release\CSScriptNpp.dll" "%plugins%\CSScriptNpp.dll"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\*.exe" "%plugins%\CSScriptNpp"
 copy "CSScriptNpp\bin\release\CSScriptNpp\*.pdb" "%plugins%\CSScriptNpp"
