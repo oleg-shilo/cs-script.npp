@@ -892,7 +892,7 @@ namespace CSScriptIntellisense
             {
                 SourceCodeFormatter.CaretBeforeLastFormatting = -1;
 
-                if (c == '.' || c == '_')
+                if (c == '.' || c == '_' || (c == '='))
                 {
                     ShowSuggestionList();
                 }
