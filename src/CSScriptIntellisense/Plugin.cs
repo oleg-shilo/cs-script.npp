@@ -738,15 +738,13 @@ namespace CSScriptIntellisense
                     Npp.SetSelectionText("= ");
 
                     currentPos = Npp.GetCaretPosition();
-
-                    //currentPos = Npp.SetCaretPosition(currentPos + 2); //set it to .Load += |
                     word = "";
                 }
-                
+
 
                 if (word != "")  // e.g. Console.Wr| but not Console.| 
                 {
-                    Win32.SendMessage(sci, SciMsg.SCI_SETSELECTION, p.X, p.Y);
+                    Npp.SetSelection(p.X, p.Y);
                 }
                 else
                 {
@@ -758,30 +756,35 @@ namespace CSScriptIntellisense
                     {
                         int dif = lineLeftPart.Length - textOnLeft.Length;
                         //set it to  myForm.Result = |
-                        if(dif > 1)
+                        if (dif > 1)
                             currentPos = Npp.SetCaretPosition(currentPos - dif + 1);
                     }
                 }
 
                 //Note CompletionText caret position if any
-                string completionText = data.CompletionText;
-                int newCarrentPos = -1;
-                int completionCaretPos = completionText.IndexOf("$|$");
-                if (completionCaretPos != -1)
-                {
-                    completionText = completionText.Replace("$|$", "");
-                    newCarrentPos = Npp.GetCaretPosition() + completionCaretPos;// + "$|$".Length;
-                }
+                InsertCompletion(data.CompletionText);
 
-                //the actual completion injection
-                Npp.SetSelectionText(completionText);
-                Npp.ClearSelection();
-
-                //process new caret position if was requested
-                if (newCarrentPos != -1)
+                //check for extra content to insert
+                if (data.Tag is Dictionary<string, object>)
                 {
-                    Npp.SetCaretPosition(newCarrentPos);
-                    Npp.ClearSelection();
+                    try
+                    {
+                        var dict = data.Tag as Dictionary<string, object>;
+                        if (dict.ContainsKey("insertionPos") && dict.ContainsKey("insertionContent"))
+                        {
+                            var insertionPos = (int) dict["insertionPos"];
+                            var insertionContent = (string) dict["insertionContent"];
+
+                            //the insertion point could be already shifted because of the previous insertion
+                            if (currentPos < insertionPos)
+                                insertionPos += data.CompletionText.Length;
+
+                            Npp.SetCaretPosition(insertionPos);
+                            Npp.ClearSelection();
+                            InsertCompletion(insertionContent);
+                        };
+                    }
+                    catch { }
                 }
 
                 if (snippetsOnlyMode)
@@ -793,6 +796,28 @@ namespace CSScriptIntellisense
                 if (autocompleteForm.Visible)
                     autocompleteForm.Close();
                 autocompleteForm = null;
+            }
+        }
+
+        static void InsertCompletion(string completionText)
+        {
+            int newCarrentPos = -1;
+            int completionCaretPos = completionText.IndexOf("$|$");
+            if (completionCaretPos != -1)
+            {
+                completionText = completionText.Replace("$|$", "");
+                newCarrentPos = Npp.GetCaretPosition() + completionCaretPos;// + "$|$".Length;
+            }
+
+            //the actual completion injection
+            Npp.SetSelectionText(completionText);
+            Npp.ClearSelection();
+
+            //process new caret position if was requested
+            if (newCarrentPos != -1)
+            {
+                Npp.SetCaretPosition(newCarrentPos);
+                Npp.ClearSelection();
             }
         }
 

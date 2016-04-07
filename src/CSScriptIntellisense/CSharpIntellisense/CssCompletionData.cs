@@ -19,6 +19,7 @@ namespace CSScriptIntellisense
         public IEnumerable<string> InvokeParameters { get { return new string[0]; } }
         public bool InvokeParametersSet { get; set; }
         public string OperationContext { get; set; }
+        public object Tag { get; set; }
 
         public void AddOverload(ICompletionData data)
         {

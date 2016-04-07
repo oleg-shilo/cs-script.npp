@@ -35,6 +35,7 @@ namespace CSScriptIntellisense
         public string DisplayText { get; set; }
         public bool InvokeParametersSet { get; set; }
         public string OperationContext { get; set; }
+        public object Tag { get; set; }
 
         public bool HasOverloads
         {

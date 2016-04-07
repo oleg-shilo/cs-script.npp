@@ -95,6 +95,7 @@ class Script
         Script.Load +=|  
     }
     static event EventHandler Load;
+    static void OnLoad1(){}
 }";
 
             var data = SimpleCodeCompletion.GetCompletionData(code.Replace("|", ""),

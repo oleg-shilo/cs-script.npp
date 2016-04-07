@@ -30,6 +30,7 @@ namespace Intellisense.Common
         CompletionType CompletionType { get; }
         IEnumerable<string> InvokeParameters { get; }
         bool HasOverloads { get; }
+        object Tag { get; set; }
 
         IEnumerable<ICompletionData> OverloadedData { get; }
 
@@ -111,6 +112,20 @@ namespace Intellisense.Common
         public IEntity Entity { get; set; }
     }
 
+    public static class ReflectionExtensions
+    {
+        public static T CopyPropertiesFrom<T>(this T dest, T src)
+        {
+            var dummy = new object[0];
+
+            foreach (PropertyInfo info in src.GetType().GetProperties())
+                if (info.CanRead && info.CanWrite)
+                    info.SetValue(dest, info.GetValue(src, dummy), dummy);
+
+            return dest;
+        }
+    }
+
     public struct DomRegion
     {
         public static readonly DomRegion Empty = new DomRegion { IsEmpty = true };
@@ -141,6 +156,7 @@ namespace Intellisense.Common
         public bool HasOverloads { get; }
         public IEnumerable<ICompletionData> OverloadedData { get; }
         public IEnumerable<string> InvokeParameters { get; set; }
+        public object Tag { get; set; }
 
         public void AddOverload(ICompletionData data)
         {
