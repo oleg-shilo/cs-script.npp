@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Xunit;
 using Intellisense.Common;
+using System.Windows.Forms;
 
 namespace CSScriptIntellisense.Test
 {
@@ -40,28 +41,37 @@ namespace NSTest
 }
 
 ";
+        public GenericTest()
+        {
+            Environment.SetEnvironmentVariable("suppress_roslyn_preloading", "true");
+            Environment.SetEnvironmentVariable("roslynintellisense_path", 
+                                                Path.GetFullPath(@"..\..\..\..\..\CSScript.Npp\src\Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.exe"));
 
-        [Fact]
-        public void CompleteEmptySpace()
+            Config.Instance.RoslynIntellisense = true;
+        }
+
+        [Fact] 
+        public void CompleteAtEmptySpace()
         {
             SimpleCodeCompletion.ResetProject();
 
-            var data = SimpleCodeCompletion.GetCompletionData(code, 120, "test.cs");
+            var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
             Assert.True(data.Count() > 0);
         }
 
-        [Fact]
+        [Fact] 
         public void TypeNamespaceRemoved()
         {
             SimpleCodeCompletion.ResetProject();
 
-            var data = SimpleCodeCompletion.GetCompletionData(code, 120, "test.cs");
+            var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
 
+            //no items in display text with full namespace present
             Assert.True(data.Where(x => x.DisplayText == "Environment").Count() > 0);
             Assert.True(data.Where(x => x.DisplayText == "System.Environment").Count() == 0);
         }
 
-        [Fact]
+        [Fact] 
         public void GetCssCompletion()
         {
             SimpleCodeCompletion.ResetProject();
@@ -69,8 +79,31 @@ namespace NSTest
             var data = SimpleCodeCompletion.GetCompletionData(@"//css_args /provider:E:\Galos\Pro...", 6, "test.cs");
         }
 
+        [Fact] 
+        public void GetAddEventHandlerCompletion()
+        {
+            SimpleCodeCompletion.ResetProject();
 
-        [Fact]
+            var code =
+@"using System;
+using System.Windows.Forms;
+
+class Script
+{
+    static public void Main()
+    { 
+        Script.Load +=|  
+    }
+    static event EventHandler Load;
+}";
+
+            var data = SimpleCodeCompletion.GetCompletionData(code.Replace("|", ""),
+                                                              code.IndexOf("|")+1,
+                                                              "test.cs");
+        }
+
+
+        [Fact] 
         public void CompletePartialWord()
         {
             SimpleCodeCompletion.ResetProject();
@@ -81,7 +114,7 @@ namespace NSTest
             Assert.True(data.Where(x => x.DisplayText == "MessageBox").Any());
         }
 
-        [Fact]
+        [Fact] 
         public void CompleteMethodArguments()
         {
             SimpleCodeCompletion.ResetProject();
@@ -106,7 +139,7 @@ class Script
             //It is a CSharpCompletionEngine flaw.
         }
 
-        [Fact]
+        [Fact] 
         public void SuggestMissingUsings()
         {
             SimpleCodeCompletion.ResetProject();
@@ -118,7 +151,7 @@ class Script
             Assert.Equal("System.IO.File", info.FullName);
         }
 
-        [Fact]
+        [Fact] 
         public void SuggestMissingUsingsForPartialWordAtCaret()
         {
             SimpleCodeCompletion.ResetProject();
@@ -130,7 +163,7 @@ class Script
             Assert.Equal("System.IO.File", info.FullName);
         }
 
-        [Fact]
+        [Fact] 
         public void SuggestMissingUsingsForTopLevelType()
         {
             SimpleCodeCompletion.ResetProject();
@@ -147,7 +180,7 @@ class Script
             Assert.True(info[1].IsNested);
         }
 
-        [Fact]
+        [Fact] 
         public void SuggestMissingUsingsForNestedType()
         {
             SimpleCodeCompletion.ResetProject();
@@ -158,7 +191,7 @@ class Script
             Assert.Equal("NSTest.TopTest.SubTest", info.FullName);
         }
 
-        [Fact]
+        [Fact] 
         public void GetWordAt()
         {
             //Console.Wri|teLine
@@ -167,7 +200,7 @@ class Script
             Assert.Equal("WriteLine", word);
         }
 
-        [Fact]
+        [Fact] 
         public void GenerateMemeberQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -188,7 +221,7 @@ class Script
             Assert.Equal("Method: void Console.WriteLine() (+ 18 overload(s))", info.First().GetLines(2).First());
         }
 
-        [Fact]
+        [Fact] 
         public void GenerateConstructorQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -209,7 +242,7 @@ class Script
             Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
         }
 
-        [Fact]
+        [Fact] 
         public void GenerateConstructorQuickInfo1()
         {
             SimpleCodeCompletion.ResetProject();
@@ -230,7 +263,7 @@ class Script
             Assert.Equal("Constructor: Script()", info.First());
         }
         
-        [Fact]
+        [Fact] 
         public void GenerateTypeDeclarationQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -252,7 +285,7 @@ class Script
             Assert.Equal("Type: Script", info.First());
         }
         
-        [Fact]
+        [Fact] 
         public void GenerateConstructorFullInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -273,7 +306,7 @@ class Script
             Assert.Equal("Constructor: DateTime()", info.OrderBy(x => x).First());
         }
         
-        [Fact]
+        [Fact] 
         public void GenerateMemeberFullInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -295,7 +328,7 @@ class Script
             Assert.Equal("Method: void Console.WriteLine(bool value)", info[1].GetLines(2).First());
         }
 
-        [Fact]
+        [Fact] 
         public void ProcessGenericsInDisplayInfo()
         {
             string cleared = "Method: IQueryable`1[[``0]] Queryable.AsQueryable`1[[``0]](IEnumerable`1[[``0]] source, Action`1[[List`1[[``0]]]])".ProcessGenricNotations();
@@ -311,7 +344,7 @@ class Script
             Assert.Equal("Method: Dictionary<T1,T> Enumerable.ToDictionary<T,T1>(IEnumerable<T> source, Func<T,T1> keySelector)", cleared);
         }
 
-        [Fact]
+        [Fact] 
         public void StringBuilderExtensions1()
         {
             Assert.True("\r\ndo\r\n".IsToken("do", 3));
@@ -394,7 +427,4 @@ class Script
             Assert.Equal("{" + Environment.NewLine, test);
         }
     }
-
-
-
 }

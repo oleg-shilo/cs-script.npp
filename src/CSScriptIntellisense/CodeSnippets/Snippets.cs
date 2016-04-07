@@ -24,15 +24,17 @@ namespace CSScriptIntellisense
     {
         public SnippetCompletionData()
         {
-            Icon = IconType.snippet;
+            CompletionType = CompletionType.snippet;
         }
 
         public CompletionCategory CompletionCategory { get; set; }
         public string CompletionText { get; set; }
         public string Description { get; set; }
-        public IconType Icon { get; set; }
+        public CompletionType CompletionType { get; set; }
         public DisplayFlags DisplayFlags { get; set; }
         public string DisplayText { get; set; }
+        public bool InvokeParametersSet { get; set; }
+        public string OperationContext { get; set; }
 
         public bool HasOverloads
         {
@@ -45,6 +47,10 @@ namespace CSScriptIntellisense
         }
 
         public IEnumerable<ICompletionData> OverloadedData
+        {
+            get { throw new NotImplementedException(); }
+        }
+        public IEnumerable<string> InvokeParameters
         {
             get { throw new NotImplementedException(); }
         }

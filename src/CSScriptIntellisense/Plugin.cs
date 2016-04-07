@@ -669,10 +669,11 @@ namespace CSScriptIntellisense
             else
             {
                 items = GetSuggestionItemsAtCaret();
-                bool namespaceSuggestion = items.All(x => x.Icon == IconType._namespace);
+                bool namespaceSuggestion = items.All(x => x.CompletionType == CompletionType._namespace);
                 bool memberSugesstion = Npp.TextBeforeCursor(2).EndsWith(".");
+                bool assignmentSugesstion = Npp.TextBeforeCursor(10).TrimEnd().EndsWith("=");
 
-                if (!memberSugesstion && !namespaceSuggestion)
+                if (!memberSugesstion && !namespaceSuggestion && !assignmentSugesstion)
                 {
                     bool cssSugesstion = Npp.TextBeforeCursor(300).Split('\n').Last().TrimStart().StartsWith("//css_");
                     if (!cssSugesstion)
@@ -731,10 +732,57 @@ namespace CSScriptIntellisense
                 Point p;
                 string word = Npp.GetWordAtCursor(out p);
 
-                if (word != "")  // e.g. Console.Wr| but not Console.|
-                    Win32.SendMessage(sci, SciMsg.SCI_SETSELECTION, p.X, p.Y);
+                if (word == "=") // .Load +=|
+                {
+                    Npp.SetSelection(p.X, p.Y);
+                    Npp.SetSelectionText("= ");
 
-                Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, data.CompletionText);
+                    currentPos = Npp.GetCaretPosition();
+
+                    //currentPos = Npp.SetCaretPosition(currentPos + 2); //set it to .Load += |
+                    word = "";
+                }
+                
+
+                if (word != "")  // e.g. Console.Wr| but not Console.| 
+                {
+                    Win32.SendMessage(sci, SciMsg.SCI_SETSELECTION, p.X, p.Y);
+                }
+                else
+                {
+                    // myForm.Result =   |
+                    var lStart = Npp.GetLineStart(Npp.GetLineNumber(currentPos));
+                    string lineLeftPart = Npp.GetTextBetween(lStart, currentPos);
+                    string textOnLeft = lineLeftPart.TrimEnd();
+                    if (textOnLeft.EndsWith("="))
+                    {
+                        int dif = lineLeftPart.Length - textOnLeft.Length;
+                        //set it to  myForm.Result = |
+                        if(dif > 1)
+                            currentPos = Npp.SetCaretPosition(currentPos - dif + 1);
+                    }
+                }
+
+                //Note CompletionText caret position if any
+                string completionText = data.CompletionText;
+                int newCarrentPos = -1;
+                int completionCaretPos = completionText.IndexOf("$|$");
+                if (completionCaretPos != -1)
+                {
+                    completionText = completionText.Replace("$|$", "");
+                    newCarrentPos = Npp.GetCaretPosition() + completionCaretPos;// + "$|$".Length;
+                }
+
+                //the actual completion injection
+                Npp.SetSelectionText(completionText);
+                Npp.ClearSelection();
+
+                //process new caret position if was requested
+                if (newCarrentPos != -1)
+                {
+                    Npp.SetCaretPosition(newCarrentPos);
+                    Npp.ClearSelection();
+                }
 
                 if (snippetsOnlyMode)
                     TriggerCodeSnippetInsertion();

@@ -16,7 +16,7 @@ namespace CSScriptIntellisense
         static IEngine monoEngine = new MonoCompletionEngine();
         static IEngine roslynEngine = RoslynCompletionEngine.GetInstance();
 
-        public static char[] Delimiters = "\\\t\n\r .,:;'\"[]{}()-/!?@$%^&*«»><#|~`".ToCharArray();
+        public static char[] Delimiters = "\\\t\n\r .,:;'\"[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
         public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
         static char[] lineDelimiters = new char[] { '\n', '\r' };
 
@@ -80,11 +80,18 @@ namespace CSScriptIntellisense
                     }
                     else if (Config.Instance.UseMethodBrackets)
                     {
-                        if (x.Icon == IconType.method || x.Icon == IconType.extension_method)
+                        if (x.CompletionType == CompletionType.method || x.CompletionType == CompletionType.extension_method)
                         {
                             //"Console.WriteLi| " but not "Console.Write|(" 
                             if (rightHalfOfLine == null || rightHalfOfLine.StartsWith(" ") || rightHalfOfLine.StartsWith("\r") || rightHalfOfLine.StartsWith("\n"))
-                                x.CompletionText = x.CompletionText + "(";
+                            {
+                                x.CompletionText += "(";
+                                if (x.InvokeParametersSet)
+                                {
+                                    if(x.InvokeParameters.Count() == 0 || (x.InvokeParameters.Count() == 1 && x.CompletionType == CompletionType.extension_method))
+                                        x.CompletionText += ")"; //like .Clone()
+                                }
+                            }
                         }
                     }
                 });

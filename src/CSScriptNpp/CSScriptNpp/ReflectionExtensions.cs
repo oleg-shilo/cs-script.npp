@@ -6,6 +6,11 @@ namespace CSScriptNpp
 {
     public static class ReflectionExtensions
     {
+        public static T To<T>(this object obj)
+        {
+            return (T) obj;
+        }
+
         public static object GetField(this object obj, string name, bool throwOnError = true)
         {
             //Note GetField(s) does not return base class fields like GetProperty does.

@@ -105,18 +105,18 @@ namespace CSScriptIntellisense
 
         Image GetImageFor(ICompletionData item)
         {
-            switch (item.Icon)
+            switch (item.CompletionType)
             {
-                case IconType.none: return null;
-                case IconType.snippet: return Res.Images.snippet;
-                case IconType.constructor: return Res.Images.constructor;
-                case IconType.extension_method: return Res.Images.extension_method;
-                case IconType.method: return Res.Images.method;
-                case IconType._event: return Res.Images._event;
-                case IconType.field: return Res.Images.field;
-                case IconType.property: return Res.Images.property;
-                case IconType._namespace: return Res.Images._namespace;
-                case IconType.unresolved: return Res.Images.unresolved;
+                case CompletionType.none: return null;
+                case CompletionType.snippet: return Res.Images.snippet;
+                case CompletionType.constructor: return Res.Images.constructor;
+                case CompletionType.extension_method: return Res.Images.extension_method;
+                case CompletionType.method: return Res.Images.method;
+                case CompletionType._event: return Res.Images._event;
+                case CompletionType.field: return Res.Images.field;
+                case CompletionType.property: return Res.Images.property;
+                case CompletionType._namespace: return Res.Images._namespace;
+                case CompletionType.unresolved: return Res.Images.unresolved;
             }
 
             return null;

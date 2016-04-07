@@ -344,7 +344,7 @@ namespace CSScriptIntellisense
             string rightText = Npp.TextAfterPosition(currentPos, 512);
 
             //if updating do not forger to update SimpleCodeCompletion.Delimiters
-            var delimiters = "\\·\t\n\r .,:;'\"[]{}()-/!?@$%^&*«»><#|~`".ToCharArray();
+            var delimiters = "\\·\t\n\r .,:;'\"[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
 
             if (wordDelimiters != null)
                 delimiters = wordDelimiters;
@@ -405,10 +405,11 @@ namespace CSScriptIntellisense
             return (int)Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
         }
 
-        public static void SetCaretPosition(int pos)
+        public static int SetCaretPosition(int pos)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETCURRENTPOS, pos, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0); 
         }
 
         public static void Undo()
@@ -435,7 +436,13 @@ namespace CSScriptIntellisense
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, start, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, end, 0); ;
+            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, end, 0); 
+        }
+
+        public static void SetSelectionText(string text)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, text);
         }
 
         static public int GrabFocus()

@@ -12,10 +12,13 @@ namespace CSScriptIntellisense
         public string CompletionText { get; set; }
         public string Description { get; set; }
         public DisplayFlags DisplayFlags { get; set; }
-        public IconType Icon { get; set; }
+        public CompletionType CompletionType { get; set; }
         public string DisplayText { get; set; }
         public bool HasOverloads { get; set; }
         public IEnumerable<ICompletionData> OverloadedData { get { return new ICompletionData[0]; } }
+        public IEnumerable<string> InvokeParameters { get { return new string[0]; } }
+        public bool InvokeParametersSet { get; set; }
+        public string OperationContext { get; set; }
 
         public void AddOverload(ICompletionData data)
         {
@@ -29,7 +32,7 @@ namespace CSScriptIntellisense
                                            .Split(';', ',')
                                            .Where(x => !string.IsNullOrWhiteSpace(x))
                                            .Select(x => x.Trim())
-                                           .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, Icon = IconType._namespace })
+                                           .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, CompletionType = CompletionType._namespace })
                                            .ToArray();
             }
         }
@@ -41,7 +44,7 @@ namespace CSScriptIntellisense
                                         .Split(';', ',')
                                         .Where(x => !string.IsNullOrWhiteSpace(x))
                                         .Select(x => x.Trim())
-                                        .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, Icon = IconType._namespace })
+                                        .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, CompletionType = CompletionType._namespace })
                                         .ToArray();
             }
         }
@@ -113,7 +116,7 @@ Examples:
 
         public CssCompletionData()
         {
-            Icon = IconType.unresolved;
+            CompletionType = CompletionType.unresolved;
         }
 
         static string GetHelpFile()

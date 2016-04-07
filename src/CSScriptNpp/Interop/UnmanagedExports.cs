@@ -28,7 +28,7 @@ namespace CSScriptNpp
 
                 InitPlugin();
             }
-            catch (Exception e)
+            catch 
             {
                 var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Notepad++\plugins\logs\CSScriptNpp");
 

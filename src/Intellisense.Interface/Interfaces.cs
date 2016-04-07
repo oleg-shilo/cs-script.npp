@@ -20,14 +20,16 @@ namespace Intellisense.Common
 
     public interface ICompletionData
     {
+        string OperationContext { get; set; }
+        bool InvokeParametersSet { get; set; }
         CompletionCategory CompletionCategory { get; set; }
         string CompletionText { get; set; }
         string Description { get; set; }
         DisplayFlags DisplayFlags { get; set; }
         string DisplayText { get; set; }
+        CompletionType CompletionType { get; }
+        IEnumerable<string> InvokeParameters { get; }
         bool HasOverloads { get; }
-
-        IconType Icon { get; }
 
         IEnumerable<ICompletionData> OverloadedData { get; }
 
@@ -80,7 +82,7 @@ namespace Intellisense.Common
         Accessor = 10
     }
 
-    public enum IconType : byte
+    public enum CompletionType : byte
     {
         none,
         snippet,
@@ -125,16 +127,20 @@ namespace Intellisense.Common
         public CompletionData()
         {
             OverloadedData = new List<ICompletionData>();
+            InvokeParameters = new List<string>();
         }
 
+        public string OperationContext { get; set; }
+        public bool InvokeParametersSet { get; set; }
         public CompletionCategory CompletionCategory { get; set; }
         public string CompletionText { get; set; }
         public string Description { get; set; }
         public DisplayFlags DisplayFlags { get; set; }
         public string DisplayText { get; set; }
-        public IconType Icon { get; set; }
+        public CompletionType CompletionType { get; set; }
         public bool HasOverloads { get; }
         public IEnumerable<ICompletionData> OverloadedData { get; }
+        public IEnumerable<string> InvokeParameters { get; set; }
 
         public void AddOverload(ICompletionData data)
         {
