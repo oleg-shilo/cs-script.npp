@@ -741,13 +741,21 @@ namespace CSScriptIntellisense
                     word = "";
                 }
 
-
                 if (word != "")  // e.g. Console.Wr| but not Console.| 
                 {
                     Npp.SetSelection(p.X, p.Y);
                 }
                 else
                 {
+                    string leftChar = Npp.GetTextBetween(p.X - 1, p.X);
+                    if (leftChar == "=")
+                    {
+                        Npp.SetSelectionText(" "); //add space
+
+                        //currentPos = Npp.SetCaretPosition(currentPos + 1);
+                        Npp.ClearSelection();
+                    }
+
                     // myForm.Result =   |
                     var lStart = Npp.GetLineStart(Npp.GetLineNumber(currentPos));
                     string lineLeftPart = Npp.GetTextBetween(lStart, currentPos);

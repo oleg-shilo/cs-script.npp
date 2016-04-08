@@ -27,6 +27,7 @@ namespace CSScriptIntellisense
             ignoreDocExceptions.Checked = data.IgnoreDocExceptions;
             formatAsYouType.Checked = data.FormatAsYouType;
             roslynFormatter.Checked = data.RoslynFormatting;
+            autoInsertSingle.Checked = data.AutoInsertSingeSuggestion;
             roslynIntellisense.Checked = data.RoslynIntellisense;
 
             this.FormClosed += (s, e) =>
@@ -43,6 +44,7 @@ namespace CSScriptIntellisense
             data.IgnoreDocExceptions = ignoreDocExceptions.Checked;
             data.FormatAsYouType = formatAsYouType.Checked;
             data.RoslynFormatting = roslynFormatter.Checked;
+            data.AutoInsertSingeSuggestion = autoInsertSingle.Checked;
             data.RoslynIntellisense = roslynIntellisense.Checked;
         }
 

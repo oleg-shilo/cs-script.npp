@@ -41,6 +41,13 @@ namespace NSTest
 }
 
 ";
+        int GetCaretPosition(ref string code)
+        {
+            int retval = code.IndexOf("|") + 1;
+            code = code.Replace("|", "");
+            return retval;
+        }
+
         public GenericTest()
         {
             Environment.SetEnvironmentVariable("suppress_roslyn_preloading", "true");
@@ -80,7 +87,7 @@ namespace NSTest
         }
 
         [Fact] 
-        public void GetAddEventHandlerCompletion()
+        public void GetAddLocalEventHandlerCompletion()
         {
             SimpleCodeCompletion.ResetProject();
 
@@ -97,10 +104,114 @@ class Script
     static event EventHandler Load;
     static void OnLoad1(){}
 }";
+            int pos = GetCaretPosition(ref code);
 
-            var data = SimpleCodeCompletion.GetCompletionData(code.Replace("|", ""),
-                                                              code.IndexOf("|")+1,
-                                                              "test.cs");
+            var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+
+            Assert.Equal(3, data.Count());
+            Assert.Contains(data, x => x.DisplayText == "OnLoad - lambda");
+            Assert.Contains(data, x => x.DisplayText == "OnLoad - delegate");
+            Assert.Contains(data, x => x.DisplayText == "OnLoad - method");
+            Assert.Equal("OnLoad2;", data.Last().CompletionText);
+        }
+
+        [Fact] 
+        public void GetAddExternalEventHandlerCompletion()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            var code =
+@"using System;
+using System.Windows.Forms;
+
+class Script
+{
+    static public void Main()
+    {
+        var form = new Form();
+        form.Load+= |  
+    }
+}";
+            int pos = GetCaretPosition(ref code);
+
+            var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+
+            Assert.Equal(3, data.Count());
+            Assert.Contains(data, x => x.DisplayText == "OnLoad - lambda");
+            Assert.Contains(data, x => x.DisplayText == "OnLoad - delegate");
+            Assert.Contains(data, x => x.DisplayText == "OnLoad - method");
+            Assert.Equal("OnLoad;", data.Last().CompletionText);
+        }
+
+        [Fact]
+        public void AddEventHandlerRespectsIncrement()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            var code =
+@"using System;
+
+class Script
+{
+    static public void Main()
+    {
+        var text = ""test"";
+        text +=|  
+    }
+}";
+            int pos = GetCaretPosition(ref code);
+
+            var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+
+            Assert.Empty(data);
+        }
+
+        [Fact] 
+        public void GetCreateNewCompletion()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            var code =
+@"using System;
+using System.Windows.Forms;
+
+class Script
+{
+    static public void Main()
+    {
+        Script.dialog =| 
+    }
+    static Form dialog;
+";
+            int pos = GetCaretPosition(ref code);
+
+            var data = SimpleCodeCompletion.GetCompletionData(code,pos, "test.cs");
+        }
+
+        [Fact]
+        public void GetAssignmentCompletion()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            var code =
+@"using System;
+using System.Windows.Forms;
+
+class Script
+{
+    static public void Main()
+    {
+        var form = new Form();
+        form.DialogResult=| 
+    }
+";
+            int pos = GetCaretPosition(ref code);
+
+            var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+
+            Assert.Equal(1, data.Count());
+            Assert.Contains(data, x => x.DisplayText == "DialogResult - value");
+            Assert.Equal("DialogResult.", data.Last().CompletionText);
         }
 
 

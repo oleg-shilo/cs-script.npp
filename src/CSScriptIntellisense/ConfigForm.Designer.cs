@@ -32,13 +32,14 @@
             this.useArrow = new System.Windows.Forms.CheckBox();
             this.intercept = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.autoInsertSingle = new System.Windows.Forms.CheckBox();
             this.useMethodBrackets = new System.Windows.Forms.CheckBox();
             this.ignoreDocExceptions = new System.Windows.Forms.CheckBox();
             this.formatAsYouType = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.ContentPanel = new System.Windows.Forms.Panel();
-            this.roslynFormatter = new System.Windows.Forms.CheckBox();
             this.roslynIntellisense = new System.Windows.Forms.CheckBox();
+            this.roslynFormatter = new System.Windows.Forms.CheckBox();
             this.ContentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,10 +64,22 @@
             this.intercept.UseVisualStyleBackColor = true;
             this.intercept.Visible = false;
             // 
+            // autoInsertSingle
+            // 
+            this.autoInsertSingle.AutoSize = true;
+            this.autoInsertSingle.Location = new System.Drawing.Point(0, 32);
+            this.autoInsertSingle.Name = "autoInsertSingle";
+            this.autoInsertSingle.Size = new System.Drawing.Size(155, 17);
+            this.autoInsertSingle.TabIndex = 2;
+            this.autoInsertSingle.Text = "Auto insert single suggetion";
+            this.toolTip1.SetToolTip(this.autoInsertSingle, "Auto inster suggested autocompletion item \r\nif it is the only item in the suggest" +
+        "ion list.");
+            this.autoInsertSingle.UseVisualStyleBackColor = true;
+            // 
             // useMethodBrackets
             // 
             this.useMethodBrackets.AutoSize = true;
-            this.useMethodBrackets.Location = new System.Drawing.Point(0, 32);
+            this.useMethodBrackets.Location = new System.Drawing.Point(0, 56);
             this.useMethodBrackets.Name = "useMethodBrackets";
             this.useMethodBrackets.Size = new System.Drawing.Size(191, 17);
             this.useMethodBrackets.TabIndex = 2;
@@ -87,7 +100,7 @@
             // formatAsYouType
             // 
             this.formatAsYouType.AutoSize = true;
-            this.formatAsYouType.Location = new System.Drawing.Point(0, 55);
+            this.formatAsYouType.Location = new System.Drawing.Point(0, 79);
             this.formatAsYouType.Name = "formatAsYouType";
             this.formatAsYouType.Size = new System.Drawing.Size(142, 17);
             this.formatAsYouType.TabIndex = 2;
@@ -97,7 +110,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(12, 124);
+            this.linkLabel1.Location = new System.Drawing.Point(12, 163);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 4;
@@ -109,6 +122,7 @@
             // 
             this.ContentPanel.Controls.Add(this.useMethodBrackets);
             this.ContentPanel.Controls.Add(this.useArrow);
+            this.ContentPanel.Controls.Add(this.autoInsertSingle);
             this.ContentPanel.Controls.Add(this.roslynIntellisense);
             this.ContentPanel.Controls.Add(this.roslynFormatter);
             this.ContentPanel.Controls.Add(this.ignoreDocExceptions);
@@ -116,34 +130,34 @@
             this.ContentPanel.Controls.Add(this.formatAsYouType);
             this.ContentPanel.Location = new System.Drawing.Point(13, 3);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 118);
+            this.ContentPanel.Size = new System.Drawing.Size(290, 148);
             this.ContentPanel.TabIndex = 5;
-            // 
-            // roslynFormatter
-            // 
-            this.roslynFormatter.AutoSize = true;
-            this.roslynFormatter.Location = new System.Drawing.Point(0, 78);
-            this.roslynFormatter.Name = "roslynFormatter";
-            this.roslynFormatter.Size = new System.Drawing.Size(127, 17);
-            this.roslynFormatter.TabIndex = 2;
-            this.roslynFormatter.Text = "Use Roslyn Formatter";
-            this.roslynFormatter.UseVisualStyleBackColor = true;
             // 
             // roslynIntellisense
             // 
             this.roslynIntellisense.AutoSize = true;
-            this.roslynIntellisense.Location = new System.Drawing.Point(0, 101);
+            this.roslynIntellisense.Location = new System.Drawing.Point(0, 125);
             this.roslynIntellisense.Name = "roslynIntellisense";
             this.roslynIntellisense.Size = new System.Drawing.Size(135, 17);
             this.roslynIntellisense.TabIndex = 2;
             this.roslynIntellisense.Text = "Use Roslyn Intellisense";
             this.roslynIntellisense.UseVisualStyleBackColor = true;
             // 
+            // roslynFormatter
+            // 
+            this.roslynFormatter.AutoSize = true;
+            this.roslynFormatter.Location = new System.Drawing.Point(0, 102);
+            this.roslynFormatter.Name = "roslynFormatter";
+            this.roslynFormatter.Size = new System.Drawing.Size(127, 17);
+            this.roslynFormatter.TabIndex = 2;
+            this.roslynFormatter.Text = "Use Roslyn Formatter";
+            this.roslynFormatter.UseVisualStyleBackColor = true;
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 159);
+            this.ClientSize = new System.Drawing.Size(315, 186);
             this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -172,5 +186,6 @@
         public System.Windows.Forms.Panel ContentPanel;
         private System.Windows.Forms.CheckBox roslynFormatter;
         private System.Windows.Forms.CheckBox roslynIntellisense;
+        private System.Windows.Forms.CheckBox autoInsertSingle;
     }
 }

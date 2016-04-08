@@ -321,7 +321,7 @@ namespace CSScriptIntellisense
             return GetWordAtPosition(position, out point, wordDelimiters);
         }
 
-        static char[] statementDelimiters = " ,:;'\"[]{}()".ToCharArray();
+        static char[] statementDelimiters = " ,:;'\"=[]{}()".ToCharArray();
         static public string GetStatementAtPosition(int position = -1)
         {
             Point point;
@@ -344,7 +344,7 @@ namespace CSScriptIntellisense
             string rightText = Npp.TextAfterPosition(currentPos, 512);
 
             //if updating do not forger to update SimpleCodeCompletion.Delimiters
-            var delimiters = "\\·\t\n\r .,:;'\"[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
+            var delimiters = "\\·\t\n\r .,:;'\"=[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
 
             if (wordDelimiters != null)
                 delimiters = wordDelimiters;

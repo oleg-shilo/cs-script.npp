@@ -252,7 +252,7 @@ namespace CSScriptIntellisense
 
                 timer1.Enabled = true;
 
-                if (listBox1.Items.Count == 1)
+                if (Config.Instance.AutoInsertSingeSuggestion &&  listBox1.Items.Count == 1)
                 {
                     listBox1.SelectedIndex = 0;
                     OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);

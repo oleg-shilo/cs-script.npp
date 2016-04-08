@@ -16,8 +16,8 @@ namespace CSScriptIntellisense
         static IEngine monoEngine = new MonoCompletionEngine();
         static IEngine roslynEngine = RoslynCompletionEngine.GetInstance();
 
-        public static char[] Delimiters = "\\\t\n\r .,:;'\"[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
-        public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
+        public static char[] Delimiters = "\\\t\n\r .,:;'\"=[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
+        public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"=[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
         static char[] lineDelimiters = new char[] { '\n', '\r' };
 
         static IEnumerable<ICompletionData> GetCSharpScriptCompletionData(string editorText, int offset)

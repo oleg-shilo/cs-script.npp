@@ -46,6 +46,7 @@ namespace CSScriptIntellisense
         public bool RoslynIntellisense = true;
         public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
+        public bool AutoInsertSingeSuggestion = false;
         public bool FallbackFormatting = false;
         public bool FormatAsYouType = true;
         public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
@@ -74,6 +75,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 SetValue(Section, "SmartIndenting", SmartIndenting);
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
+                SetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
                 SetValue(Section, "RoslynFormatting", RoslynFormatting);
                 SetValue(Section, "RoslynIntellisense", RoslynIntellisense);
@@ -104,6 +106,7 @@ namespace CSScriptIntellisense
                 DefaultNamespaces = GetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
+                AutoInsertSingeSuggestion = GetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
                 RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);
                 RoslynIntellisense = GetValue(Section, "RoslynIntellisense", RoslynIntellisense);
