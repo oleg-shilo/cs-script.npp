@@ -51,6 +51,7 @@ namespace CSScriptIntellisense
         {
             get { throw new NotImplementedException(); }
         }
+        public string InvokeReturn { get; set; }
         public IEnumerable<string> InvokeParameters
         {
             get { throw new NotImplementedException(); }

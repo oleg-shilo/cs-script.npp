@@ -16,7 +16,8 @@ namespace CSScriptIntellisense
         public string DisplayText { get; set; }
         public bool HasOverloads { get; set; }
         public IEnumerable<ICompletionData> OverloadedData { get { return new ICompletionData[0]; } }
-        public IEnumerable<string> InvokeParameters { get { return new string[0]; } }
+        public IEnumerable<string> InvokeParameters { get { return null; } }
+        public string InvokeReturn { get; set; }
         public bool InvokeParametersSet { get; set; }
         public string OperationContext { get; set; }
         public object Tag { get; set; }

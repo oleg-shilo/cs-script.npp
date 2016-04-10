@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text.RegularExpressions;
 
 namespace RoslynIntellisense
 {
@@ -120,7 +121,7 @@ namespace RoslynIntellisense
             if (position > 5) //you need at least a few chars to declare the event handler adding: a.b+=
             {
                 int start = Math.Max(0, position - 300);
-                string leftSide = code.Substring(start, position- start); //max 300 chars from left
+                string leftSide = code.Substring(start, position - start); //max 300 chars from left
                 string leftSideText = leftSide.TrimEnd();
 
                 if (leftSideText.EndsWith("-=")) //it is 'remove event' declaration: this.Load -= |
@@ -265,7 +266,7 @@ namespace RoslynIntellisense
                 string[] namespaces = root.GetUsingNamespace(code);
 
                 // delegate event handler
-                handlerArgs = string.Join(", ", data.InvokeParameters.Select(x=>x.ShrinkNamespaces(namespaces)).ToArray());
+                handlerArgs = string.Join(", ", data.InvokeParameters.Select(x => x.ShrinkNamespaces(namespaces)).ToArray());
 
                 sb.Clear()
                   .AppendLine("delegate(" + handlerArgs + ")")
@@ -320,9 +321,11 @@ namespace RoslynIntellisense
                     methodCompletion.CompletionText = handlerName + ";";
                     methodCompletion.DisplayText = "On" + eventName + " - method";
 
+                    var returnType = delegateCompletion.InvokeReturn.ShrinkNamespaces(namespaces) + " ";
+
                     sb.Clear()
                       .AppendLine()
-                      .AppendLine(indent + modifier + "void " + handlerName + "(" + handlerArgs + ")")
+                      .AppendLine(indent + modifier + returnType + handlerName + "(" + handlerArgs + ")")
                       .AppendLine(indent + "{")
                       .AppendLine(indent + "    $|$")
                       .AppendLine(indent + "}");
@@ -365,7 +368,7 @@ namespace RoslynIntellisense
                 data.CompletionText = typeName + ".";
             else if (type.IsReferenceType)
                 data.CompletionText = "new " + typeName + "();";
-            else 
+            else
                 data.CompletionText = typeName;
             return true;
 
@@ -426,6 +429,21 @@ namespace RoslynIntellisense
             }
         }
 
+        static string ToDecoratedName(this ITypeSymbol type)
+        {
+            string result = type.ToDisplayString();
+
+            if (!result.Contains('.'))
+                return result;
+            //if (clrAliaces.ContainsKey(result))
+            //    return clrAliaces[result];
+
+            string nmspace = "";
+            if (type.ContainingNamespace != null)
+                nmspace = "{" + type.ContainingNamespace + "}.";
+            return (nmspace + type.Name);
+        }
+
         public static ICompletionData ToCompletionData(this ISymbol symbol)
         {
             if (symbol.Kind == SymbolKind.Event ||
@@ -435,6 +453,7 @@ namespace RoslynIntellisense
             {
                 // Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE.PEMethodSymbol is internal so we cannot explore it
                 var invokeParams = new List<string>();
+                string invokeReturn = null;
                 try
                 {
                     if (symbol.Kind == SymbolKind.Method && symbol is IMethodSymbol)
@@ -442,8 +461,9 @@ namespace RoslynIntellisense
                         var method = (IMethodSymbol) symbol;
                         foreach (var item in method.Parameters)
                         {
-                            invokeParams.Add(item.Type.ToDisplayString() + " " + item.Name);
+                            invokeParams.Add(item.Type.ToDecoratedName() + " " + item.Name);
                         }
+                        invokeReturn = method.ReturnType.ToDecoratedName();
                     }
                     else if (symbol.Kind == SymbolKind.Event && symbol is IEventSymbol)
                     {
@@ -453,8 +473,9 @@ namespace RoslynIntellisense
 
                         foreach (var item in method.Parameters)
                         {
-                            invokeParams.Add(item.Type.ToDisplayString() + " " + item.Name);
+                            invokeParams.Add(item.Type.ToDecoratedName() + " " + item.Name);
                         }
+                        invokeReturn = method.ReturnType.ToDecoratedName();
                     }
                 }
                 catch { }
@@ -466,7 +487,8 @@ namespace RoslynIntellisense
                     CompletionType = symbol.Kind.ToCompletionType(),
                     RawData = symbol,
                     InvokeParameters = invokeParams,
-                    InvokeParametersSet = true
+                    InvokeParametersSet = true,
+                    InvokeReturn = invokeReturn
                 };
             }
             else
@@ -498,7 +520,6 @@ namespace RoslynIntellisense
             return property.GetValue(obj, null);
         }
 
-
         public static string[] GetUsingNamespace(this SyntaxNode syntax, string code)
         {
             var namespaces = syntax.DescendantNodes()
@@ -513,13 +534,14 @@ namespace RoslynIntellisense
 
         public static string ShrinkNamespaces(this string statement, params string[] knownNamespaces)
         {
+            //statement format: "{<namespace_name>}.type"
             string result = statement;
-            var ordered = knownNamespaces.Select(x => new { Order = x.Split('.').Count(), Text = x })
-                                         .OrderByDescending(x=>x.Order);
 
-            foreach (var item in ordered)
-                result = result.Replace(item.Text + ".", "");
-            return result;
+            foreach (var item in knownNamespaces.Select(x => "{" + x + "}."))
+                result = result.Replace(item, "");
+
+            return result.Replace("{", "")
+                         .Replace("}", "");
         }
     }
 

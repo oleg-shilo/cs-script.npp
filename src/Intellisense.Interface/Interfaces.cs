@@ -21,14 +21,15 @@ namespace Intellisense.Common
     public interface ICompletionData
     {
         string OperationContext { get; set; }
-        bool InvokeParametersSet { get; set; }
         CompletionCategory CompletionCategory { get; set; }
         string CompletionText { get; set; }
         string Description { get; set; }
         DisplayFlags DisplayFlags { get; set; }
         string DisplayText { get; set; }
         CompletionType CompletionType { get; }
+        bool InvokeParametersSet { get; set; }
         IEnumerable<string> InvokeParameters { get; }
+        string InvokeReturn { get; }
         bool HasOverloads { get; }
         object Tag { get; set; }
 
@@ -146,7 +147,6 @@ namespace Intellisense.Common
         }
 
         public string OperationContext { get; set; }
-        public bool InvokeParametersSet { get; set; }
         public CompletionCategory CompletionCategory { get; set; }
         public string CompletionText { get; set; }
         public string Description { get; set; }
@@ -155,7 +155,9 @@ namespace Intellisense.Common
         public CompletionType CompletionType { get; set; }
         public bool HasOverloads { get; }
         public IEnumerable<ICompletionData> OverloadedData { get; }
+        public bool InvokeParametersSet { get; set; }
         public IEnumerable<string> InvokeParameters { get; set; }
+        public string InvokeReturn { get; set; }
         public object Tag { get; set; }
 
         public void AddOverload(ICompletionData data)
