@@ -1,10 +1,9 @@
-v1.0.50.3
+v1.0.51.0
+* Added support for "add event handler" scenario (Roslyn)
+    - add lambda handler
+    - add delegate handler
+    - add method handler
+* Added support for add member assignment 
+* Added "AutoInsertSingeSuggestion" config option
+* Issue#14: Currently not compatible with Notepad++ v6.9.1.
 * NLog based logging replaced with more reliable custom logging (to address Issue#14).
-v1.0.50.2
-* Added extra foll back custom logging at startup
-v1.0.50.1
-* Fixed problem for autocompletion at the very end of the code line.
-v1.0.50.0
-* Added support for C# 6.0 Intellisense (auto-completion). Previously only formatting and script execution was available.
-  It is a serious milestone, which opens the road for gradual phasing out the NRefactory parsers in favor of Roslyn. 
-* Updated embedded SC-Script engine to the latest v3.12.1.0 (NuGet and misc usability improvements)
