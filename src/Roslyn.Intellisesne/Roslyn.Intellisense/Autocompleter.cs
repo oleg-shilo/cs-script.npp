@@ -345,7 +345,7 @@ namespace RoslynIntellisense
         static bool ProcessAsignmentCompletion(ICompletionData data, string code)
         {
             var root = CSharpSyntaxTree.ParseText(code)
-                                           .GetRoot();
+                                       .GetRoot();
 
             string[] namespaces = root.GetUsingNamespace(code);
 
@@ -361,8 +361,7 @@ namespace RoslynIntellisense
             else
                 return false;
 
-            //var typeName = type.ToDisplayString().Replace("System.", "");
-            var typeName = type.ToDisplayString().ShrinkNamespaces(namespaces);
+            var typeName = type.ToDecoratedName().ShrinkNamespaces(namespaces);
 
             if (type.BaseType.ToDisplayString() == "System.Enum")
                 data.CompletionText = typeName + ".";
@@ -429,7 +428,7 @@ namespace RoslynIntellisense
             }
         }
 
-        static string ToDecoratedName(this ITypeSymbol type)
+        public static string ToDecoratedName(this ITypeSymbol type)
         {
             string result = type.ToDisplayString();
 
