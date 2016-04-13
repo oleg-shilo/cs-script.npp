@@ -43,7 +43,7 @@ namespace CSScriptIntellisense
         public bool ShowQuickInfoInStatusBar = false;
         public bool ShowQuickInfoAsNativeNppTooltip = false;
         public bool UseMethodBrackets = false;
-        public bool RoslynIntellisense = true;
+        public bool RoslynIntellisense = false;
         public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
         public bool AutoInsertSingeSuggestion = false;
@@ -78,7 +78,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
                 SetValue(Section, "RoslynFormatting", RoslynFormatting);
-                SetValue(Section, "RoslynIntellisense", RoslynIntellisense);
+                SetValue(Section, "RoslynIntellisense_v2", RoslynIntellisense);
                 SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 SetValue(Section, "DefaultRefAsms", DefaultRefAsms);
                 SetValue(Section, "DefaultNamespaces", DefaultNamespaces);
@@ -109,7 +109,7 @@ namespace CSScriptIntellisense
                 AutoInsertSingeSuggestion = GetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
                 RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);
-                RoslynIntellisense = GetValue(Section, "RoslynIntellisense", RoslynIntellisense);
+                RoslynIntellisense = GetValue(Section, "RoslynIntellisense_v2", RoslynIntellisense);
                 
             }
         }

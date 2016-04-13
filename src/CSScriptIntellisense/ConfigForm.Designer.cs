@@ -130,7 +130,7 @@
             this.ContentPanel.Controls.Add(this.formatAsYouType);
             this.ContentPanel.Location = new System.Drawing.Point(13, 3);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 148);
+            this.ContentPanel.Size = new System.Drawing.Size(290, 142);
             this.ContentPanel.TabIndex = 5;
             // 
             // roslynIntellisense
