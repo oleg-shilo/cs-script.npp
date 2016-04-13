@@ -10,13 +10,31 @@ namespace RoslynIntellisense
 
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             //Debug.Assert(false);
 
             //Formatting(args);
             //IntellisenseSimple();
-            Intellisense();
+            //Intellisense();
+            if (args.Contains("/detect"))
+                return Detect();
+            else
+                return 0;
+        }
+
+        static int Detect()
+        {
+            try
+            {
+                Console.WriteLine("success");
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("failure");
+                return 1;
+            }
         }
 
         static void Formatting(string[] args)

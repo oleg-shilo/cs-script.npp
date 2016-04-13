@@ -34,9 +34,12 @@ namespace RoslynIntellisense
                     Autocompleter.GetAutocompletionFor(code, 132);
                 }
             }
-            catch { }
-
+            catch
+            {
+                throw;
+            }
         }
+
         public string[] FindReferences(string editorText, int offset, string fileName)
         {
             throw new NotImplementedException();

@@ -1,4 +1,4 @@
-v1.0.51.1
+v1.0.51.2
 * After the initial feedback Roslyn Intellisense support has been disabled by default. You can still enable it from the Config panel. 
 Please report any problems with Roslyn as your feedback is vital for improving C# 6 support
 

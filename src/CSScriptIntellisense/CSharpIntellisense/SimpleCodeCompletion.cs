@@ -10,11 +10,19 @@ namespace CSScriptIntellisense
         public static void Init()
         {
             MonoCompletionEngine.Init();
-            RoslynCompletionEngine.Init();
+            if (Config.Instance.RoslynIntellisense)
+                RoslynCompletionEngine.Init();
         }
 
-        static IEngine monoEngine = new MonoCompletionEngine();
-        static IEngine roslynEngine = RoslynCompletionEngine.GetInstance();
+        static IEngine MonoEngine = new MonoCompletionEngine();
+
+        static IEngine RoslynEngine
+        {
+            get
+            {
+                return RoslynCompletionEngine.GetInstance();
+            }
+        }
 
         public static char[] Delimiters = "\\\t\n\r .,:;'\"=[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
         public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"=[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
@@ -51,8 +59,8 @@ namespace CSScriptIntellisense
 
                 var data = (GetCSharpScriptCompletionData(editorText, offset) ??
                             (Config.Instance.RoslynIntellisense ?
-                            roslynEngine.GetCompletionData(editorText, offset, fileName, isControlSpace) :
-                            monoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace))
+                            RoslynEngine.GetCompletionData(editorText, offset, fileName, isControlSpace) :
+                            MonoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace))
                             ).ToList();
 
                 //suggest default CS-Script usings as well
@@ -88,7 +96,7 @@ namespace CSScriptIntellisense
                                 x.CompletionText += "(";
                                 if (x.InvokeParametersSet)
                                 {
-                                    if(x.InvokeParameters.Count() == 0 || (x.InvokeParameters.Count() == 1 && x.CompletionType == CompletionType.extension_method))
+                                    if (x.InvokeParameters.Count() == 0 || (x.InvokeParameters.Count() == 1 && x.CompletionType == CompletionType.extension_method))
                                         x.CompletionText += ")"; //like .Clone()
                                 }
                             }
@@ -98,8 +106,9 @@ namespace CSScriptIntellisense
 
                 return data.Concat(extraItems);
             }
-            catch
+            catch (Exception e)
             {
+                e.LogAsDebug();
                 return new ICompletionData[0]; //the exception can happens even for the internal NRefactor-related reasons
             }
         }
@@ -108,9 +117,9 @@ namespace CSScriptIntellisense
         public static void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies)
         {
             if (Config.Instance.RoslynIntellisense)
-                roslynEngine.ResetProject(sourceFiles, assemblies);
+                RoslynEngine.ResetProject(sourceFiles, assemblies);
             //else
-            monoEngine.ResetProject(sourceFiles, assemblies); //at this stage always reset mono project as it is always used for other then autocomplete operations
+            MonoEngine.ResetProject(sourceFiles, assemblies); //at this stage always reset mono project as it is always used for other then autocomplete operations
         }
 
         //----------------------------------
@@ -122,7 +131,7 @@ namespace CSScriptIntellisense
 
         internal static IEnumerable<Intellisense.Common.TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName) // not the best way to put in the whole string every time
         {
-            return monoEngine.GetPossibleNamespaces(editorText, nameToResolve, fileName);
+            return MonoEngine.GetPossibleNamespaces(editorText, nameToResolve, fileName);
         }
 
         //----------------------------------
@@ -134,13 +143,13 @@ namespace CSScriptIntellisense
 
         public static string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos)
         {
-            return monoEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+            return MonoEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
         }
 
         //----------------------------------
         static public string[] FindReferences(string editorText, int offset, string fileName)
         {
-            return monoEngine.FindReferences(editorText, offset, fileName);
+            return MonoEngine.FindReferences(editorText, offset, fileName);
         }
 
         //----------------------------------
@@ -164,7 +173,7 @@ namespace CSScriptIntellisense
 
         static DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
         {
-            return monoEngine.ResolveCSharpMember(editorText, offset, fileName);
+            return MonoEngine.ResolveCSharpMember(editorText, offset, fileName);
         }
 
         //----------------------------------
