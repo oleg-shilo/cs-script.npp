@@ -1128,7 +1128,11 @@ namespace CSScriptIntellisense
             {
                 var result = SimpleCodeCompletion.GetMissingUsings(text, actualStart + offset, file);
                 if (result.Any())
+                {
                     allUsings.AddRange(result);
+                    if (Config.Instance.RoslynIntellisense) //Roslyn is slow with resolving namespaces so do it less aggressive way than NRefactory
+                        break;
+                }
                 //return result;
             }
 
