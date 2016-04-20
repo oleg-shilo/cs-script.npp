@@ -15,10 +15,19 @@ namespace Updater
             if (prompt == null) //not very accurate but practical enough
                 ThreadPool.QueueUserWorkItem(x =>
                 {
+                    try
+                    {
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                    }
+                    catch  { }  
                     prompt = new WaitPrompt();
+                    prompt.VisibleChanged += (sender, e) =>
+                                                 prompt.Activate();
                     prompt.ShowDialog();
                 });
         }
+
 
         public static void OnProgress(long step, long total)
         {

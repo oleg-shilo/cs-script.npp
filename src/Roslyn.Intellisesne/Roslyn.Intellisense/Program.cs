@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace RoslynIntellisense
 {
@@ -18,15 +19,45 @@ namespace RoslynIntellisense
             //IntellisenseSimple();
             //Intellisense();
 
-            //Autocompleter.FindMissingUsings11();
 
 
             if (args.Contains("/test"))
-                return Intellisense2();
+                return Test();
             else if (args.Contains("/detect"))
                 return Detect();
             else
                 return 0;
+        }
+
+        static int Test()
+        {
+            //var engine 
+            //Autocompleter.FindMissingUsings();
+            //Autocompleter.FindMissingUsings11();
+            //Intellisense2();
+            ResolveNamespaces();
+            return 0;
+        }
+
+        static int ResolveNamespaces()
+        {
+            string code = @"class Test 
+            {
+                void Foo()
+                {
+                    Form
+                }
+            }";
+
+            var sources = new Tuple<string, string>[0];
+            var asms = new[] { typeof(object).Assembly.Location, typeof(Form).Assembly.Location };
+
+            var engine = new Engine();
+            engine.Preload();
+            engine.ResetProject(sources, asms);
+
+            var result = engine.GetPossibleNamespaces(code, "Form", "script.cs");
+            return 0;
         }
 
         static int Detect()

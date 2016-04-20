@@ -20,8 +20,6 @@ namespace CSScriptNpp.Deployment
 
         static void Main(string[] args)
         {
-            StopVBCSCompilers();
-
             //Debug.Assert(false);
             bool createdNew;
             appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);

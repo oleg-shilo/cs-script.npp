@@ -2,17 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Intellisense.Common;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Recommendations;
 using Microsoft.CodeAnalysis.Text;
 using System.Windows.Forms;
-using System.Text;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Text.RegularExpressions;
-using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace RoslynIntellisense
 {
@@ -48,9 +47,9 @@ namespace RoslynIntellisense
 
         public IEnumerable<ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true)
         {
-            return Autocompleter.GetAutocompletionFor(editorText, offset, 
-                                                      assemblies.ToArray(), 
-                                                      sources.Where(x=>x.Item2 != fileName).Select(x => x.Item1).ToArray())
+            return Autocompleter.GetAutocompletionFor(editorText, offset,
+                                                      assemblies.ToArray(),
+                                                      sources.Where(x => x.Item2 != fileName).Select(x => x.Item1).ToArray())
                                                       .Result;
         }
 
@@ -61,7 +60,11 @@ namespace RoslynIntellisense
 
         public IEnumerable<Intellisense.Common.TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName)
         {
-            throw new NotImplementedException();
+            return Autocompleter.GetNamespacesFor(editorText, nameToResolve,
+                                                  assemblies.ToArray(),
+                                                  sources.Where(x => x.Item2 != fileName).Select(x => x.Item1).ToArray())
+                                                  .Result;
+
         }
 
         List<Tuple<string, string>> sources = new List<Tuple<string, string>>();
@@ -84,13 +87,29 @@ namespace RoslynIntellisense
 
     public static class Autocompleter
     {
+        static internal Lazy<MetadataReference[]> builtInLibs = new Lazy<MetadataReference[]>(
+         delegate
+         {
+             Assembly[] assemblies = {
+                    typeof(object).Assembly,                    // mscorlib.dll
+                    typeof(Uri).Assembly,                       // System.dll
+                    typeof(Form).Assembly,                      // System.Windows.Forms.dll
+                    typeof(System.Linq.Enumerable).Assembly,    // System.Core.dll
+                    typeof(System.Xml.XmlDocument).Assembly,    // System.Xml.dll
+                    typeof(System.Drawing.Bitmap).Assembly,     // System.Drawing.dll
+              };
+
+             return assemblies.Select(a => MetadataReference.CreateFromFile(a.Location)).ToArray();
+         });
+
         public static Document InitWorkspace(AdhocWorkspace workspace, string code, string[] references = null, string[] includes = null)
         {
             string projName = "NewProject";
             var projectId = ProjectId.CreateNewId();
             var versionStamp = VersionStamp.Create();
 
-            var refs = new List<MetadataReference>();
+            var refs = new List<MetadataReference>(builtInLibs.Value);
+
             if (references != null)
                 refs.AddRange(references.Select(a => MetadataReference.CreateFromFile(a)));
 
@@ -412,7 +431,7 @@ namespace RoslynIntellisense
             return completions;
         }
 
-        static public void FindMissingUsings11()
+        static public void FindMissingUsingsCanonical()
         {
             var workspace = new AdhocWorkspace();
             var solutionInfo = SolutionInfo.Create(SolutionId.CreateNewId(), VersionStamp.Create());
@@ -444,38 +463,27 @@ namespace RoslynIntellisense
             }
         }
 
-        static public IEnumerable<string> FindMissingUsings()
+        public async static Task<IEnumerable<Intellisense.Common.TypeInfo>> GetNamespacesFor(string editorText, string nameToResolve, string[] references = null, string[] includes = null)
         {
-            var suggestions = new List<string>();
+            var suggestions = new List<Intellisense.Common.TypeInfo>();
 
             var workspace = new AdhocWorkspace();
 
-            string code = @"class Test 
-            {
-                void Foo()
-                {
-                    Console.WriteLine();
-                }
-            }";
-            
+            var doc = InitWorkspace(workspace, editorText, references, includes);
 
-            var doc = InitWorkspace(workspace, code, new[] { typeof(object).Assembly.Location });
-            var model = doc.GetSemanticModelAsync().Result;
-            var unresolvedSymbols = doc.GetSyntaxRootAsync().Result
-                                       .DescendantNodes()
-                                       .OfType<IdentifierNameSyntax>()
-                                       .Where(x => model.GetSymbolInfo(x).Symbol == null);
-
-            foreach (var item in unresolvedSymbols)
+            IEnumerable<ISymbol> result = await SymbolFinder.FindDeclarationsAsync(doc.Project, nameToResolve, ignoreCase: false);
+            foreach (ISymbol declaration in result)
             {
-                var result = SymbolFinder.FindDeclarationsAsync(doc.Project, item.Identifier.ValueText, ignoreCase: false).Result;
-                if (result != null)
-                {
-                    foreach (ISymbol declaration in result)
-                    {
-                        suggestions.Add(declaration.ContainingNamespace.Name);
-                    }
-                }
+                if (declaration.Kind != SymbolKind.NamedType)
+                    continue; //limit to 
+
+                var name = declaration.Name;
+                var nmspace = declaration.GetNamespace();
+                if (!string.IsNullOrEmpty(nmspace))
+                    name = nmspace + "." + name;
+
+                var info = new Intellisense.Common.TypeInfo { Namespace = nmspace, FullName = name };
+                suggestions.Add(info);
             }
 
             return suggestions;
@@ -486,6 +494,11 @@ namespace RoslynIntellisense
 
     public static class GenericExtensions
     {
+        public static bool HasText(this string text)
+        {
+            return !string.IsNullOrEmpty(text);
+        }
+
         public static T To<T>(this object obj)
         {
             return (T) obj;
@@ -515,10 +528,25 @@ namespace RoslynIntellisense
             //if (clrAliaces.ContainsKey(result))
             //    return clrAliaces[result];
 
-            string nmspace = "";
-            if (type.ContainingNamespace != null)
-                nmspace = "{" + type.ContainingNamespace + "}.";
+            string nmspace = type.GetNamespace();
+            if (!string.IsNullOrEmpty(nmspace))
+                nmspace = "{" + nmspace + "}.";
             return (nmspace + type.Name);
+        }
+
+        public static string GetNamespace(this ISymbol type)
+        {
+            List<string> parts = new List<string>();
+            var nm = type.ContainingNamespace;
+
+            while (nm != null && nm.Name.HasText())
+            {
+                parts.Add(nm.Name);
+                nm = nm.ContainingNamespace;
+            }
+
+            parts.Reverse();
+            return string.Join(".", parts.ToArray());
         }
 
         public static ICompletionData ToCompletionData(this ISymbol symbol)

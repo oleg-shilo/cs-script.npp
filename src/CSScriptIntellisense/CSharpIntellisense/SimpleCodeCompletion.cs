@@ -131,7 +131,10 @@ namespace CSScriptIntellisense
 
         internal static IEnumerable<Intellisense.Common.TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName) // not the best way to put in the whole string every time
         {
-            return MonoEngine.GetPossibleNamespaces(editorText, nameToResolve, fileName);
+            if (Config.Instance.RoslynIntellisense)
+                return RoslynEngine.GetPossibleNamespaces(editorText, nameToResolve, fileName);
+            else
+                return MonoEngine.GetPossibleNamespaces(editorText, nameToResolve, fileName);
         }
 
         //----------------------------------
