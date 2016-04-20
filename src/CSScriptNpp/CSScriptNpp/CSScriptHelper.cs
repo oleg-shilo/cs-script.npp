@@ -626,7 +626,7 @@ class Script
         {
             string url = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL") ?? "http://csscript.net/npp/latest_version.txt";
 #if DEBUG
-            //url = "http://csscript.net/npp/latest_version_dbg.txt";
+            url = "http://csscript.net/npp/latest_version_dbg.txt";
 #endif
             string stableVersion = GetLatestAvailableVersion(url);
 
@@ -762,7 +762,8 @@ class Script
                                 .ForEach(file => copy(file, dir));
 
                 string batchFile = Path.Combine(dir, "run.cmd");
-                File.WriteAllText(batchFile, "cscs.exe \"" + Path.GetFileName(scriptFile) + "\"\r\npause");
+                string engineName = Path.GetFileName(engineFile);
+                File.WriteAllText(batchFile, engineName + " \"" + Path.GetFileName(scriptFile) + "\"\r\npause");
 
                 return dir;
             }

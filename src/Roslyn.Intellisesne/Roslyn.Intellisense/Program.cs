@@ -17,7 +17,13 @@ namespace RoslynIntellisense
             //Formatting(args);
             //IntellisenseSimple();
             //Intellisense();
-            if (args.Contains("/detect"))
+
+            //Autocompleter.FindMissingUsings11();
+
+
+            if (args.Contains("/test"))
+                return Intellisense2();
+            else if (args.Contains("/detect"))
                 return Detect();
             else
                 return 0;
@@ -30,7 +36,7 @@ namespace RoslynIntellisense
                 Console.WriteLine("success");
                 return 0;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("failure");
                 return 1;
@@ -66,7 +72,7 @@ namespace RoslynIntellisense
             var result = engine.GetCompletionData(code, 598, script);
         }
 
-        static void Intellisense2()
+        static int Intellisense2()
         {
             var asms = new[]
             {
@@ -76,15 +82,36 @@ namespace RoslynIntellisense
                 @"C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll",
             };
 
-            //var code = File.ReadAllText(@"E:\Galos\Projects\GitHub\cp2gp.Wiki.cs");
-            var code = File.ReadAllText(@"C:\Users\osh\Documents\C# Scripts\New Script34.cs");
+            var code = @"
+using System;
+class Script
+{
+    static public void Main(string[] args)
+    {
+        TestA.|Who();
+    }
+}";
+            var includeCode = @"
+using System;
 
-            //var result = Autocompleter.GetAutocompletionFor(code, 195, asms.ToArray());
-            var result = Autocompleter.GetAutocompletionFor(code, 633, asms.ToArray());
+public class TestA
+{
+    static public void Who()
+    {
+        Console.WriteLine(""TestA"");
+    }
+    }";
+
+            int carret = code.IndexOf("|");
+            code = code.Replace("|", "");
+
+            var result = Autocompleter.GetAutocompletionFor(code, carret, asms.ToArray(), new string[] { includeCode });
 
             Console.WriteLine("----------------------------------");
             Console.ReadLine();
+            return 0;
         }
+
         static void IntellisenseSimple()
         {
             new Engine().Preload();

@@ -43,19 +43,19 @@ copy "CSScriptNpp\CSScriptNpp\roslyn\CSSCodeProvider.v4.6.dll" "%plugins%\CSScri
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe"
 copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe.config" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe.config"
-
+echo ---------------------
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll"
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.Workspaces.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.VisualBasic.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.Workspaces.Desktop.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.Workspaces.Desktop.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.Workspaces.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.Workspaces.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.AttributedModel.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.AttributedModel.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.Convention.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.Convention.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.Hosting.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.Hosting.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.Runtime.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.Runtime.dll"
-copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.TypedParts.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.TypedParts.dll"
-
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll"
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.Workspaces.Desktop.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.Workspaces.Desktop.dll"
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.Workspaces.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.Workspaces.dll"
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.AttributedModel.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.AttributedModel.dll"
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.Convention.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.Convention.dll"
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.Hosting.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.Hosting.dll"
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.Runtime.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.Runtime.dll"
+rem copy "CSScriptNpp\CSScriptNpp\roslyn\System.Composition.TypedParts.dll" "%plugins%\CSScriptNpp\Roslyn\System.Composition.TypedParts.dll"
+echo ---------------------
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.CSharp.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeAnalysis.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.dll"
 copy "CSScriptNpp\CSScriptNpp\roslyn\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll" "%plugins%\CSScriptNpp\Roslyn\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll"

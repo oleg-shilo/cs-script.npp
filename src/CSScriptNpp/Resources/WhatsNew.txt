@@ -1,6 +1,7 @@
-v1.0.51.2
+v1.0.51.3
 * After the initial feedback Roslyn Intellisense support has been disabled by default. You can still enable it from the Config panel. 
 Please report any problems with Roslyn as your feedback is vital for improving C# 6 support
+* Added additional checking for Roslyn running compilers locking plugin files during update. 
 
 v1.0.51.0
 * Added support for "add event handler" scenario (Roslyn)

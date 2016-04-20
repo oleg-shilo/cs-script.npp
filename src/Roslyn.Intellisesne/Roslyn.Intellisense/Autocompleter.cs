@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace RoslynIntellisense
 {
@@ -47,7 +48,10 @@ namespace RoslynIntellisense
 
         public IEnumerable<ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true)
         {
-            return Autocompleter.GetAutocompletionFor(editorText, offset, assemblies.ToArray(), sources.Select(x => x.Item1).ToArray()).Result;
+            return Autocompleter.GetAutocompletionFor(editorText, offset, 
+                                                      assemblies.ToArray(), 
+                                                      sources.Where(x=>x.Item2 != fileName).Select(x => x.Item1).ToArray())
+                                                      .Result;
         }
 
         public string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos)
@@ -92,7 +96,6 @@ namespace RoslynIntellisense
 
             var projectInfo = ProjectInfo.Create(projectId, versionStamp, projName, projName, LanguageNames.CSharp, metadataReferences: refs);
             var newProject = workspace.AddProject(projectInfo);
-
             var newDocument = workspace.AddDocument(newProject.Id, "code.cs", SourceText.From(code));
 
             if (includes != null)
@@ -103,7 +106,8 @@ namespace RoslynIntellisense
                     workspace.AddDocument(newProject.Id, $"code{index++}.cs", SourceText.From(item));
             }
 
-            return newDocument;
+            //EXTREMELY IMPORTANT: "return newDocument;" will not return the correct instance of the document but lookup will 
+            return workspace.CurrentSolution.Projects.Single().Documents.Single(x => x.Name == "code.cs");
         }
 
         //mscorlib, systemCore
@@ -407,7 +411,78 @@ namespace RoslynIntellisense
 
             return completions;
         }
+
+        static public void FindMissingUsings11()
+        {
+            var workspace = new AdhocWorkspace();
+            var solutionInfo = SolutionInfo.Create(SolutionId.CreateNewId(), VersionStamp.Create());
+            var solution = workspace.AddSolution(solutionInfo);
+            var project = workspace.AddProject("NewProj", "C#");
+
+            var mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+            project = project.AddMetadataReference(mscorlib);
+            workspace.TryApplyChanges(project.Solution);
+            string text = @"class Test 
+            {
+                void Foo()
+                {
+                    Console.Write();
+                }
+            }";
+
+            var sourceText = SourceText.From(text);
+            //Add document to project 
+            var doc = workspace.AddDocument(project.Id, "NewDoc", sourceText);
+            var model = doc.GetSemanticModelAsync().Result;
+            var unresolved = doc.GetSyntaxRootAsync().Result.DescendantNodes()
+                                                     .OfType<IdentifierNameSyntax>()
+                                                     .Where(x => model.GetSymbolInfo(x).Symbol == null)
+                                                     .ToArray();
+            foreach (var identifier in unresolved)
+            {
+                var candidateUsings = SymbolFinder.FindDeclarationsAsync(doc.Project, identifier.Identifier.ValueText, ignoreCase: false).Result;
+            }
+        }
+
+        static public IEnumerable<string> FindMissingUsings()
+        {
+            var suggestions = new List<string>();
+
+            var workspace = new AdhocWorkspace();
+
+            string code = @"class Test 
+            {
+                void Foo()
+                {
+                    Console.WriteLine();
+                }
+            }";
+            
+
+            var doc = InitWorkspace(workspace, code, new[] { typeof(object).Assembly.Location });
+            var model = doc.GetSemanticModelAsync().Result;
+            var unresolvedSymbols = doc.GetSyntaxRootAsync().Result
+                                       .DescendantNodes()
+                                       .OfType<IdentifierNameSyntax>()
+                                       .Where(x => model.GetSymbolInfo(x).Symbol == null);
+
+            foreach (var item in unresolvedSymbols)
+            {
+                var result = SymbolFinder.FindDeclarationsAsync(doc.Project, item.Identifier.ValueText, ignoreCase: false).Result;
+                if (result != null)
+                {
+                    foreach (ISymbol declaration in result)
+                    {
+                        suggestions.Add(declaration.ContainingNamespace.Name);
+                    }
+                }
+            }
+
+            return suggestions;
+        }
     }
+
+    //for member info SemanticModel.LookupSymbols can be tried
 
     public static class GenericExtensions
     {

@@ -20,6 +20,8 @@ namespace CSScriptNpp.Deployment
 
         static void Main(string[] args)
         {
+            StopVBCSCompilers();
+
             //Debug.Assert(false);
             bool createdNew;
             appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
@@ -84,7 +86,7 @@ namespace CSScriptNpp.Deployment
                         string zipFile = args[0];
                         string pluginDir = args[1];
 
-                        if (EnsureNppNotRunning(isAsynchUpdate))
+                        if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                         {
                             if (isAsynchUpdate)
                             {
@@ -99,12 +101,13 @@ namespace CSScriptNpp.Deployment
 
                             WaitPrompt.Hide();
 
-
-                            if (File.Exists(nppExe))
-                                Process.Start(nppExe);
-                            else
-                                MessageBox.Show("The update has been successfully installed.", "CS-Script Update");
-                        }
+                            if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
+                            {
+                                if (File.Exists(nppExe))
+                                    Process.Start(nppExe);
+                                else
+                                    MessageBox.Show("The update has been successfully installed.", "CS-Script Update");
+                            }                        }
                     }
                     else
                     {
@@ -140,6 +143,33 @@ namespace CSScriptNpp.Deployment
                 catch { } //cannot analyse main module as it may not be accessible for x86 vs. x64 reasons
         }
 
+        public static bool IsVBCSCompilerLocked(string pluginDir = null)
+        {
+            if (pluginDir == null)
+            {
+                return Process.GetProcessesByName("VBCSCompiler").Any();
+            }
+            else
+            {
+                foreach (string file in Directory.GetFiles(pluginDir, "VBCSCompiler.exe", SearchOption.AllDirectories))
+                    try
+                    {
+                        string temp = file + ".tmp";
+                        if (File.Exists(temp))
+                            File.Delete(temp);
+
+                        File.Move(file, temp);
+                        File.Move(temp, file);
+                    }
+                    catch
+                    {
+                        return true;
+                    }
+
+                return false;
+            }
+        }
+
         static bool RestartElevated(string[] arguments)
         {
             string args = elevationIndicatorArg;
@@ -156,6 +186,37 @@ namespace CSScriptNpp.Deployment
                 startInfo.Verb = "runas";
 
             Process.Start(startInfo);
+            return true;
+        }
+
+        static bool EnsureVBCSCompilerNotLocked(bool backgroundWait)
+        {
+            int count = 0;
+            while (IsVBCSCompilerLocked())
+            {
+                if (backgroundWait)
+                {
+                    Thread.Sleep(5000);
+                }
+                else
+                {
+                    count++;
+
+                    var buttons = MessageBoxButtons.OKCancel;
+                    var prompt = "Updater detected running VBCSCompiler.exe, which may lock plugin files.\n"+
+                        "Please close any running instance of VBCSCompiler.exe from Task Manager and press OK to proceed.";
+
+
+                    if (count > 1)
+                    {
+                        prompt = "Please close any running instance of VBCSCompiler.exe from Task Manager and try again.";
+                        buttons = MessageBoxButtons.RetryCancel;
+                    }
+
+                    if (MessageBox.Show(prompt, "CS-Script Update", buttons) == DialogResult.Cancel)
+                        return false;
+                }
+            }
             return true;
         }
 

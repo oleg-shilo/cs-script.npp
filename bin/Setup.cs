@@ -56,7 +56,7 @@ class Script
             {
                 Name = "Action_StartNPP" //need to give custom name as "Action1_notepad++.exe" is illegal because of '++'
             },
-            new ManagedAction(@"FindNpp", Return.check, When.Before, Step.LaunchConditions, Condition.NOT_Installed)
+            new ManagedAction(CustonActions.FindNpp, Return.check, When.Before, Step.LaunchConditions, Condition.NOT_Installed)
         };
 
         project.GUID = new Guid("6f930b47-2277-411d-9095-18614525889b");
