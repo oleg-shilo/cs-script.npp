@@ -5,13 +5,13 @@ using System.Text;
 using Xunit;
 using Intellisense.Common;
 using System.Windows.Forms;
+using CSScriptIntellisense;
+using System.Reflection;
 
-namespace CSScriptIntellisense.Test
+public class GenericTest
 {
-    public class GenericTest
-    {
-        static string code =
-            @"using System;
+    static string code =
+        @"using System;
 using System.Windows.Forms;
 
 class Script
@@ -41,57 +41,88 @@ namespace NSTest
 }
 
 ";
-        int GetCaretPosition(ref string code)
+    int GetCaretPosition(ref string code)
+    {
+        int retval = code.IndexOf("|") + 1;
+        code = code.Replace("|", "");
+        return retval;
+    }
+
+    string GetCaretPosition(string code, out int pos)
+    {
+        pos = code.IndexOf("|") + 1;
+        return code.Replace("|", "");
+    }
+
+    public GenericTest()
+    {
+        Environment.SetEnvironmentVariable("suppress_roslyn_preloading", "true");
+        Environment.SetEnvironmentVariable("roslynintellisense_path",
+                                            Path.GetFullPath(@"..\..\..\..\..\CSScript.Npp\src\Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.exe"));
+
+        Config.Instance.RoslynIntellisense = true;
+
+        Init();
+    }
+
+    static string roslynBinDir = null;
+
+    static void Init()
+    {
+        if (roslynBinDir == null)
         {
-            int retval = code.IndexOf("|") + 1;
-            code = code.Replace("|", "");
-            return retval;
+            roslynBinDir = Path.GetFullPath(@"..\..\..\..\..\CSScript.Npp\src\Roslyn.Intellisesne\Roslyn.Intellisense\Microsoft.CodeAnalysis.CSharp.1.1.0");
+
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
+    }
 
-        public GenericTest()
-        {
-            Environment.SetEnvironmentVariable("suppress_roslyn_preloading", "true");
-            Environment.SetEnvironmentVariable("roslynintellisense_path", 
-                                                Path.GetFullPath(@"..\..\..\..\..\CSScript.Npp\src\Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.exe"));
+    private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    {
+        var path = $"{roslynBinDir}\\{args.Name.Split(',').First()}";
+        if (File.Exists(path + ".dll"))
+            return Assembly.LoadFrom(path + ".dll");
+        if (File.Exists(path + ".exe"))
+            return Assembly.LoadFrom(path + ".exe");
+        return null;
+    }
 
-            Config.Instance.RoslynIntellisense = true;
-        }
 
-        [Fact] 
-        public void CompleteAtEmptySpace()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void CompleteAtEmptySpace()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
-            Assert.True(data.Count() > 0);
-        }
+        var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
+        Assert.True(data.Count() > 0);
+    }
 
-        [Fact] 
-        public void TypeNamespaceRemoved()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void TypeNamespaceRemoved()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
+        var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
 
-            //no items in display text with full namespace present
-            Assert.True(data.Where(x => x.DisplayText == "Environment").Count() > 0);
-            Assert.True(data.Where(x => x.DisplayText == "System.Environment").Count() == 0);
-        }
+        //no items in display text with full namespace present
+        Assert.True(data.Where(x => x.DisplayText == "Environment").Count() > 0);
+        Assert.True(data.Where(x => x.DisplayText == "System.Environment").Count() == 0);
+    }
 
-        [Fact] 
-        public void GetCssCompletion()
-        {
-            SimpleCodeCompletion.ResetProject();
-            // "//css_|args "
-            var data = SimpleCodeCompletion.GetCompletionData(@"//css_args /provider:E:\Galos\Pro...", 6, "test.cs");
-        }
+    [Fact]
+    public void GetCssCompletion()
+    {
+        SimpleCodeCompletion.ResetProject();
+        // "//css_|args "
+        var data = SimpleCodeCompletion.GetCompletionData(@"//css_args /provider:E:\Galos\Pro...", 6, "test.cs");
+    }
 
-        [Fact] 
-        public void GetAddLocalEventHandlerCompletion()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void GetAddLocalEventHandlerCompletion()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var code =
+        var code =
 @"using System;
 using System.Windows.Forms;
 
@@ -104,23 +135,23 @@ class Script
     static event EventHandler Load;
     static void OnLoad1(){}
 }";
-            int pos = GetCaretPosition(ref code);
+        int pos = GetCaretPosition(ref code);
 
-            var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+        var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
 
-            Assert.Equal(3, data.Count());
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - lambda");
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - delegate");
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - method");
-            Assert.Equal("OnLoad2;", data.Last().CompletionText);
-        }
+        Assert.Equal(3, data.Count());
+        Assert.Contains(data, x => x.DisplayText == "OnLoad - lambda");
+        Assert.Contains(data, x => x.DisplayText == "OnLoad - delegate");
+        Assert.Contains(data, x => x.DisplayText == "OnLoad - method");
+        Assert.Equal("OnLoad2;", data.Last().CompletionText);
+    }
 
-        [Fact] 
-        public void GetAddExternalEventHandlerCompletion()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void GetAddExternalEventHandlerCompletion()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var code =
+        var code =
 @"using System;
 using System.Windows.Forms;
 
@@ -133,23 +164,23 @@ class Script
         //form.Load+= |  
     }
 }";
-            int pos = GetCaretPosition(ref code);
+        int pos = GetCaretPosition(ref code);
 
-            var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+        var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
 
-            Assert.Equal(3, data.Count());
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - lambda");
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - delegate");
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - method");
-            //Assert.Equal("OnLoad;", data.Last().CompletionText);
-        }
+        Assert.Equal(3, data.Count());
+        Assert.Contains(data, x => x.DisplayText == "OnLoad - lambda");
+        Assert.Contains(data, x => x.DisplayText == "OnLoad - delegate");
+        Assert.Contains(data, x => x.DisplayText == "OnLoad - method");
+        //Assert.Equal("OnLoad;", data.Last().CompletionText);
+    }
 
-        [Fact]
-        public void AddEventHandlerRespectsIncrement()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void AddEventHandlerRespectsIncrement()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var code =
+        var code =
 @"using System;
 
 class Script
@@ -160,19 +191,19 @@ class Script
         text +=|  
     }
 }";
-            int pos = GetCaretPosition(ref code);
+        int pos = GetCaretPosition(ref code);
 
-            var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+        var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
 
-            Assert.Empty(data);
-        }
+        Assert.Empty(data);
+    }
 
-        [Fact] 
-        public void GetCreateNewCompletion()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void GetCreateNewCompletion()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var code =
+        var code =
 @"using System;
 using System.Windows.Forms;
 
@@ -184,17 +215,17 @@ class Script
     }
     static Form dialog;
 ";
-            int pos = GetCaretPosition(ref code);
+        int pos = GetCaretPosition(ref code);
 
-            var data = SimpleCodeCompletion.GetCompletionData(code,pos, "test.cs");
-        }
+        var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+    }
 
-        [Fact]
-        public void GetAssignmentCompletion()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void GetAssignmentCompletion()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var code =
+        var code =
 @"using System;
 using System.Windows.Forms;
 
@@ -206,34 +237,34 @@ class Script
         form.DialogResult=| 
     }
 ";
-            int pos = GetCaretPosition(ref code);
+        int pos = GetCaretPosition(ref code);
 
-            var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
+        var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
 
-            Assert.Equal(1, data.Count());
-            Assert.Contains(data, x => x.DisplayText == "DialogResult - value");
-            Assert.Equal("DialogResult.", data.Last().CompletionText);
-        }
+        Assert.Equal(1, data.Count());
+        Assert.Contains(data, x => x.DisplayText == "DialogResult - value");
+        Assert.Equal("DialogResult.", data.Last().CompletionText);
+    }
 
 
-        [Fact] 
-        public void CompletePartialWord()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void CompletePartialWord()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            // Messa|geBox.Show("Just a test!");
-            var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
+        // Messa|geBox.Show("Just a test!");
+        var data = SimpleCodeCompletion.GetCompletionData(code, 129, "test.cs");
 
-            Assert.True(data.Where(x => x.DisplayText == "MessageBox").Any());
-        }
+        Assert.True(data.Where(x => x.DisplayText == "MessageBox").Any());
+    }
 
-        [Fact] 
-        public void CompleteMethodArguments()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void CompleteMethodArguments()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            //fileNam|
-            var data = SimpleCodeCompletion.GetCompletionData(@"using System.IO;
+        //fileNam|
+        var data = SimpleCodeCompletion.GetCompletionData(@"using System.IO;
 using System;
 
 class Script
@@ -246,80 +277,80 @@ class Script
         string statsFile = Path.Combine(dirName, fileNam
     }
 }", 242, "test.cs", true);
-            Assert.True(data.Where(x => x.DisplayText == "fileName").Any());
+        Assert.True(data.Where(x => x.DisplayText == "fileName").Any());
 
-            //Note the test will fail if "dirName, fileNam" replaced with "dirName,fileNam"
-            //It is a CSharpCompletionEngine flaw.
-        }
+        //Note the test will fail if "dirName, fileNam" replaced with "dirName,fileNam"
+        //It is a CSharpCompletionEngine flaw.
+    }
 
-        [Fact] 
-        public void SuggestMissingUsings()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void SuggestMissingUsings()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            // File|.
-            var info = SimpleCodeCompletion.GetMissingUsings(code, 187, "test.cs").FirstOrDefault();
+        // File|.
+        var info = SimpleCodeCompletion.GetMissingUsings(code, 187, "test.cs").FirstOrDefault();
 
-            Assert.Equal("System.IO", info.Namespace);
-            Assert.Equal("System.IO.File", info.FullName);
-        }
+        Assert.Equal("System.IO", info.Namespace);
+        Assert.Equal("System.IO.File", info.FullName);
+    }
 
-        [Fact] 
-        public void SuggestMissingUsingsForPartialWordAtCaret()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void SuggestMissingUsingsForPartialWordAtCaret()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            // F|ile.
-            var info = SimpleCodeCompletion.GetMissingUsings(code, 184, "test.cs").FirstOrDefault();
+        // F|ile.
+        var info = SimpleCodeCompletion.GetMissingUsings(code, 184, "test.cs").FirstOrDefault();
 
-            Assert.Equal("System.IO", info.Namespace);
-            Assert.Equal("System.IO.File", info.FullName);
-        }
+        Assert.Equal("System.IO", info.Namespace);
+        Assert.Equal("System.IO.File", info.FullName);
+    }
 
-        [Fact] 
-        public void SuggestMissingUsingsForTopLevelType()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void SuggestMissingUsingsForTopLevelType()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var info = SimpleCodeCompletion.GetPossibleNamespaces(code, "File", "test.cs").ToArray();
+        var info = SimpleCodeCompletion.GetPossibleNamespaces(code, "File", "test.cs").ToArray();
 
-            Assert.Equal("System.IO", info[0].Namespace);
-            Assert.Equal("System.IO.File", info[0].FullName);
+        Assert.Equal("System.IO", info[0].Namespace);
+        Assert.Equal("System.IO.File", info[0].FullName);
 
-            Assert.Equal("System.Net", info[1].Namespace);
-            Assert.Equal("System.Net.WebRequestMethods.File", info[1].FullName);
+        Assert.Equal("System.Net", info[1].Namespace);
+        Assert.Equal("System.Net.WebRequestMethods.File", info[1].FullName);
 
-            Assert.False(info[0].IsNested);
-            Assert.True(info[1].IsNested);
-        }
+        Assert.False(info[0].IsNested);
+        Assert.True(info[1].IsNested);
+    }
 
-        [Fact] 
-        public void SuggestMissingUsingsForNestedType()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void SuggestMissingUsingsForNestedType()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            var info = SimpleCodeCompletion.GetPossibleNamespaces(code, "SubTest", "test.cs").FirstOrDefault();
+        var info = SimpleCodeCompletion.GetPossibleNamespaces(code, "SubTest", "test.cs").FirstOrDefault();
 
-            Assert.Equal("NSTest", info.Namespace);
-            Assert.Equal("NSTest.TopTest.SubTest", info.FullName);
-        }
+        Assert.Equal("NSTest", info.Namespace);
+        Assert.Equal("NSTest.TopTest.SubTest", info.FullName);
+    }
 
-        [Fact] 
-        public void GetWordAt()
-        {
-            //Console.Wri|teLine
-            string word = SimpleCodeCompletion.GetWordAt("Console.WriteLine;", 11);
-            
-            Assert.Equal("WriteLine", word);
-        }
+    [Fact]
+    public void GetWordAt()
+    {
+        //Console.Wri|teLine
+        string word = SimpleCodeCompletion.GetWordAt("Console.WriteLine;", 11);
 
-        [Fact] 
-        public void GenerateMemeberQuickInfo()
-        {
-            SimpleCodeCompletion.ResetProject();
+        Assert.Equal("WriteLine", word);
+    }
 
-            //Console.Wri|teLine
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+    [Fact]
+    public void GenerateMemberMethodQuickInfo()
+    {
+        SimpleCodeCompletion.ResetProject();
+
+        //Console.Wri|teLine
+        string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -330,17 +361,71 @@ class Script
     }
 }", 124, "test.cs", true);
 
-            Assert.Equal(1, info.Count());
-            Assert.Equal("Method: void Console.WriteLine() (+ 18 overload(s))", info.First().GetLines(2).First());
-        }
+        Assert.Equal(1, info.Count());
+        Assert.Equal("Method: void Console.WriteLine() (+ 18 overload(s))", info.First().GetLines(2).First());
+    }
 
-        [Fact] 
-        public void GenerateConstructorQuickInfo()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void GenerateMemberQuickInfo()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            //124 - new DateTim|e(
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+        //132 - Console.Out|putEncoding;
+        var code = @"using System;
+using System.Linq;
+
+class Script
+{
+    static public void Main(string[] args)
+    {
+        var p = Console.O|ut;
+    }
+}";
+        int pos = GetCaretPosition(ref code);
+
+        string[] info = SimpleCodeCompletion.GetMemberInfo(code, pos, "test.cs", true);
+
+        var p = Console.Out;
+
+        Assert.Equal(1, info.Count());
+        Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
+    }
+
+    [Fact]
+    public void GenerateTypeQuickInfo()
+    {
+        SimpleCodeCompletion.ResetProject();
+
+        var code = @"using System;
+using System.Linq;
+
+/// <summary>
+/// class decl
+/// </summary>
+class Script<T,T1,T2>
+{
+    static public void Main(string[] args)
+    {
+        var p = new Scri|pt<int, int, int>();
+    }
+}";
+        int pos = GetCaretPosition(ref code);
+
+        string[] info = SimpleCodeCompletion.GetMemberInfo(code, pos, "test.cs", true);
+
+        var p = Console.Out;
+
+        Assert.Equal(1, info.Count());
+        Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
+    }
+
+    [Fact]
+    public void GenerateConstructorQuickInfo()
+    {
+        SimpleCodeCompletion.ResetProject();
+
+        //124 - new DateTim|e(
+        string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -351,17 +436,17 @@ class Script
     }
 }", 124, "test.cs", true);
 
-            Assert.Equal(1, info.Count());
-            Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
-        }
+        Assert.Equal(1, info.Count());
+        Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
+    }
 
-        [Fact] 
-        public void GenerateConstructorQuickInfo1()
-        {
-            SimpleCodeCompletion.ResetProject();
+    [Fact]
+    public void GenerateConstructorQuickInfo1()
+    {
+        SimpleCodeCompletion.ResetProject();
 
-            //121 - new Scrip|t()
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+        //121 - new Scrip|t()
+        string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -372,17 +457,17 @@ class Script
     }
 }", 121, "test.cs", true);
 
-            Assert.Equal(1, info.Count());
-            Assert.Equal("Constructor: Script()", info.First());
-        }
-        
-        [Fact] 
-        public void GenerateTypeDeclarationQuickInfo()
-        {
-            SimpleCodeCompletion.ResetProject();
+        Assert.Equal(1, info.Count());
+        Assert.Equal("Constructor: Script()", info.First());
+    }
 
-            //61 - Scr|ipt
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+    [Fact]
+    public void GenerateTypeDeclarationQuickInfo()
+    {
+        SimpleCodeCompletion.ResetProject();
+
+        //61 - Scr|ipt
+        string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -394,17 +479,17 @@ class Script
     }
 }", 61, "test.cs", true);
 
-            Assert.Equal(1, info.Count());
-            Assert.Equal("Type: Script", info.First());
-        }
-        
-        [Fact] 
-        public void GenerateConstructorFullInfo()
-        {
-            SimpleCodeCompletion.ResetProject();
+        Assert.Equal(1, info.Count());
+        Assert.Equal("Type: Script", info.First());
+    }
 
-            //126 - new DateTime(|
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+    [Fact]
+    public void GenerateConstructorFullInfo()
+    {
+        SimpleCodeCompletion.ResetProject();
+
+        //126 - new DateTime(|
+        string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -415,17 +500,17 @@ class Script
     }
 }", 126, "test.cs", false);
 
-            Assert.Equal(12, info.Count());
-            Assert.Equal("Constructor: DateTime()", info.OrderBy(x => x).First());
-        }
-        
-        [Fact] 
-        public void GenerateMemeberFullInfo()
-        {
-            SimpleCodeCompletion.ResetProject();
+        Assert.Equal(12, info.Count());
+        Assert.Equal("Constructor: DateTime()", info.OrderBy(x => x).First());
+    }
 
-            //Console.WriteLine(|
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+    [Fact]
+    public void GenerateMemeberFullInfo()
+    {
+        SimpleCodeCompletion.ResetProject();
+
+        //Console.WriteLine(|
+        string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -436,108 +521,107 @@ class Script
     }
 }", 131, "test.cs", false);
 
-            Assert.Equal(19, info.Count());
-            Assert.Equal("Method: void Console.WriteLine()", info[0].GetLines(2).First());
-            Assert.Equal("Method: void Console.WriteLine(bool value)", info[1].GetLines(2).First());
-        }
+        Assert.Equal(19, info.Count());
+        Assert.Equal("Method: void Console.WriteLine()", info[0].GetLines(2).First());
+        Assert.Equal("Method: void Console.WriteLine(bool value)", info[1].GetLines(2).First());
+    }
 
-        [Fact] 
-        public void ProcessGenericsInDisplayInfo()
-        {
-            string cleared = "Method: IQueryable`1[[``0]] Queryable.AsQueryable`1[[``0]](IEnumerable`1[[``0]] source, Action`1[[List`1[[``0]]]])".ProcessGenricNotations();
-            Assert.Equal("Method: IQueryable<T> Queryable.AsQueryable<T>(IEnumerable<T> source, Action<List<T>>)", cleared);
+    [Fact]
+    public void ProcessGenericsInDisplayInfo()
+    {
+        string cleared = "Method: IQueryable`1[[``0]] Queryable.AsQueryable`1[[``0]](IEnumerable`1[[``0]] source, Action`1[[List`1[[``0]]]])".ProcessGenricNotations();
+        Assert.Equal("Method: IQueryable<T> Queryable.AsQueryable<T>(IEnumerable<T> source, Action<List<T>>)", cleared);
 
-            cleared = "Method: ``0[] Enumerable.ToArray`1[[``0]](IEnumerable`1[[``0]] source)".ProcessGenricNotations();
-            Assert.Equal("Method: T[] Enumerable.ToArray<T>(IEnumerable<T> source)", cleared);
+        cleared = "Method: ``0[] Enumerable.ToArray`1[[``0]](IEnumerable`1[[``0]] source)".ProcessGenricNotations();
+        Assert.Equal("Method: T[] Enumerable.ToArray<T>(IEnumerable<T> source)", cleared);
 
-            cleared = "Method: IEnumerable`1[[``0]] Enumerable.Where`1[[``0]](IEnumerable`1[[``0]] source, Func`2[[``0],[bool]] predicate)".ProcessGenricNotations();
-            Assert.Equal("Method: IEnumerable<T> Enumerable.Where<T>(IEnumerable<T> source, Func<T,bool> predicate)", cleared);
+        cleared = "Method: IEnumerable`1[[``0]] Enumerable.Where`1[[``0]](IEnumerable`1[[``0]] source, Func`2[[``0],[bool]] predicate)".ProcessGenricNotations();
+        Assert.Equal("Method: IEnumerable<T> Enumerable.Where<T>(IEnumerable<T> source, Func<T,bool> predicate)", cleared);
 
-            cleared = "Method: Dictionary`2[[``1],[``0]] Enumerable.ToDictionary`2[[``0],[``1]](IEnumerable`1[[``0]] source, Func`2[[``0],[``1]] keySelector)".ProcessGenricNotations();
-            Assert.Equal("Method: Dictionary<T1,T> Enumerable.ToDictionary<T,T1>(IEnumerable<T> source, Func<T,T1> keySelector)", cleared);
-        }
+        cleared = "Method: Dictionary`2[[``1],[``0]] Enumerable.ToDictionary`2[[``0],[``1]](IEnumerable`1[[``0]] source, Func`2[[``0],[``1]] keySelector)".ProcessGenricNotations();
+        Assert.Equal("Method: Dictionary<T1,T> Enumerable.ToDictionary<T,T1>(IEnumerable<T> source, Func<T,T1> keySelector)", cleared);
+    }
 
-        [Fact] 
-        public void StringBuilderExtensions1()
-        {
-            Assert.True("\r\ndo\r\n".IsToken("do", 3));
-        }
-       
-        [Fact]
-        public void StringBuilderExtensions3()
-        {
-            var builder = new StringBuilder();
-            builder.Append("test\r\nTEST");
-            Assert.Equal("test", builder.GetLineFrom(3));
-            Assert.Equal("test", builder.GetLineFrom(2));
-            Assert.Equal("test", builder.GetLineFrom(4));
-            Assert.Equal("test", builder.GetLineFrom(5));
-            Assert.Equal("TEST", builder.GetLineFrom(9));
-            Assert.Equal(null, builder.GetLineFrom(29));
-            Assert.Equal("TEST", builder.GetLastLine());
+    [Fact]
+    public void StringBuilderExtensions1()
+    {
+        Assert.True("\r\ndo\r\n".IsToken("do", 3));
+    }
 
-            builder.Clear();
-            builder.Append("test\r\nTEST\r\n");
-            Assert.Equal("", builder.GetLineFrom(11));
-            Assert.Equal("TEST", builder.GetLineFrom(9));
-            
-            Assert.Equal("", builder.GetLastLine());
-        }
-        
-        [Fact]
-        public void StringBuilderExtensions2()
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine("");
-            builder.AppendLine("");
-            Assert.Equal("", builder.TrimEmptyEndLines().ToString());
+    [Fact]
+    public void StringBuilderExtensions3()
+    {
+        var builder = new StringBuilder();
+        builder.Append("test\r\nTEST");
+        Assert.Equal("test", builder.GetLineFrom(3));
+        Assert.Equal("test", builder.GetLineFrom(2));
+        Assert.Equal("test", builder.GetLineFrom(4));
+        Assert.Equal("test", builder.GetLineFrom(5));
+        Assert.Equal("TEST", builder.GetLineFrom(9));
+        Assert.Equal(null, builder.GetLineFrom(29));
+        Assert.Equal("TEST", builder.GetLastLine());
 
-            builder.Clear();
-            builder.Append("test");
-            Assert.Equal("test", builder.TrimEmptyEndLines().ToString());
+        builder.Clear();
+        builder.Append("test\r\nTEST\r\n");
+        Assert.Equal("", builder.GetLineFrom(11));
+        Assert.Equal("TEST", builder.GetLineFrom(9));
 
-            builder.Clear();
-            builder.AppendLine("");
-            Assert.Equal("", builder.TrimEmptyEndLines(2).ToString());
+        Assert.Equal("", builder.GetLastLine());
+    }
 
-            builder.Clear();
-            builder.AppendLine("test");
-            Assert.Equal("test"+Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+    [Fact]
+    public void StringBuilderExtensions2()
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("");
+        builder.AppendLine("");
+        Assert.Equal("", builder.TrimEmptyEndLines().ToString());
 
-            builder.Clear();
-            builder.AppendLine("test");
-            builder.AppendLine("");
-            Assert.Equal("test" + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
-            
-            builder.Clear();
-            builder.AppendLine("test");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            Assert.Equal("test" + Environment.NewLine + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+        builder.Clear();
+        builder.Append("test");
+        Assert.Equal("test", builder.TrimEmptyEndLines().ToString());
 
-            builder.Clear();
-            builder.AppendLine("test");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            Assert.Equal("test" + Environment.NewLine + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+        builder.Clear();
+        builder.AppendLine("");
+        Assert.Equal("", builder.TrimEmptyEndLines(2).ToString());
 
-            builder.Clear();
-            builder.AppendLine("test");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            Assert.Equal("test" + Environment.NewLine, builder.TrimEmptyEndLines(0).ToString());
-            
-            builder.Clear();
-            builder.Append(
+        builder.Clear();
+        builder.AppendLine("test");
+        Assert.Equal("test" + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+
+        builder.Clear();
+        builder.AppendLine("test");
+        builder.AppendLine("");
+        Assert.Equal("test" + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+
+        builder.Clear();
+        builder.AppendLine("test");
+        builder.AppendLine("");
+        builder.AppendLine("");
+        Assert.Equal("test" + Environment.NewLine + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+
+        builder.Clear();
+        builder.AppendLine("test");
+        builder.AppendLine("");
+        builder.AppendLine("");
+        builder.AppendLine("");
+        builder.AppendLine("");
+        builder.AppendLine("");
+        builder.AppendLine("");
+        Assert.Equal("test" + Environment.NewLine + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+
+        builder.Clear();
+        builder.AppendLine("test");
+        builder.AppendLine("");
+        builder.AppendLine("");
+        Assert.Equal("test" + Environment.NewLine, builder.TrimEmptyEndLines(0).ToString());
+
+        builder.Clear();
+        builder.Append(
 @"{
 
 ");
-            string test = builder.TrimEmptyEndLines(0).ToString();
-            Assert.Equal("{" + Environment.NewLine, test);
-        }
+        string test = builder.TrimEmptyEndLines(0).ToString();
+        Assert.Equal("{" + Environment.NewLine, test);
     }
 }

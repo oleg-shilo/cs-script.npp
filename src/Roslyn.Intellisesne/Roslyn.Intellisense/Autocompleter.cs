@@ -11,80 +11,14 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Recommendations;
 using Microsoft.CodeAnalysis.Text;
+using System.Diagnostics;
 using System.Windows.Forms;
+using System.Globalization;
+using System.Threading;
+using System.IO;
 
 namespace RoslynIntellisense
 {
-    public class Engine : IEngine
-    {
-#pragma warning disable 4014
-        public void Preload()
-        {
-            try
-            {
-                if (Environment.GetEnvironmentVariable("suppress_roslyn_preloading") == null)
-                {
-                    var code = @"class Script
-                             {
-                                 static void Main()
-                                 {
-                                     var test = ""ttt"";
-                                     System.Console.WriteLine($""Hello World!{test.Ends";
-
-                    Autocompleter.GetAutocompletionFor(code, 132);
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public string[] FindReferences(string editorText, int offset, string fileName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true)
-        {
-            return Autocompleter.GetAutocompletionFor(editorText, offset,
-                                                      assemblies.ToArray(),
-                                                      sources.Where(x => x.Item2 != fileName).Select(x => x.Item1).ToArray())
-                                                      .Result;
-        }
-
-        public string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Intellisense.Common.TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName)
-        {
-            return Autocompleter.GetNamespacesFor(editorText, nameToResolve,
-                                                  assemblies.ToArray(),
-                                                  sources.Where(x => x.Item2 != fileName).Select(x => x.Item1).ToArray())
-                                                  .Result;
-
-        }
-
-        List<Tuple<string, string>> sources = new List<Tuple<string, string>>();
-        List<string> assemblies = new List<string>();
-
-        public void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies)
-        {
-            this.sources.Clear();
-            this.assemblies.Clear();
-            if (sourceFiles != null)
-                this.sources.AddRange(sourceFiles);
-            this.assemblies.AddRange(assemblies);
-        }
-
-        public DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public static class Autocompleter
     {
         static internal Lazy<MetadataReference[]> builtInLibs = new Lazy<MetadataReference[]>(
@@ -99,7 +33,7 @@ namespace RoslynIntellisense
                     typeof(System.Drawing.Bitmap).Assembly,     // System.Drawing.dll
               };
 
-             return assemblies.Select(a => MetadataReference.CreateFromFile(a.Location)).ToArray();
+             return assemblies.Select(a => MetadataReference.CreateFromFile(a.Location, documentation: NppDocumentationProvider.NewFor(a.Location))).ToArray();
          });
 
         public static Document InitWorkspace(AdhocWorkspace workspace, string code, string[] references = null, string[] includes = null)
@@ -111,7 +45,7 @@ namespace RoslynIntellisense
             var refs = new List<MetadataReference>(builtInLibs.Value);
 
             if (references != null)
-                refs.AddRange(references.Select(a => MetadataReference.CreateFromFile(a)));
+                refs.AddRange(references.Select(a => MetadataReference.CreateFromFile(a, documentation: NppDocumentationProvider.NewFor(a))));
 
             var projectInfo = ProjectInfo.Create(projectId, versionStamp, projName, projName, LanguageNames.CSharp, metadataReferences: refs);
             var newProject = workspace.AddProject(projectInfo);
@@ -124,6 +58,8 @@ namespace RoslynIntellisense
                 foreach (var item in includes)
                     workspace.AddDocument(newProject.Id, $"code{index++}.cs", SourceText.From(item));
             }
+
+            var proj = workspace.CurrentSolution.Projects.Single();
 
             //EXTREMELY IMPORTANT: "return newDocument;" will not return the correct instance of the document but lookup will 
             return workspace.CurrentSolution.Projects.Single().Documents.Single(x => x.Name == "code.cs");
@@ -194,6 +130,69 @@ namespace RoslynIntellisense
             logicalPosition = position;
         }
 
+        public async static Task<IEnumerable<string>> GetMemberInfo(string code, int position, string[] references = null, string[] includes = null)
+        {
+            try
+            {
+                var result = new List<string>();
+
+                var workspace = new AdhocWorkspace();
+                var doc = InitWorkspace(workspace, code, references, includes);
+
+                var symbol = await SymbolFinder.FindSymbolAtPositionAsync(doc, position);
+
+                if (symbol != null)
+                {
+                    //For overloads: "Constructor: DateTime() (+ 11 overload(s))
+
+                    string symbolDoc = "";
+
+                    switch (symbol.Kind)
+                    {
+                        case SymbolKind.Property:
+                            {
+                                var prop = (IPropertySymbol) symbol;
+
+                                string body = "{ }";
+                                if (prop.GetMethod == null)
+                                    body = "{ set; }";
+                                else if (prop.SetMethod == null)
+                                    body = "{ get; }";
+                                else
+                                    body = "{ get; set; }";
+
+                                symbolDoc = $"Property: {prop.Type.Name} {symbol.Name} {body}";
+
+                                break;
+                            }
+                        case SymbolKind.Field:
+                        case SymbolKind.ArrayType:
+                        case SymbolKind.Event:
+                        case SymbolKind.Local:
+                        case SymbolKind.Method:
+                        case SymbolKind.NamedType:
+                        case SymbolKind.Parameter:
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (!symbolDoc.HasText())
+                        symbolDoc = $"{symbol.ToDisplayKind()}: {symbol.ToDisplayString()}";
+
+                    var xmlDoc = symbol.GetDocumentationCommentXml();
+                    if (xmlDoc.HasText())
+                        symbolDoc += "\r\n" + xmlDoc.XmlToPlainText();
+
+                    result.Add(symbolDoc);
+
+                    return result;
+                }
+            }
+            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
+            return new string[0];
+        }
+
         //position is zero-based
         public async static Task<IEnumerable<ICompletionData>> GetAutocompletionFor(string code, int position, string[] references = null, string[] includes = null)
         {
@@ -208,9 +207,9 @@ namespace RoslynIntellisense
 
             try
             {
-                var result = completions.Where(s => s.DisplayText.IsValidCompletionFor(partialWord))
-                                        .OrderByDescending(c => c.DisplayText.IsValidCompletionStartsWithExactCase(partialWord))
-                                        .ThenByDescending(c => c.DisplayText.IsValidCompletionStartsWithIgnoreCase(partialWord))
+                var result = completions.Where(s => s.DisplayText.CanComplete(partialWord))
+                                        .OrderByDescending(c => c.DisplayText.StartsWith(partialWord))
+                                        .ThenByDescending(c => c.DisplayText.StartsWith(partialWord, StringComparison.OrdinalIgnoreCase))
                                         .ThenByDescending(c => c.DisplayText.IsCamelCaseMatch(partialWord))
                                         .ThenByDescending(c => c.DisplayText.IsSubsequenceMatch(partialWord))
                                         .ThenBy(c => c.DisplayText)
@@ -491,213 +490,4 @@ namespace RoslynIntellisense
     }
 
     //for member info SemanticModel.LookupSymbols can be tried
-
-    public static class GenericExtensions
-    {
-        public static bool HasText(this string text)
-        {
-            return !string.IsNullOrEmpty(text);
-        }
-
-        public static T To<T>(this object obj)
-        {
-            return (T) obj;
-        }
-
-        public static CompletionType ToCompletionType(this SymbolKind kind)
-        {
-            switch (kind)
-            {
-                case SymbolKind.Method: return CompletionType.method;
-                case SymbolKind.Event: return CompletionType._event;
-                case SymbolKind.Field: return CompletionType.field;
-                case SymbolKind.Property: return CompletionType.property;
-                case SymbolKind.Namespace: return CompletionType._namespace;
-                case SymbolKind.Assembly: return CompletionType._namespace;
-                default:
-                    return CompletionType.unresolved;
-            }
-        }
-
-        public static string ToDecoratedName(this ITypeSymbol type)
-        {
-            string result = type.ToDisplayString();
-
-            if (!result.Contains('.'))
-                return result;
-            //if (clrAliaces.ContainsKey(result))
-            //    return clrAliaces[result];
-
-            string nmspace = type.GetNamespace();
-            if (!string.IsNullOrEmpty(nmspace))
-                nmspace = "{" + nmspace + "}.";
-            return (nmspace + type.Name);
-        }
-
-        public static string GetNamespace(this ISymbol type)
-        {
-            List<string> parts = new List<string>();
-            var nm = type.ContainingNamespace;
-
-            while (nm != null && nm.Name.HasText())
-            {
-                parts.Add(nm.Name);
-                nm = nm.ContainingNamespace;
-            }
-
-            parts.Reverse();
-            return string.Join(".", parts.ToArray());
-        }
-
-        public static ICompletionData ToCompletionData(this ISymbol symbol)
-        {
-            if (symbol.Kind == SymbolKind.Event ||
-                symbol.Kind == SymbolKind.Property ||
-                symbol.Kind == SymbolKind.Field ||
-                symbol.Kind == SymbolKind.Method)
-            {
-                // Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE.PEMethodSymbol is internal so we cannot explore it
-                var invokeParams = new List<string>();
-                string invokeReturn = null;
-                try
-                {
-                    if (symbol.Kind == SymbolKind.Method && symbol is IMethodSymbol)
-                    {
-                        var method = (IMethodSymbol) symbol;
-                        foreach (var item in method.Parameters)
-                        {
-                            invokeParams.Add(item.Type.ToDecoratedName() + " " + item.Name);
-                        }
-                        invokeReturn = method.ReturnType.ToDecoratedName();
-                    }
-                    else if (symbol.Kind == SymbolKind.Event && symbol is IEventSymbol)
-                    {
-                        var method = symbol.To<IEventSymbol>()
-                                           .Type.To<INamedTypeSymbol>()
-                                           .DelegateInvokeMethod.To<IMethodSymbol>();
-
-                        foreach (var item in method.Parameters)
-                        {
-                            invokeParams.Add(item.Type.ToDecoratedName() + " " + item.Name);
-                        }
-                        invokeReturn = method.ReturnType.ToDecoratedName();
-                    }
-                }
-                catch { }
-
-                return new EntityCompletionData
-                {
-                    DisplayText = symbol.Name,
-                    CompletionText = symbol.Name,
-                    CompletionType = symbol.Kind.ToCompletionType(),
-                    RawData = symbol,
-                    InvokeParameters = invokeParams,
-                    InvokeParametersSet = true,
-                    InvokeReturn = invokeReturn
-                };
-            }
-            else
-            {
-                return new CompletionData
-                {
-                    DisplayText = symbol.Name,
-                    CompletionText = symbol.Name,
-                    CompletionType = symbol.Kind.ToCompletionType(),
-                    RawData = symbol
-                };
-            }
-        }
-
-        public static int GetWordStartOf(this string text, int offset)
-        {
-            if (text[offset] != '.') //we may be at the partially complete word
-                for (int i = offset - 1; i >= 0; i--)
-                    if (Autocompleter.Delimiters.Contains(text[i]))
-                        return i + 1;
-            return offset;
-        }
-
-        public static object GetProp(this object obj, string name)
-        {
-            var property = obj.GetType().GetProperty(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            if (property == null)
-                throw new Exception("ReflectionExtensions: cannot find property " + name);
-            return property.GetValue(obj, null);
-        }
-
-        public static string[] GetUsingNamespace(this SyntaxNode syntax, string code)
-        {
-            var namespaces = syntax.DescendantNodes()
-                                   .OfType<UsingDirectiveSyntax>()
-                                   .Select(x => x.GetText().ToString()
-                                                 .Replace("using", "")
-                                                 .Replace(";", "")
-                                                 .Trim())
-                                   .ToArray();
-            return namespaces;
-        }
-
-        public static string ShrinkNamespaces(this string statement, params string[] knownNamespaces)
-        {
-            //statement format: "{<namespace_name>}.type"
-            string result = statement;
-
-            foreach (var item in knownNamespaces.Select(x => "{" + x + "}."))
-                result = result.Replace(item, "");
-
-            return result.Replace("{", "")
-                         .Replace("}", "");
-        }
-    }
-
-    public static class OmnyRoslynStringExtensions
-    {
-        public static bool IsValidCompletionFor(this string completion, string partial)
-        {
-            return completion.IsValidCompletionStartsWithIgnoreCase(partial) || completion.IsSubsequenceMatch(partial);
-        }
-
-        public static bool IsValidCompletionStartsWithExactCase(this string completion, string partial)
-        {
-            return completion.StartsWith(partial);
-        }
-
-        public static bool IsValidCompletionStartsWithIgnoreCase(this string completion, string partial)
-        {
-            return completion.ToLower().StartsWith(partial.ToLower());
-        }
-
-        public static bool IsCamelCaseMatch(this string completion, string partial)
-        {
-            return new string(completion.Where(c => c >= 'A' && c <= 'Z').ToArray()).StartsWith(partial.ToUpper());
-        }
-
-        public static bool IsSubsequenceMatch(this string completion, string partial)
-        {
-            if (partial == string.Empty)
-            {
-                return true;
-            }
-
-            // Limit the number of results returned by making sure
-            // at least the first characters match.
-            // We can get far too many results back otherwise.
-            if (!FirstLetterMatches(partial, completion))
-            {
-                return false;
-            }
-
-            return new string(completion.ToUpper().Intersect(partial.ToUpper()).ToArray()) == partial.ToUpper();
-        }
-
-        static bool FirstLetterMatches(string word, string match)
-        {
-            if (string.IsNullOrEmpty(match))
-            {
-                return false;
-            }
-
-            return char.ToLowerInvariant(word.First()) == char.ToLowerInvariant(match.First());
-        }
-    }
 }

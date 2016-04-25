@@ -1133,7 +1133,6 @@ namespace CSScriptIntellisense
                     if (Config.Instance.RoslynIntellisense) //Roslyn is slow with resolving namespaces so do it less aggressive way than NRefactory
                         break;
                 }
-                //return result;
             }
 
             return allUsings.DistinctBy(x => x.Namespace).ToArray();

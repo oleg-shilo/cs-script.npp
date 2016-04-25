@@ -325,9 +325,6 @@
     <None Include="Interop\DllExport\NppPlugin.DllExport.targets" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Resources\about.png" />
   </ItemGroup>
   <ItemGroup>

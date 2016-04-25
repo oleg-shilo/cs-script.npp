@@ -6,8 +6,12 @@ using System.Windows.Forms;
 
 namespace RoslynIntellisense
 {
-    public delegate void D2(string s);
-    ///public delegate IEnumerable<ICompletionData> GetAutocompletionFor(string code, int position, string[] references, string[] includes);
+    // Roslyn packages:
+    // 1.1.0 - currently used
+    // 1.2.1 - very slow (e.g. with GetPossibleNamespaces)
+    // 2.0.0 - beta1 is OK but Beta
+    // Microsoft.CodeAnalysis.CSharp
+    // Microsoft.CodeAnalysis.CSharp.Workspaces
 
     class Program
     {
@@ -20,7 +24,7 @@ namespace RoslynIntellisense
             //Intellisense();
 
 
-
+             
             if (args.Contains("/test"))
                 return Test();
             else if (args.Contains("/detect"))
@@ -57,6 +61,7 @@ namespace RoslynIntellisense
             engine.ResetProject(sources, asms);
 
             var result = engine.GetPossibleNamespaces(code, "Form", "script.cs");
+            result = engine.GetPossibleNamespaces(code, "Form", "script.cs");
             return 0;
         }
 

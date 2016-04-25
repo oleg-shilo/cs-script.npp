@@ -56,6 +56,9 @@
     <Reference Include="ICSharpCode.NRefactory.CSharp">
       <HintPath>..\CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CodeAnalysis">
+      <HintPath>..\Roslyn.Intellisesne\Roslyn.Intellisense\Microsoft.CodeAnalysis.CSharp.1.1.0\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -84,6 +87,7 @@
     <Compile Include="Generic.Tests\GenericTests.cs" />
     <Compile Include="Intellisense.Tests\GenericTest.cs" />
     <Compile Include="Intellisense.Tests\MethodInfoTest.cs" />
+    <Compile Include="Intellisense.Tests\RoslynTest.cs" />
     <Compile Include="Intellisense.Tests\SnippetsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Intellisense.Tests\ReferenceResolverTest.cs" />
@@ -108,6 +112,10 @@
     <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
       <Project>{c67d7ed7-f350-4fd4-81b5-5e635fb08765}</Project>
       <Name>Intellisense.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Roslyn.Intellisesne\Roslyn.Intellisense\Roslyn.Intellisense.csproj">
+      <Project>{68062b6a-67e4-459d-9a42-97e798356c6e}</Project>
+      <Name>Roslyn.Intellisense</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

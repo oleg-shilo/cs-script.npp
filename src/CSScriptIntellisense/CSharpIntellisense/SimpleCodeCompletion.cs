@@ -146,7 +146,10 @@ namespace CSScriptIntellisense
 
         public static string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos)
         {
-            return MonoEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+            if (Config.Instance.RoslynIntellisense)
+                return RoslynEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+            else
+                return MonoEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
         }
 
         //----------------------------------

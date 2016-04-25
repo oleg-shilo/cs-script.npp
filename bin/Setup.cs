@@ -16,7 +16,7 @@ class Script
         string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp.dll");
         Version version = System.Reflection.Assembly.ReflectionOnlyLoadFrom(pluginFile).GetName().Version;
 
-        Project project =
+        var project =
             new Project("CS-Script for Notepad++",
                 new Dir(@"%ProgramFiles%\Notepad++\Plugins",
                     new File(@"Plugins\CSScriptNpp.dll"),
@@ -50,6 +50,10 @@ class Script
                             new File(@"Plugins\CSScriptNpp\Roslyn\System.Collections.Immutable.dll"),
                             new File(@"Plugins\CSScriptNpp\Roslyn\System.Reflection.Metadata.dll")))));
 
+        project.ControlPanelInfo.UrlInfoAbout = "https://csscriptnpp.codeplex.com/";
+        project.ControlPanelInfo.Contact = "Product owner";
+        project.ControlPanelInfo.Manufacturer = "Oleg Shilo";
+        
         project.Actions = new WixSharp.Action[]
         {
             new PathFileAction("%ProgramFiles%\\Notepad++\\notepad++.exe", "", "INSTALLDIR", Return.asyncNoWait, When.After, Step.InstallInitialize, Condition.NOT_Installed)
