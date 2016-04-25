@@ -87,6 +87,7 @@
     <Compile Include="Generic.Tests\GenericTests.cs" />
     <Compile Include="Intellisense.Tests\GenericTest.cs" />
     <Compile Include="Intellisense.Tests\MethodInfoTest.cs" />
+    <Compile Include="Intellisense.Tests\RoslynHosting.cs" />
     <Compile Include="Intellisense.Tests\RoslynTest.cs" />
     <Compile Include="Intellisense.Tests\SnippetsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

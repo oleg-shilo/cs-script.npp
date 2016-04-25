@@ -130,8 +130,19 @@ namespace RoslynIntellisense
             logicalPosition = position;
         }
 
-        public async static Task<IEnumerable<string>> GetMemberInfo(string code, int position, string[] references = null, string[] includes = null)
+        public static IEnumerable<string> GetMemberInfo(string code, int position, out int methodStartPos, string[] references = null, string[] includes = null, bool includeOverloads = false)
         {
+            int actualPosition = position;
+
+            if (includeOverloads)  //Resolving method tooltips
+            {
+                int pos = code.LastIndexOf('(', position - 1);
+                if (pos != -1)
+                    actualPosition = pos;
+            }
+
+            methodStartPos = actualPosition;
+
             try
             {
                 var result = new List<string>();
@@ -139,58 +150,71 @@ namespace RoslynIntellisense
                 var workspace = new AdhocWorkspace();
                 var doc = InitWorkspace(workspace, code, references, includes);
 
-                var symbol = await SymbolFinder.FindSymbolAtPositionAsync(doc, position);
+                var symbol = SymbolFinder.FindSymbolAtPositionAsync(doc, actualPosition).Result;
 
                 if (symbol != null)
                 {
-                    //For overloads: "Constructor: DateTime() (+ 11 overload(s))
+                    result.Add(symbol.GetMemberInfo());
 
-                    string symbolDoc = "";
-
-                    switch (symbol.Kind)
+                    if (includeOverloads)
                     {
-                        case SymbolKind.Property:
-                            {
-                                var prop = (IPropertySymbol) symbol;
-
-                                string body = "{ }";
-                                if (prop.GetMethod == null)
-                                    body = "{ set; }";
-                                else if (prop.SetMethod == null)
-                                    body = "{ get; }";
-                                else
-                                    body = "{ get; set; }";
-
-                                symbolDoc = $"Property: {prop.Type.Name} {symbol.Name} {body}";
-
-                                break;
-                            }
-                        case SymbolKind.Field:
-                        case SymbolKind.ArrayType:
-                        case SymbolKind.Event:
-                        case SymbolKind.Local:
-                        case SymbolKind.Method:
-                        case SymbolKind.NamedType:
-                        case SymbolKind.Parameter:
-                            break;
-                        default:
-                            break;
+                        result.AddRange(symbol.GetOverloads().Select(s => s.GetMemberInfo()));
                     }
-
-                    if (!symbolDoc.HasText())
-                        symbolDoc = $"{symbol.ToDisplayKind()}: {symbol.ToDisplayString()}";
-
-                    var xmlDoc = symbol.GetDocumentationCommentXml();
-                    if (xmlDoc.HasText())
-                        symbolDoc += "\r\n" + xmlDoc.XmlToPlainText();
-
-                    result.Add(symbolDoc);
 
                     return result;
                 }
             }
             catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
             return new string[0];
+        }
+
+        static IEnumerable<ISymbol> GetOverloads(this ISymbol symbol)
+        {
+            return symbol.ContainingType.GetMembers(symbol.Name).Where(x=>x != symbol);
+        }
+
+        static string GetMemberInfo(this ISymbol symbol)
+        {
+            string symbolDoc = "";
+
+            switch (symbol.Kind)
+            {
+                case SymbolKind.Property:
+                    {
+                        var prop = (IPropertySymbol) symbol;
+
+                        string body = "{ }";
+                        if (prop.GetMethod == null)
+                            body = "{ set; }";
+                        else if (prop.SetMethod == null)
+                            body = "{ get; }";
+                        else
+                            body = "{ get; set; }";
+
+                        symbolDoc = $"Property: {prop.Type.Name} {symbol.Name} {body}";
+
+                        break;
+                    }
+                case SymbolKind.Field:
+                case SymbolKind.ArrayType:
+                case SymbolKind.Event:
+                case SymbolKind.Local:
+                case SymbolKind.Method:
+                case SymbolKind.NamedType:
+                case SymbolKind.Parameter:
+                    break;
+                default:
+                    break;
+            }
+
+            if (!symbolDoc.HasText())
+                symbolDoc = $"{symbol.ToDisplayKind()}: {symbol.ToDisplayString()}";
+
+            var xmlDoc = symbol.GetDocumentationCommentXml();
+            if (xmlDoc.HasText())
+                symbolDoc += "\r\n" + xmlDoc.XmlToPlainText();
+
+            return symbolDoc;
         }
 
         //position is zero-based
