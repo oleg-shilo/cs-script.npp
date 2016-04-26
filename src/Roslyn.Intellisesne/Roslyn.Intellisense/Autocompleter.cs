@@ -131,6 +131,53 @@ namespace RoslynIntellisense
             logicalPosition = position;
         }
 
+        public static string[] FindReferencess(string code, int position, string file, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        {
+            //SymbolFinder.FindReferencesAsync
+            try
+            {
+                var workspace = new AdhocWorkspace();
+                var doc = InitWorkspace(workspace, code, file, references, includes);
+
+                ISymbol symbol = SymbolFinder.FindSymbolAtPositionAsync(doc, position).Result;
+
+                if (symbol == null)
+                    return new string[0];
+
+                var refsGroups = SymbolFinder.FindReferencesAsync(symbol, doc.Project.Solution).Result;
+
+                //good ref doc https://joshvarty.wordpress.com/roslynfaq/csharp/
+                var locations = refsGroups.FirstOrDefault()
+                                          .Locations
+                                          .Select(x => x.Location)
+                                          .OrderBy(x => x.SourceSpan.Start)
+                                          .Select(x =>
+                                          {
+                                              var start = x.GetLineSpan().StartLinePosition;
+
+                                              var line = start.Line + 1;
+                                              var column = start.Character + 1;
+                                              var filePath = x.SourceTree.FilePath;
+                                              
+                                              //var hint =  code.Substring(x.SourceSpan.Start, x.SourceSpan.Length);
+                                              var hint =  code.Substring(x.SourceSpan.Start).Split('\n').First().Trim();
+
+                                              var fileContent = x.SourceTree.GetText().ToString();
+                                              int pos = fileContent.IndexOf("///CS-Script auto-class generation");
+                                              if (pos != 1)
+                                              {
+                                                  if (pos < x.SourceSpan.Start)
+                                                      line--;
+                                              }
+                                              return $"{filePath}({line},{column}): {hint}";
+                                          }).ToArray();
+
+                return locations;
+            }
+            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
+            return new string[0];
+        }
+
         public static DomRegion ResolveSymbol(string code, int position, string file, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             try
@@ -178,7 +225,7 @@ namespace RoslynIntellisense
                     }
                     else
                     {
-                        Reflect(symbol);
+                        //Reflect(symbol);
                         //Temporary work around: making it Reflector.Cecil compatible
                         //Cannot use symbol.ContainingType.ToString() as it will use aliases for built-in types
                         //Reflector.Cecil require aliased params but proper member names 
@@ -206,13 +253,11 @@ namespace RoslynIntellisense
 
         static void Reflect(ISymbol symbol)
         {
-            //symbol.ContainingAssembly.TypeNames
-            string name = "System.String";
-            name = symbol.ContainingType.GetFullName();
+            string name = symbol.ContainingType.GetFullName();
             var type = symbol.ContainingAssembly.GetTypeByMetadataName(name);
             foreach (var item in type.GetMembers())
             {
-                if (symbol.ToDisplayString() == item.ToDisplayString())
+                //if (symbol.ToDisplayString() == item.ToDisplayString())
                 {
                     var xml = symbol.GetDocumentationCommentXml();
 

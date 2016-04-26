@@ -155,7 +155,10 @@ namespace CSScriptIntellisense
         //----------------------------------
         static public string[] FindReferences(string editorText, int offset, string fileName)
         {
-            return MonoEngine.FindReferences(editorText, offset, fileName);
+            if (Config.Instance.RoslynIntellisense)
+                return RoslynEngine.FindReferences(editorText, offset, fileName);
+            else
+                return MonoEngine.FindReferences(editorText, offset, fileName);
         }
 
         //----------------------------------
