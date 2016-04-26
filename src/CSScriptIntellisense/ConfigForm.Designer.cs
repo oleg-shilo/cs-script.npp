@@ -50,7 +50,7 @@
             this.useArrow.Name = "useArrow";
             this.useArrow.Size = new System.Drawing.Size(205, 17);
             this.useArrow.TabIndex = 0;
-            this.useArrow.Text = "Use Right Arrow to accept suggestion";
+            this.useArrow.Text = "Use Right Arrow to accept selected suggestion";
             this.useArrow.UseVisualStyleBackColor = true;
             // 
             // intercept

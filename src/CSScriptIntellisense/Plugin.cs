@@ -1164,10 +1164,15 @@ namespace CSScriptIntellisense
             }
             catch { }
 
-            CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
+            var decorated = CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
             EnsureCurrentFileParsed();
-            return SimpleCodeCompletion.ResolveMember(text, currentPos, file);
+            DomRegion result = SimpleCodeCompletion.ResolveMember(text, currentPos, file);
+
+            if (decorated && result.FileName == file)
+                CSScriptHelper.Undecorate(text, ref result);
+           
+            return result;
         }
 
         static string[] FindAllReferencesAtCaret()

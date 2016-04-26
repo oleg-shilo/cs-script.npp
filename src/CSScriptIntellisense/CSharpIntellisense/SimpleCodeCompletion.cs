@@ -179,7 +179,29 @@ namespace CSScriptIntellisense
 
         static DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
         {
-            return MonoEngine.ResolveCSharpMember(editorText, offset, fileName);
+            if (Config.Instance.RoslynIntellisense)
+            {
+                var result = RoslynEngine.ResolveCSharpMember(editorText, offset, fileName);
+
+                if (result.Hint?.StartsWith("asm|") ?? false)
+                {
+                    try
+                    {
+                        string[] parts = result.Hint.Split('|');
+                        var reconstructedResult = (MonoEngine as MonoCompletionEngine).ResolveTypeByName(parts[1], parts[2]);
+                        reconstructedResult.Hint = result.Hint;
+                        return reconstructedResult;
+                    }
+                    catch
+                    {
+                        return DomRegion.Empty;
+                    }
+                }
+
+                return result;
+            }
+            else
+                return MonoEngine.ResolveCSharpMember(editorText, offset, fileName);
         }
 
         //----------------------------------

@@ -1,6 +1,7 @@
 using csscript;
 using CSScriptLibrary;
 using ICSharpCode.NRefactory.Editor;
+using Intellisense.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -222,6 +223,20 @@ namespace CSScriptIntellisense
             }
             else
                 return new Tuple<int, int>(-1, 0);
+        }
+
+        static public void Undecorate(string text, ref DomRegion region)
+        {
+            int pos = text.IndexOf("///CS-Script auto-class generation");
+            if (pos != -1)
+            {
+                var injectedLine = new ReadOnlyDocument(text).GetLineByOffset(pos);
+                if (injectedLine.LineNumber < region.BeginLine)
+                {
+                    region.BeginLine--;
+                    region.EndLine--;
+                }
+            }
         }
 
         static public bool DecorateIfRequired(ref string text, ref int currentPos)

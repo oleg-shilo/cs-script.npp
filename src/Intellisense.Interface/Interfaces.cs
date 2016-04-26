@@ -135,6 +135,7 @@ namespace Intellisense.Common
         public int BeginLine { get; set; }
         public int EndLine { get; set; }
         public string FileName { get; set; }
+        public string Hint { get; set; }
         public bool IsEmpty { get; set; }
     }
 

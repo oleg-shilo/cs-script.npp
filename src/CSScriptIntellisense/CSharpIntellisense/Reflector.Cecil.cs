@@ -63,7 +63,7 @@ namespace UltraSharp.Cecil
             get { return Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes"); }
         }
 
-        public FileLocation ReconstructToFile(IAssembly assembly, IType type, IMember member = null, string outputFile = null)
+        public FileLocation ReconstructToFile(IAssembly assembly, IType type, IMember member = null, string outputFile = null, string memberName = null)
         {
             string file = outputFile;
             if (file.IsNullOrEmpty())
@@ -81,7 +81,7 @@ namespace UltraSharp.Cecil
             if (File.Exists(file))
                 File.Delete(file);
 
-            Result result = Process(assembly, type, member);
+            Result result = Process(assembly, type, member, memberName);
 
             file += "." + result.Code.GetHashCode() + ".cs"; //simple caching mechanism for avoiding overrating the file
 
@@ -101,10 +101,12 @@ namespace UltraSharp.Cecil
         }
 
         private IMember lookupMember;
+        private string lookupMemberName;
         private int lookupMemberPosition = -1;
 
-        public Result Process(IAssembly assembly, IType type, IMember member = null)
+        public Result Process(IAssembly assembly, IType type, IMember member = null, string memberName = null)
         {
+            lookupMemberName = memberName;
             lookupMember = member;
             lookupMemberPosition = -1;
             classDefinition.Clear();
@@ -294,10 +296,29 @@ namespace UltraSharp.Cecil
 
         private void NoteMemberPosition(IMember item)
         {
-            if (item == lookupMember)
+            if (item == lookupMember || HasName(item, lookupMemberName))
             {
                 lookupMemberPosition = classDefinition.Length;
             }
+        }
+
+        bool HasName(IMember item, string name)
+        {
+            if(name == null)
+                return false;
+
+            if (name.StartsWith(item.FullName, StringComparison.Ordinal))
+            {
+                if (item is IMethod)
+                {
+                    var parameters = BuildMethodMinimalisticParams(item as IMethod);
+                    if (name.EndsWith(parameters))
+                        return true;
+                }
+                else
+                    return true;
+            }
+            return false;
         }
 
         private void NoteLookupPosition()
@@ -364,6 +385,41 @@ namespace UltraSharp.Cecil
                 if (param.IsOut) methodSignature.Append("out ");
                 if (param.IsParams) methodSignature.Append("params ");
                 methodSignature.Append(GetTypeName(param) + " " + param.Name);
+                if (param.IsOptional)
+                    methodSignature.Append(" = " + (param as DefaultUnresolvedParameter).DefaultValue);
+            }
+            methodSignature.Append(")");
+            string methodText = methodSignature.ToString().ResolveTypeParameters(typeParamsList) + constraints;
+
+            return methodText;
+        }
+
+        private string BuildMethodMinimalisticParams(IMethod item)
+        {
+            var methodSignature = new StringBuilder();
+
+            var method = (item as DefaultResolvedMethod);
+            var typeParamsList = new List<string>();
+            //method.Parameters //does not return TypeParameter info for generic parameters
+            var parameters = method.Parts.First().Parameters;
+
+            string constraints = "";
+
+            if (item.IsConstructor)
+                return "";
+
+            methodSignature.Append("(");
+            foreach (IUnresolvedParameter param in parameters)
+            {
+                if (param != parameters.First())
+                    methodSignature.Append(", ");
+                else if (method.IsExtensionMethod)
+                    methodSignature.Append("this ");
+
+                if (param.IsRef) methodSignature.Append("ref ");
+                if (param.IsOut) methodSignature.Append("out ");
+                if (param.IsParams) methodSignature.Append("params ");
+                methodSignature.Append(GetTypeName(param));
                 if (param.IsOptional)
                     methodSignature.Append(" = " + (param as DefaultUnresolvedParameter).DefaultValue);
             }

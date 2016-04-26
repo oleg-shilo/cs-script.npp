@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using System.Globalization;
 using System.Threading;
 using System.IO;
+using System.Collections.Immutable;
 
 namespace RoslynIntellisense
 {
@@ -33,14 +34,18 @@ namespace RoslynIntellisense
                     typeof(System.Drawing.Bitmap).Assembly,     // System.Drawing.dll
               };
 
-             return assemblies.Select(a => MetadataReference.CreateFromFile(a.Location, documentation: NppDocumentationProvider.NewFor(a.Location))).ToArray();
+             return assemblies.Select(a =>
+                {
+                    return MetadataReference.CreateFromFile(a.Location, documentation: NppDocumentationProvider.NewFor(a.Location));
+                }).ToArray();
          });
 
-        public static Document InitWorkspace(AdhocWorkspace workspace, string code, string[] references = null, string[] includes = null)
+        public static Document InitWorkspace(AdhocWorkspace workspace, string code, string file = null, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             string projName = "NewProject";
             var projectId = ProjectId.CreateNewId();
             var versionStamp = VersionStamp.Create();
+            string docName = file ?? "current_code.cs";
 
             var refs = new List<MetadataReference>(builtInLibs.Value);
 
@@ -49,20 +54,16 @@ namespace RoslynIntellisense
 
             var projectInfo = ProjectInfo.Create(projectId, versionStamp, projName, projName, LanguageNames.CSharp, metadataReferences: refs);
             var newProject = workspace.AddProject(projectInfo);
-            var newDocument = workspace.AddDocument(newProject.Id, "code.cs", SourceText.From(code));
+            var newDocument = workspace.AddDocument(newProject.Id, docName, SourceText.From(code));
 
             if (includes != null)
-            {
-                int index = 1;
-
                 foreach (var item in includes)
-                    workspace.AddDocument(newProject.Id, $"code{index++}.cs", SourceText.From(item));
-            }
+                    workspace.AddDocument(newProject.Id, item.Item2, SourceText.From(item.Item1));
 
             var proj = workspace.CurrentSolution.Projects.Single();
 
             //EXTREMELY IMPORTANT: "return newDocument;" will not return the correct instance of the document but lookup will 
-            return workspace.CurrentSolution.Projects.Single().Documents.Single(x => x.Name == "code.cs");
+            return workspace.CurrentSolution.Projects.Single().Documents.Single(x => x.Name == docName);
         }
 
         //mscorlib, systemCore
@@ -130,7 +131,98 @@ namespace RoslynIntellisense
             logicalPosition = position;
         }
 
-        public static IEnumerable<string> GetMemberInfo(string code, int position, out int methodStartPos, string[] references = null, string[] includes = null, bool includeOverloads = false)
+        public static DomRegion ResolveSymbol(string code, int position, string file, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        {
+            try
+            {
+                var workspace = new AdhocWorkspace();
+                var doc = InitWorkspace(workspace, code, file, references, includes);
+
+                ISymbol symbol = SymbolFinder.FindSymbolAtPositionAsync(doc, position).Result;
+
+                if (symbol == null)
+                    return DomRegion.Empty;
+
+                var location = symbol.Locations.First();
+
+                if (location.IsInSource)
+                {
+                    var linePosition = location.GetLineSpan().StartLinePosition;
+
+                    //DomRegion is 1-based Editor friendly struct
+                    return new DomRegion
+                    {
+                        FileName = location.SourceTree.FilePath,
+                        BeginLine = linePosition.Line + 1,
+                        EndLine = linePosition.Line + 1,
+                        BeginColumn = linePosition.Character + 1,
+                    };
+                }
+                else if (location.IsInMetadata)
+                {
+
+                    // Will not work if the asm name (Identity.Name) is not the same as the file name.
+                    // But unfortunately location.MetadataModule doesn't preserve the asm file name
+                    var asmName = symbol.ContainingAssembly.Identity.Name;
+                    var asmFile = doc.Project.MetadataReferences
+                                             .Select(x => x.Display)
+                                             .Where(x => string.Compare(Path.GetFileNameWithoutExtension(x), asmName, true) == 0)
+                                             .FirstOrDefault();
+
+                    string typeName, memberName;
+
+                    if (symbol.Kind == SymbolKind.NamedType)
+                    {
+                        typeName =
+                        memberName = symbol.ToString();
+                    }
+                    else
+                    {
+                        Reflect(symbol);
+                        //Temporary work around: making it Reflector.Cecil compatible
+                        //Cannot use symbol.ContainingType.ToString() as it will use aliases for built-in types
+                        //Reflector.Cecil require aliased params but proper member names 
+                        string displayName = symbol.ToString();
+                        typeName = symbol.ContainingType.GetFullName();
+                        //Need to generate: 'System.String.Replace(string, string)'
+                        if (displayName.Contains("(")) //method
+                            memberName = typeName + "." + symbol.Name + "(" + displayName.Split('(').Last();
+                        else
+                            memberName = typeName + "." + symbol.Name;
+                    }
+                    return new DomRegion
+                    {
+                        FileName = asmFile,
+                        BeginLine = 0,
+                        EndLine = 0,
+                        BeginColumn = 0,
+                        Hint = $"asm|{typeName}|{memberName}"
+                    };
+                }
+            }
+            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
+            return DomRegion.Empty;
+        }
+
+        static void Reflect(ISymbol symbol)
+        {
+            //symbol.ContainingAssembly.TypeNames
+            string name = "System.String";
+            name = symbol.ContainingType.GetFullName();
+            var type = symbol.ContainingAssembly.GetTypeByMetadataName(name);
+            foreach (var item in type.GetMembers())
+            {
+                if (symbol.ToDisplayString() == item.ToDisplayString())
+                {
+                    var xml = symbol.GetDocumentationCommentXml();
+
+                    Debug.WriteLine(item.ToDisplayString());
+                }
+            }
+        }
+
+
+        public static IEnumerable<string> GetMemberInfo(string code, int position, out int methodStartPos, string[] references = null, IEnumerable<Tuple<string, string>> includes = null, bool includeOverloads = false)
         {
             int actualPosition = position;
 
@@ -148,7 +240,7 @@ namespace RoslynIntellisense
                 var result = new List<string>();
 
                 var workspace = new AdhocWorkspace();
-                var doc = InitWorkspace(workspace, code, references, includes);
+                var doc = InitWorkspace(workspace, code, null, references, includes);
 
                 var symbol = SymbolFinder.FindSymbolAtPositionAsync(doc, actualPosition).Result;
 
@@ -170,7 +262,7 @@ namespace RoslynIntellisense
 
         static IEnumerable<ISymbol> GetOverloads(this ISymbol symbol)
         {
-            return symbol.ContainingType.GetMembers(symbol.Name).Where(x=>x != symbol);
+            return symbol.ContainingType.GetMembers(symbol.Name).Where(x => x != symbol);
         }
 
         static string GetMemberInfo(this ISymbol symbol)
@@ -218,7 +310,7 @@ namespace RoslynIntellisense
         }
 
         //position is zero-based
-        public async static Task<IEnumerable<ICompletionData>> GetAutocompletionFor(string code, int position, string[] references = null, string[] includes = null)
+        public async static Task<IEnumerable<ICompletionData>> GetAutocompletionFor(string code, int position, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             string opContext;
 
@@ -422,7 +514,7 @@ namespace RoslynIntellisense
 
         }
 
-        public async static Task<IEnumerable<ICompletionData>> Resolve(string code, int position, string[] references = null, string[] includes = null)
+        public async static Task<IEnumerable<ICompletionData>> Resolve(string code, int position, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             var completions = new List<ICompletionData>();
 
@@ -433,7 +525,7 @@ namespace RoslynIntellisense
             if (references != null)
                 asms = asms.Concat(references).ToArray();
 
-            var document = InitWorkspace(workspace, code, asms.ToArray(), includes);
+            var document = InitWorkspace(workspace, code, null, asms.ToArray(), includes);
             var model = await document.GetSemanticModelAsync();
             var symbols = Recommender.GetRecommendedSymbolsAtPosition(model, position, workspace).ToArray();
 
@@ -486,13 +578,13 @@ namespace RoslynIntellisense
             }
         }
 
-        public async static Task<IEnumerable<Intellisense.Common.TypeInfo>> GetNamespacesFor(string editorText, string nameToResolve, string[] references = null, string[] includes = null)
+        public async static Task<IEnumerable<Intellisense.Common.TypeInfo>> GetNamespacesFor(string editorText, string nameToResolve, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             var suggestions = new List<Intellisense.Common.TypeInfo>();
 
             var workspace = new AdhocWorkspace();
 
-            var doc = InitWorkspace(workspace, editorText, references, includes);
+            var doc = InitWorkspace(workspace, editorText, null, references, includes);
 
             IEnumerable<ISymbol> result = await SymbolFinder.FindDeclarationsAsync(doc.Project, nameToResolve, ignoreCase: false);
             foreach (ISymbol declaration in result)

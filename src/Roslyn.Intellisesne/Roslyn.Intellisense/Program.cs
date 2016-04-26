@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -137,11 +138,12 @@ public class TestA
         Console.WriteLine(""TestA"");
     }
     }";
+            var sources = new List<Tuple<string, string>> { new Tuple<string, string> (includeCode, "code.cs") };
 
             int carret = code.IndexOf("|");
             code = code.Replace("|", "");
 
-            var result = Autocompleter.GetAutocompletionFor(code, carret, asms.ToArray(), new string[] { includeCode });
+            var result = Autocompleter.GetAutocompletionFor(code, carret, asms.ToArray(), sources);
 
             Console.WriteLine("----------------------------------");
             Console.ReadLine();

@@ -134,7 +134,7 @@ namespace CSScriptIntellisense
                 popupForm.ProcessMethodOverloadHint(NppEditor.GetMethodOverloadHint(methodStartPos, out text));
 
                 int currentPos = Npp.GetCaretPosition();
-                if (currentPos <= methodStartPos) //user removed method start
+                if (currentPos <= methodStartPos) //user removed/substituted method token as the result of keyboard input
                 {
                     base.Close();
                 }
