@@ -49,10 +49,14 @@ namespace CSScriptIntellisense
                             form.LeftBottomCorner = Cursor.Position;
 
                         form.Simple = simple;
+                        form.AddData(data);
+
+                        KeyInterceptor.Instance.Add(Keys.Escape);
+                        KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
+
                         if (!simple)
                         {
                             KeyInterceptor.Instance.Add(Keys.Down, Keys.Up, Keys.Escape, Keys.Enter, Keys.Delete, Keys.Back);
-                            KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
 
                             form.KeyPress += (sender, e) =>
                             {
@@ -66,10 +70,7 @@ namespace CSScriptIntellisense
                                 if (e.KeyCode == Keys.Delete)
                                     NppEditor.ProcessDeleteKeyDown();
                             };
-                        }
-                        form.AddData(data);
-                        if (!simple)
-                        {
+
                             form.ProcessMethodOverloadHint(NppEditor.GetMethodOverloadHint(methodStartPos));
                             Task.Factory.StartNew(() =>
                                 {
@@ -97,12 +98,10 @@ namespace CSScriptIntellisense
                                 });
                         }
                     },
+
                     form => //on closing
                     {
-                        if (!simple)
-                        {
-                            KeyInterceptor.Instance.KeyDown -= Instance_KeyDown;
-                        }
+                        KeyInterceptor.Instance.KeyDown -= Instance_KeyDown;
                     });
             }
             catch { }
