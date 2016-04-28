@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -11,12 +13,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Recommendations;
 using Microsoft.CodeAnalysis.Text;
-using System.Diagnostics;
 using System.Windows.Forms;
-using System.Globalization;
-using System.Threading;
-using System.IO;
-using System.Collections.Immutable;
+using System.Diagnostics;
 
 namespace RoslynIntellisense
 {
@@ -159,7 +157,7 @@ namespace RoslynIntellisense
                                               var column = start.Character + 1;
                                               var filePath = x.SourceTree.FilePath;
 
-                                              var hint =  File.ReadAllText(filePath).Substring(x.SourceSpan.Start).Split('\n').First().Trim();
+                                              var hint = File.ReadAllText(filePath).Substring(x.SourceSpan.Start).Split('\n').First().Trim();
 
                                               var fileContent = x.SourceTree.GetText().ToString();
                                               int pos = fileContent.IndexOf("///CS-Script auto-class generation");
@@ -265,7 +263,6 @@ namespace RoslynIntellisense
             }
         }
 
-
         public static IEnumerable<string> GetMemberInfo(string code, int position, out int methodStartPos, string[] references = null, IEnumerable<Tuple<string, string>> includes = null, bool includeOverloads = false)
         {
             int actualPosition = position;
@@ -290,11 +287,11 @@ namespace RoslynIntellisense
 
                 if (symbol != null)
                 {
-                    result.Add(symbol.GetMemberInfo());
+                    result.Add(symbol.ToTooltip());
 
                     if (includeOverloads)
                     {
-                        result.AddRange(symbol.GetOverloads().Select(s => s.GetMemberInfo()));
+                        result.AddRange(symbol.GetOverloads().Select(s => s.ToTooltip()));
                     }
 
                     return result;
@@ -307,50 +304,6 @@ namespace RoslynIntellisense
         static IEnumerable<ISymbol> GetOverloads(this ISymbol symbol)
         {
             return symbol.ContainingType.GetMembers(symbol.Name).Where(x => x != symbol);
-        }
-
-        static string GetMemberInfo(this ISymbol symbol)
-        {
-            string symbolDoc = "";
-
-            switch (symbol.Kind)
-            {
-                case SymbolKind.Property:
-                    {
-                        var prop = (IPropertySymbol) symbol;
-
-                        string body = "{ }";
-                        if (prop.GetMethod == null)
-                            body = "{ set; }";
-                        else if (prop.SetMethod == null)
-                            body = "{ get; }";
-                        else
-                            body = "{ get; set; }";
-
-                        symbolDoc = $"Property: {prop.Type.Name} {symbol.Name} {body}";
-
-                        break;
-                    }
-                case SymbolKind.Field:
-                case SymbolKind.ArrayType:
-                case SymbolKind.Event:
-                case SymbolKind.Local:
-                case SymbolKind.Method:
-                case SymbolKind.NamedType:
-                case SymbolKind.Parameter:
-                    break;
-                default:
-                    break;
-            }
-
-            if (!symbolDoc.HasText())
-                symbolDoc = $"{symbol.ToDisplayKind()}: {symbol.ToDisplayString()}";
-
-            var xmlDoc = symbol.GetDocumentationCommentXml();
-            if (xmlDoc.HasText())
-                symbolDoc += "\r\n" + xmlDoc.XmlToPlainText();
-
-            return symbolDoc;
         }
 
         //position is zero-based

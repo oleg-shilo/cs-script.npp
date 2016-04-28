@@ -72,6 +72,7 @@ namespace CSScriptIntellisense
                             };
 
                             form.ProcessMethodOverloadHint(NppEditor.GetMethodOverloadHint(methodStartPos));
+
                             Task.Factory.StartNew(() =>
                                 {
                                     Rectangle rect = Npp.GetClientRect();

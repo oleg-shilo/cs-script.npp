@@ -19,6 +19,11 @@ namespace RoslynIntellisense
             return !string.IsNullOrEmpty(text);
         }
 
+        public static bool HasAny<T>(this IEnumerable<T> items)
+        {
+            return items != null && items.Any();
+        }
+
         public static T To<T>(this object obj)
         {
             return (T) obj;
@@ -69,6 +74,14 @@ namespace RoslynIntellisense
             return string.Join(".", parts.ToArray());
         }
 
+        public static string ToMinimalString(this ISymbol type)
+        {
+            var nms = type.GetNamespace();
+            var result = type.ToDisplayString().Replace(nms+".", "");
+
+            return result;
+        }
+
         public static string GetFullName(this ISymbol type)
         {
             List<string> parts = new List<string>();
@@ -114,6 +127,98 @@ namespace RoslynIntellisense
             }
 
             return symbol.Kind.ToString();
+        }
+
+        public static string ToTooltip(this ISymbol symbol)
+        {
+            string symbolDoc = "";
+
+            switch (symbol.Kind)
+            {
+                case SymbolKind.Property:
+                    {
+                        var member = (IPropertySymbol) symbol;
+                        var type = member.Type.ToMinimalString();
+                        var name = $"{member.ContainingType.ToMinimalString()}.{member.Name}";
+
+                        string body = "{ }";
+                        if (member.GetMethod == null)
+                            body = "{ set; }";
+                        else if (member.SetMethod == null)
+                            body = "{ get; }";
+                        else
+                            body = "{ get; set; }";
+
+                        symbolDoc = $"Property: {type} {name} {body}";
+
+                        break;
+                    }
+                case SymbolKind.Field:
+                    {
+                        var member = (IFieldSymbol) symbol;
+                        var type = member.Type.ToMinimalString();
+                        var name = $"{member.ContainingType.ToMinimalString()}.{member.Name}";
+                        symbolDoc = $"Field: {type} {name}";
+                        break;
+                    }
+                case SymbolKind.Event:
+                    {
+                        var member = (IEventSymbol) symbol;
+                        var type = member.Type.ToMinimalString();
+                        var name = $"{member.ContainingType.ToMinimalString()}.{member.Name}";
+                        symbolDoc = $"Event: {type} {name}";
+                        break;
+                    }
+                case SymbolKind.Method:
+                    {
+                        var method = (symbol as IMethodSymbol);
+
+                        var returnType = method.ReturnType.ToMinimalString();
+
+                        var name = $"{method.ReceiverType.ToMinimalString()}.{method.Name}";
+                        if (method.TypeArguments.HasAny())
+                        {
+                            string prms = string.Join(", ", method.TypeArguments.Select(p => p.ToMinimalString()).ToArray());
+                            name = $"{name}<{prms}>";
+                        }
+
+                        var args = "";
+                        if (method.Parameters.HasAny())
+                        {
+                            string prms = string.Join(", ", method.Parameters.Select(p => p.Type.ToMinimalString() + " " + p.Name).ToArray());
+                            args = $"({prms})";
+                        }
+
+                        var kind = "Method";
+                        if (method.IsExtensionMethod)
+                            kind += " (extension)";
+
+                        symbolDoc = $"{kind}: {returnType} {name}{args}";
+
+                        int overloads = symbol.ContainingType.GetMembers(method.Name).OfType<IMethodSymbol>().Count() - 1;
+
+                        if (overloads > 0)
+                            symbolDoc += $" (+ {overloads} overloads)";
+
+                        break;
+                    }
+                case SymbolKind.ArrayType:
+                case SymbolKind.Local:
+                case SymbolKind.NamedType:
+                case SymbolKind.Parameter:
+                    break;
+                default:
+                    break;
+            }
+
+            if (!symbolDoc.HasText())
+                symbolDoc = $"{symbol.ToDisplayKind()}: {symbol.ToDisplayString()}";
+
+            var xmlDoc = symbol.GetDocumentationCommentXml();
+            if (xmlDoc.HasText())
+                symbolDoc += "\r\n" + xmlDoc.XmlToPlainText();
+
+            return symbolDoc;
         }
 
         public static ICompletionData ToCompletionData(this ISymbol symbol)

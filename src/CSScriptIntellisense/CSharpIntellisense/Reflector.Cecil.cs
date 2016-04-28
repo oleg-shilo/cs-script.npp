@@ -311,7 +311,7 @@ namespace UltraSharp.Cecil
             {
                 if (item is IMethod)
                 {
-                    var parameters = BuildMethodMinimalisticParams(item as IMethod);
+                    var parameters = BuildMethodMinimalisticParams(item as IMethod, true);
                     if (name.EndsWith(parameters))
                         return true;
                 }
@@ -394,7 +394,7 @@ namespace UltraSharp.Cecil
             return methodText;
         }
 
-        private string BuildMethodMinimalisticParams(IMethod item)
+        private string BuildMethodMinimalisticParams(IMethod item, bool hideExtensionMethodObject)
         {
             var methodSignature = new StringBuilder();
 
@@ -412,9 +412,15 @@ namespace UltraSharp.Cecil
             foreach (IUnresolvedParameter param in parameters)
             {
                 if (param != parameters.First())
+                {
                     methodSignature.Append(", ");
+                }
                 else if (method.IsExtensionMethod)
+                {
+                    if (hideExtensionMethodObject)
+                        continue;
                     methodSignature.Append("this ");
+                }
 
                 if (param.IsRef) methodSignature.Append("ref ");
                 if (param.IsOut) methodSignature.Append("out ");
