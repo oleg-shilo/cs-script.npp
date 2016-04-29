@@ -38,6 +38,12 @@ namespace RoslynIntellisense
                 }).ToArray();
          });
 
+        public static Document WithWorkspace(string code, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        {
+            var workspace = new AdhocWorkspace();
+            return InitWorkspace(workspace, code, null, references, includes);
+        }
+
         public static Document InitWorkspace(AdhocWorkspace workspace, string code, string file = null, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             string projName = "NewProject";
@@ -175,6 +181,7 @@ namespace RoslynIntellisense
             return new string[0];
         }
 
+
         public static DomRegion ResolveSymbol(string code, int position, string file, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             try
@@ -222,7 +229,10 @@ namespace RoslynIntellisense
                     }
                     else
                     {
-                        //Reflect(symbol);
+                        int pos;
+                        string reconstructed = symbol.Reconstruct(out pos);
+
+
                         //Temporary work around: making it Reflector.Cecil compatible
                         //Cannot use symbol.ContainingType.ToString() as it will use aliases for built-in types
                         //Reflector.Cecil require aliased params but proper member names 
@@ -246,21 +256,6 @@ namespace RoslynIntellisense
             }
             catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
             return DomRegion.Empty;
-        }
-
-        static void Reflect(ISymbol symbol)
-        {
-            string name = symbol.ContainingType.GetFullName();
-            var type = symbol.ContainingAssembly.GetTypeByMetadataName(name);
-            foreach (var item in type.GetMembers())
-            {
-                //if (symbol.ToDisplayString() == item.ToDisplayString())
-                {
-                    var xml = symbol.GetDocumentationCommentXml();
-
-                    Debug.WriteLine(item.ToDisplayString());
-                }
-            }
         }
 
         public static IEnumerable<string> GetMemberInfo(string code, int position, out int methodStartPos, string[] references = null, IEnumerable<Tuple<string, string>> includes = null, bool includeOverloads = false)

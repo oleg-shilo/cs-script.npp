@@ -59,6 +59,14 @@
     <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>..\Roslyn.Intellisesne\Roslyn.Intellisense\Microsoft.CodeAnalysis.CSharp.1.1.0\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Roslyn.Intellisesne\Roslyn.Intellisense\Microsoft.CodeAnalysis.CSharp.1.1.0\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces.Desktop, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Roslyn.Intellisesne\Roslyn.Intellisense\Microsoft.CodeAnalysis.CSharp.1.1.0\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -81,20 +89,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Generic.Tests\CodeMapTests.cs" />
-    <Compile Include="Generic.Tests\DbgAgentTests.cs" />
-    <Compile Include="Generic.Tests\FormattingTests.cs" />
-    <Compile Include="Generic.Tests\GenericTests.cs" />
-    <Compile Include="Intellisense.Tests\GenericTest.cs" />
-    <Compile Include="Intellisense.Tests\MethodInfoTest.cs" />
-    <Compile Include="Intellisense.Tests\RoslynHosting.cs" />
-    <Compile Include="Intellisense.Tests\RoslynTest.cs" />
-    <Compile Include="Intellisense.Tests\SnippetsTests.cs" />
+    <Compile Include="Editor.Tests\CodeMap.cs" />
+    <Compile Include="Editor.Tests\DbgAgent.cs" />
+    <Compile Include="Editor.Tests\Formatting.cs" />
+    <Compile Include="Intellisense.Tests\Misc.cs" />
+    <Compile Include="Intellisense.Tests\MethodInfo.cs" />
+    <Compile Include="Intellisense.Tests\Roslyn.Tests\RoslynReflector.cs" />
+    <Compile Include="Intellisense.Tests\Roslyn.Tests\RoslynHost.cs" />
+    <Compile Include="Intellisense.Tests\Roslyn.Tests\RoslynIntellisense.cs" />
+    <Compile Include="Intellisense.Tests\Snippets.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Intellisense.Tests\ReferenceResolverTest.cs" />
-    <Compile Include="Intellisense.Tests\ReflectorTest.cs" />
+    <Compile Include="Intellisense.Tests\ReferenceResolving.cs" />
+    <Compile Include="Intellisense.Tests\Mono.Tests\MonoReflector.cs" />
     <Compile Include="TestData\Script.cs" />
-    <Compile Include="Intellisense.Tests\StringManipulationTest.cs" />
+    <Compile Include="Intellisense.Tests\StringManipulation.cs" />
     <Compile Include="TestData\TestClasses.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,5 @@
 using Intellisense.Common;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -77,7 +76,7 @@ namespace RoslynIntellisense
         public static string ToMinimalString(this ISymbol type)
         {
             var nms = type.GetNamespace();
-            var result = type.ToDisplayString().Replace(nms+".", "");
+            var result = type.ToDisplayString().Replace(nms + ".", "");
 
             return result;
         }
@@ -109,17 +108,23 @@ namespace RoslynIntellisense
                 {
                     case MethodKind.LambdaMethod:
                         return "Lambda";
+
                     case MethodKind.Constructor:
                         return "Cosntructor";
+
                     case MethodKind.Destructor:
                         return "Destructor";
+
                     case MethodKind.ReducedExtension:
                         return "Extension Method";
+
                     case MethodKind.StaticConstructor:
                         return "Static Constructor";
+
                     case MethodKind.UserDefinedOperator:
                     case MethodKind.BuiltinOperator:
                         return "Operator";
+
                     case MethodKind.DeclareMethod:
                     default:
                         return "Method";
@@ -127,6 +132,374 @@ namespace RoslynIntellisense
             }
 
             return symbol.Kind.ToString();
+        }
+
+        public static string Reconstruct(this ISymbol symbol)
+        {
+            int pos;
+            return symbol.Reconstruct(out pos);
+        }
+
+        public static string Reconstruct(this ISymbol symbol, out int startPosition)
+        {
+            var code = new StringBuilder();
+            startPosition = -1;
+
+            int indent = 0;
+
+            INamedTypeSymbol rootType;
+
+            if (symbol is INamedTypeSymbol)
+                rootType = (INamedTypeSymbol) symbol;
+            else
+                rootType = symbol.ContainingType;
+
+            startPosition = code.Length;
+
+            string nmsp = rootType.GetNamespace();
+
+            if (nmsp.HasAny())
+            {
+                code.AppendLine(("namespace "+ nmsp).IndentBy(indent));
+                code.AppendLine("{".IndentBy(indent++));
+            }
+
+            var type = rootType.ToReflectedCode();
+            code.AppendLine(type.IndentLinesBy(indent));
+            code.AppendLine("{".IndentBy(indent++));
+
+            foreach (var item in rootType.GetMembers())
+            {
+                if (symbol == item)
+                    startPosition = code.Length;
+
+                string memberInfo = item.ToReflectedCode();
+                if(memberInfo.HasAny())
+                    code.AppendLine(memberInfo.IndentLinesBy(indent));
+            }
+
+            code.AppendLine("}".IndentBy(--indent));
+            if (nmsp.HasAny()) code.AppendLine("}".IndentBy(--indent));
+
+            return code.ToString().Trim();
+        }
+
+        public static string IndentLinesBy(this string text, int indentLevel, string linePreffix = "")
+        {
+            return string.Join(Environment.NewLine, text.Replace("\r", "")
+                                                        .Split('\n')
+                                                        .Select(x => x.IndentBy(indentLevel, linePreffix))
+                                                        .ToArray());
+        }
+
+        public static string IndentBy(this string text, int indentLevel, string linePreffix = "")
+        {
+            var indent = new string(' ', indentLevel * 4);
+            return indent + linePreffix + text;
+        }
+
+        public static string GetDocumentationComment(this ISymbol symbol, bool ignoreExceptionsInfo = false)
+        {
+            string xmlDoc = symbol.GetDocumentationCommentXml();
+            var sections = new List<string>();
+
+            var builder = new StringBuilder();
+            try
+            {
+                using (XmlTextReader reader = new XmlTextReader(new StringReader("<root>" + xmlDoc + "</root>")))
+                {
+                    string lastElementName = null;
+                    bool exceptionsStarted = false;
+                    reader.XmlResolver = null;
+                    while (reader.Read())
+                    {
+                        var nodeType = reader.NodeType;
+                        switch (nodeType)
+                        {
+                            case XmlNodeType.Text:
+                                if (lastElementName == "summary")
+                                {
+                                    builder.Insert(0, reader.Value.Shrink());
+                                }
+                                else
+                                {
+                                    if (exceptionsStarted)
+                                        builder.Append("  ");
+
+                                    if (lastElementName == "code")
+                                        builder.Append(reader.Value); //need to preserve all formatting (line breaks and indents)
+                                    else
+                                    {
+                                        //if (reflectionDocument)
+                                        //    b.Append(reader.Value.NormalizeLines()); //need to preserve line breaks but not indents
+                                        //else
+                                        builder.Append(reader.Value.Shrink());
+                                    }
+                                }
+                                break;
+
+                            case XmlNodeType.Element:
+                                {
+                                    bool silentElement = false;
+
+                                    switch (reader.Name)
+                                    {
+                                        case "filterpriority":
+                                            reader.Skip();
+                                            break;
+
+                                        case "root":
+                                        case "summary":
+                                        case "c":
+                                            silentElement = true;
+                                            break;
+
+                                        case "paramref":
+                                            silentElement = true;
+                                            builder.Append(reader.GetAttribute("name"));
+                                            break;
+
+                                        case "param":
+                                            silentElement = true;
+                                            builder.AppendLine();
+                                            builder.Append(reader.GetAttribute("name") + ": ");
+                                            break;
+
+                                        case "para":
+                                            silentElement = true;
+                                            builder.AppendLine();
+                                            break;
+
+                                        case "remarks":
+                                            builder.AppendLine();
+                                            builder.Append("Remarks: ");
+                                            break;
+
+                                        case "returns":
+                                            silentElement = true;
+                                            builder.AppendLine();
+                                            builder.Append("Returns: ");
+                                            break;
+
+                                        case "exception":
+                                            {
+                                                if (!exceptionsStarted)
+                                                {
+                                                    builder.AppendLine();
+                                                    sections.Add(builder.ToString().Trim());
+                                                    builder.Length = 0;
+                                                    if (!ignoreExceptionsInfo)
+                                                        builder.AppendLine("Exceptions: ");
+                                                }
+                                                exceptionsStarted = true;
+
+                                                if (!ignoreExceptionsInfo && !reader.IsEmptyElement)
+                                                {
+                                                    bool printExInfo = false;
+                                                    if (printExInfo)
+                                                    {
+                                                        builder.Append("  " + reader.GetCrefAttribute() + ": ");
+                                                    }
+                                                    else
+                                                    {
+                                                        builder.Append("  " + reader.GetCrefAttribute());
+                                                        reader.Skip();
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        case "see":
+                                            silentElement = true;
+                                            if (reader.IsEmptyElement)
+                                            {
+                                                builder.Append(reader.GetCrefAttribute());
+                                            }
+                                            else
+                                            {
+                                                reader.MoveToContent();
+                                                if (reader.HasValue)
+                                                {
+                                                    builder.Append(reader.Value);
+                                                }
+                                                else
+                                                {
+                                                    builder.Append(reader.GetCrefAttribute());
+                                                }
+                                            }
+                                            break;
+                                    }
+
+                                    if (!silentElement)
+                                        builder.AppendLine();
+
+                                    lastElementName = reader.Name;
+                                    break;
+                                }
+                            case XmlNodeType.EndElement:
+                                {
+                                    if (reader.Name == "summary")
+                                    {
+                                        builder.AppendLine();
+                                        sections.Add(builder.ToString().Trim());
+                                        builder.Length = 0;
+                                    }
+                                    else if (reader.Name == "returns")
+                                    {
+                                        builder.AppendLine();
+                                        sections.Add(builder.ToString().Trim());
+                                        builder.Length = 0;
+                                    }
+                                    break;
+                                }
+                        }
+                    }
+                }
+
+                sections.Add(builder.ToString().Trim());
+
+                string sectionSeparator = "\r\n--------------------------\r\n";
+                return string.Join(sectionSeparator, sections.Where(x => !string.IsNullOrEmpty(x)).ToArray());
+            }
+            catch (XmlException)
+            {
+                return xmlDoc;
+            }
+        }
+
+        public static string ToReflectedCode(this ISymbol symbol)
+        {
+            var code = new StringBuilder(150);
+            var doc = symbol.GetDocumentationComment();
+
+            Action<string, int> cosdeAddComment = (text, indent) => { if (text.HasAny()) code.AppendLine(text.IndentLinesBy(indent, "// ")); };
+
+            cosdeAddComment(doc, 0);
+
+            string modifiers = "public ";
+            if (symbol.IsStatic)
+                modifiers += "static ";
+
+            switch (symbol.Kind)
+            {
+                case SymbolKind.Property:
+                    {
+                        var member = (IPropertySymbol) symbol;
+                        var type = member.Type.ToMinimalString();
+                        var name = $"{member.ContainingType.ToMinimalString()}.{member.Name}";
+
+                        string body = "{ }";
+                        if (member.GetMethod == null)
+                            body = "{ set; }";
+                        else if (member.SetMethod == null)
+                            body = "{ get; }";
+                        else
+                            body = "{ get; set; }";
+
+                        code.Append($"Property: {type} {name} {body}");
+
+                        break;
+                    }
+                case SymbolKind.Field:
+                    {
+                        var field = (IFieldSymbol) symbol;
+
+                        if (field.ContainingType.IsEnum())
+                        {
+                            if (field.ConstantValue != null)
+                                code.Append($"{field.Name} = {field.ConstantValue},");
+                            else
+                                code.Append($"{field.Name},");
+                        }
+                        else
+                        {
+                            var type = field.Type.ToMinimalString();
+
+                            if (field.IsConst)
+                                modifiers += "const ";
+
+                            if (field.IsReadOnly)
+                                modifiers += "readonly ";
+
+                            code.Append($"{modifiers.Trim()} {type} {field.Name};");
+                        }
+                        break;
+                    }
+                case SymbolKind.Event:
+                    {
+                        var member = (IEventSymbol) symbol;
+                        var type = member.Type.ToMinimalString();
+                        var name = $"{member.ContainingType.ToMinimalString()}.{member.Name}";
+                        code.Append($"Event: {type} {name}");
+                        break;
+                    }
+                case SymbolKind.Method:
+                    {
+                        if (symbol.ContainingType.IsEnum()) //Enum constructor is hidden from user
+                            return null;
+
+                        var method = (symbol as IMethodSymbol);
+
+                        var returnType = method.ReturnType.ToMinimalString();
+
+                        var name = $"{method.ReceiverType.ToMinimalString()}.{method.Name}";
+                        if (method.TypeArguments.HasAny())
+                        {
+                            string prms = string.Join(", ", method.TypeArguments.Select(p => p.ToMinimalString()).ToArray());
+                            name = $"{name}<{prms}>";
+                        }
+
+                        var args = "";
+                        if (method.Parameters.HasAny())
+                        {
+                            string prms = string.Join(", ", method.Parameters.Select(p => p.Type.ToMinimalString() + " " + p.Name).ToArray());
+                            args = $"({prms})";
+                        }
+
+                        var kind = "Method";
+                        if (method.IsExtensionMethod)
+                            kind += " (extension)";
+
+                        code.Append($"{kind}: {returnType} {name}{args}");
+
+                        int overloads = symbol.ContainingType.GetMembers(method.Name).OfType<IMethodSymbol>().Count() - 1;
+
+                        if (overloads > 0)
+                            code.Append($" (+ {overloads} overloads)");
+
+                        break;
+                    }
+                case SymbolKind.NamedType:
+                    {
+                        var type = (symbol as INamedTypeSymbol);
+
+                        if (type.IsAbstract && !symbol.IsStatic)
+                            modifiers += "abstract ";
+
+                        string kind = type.IsReferenceType ? "class" :
+                                      type.IsEnum() ? "enum" :
+                                      "struct";
+
+                        if (!type.IsEnum() && type.IsSealed)
+                            modifiers += "sealed ";
+
+                        code.Append($"{modifiers.Trim()} {kind} {type.Name}");
+
+                        //if (type.IsAbstract && !symbol.IsStatic && type. Is != SymbolKind.Interface, "abstract ");
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            if (code.Length == 0)
+                code.AppendLine($"{symbol.ToDisplayKind()}: {symbol.ToDisplayString()}");
+
+            return code.ToString();
+        }
+
+        public static bool IsEnum(this INamedTypeSymbol symbol)
+        {
+            return symbol.BaseType != null && symbol.BaseType.GetFullName() == "System.Enum";
         }
 
         public static string ToTooltip(this ISymbol symbol)
@@ -207,6 +580,7 @@ namespace RoslynIntellisense
                 case SymbolKind.NamedType:
                 case SymbolKind.Parameter:
                     break;
+
                 default:
                     break;
             }
@@ -301,7 +675,6 @@ namespace RoslynIntellisense
         {
             var t = syntax.SyntaxTree.Options.DocumentationMode;
 
-
             var namespaces = syntax.DescendantNodes()
                                .OfType<UsingDirectiveSyntax>()
                                .Select(x => x.GetText().ToString()
@@ -330,7 +703,6 @@ namespace RoslynIntellisense
         //        var typeNode = syntax.DescendantNodes()
         //                             .OfType<TypeDeclarationSyntax>()
         //                             .FirstOrDefault();
-
 
         //        // string xmlText = DocumentationCommentCompiler.GetDocumentationCommentXml(symbol, expandIncludes, default(CancellationToken));
         //        //T:F:M:P

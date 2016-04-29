@@ -50,6 +50,10 @@ namespace RoslynIntellisense
             if (File.Exists(localPath))
                 return XDocument.Load(localPath);
 
+            localPath = Environment.ExpandEnvironmentVariables(@"%roslynintellisense_testing_dir%\" + xmlFileName);
+            if (File.Exists(localPath))
+                return XDocument.Load(localPath);
+
             //if it's a .NET framework assembly it's in one of following folders
 
             var netPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\" + xmlFileName);
