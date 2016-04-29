@@ -229,8 +229,8 @@ namespace RoslynIntellisense
                     }
                     else
                     {
-                        int pos;
-                        string reconstructed = symbol.Reconstruct(out pos);
+                        //int pos;
+                        //string reconstructed = symbol.Reconstruct(out pos);
 
 
                         //Temporary work around: making it Reflector.Cecil compatible

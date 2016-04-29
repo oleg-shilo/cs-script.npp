@@ -12,7 +12,7 @@ namespace CSScriptIntellisense.Test
     /// <summary>
     /// Test values
     /// </summary>
-    public enum TestEnum
+    public enum TestEnum : uint
     {
         /// <summary>Value 1</summary>
         Val1,
@@ -253,7 +253,8 @@ namespace CSScriptIntellisense.Test
     public class TestBaseGenericClass2<T> where T : TestBaseClass { }
     public class TestBaseGenericClass3<T, T2>
         where T : class, new()
-        where T2 : TestBaseClass, IEnumerable<int>, IList<int> { }
+        where T2 : TestBaseClass, IEnumerable<int>, IList<int>
+    { }
 
     public interface IEmptyInterface1 { }
 
@@ -282,19 +283,27 @@ namespace CSScriptIntellisense.Test
         }
     }
 
-    public class GTestClass1<TSource, TDestination>
-            where TSource : TestBaseClass, IEnumerable<int>, IList<int>
+    public interface ITestInterface1 { }
+    public interface ITestInterface2 { }
+
+    public class GTestClass1<TSource, TDestination, T3> : ITestInterface1, ITestInterface2
+            where TSource : IEnumerable<int>, IList<int>
+            where T3: new()
     {
         public int? Count { get; set; }
 
         static public int MyProperty { get; set; }
+
+        internal int internalFld;
+        private int privateFld;
+        protected int protectedFld;
 
         public int MyField;
         public ICloneable MyCLonabeField;
         public Dictionary<int, string> Map;
         public Dictionary<int, List<string>> MapOfMaps;
 
-        public void AddItems<T>(Dictionary<T, TSource> items)
+        public void AddItems<T>(Dictionary<T, TSource> items, int index)
             where T : class, new()
         {
         }

@@ -75,14 +75,16 @@ namespace RoslynIntellisense
 
         public static string ToMinimalString(this ISymbol type)
         {
-            var nms = type.GetNamespace();
-            var result = type.ToDisplayString().Replace(nms + ".", "");
-
+            //var nms = type.GetNamespace();
+            //var result = type.ToDisplayString().Replace(nms + ".", "");
+            var result = type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
             return result;
         }
 
         public static string GetFullName(this ISymbol type)
         {
+            if (type == null) return null;
+
             List<string> parts = new List<string>();
             var nm = type.ContainingNamespace;
 
@@ -134,13 +136,49 @@ namespace RoslynIntellisense
             return symbol.Kind.ToString();
         }
 
-        public static string Reconstruct(this ISymbol symbol)
+        public static string[] UsedNamespaces(this INamedTypeSymbol type)
         {
-            int pos;
-            return symbol.Reconstruct(out pos);
+            var result = new List<string>();
+
+            Action<string> add = (string nms) => { if (nms.HasAny() && !result.Contains(nms)) result.Add(nms); };
+
+            foreach (var item in type.GetMembers())
+            {
+                if (item.Kind == SymbolKind.Field)
+                    add((item as IFieldSymbol).Type.GetNamespace());
+                else if (item.Kind == SymbolKind.Property)
+                    add((item as IPropertySymbol).Type.GetNamespace());
+                else if (item.Kind == SymbolKind.Event)
+                    add((item as IEventSymbol).Type.GetNamespace());
+                else if (item.Kind == SymbolKind.Method)
+                {
+                    var method = (item as IMethodSymbol);
+
+                    add(method.ReturnType.GetNamespace());
+
+                    if (method.TypeArguments.HasAny())
+                        foreach (var a in method.TypeArguments)
+                            add(a.GetNamespace());
+
+                    if (method.Parameters.HasAny())
+                        foreach (var a in method.TypeArguments)
+                            add(a.GetNamespace());
+                }
+            }
+
+            return result.Distinct()
+                         .Where(x => x != type.GetNamespace())
+                         .ToArray();
         }
 
-        public static string Reconstruct(this ISymbol symbol, out int startPosition)
+
+        public static string Reconstruct(this ISymbol symbol, bool includeDoc = true)
+        {
+            int pos;
+            return symbol.Reconstruct(out pos, includeDoc);
+        }
+
+        public static string Reconstruct(this ISymbol symbol, out int startPosition, bool includeDoc = true)
         {
             var code = new StringBuilder();
             startPosition = -1;
@@ -154,17 +192,20 @@ namespace RoslynIntellisense
             else
                 rootType = symbol.ContainingType;
 
-            startPosition = code.Length;
+            var usedNamespaces = rootType.UsedNamespaces();
+            code.AppendLine(string.Join(Environment.NewLine, usedNamespaces.Select(x => $"using {x};")));
+            code.AppendLine();
 
             string nmsp = rootType.GetNamespace();
-
             if (nmsp.HasAny())
             {
-                code.AppendLine(("namespace "+ nmsp).IndentBy(indent));
+                code.AppendLine(("namespace " + nmsp).IndentBy(indent));
                 code.AppendLine("{".IndentBy(indent++));
             }
 
-            var type = rootType.ToReflectedCode();
+            startPosition = code.Length;
+
+            var type = rootType.ToReflectedCode(includeDoc);
             code.AppendLine(type.IndentLinesBy(indent));
             code.AppendLine("{".IndentBy(indent++));
 
@@ -173,8 +214,8 @@ namespace RoslynIntellisense
                 if (symbol == item)
                     startPosition = code.Length;
 
-                string memberInfo = item.ToReflectedCode();
-                if(memberInfo.HasAny())
+                string memberInfo = item.ToReflectedCode(includeDoc);
+                if (memberInfo.HasAny())
                     code.AppendLine(memberInfo.IndentLinesBy(indent));
             }
 
@@ -366,18 +407,30 @@ namespace RoslynIntellisense
             }
         }
 
-        public static string ToReflectedCode(this ISymbol symbol)
+        public static string ToReflectedCode(this ISymbol symbol, bool includeDoc = true)
         {
             var code = new StringBuilder(150);
-            var doc = symbol.GetDocumentationComment();
 
             Action<string, int> cosdeAddComment = (text, indent) => { if (text.HasAny()) code.AppendLine(text.IndentLinesBy(indent, "// ")); };
+            if (includeDoc)
+            {
+                var doc = symbol.GetDocumentationComment();
+                cosdeAddComment(doc, 0);
+            }
 
-            cosdeAddComment(doc, 0);
+            if (symbol.DeclaredAccessibility != Accessibility.Public && symbol.DeclaredAccessibility != Accessibility.Protected)
+                return null;
 
-            string modifiers = "public ";
+            string modifiers = $"{symbol.DeclaredAccessibility} ".ToLower();
+
+            if (symbol.IsOverride)
+                modifiers += "override ";
             if (symbol.IsStatic)
                 modifiers += "static ";
+            if (symbol.IsAbstract)
+                modifiers += "abstract ";
+            if (symbol.IsVirtual)
+                modifiers += "virtual ";
 
             switch (symbol.Kind)
             {
@@ -412,7 +465,7 @@ namespace RoslynIntellisense
                         }
                         else
                         {
-                            var type = field.Type.ToMinimalString();
+                            var type = field.OriginalDefinition.Type.ToMinimalString();
 
                             if (field.IsConst)
                                 modifiers += "const ";
@@ -427,7 +480,7 @@ namespace RoslynIntellisense
                 case SymbolKind.Event:
                     {
                         var member = (IEventSymbol) symbol;
-                        var type = member.Type.ToMinimalString();
+                        var type = member.OriginalDefinition.Type.ToMinimalString();
                         var name = $"{member.ContainingType.ToMinimalString()}.{member.Name}";
                         code.Append($"Event: {type} {name}");
                         break;
@@ -439,32 +492,38 @@ namespace RoslynIntellisense
 
                         var method = (symbol as IMethodSymbol);
 
-                        var returnType = method.ReturnType.ToMinimalString();
+                        if (method.MethodKind == MethodKind.PropertyGet || method.MethodKind == MethodKind.PropertyGet)
+                            return null; //getters and setters are hidden from user
 
-                        var name = $"{method.ReceiverType.ToMinimalString()}.{method.Name}";
-                        if (method.TypeArguments.HasAny())
-                        {
-                            string prms = string.Join(", ", method.TypeArguments.Select(p => p.ToMinimalString()).ToArray());
-                            name = $"{name}<{prms}>";
-                        }
+                        code.Append($"{modifiers.Trim()} ");
 
-                        var args = "";
+                        var returnType = method.OriginalDefinition.ReturnType.ToMinimalString();
+
+                        if (method.MethodKind == MethodKind.Constructor)
+                            code.Append($"{method.ContainingType.Name}"); // Printer
+                        else
+                            code.Append($"{returnType} {method.Name}");   //int GetIndex
+
+                        code.Append(method.TypeParameters.ToDeclarationString())  // <T, T2>
+                            .Append(method.TypeParameters.GetConstrains());       // where T: class
+
+                        var args = "()";
                         if (method.Parameters.HasAny())
                         {
-                            string prms = string.Join(", ", method.Parameters.Select(p => p.Type.ToMinimalString() + " " + p.Name).ToArray());
-                            args = $"({prms})";
+                            string prms = string.Join(", ", method.OriginalDefinition.Parameters.Select(p => p.Type.ToMinimalString() + " " + p.Name).ToArray());
+
+                            if (method.IsExtensionMethod)
+                                args = $"(this {prms})";
+                            else
+                                args = $"({prms})";
                         }
 
-                        var kind = "Method";
-                        if (method.IsExtensionMethod)
-                            kind += " (extension)";
+                        string constrains = type.TypeParameters.GetConstrains();
 
-                        code.Append($"{kind}: {returnType} {name}{args}");
-
-                        int overloads = symbol.ContainingType.GetMembers(method.Name).OfType<IMethodSymbol>().Count() - 1;
-
-                        if (overloads > 0)
-                            code.Append($" (+ {overloads} overloads)");
+                        if (method.MethodKind == MethodKind.Constructor)
+                            code.Append($"{modifiers.Trim()} {method.ContainingType.Name}{args};");
+                        else
+                            code.Append($"{modifiers.Trim()} {returnType} {name}{args};");
 
                         break;
                     }
@@ -474,17 +533,18 @@ namespace RoslynIntellisense
 
                         if (type.IsAbstract && !symbol.IsStatic)
                             modifiers += "abstract ";
+                        if (!type.IsEnum() && type.IsSealed)
+                            modifiers += "sealed ";
 
                         string kind = type.IsReferenceType ? "class" :
                                       type.IsEnum() ? "enum" :
                                       "struct";
 
-                        if (!type.IsEnum() && type.IsSealed)
-                            modifiers += "sealed ";
+                        code.Append($"{modifiers.Trim()} {kind} {type.Name}")   // public class Filter
+                            .Append(type.TypeParameters.ToDeclarationString())  // <T, T2>
+                            .Append(type.ToInheritanceString())                 // : IList<int>
+                            .Append(type.TypeParameters.GetConstrains());       // where T: class
 
-                        code.Append($"{modifiers.Trim()} {kind} {type.Name}");
-
-                        //if (type.IsAbstract && !symbol.IsStatic && type. Is != SymbolKind.Interface, "abstract ");
                         break;
                     }
                 default:
@@ -497,9 +557,84 @@ namespace RoslynIntellisense
             return code.ToString();
         }
 
+        public static string ToInheritanceString(this INamedTypeSymbol type)
+        {
+            var code = new StringBuilder();
+
+            string baseType = null;
+
+            if (type.BaseType != null && type.BaseType.GetFullName().OneOf("System.ValueType", "System.Object"))
+                type.BaseType.ToMinimalString();
+
+            if (baseType.HasAny())
+                code.Append(" : " + baseType);
+            if (type.AllInterfaces.HasAny())
+            {
+                if (baseType.HasAny())
+                    code.Append(", ");
+                else
+                    code.Append(": ");
+
+                code.Append(type.AllInterfaces.Select(x => x.Name).JoinBy(", "));
+            }
+            return code.ToString();
+        }
+
+        public static string ToDeclarationString(this IEnumerable<ITypeParameterSymbol> typeParameters)
+        {
+            if (typeParameters.HasAny())
+            {
+                string prms = typeParameters.Select(x => x.Name).JoinBy(", ");
+                return $"<{prms}>";
+            }
+
+            return "";
+        }
+
+        public static string GetConstrains(this IEnumerable<ITypeParameterSymbol> typeParameters)
+        {
+            var code = new StringBuilder();
+
+            if (typeParameters.HasAny())
+                foreach (var item in typeParameters)
+                {
+                    var constrains = item.GetConstrains();
+                    if (constrains.HasAny())
+                        code.Append(Environment.NewLine + "    " + constrains);
+                }
+            return code.ToString();
+        }
+
+        public static string GetConstrains(this ITypeParameterSymbol symbol)
+        {
+            var items = new List<string>();
+
+            if (symbol.HasValueTypeConstraint) items.Add("struct");
+            if (symbol.HasReferenceTypeConstraint) items.Add("class");
+            if (symbol.HasConstructorConstraint) items.Add("new()");
+
+            items.AddRange(symbol.ConstraintTypes.Select(x => x.ToMinimalString()));
+
+            if (items.Any())
+                return $"where {symbol.Name}: {items.JoinBy(", ")}";
+
+            else
+                return "";
+        }
+
         public static bool IsEnum(this INamedTypeSymbol symbol)
         {
             return symbol.BaseType != null && symbol.BaseType.GetFullName() == "System.Enum";
+        }
+
+        public static string JoinBy(this IEnumerable<string> items, string separator = "")
+        {
+            return string.Join(separator, items.ToArray());
+        }
+
+        public static bool OneOf(this string text, params string[] items)
+        {
+            return items.Any(x => x == text);
         }
 
         public static string ToTooltip(this ISymbol symbol)
@@ -555,7 +690,7 @@ namespace RoslynIntellisense
                             name = $"{name}<{prms}>";
                         }
 
-                        var args = "";
+                        var args = "()";
                         if (method.Parameters.HasAny())
                         {
                             string prms = string.Join(", ", method.Parameters.Select(p => p.Type.ToMinimalString() + " " + p.Name).ToArray());
