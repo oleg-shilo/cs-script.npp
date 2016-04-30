@@ -283,12 +283,47 @@ namespace CSScriptIntellisense.Test
         }
     }
 
+    public class DBBool
+    {
+        public static implicit operator DBBool(bool x) { return null; }
+        public static explicit operator bool(DBBool x) { return false; }
+
+        public static DBBool operator +(DBBool x, DBBool y) { return null; }
+        public static DBBool operator -(DBBool x, DBBool y) { return null; }
+        public static DBBool operator *(DBBool x, DBBool y) { return null; }
+        public static DBBool operator /(DBBool x, DBBool y) { return null; }
+        public static DBBool operator %(DBBool x, DBBool y) { return null; }
+        public static DBBool operator &(DBBool x, DBBool y) { return null; }
+        public static DBBool operator |(DBBool x, DBBool y) { return null; }
+        public static DBBool operator ^(DBBool x, DBBool y) { return null; }
+        public static DBBool operator <<(DBBool x, int y) { return null; }
+        public static DBBool operator >>(DBBool x, int y) { return null; }
+        public static DBBool operator !(DBBool x) { return null; }
+        public static DBBool operator ~(DBBool x) { return null; }
+        public static DBBool operator --(DBBool x) { return null; }
+        public static DBBool operator ++(DBBool x) { return null; }
+
+        public static DBBool operator ==(DBBool x, DBBool y) { return null; }
+        public static DBBool operator !=(DBBool x, DBBool y) { return null; }
+        public static DBBool operator <(DBBool x, DBBool y) { return null; }
+        public static DBBool operator >(DBBool x, DBBool y) { return null; }
+        public static DBBool operator <=(DBBool x, DBBool y) { return null; }
+        public static DBBool operator >=(DBBool x, DBBool y) { return null; }
+
+        public static bool operator true(DBBool x) { return false; }
+        public static bool operator false(DBBool x) { return false; }
+
+        //public override bool Equals(object obj) { return false; }
+        //public override int GetHashCode() { return 0; }
+        //public override string ToString() { return "DBBool.Null"; }
+    }
+
     public interface ITestInterface1 { }
     public interface ITestInterface2 { }
 
     public class GTestClass1<TSource, TDestination, T3> : ITestInterface1, ITestInterface2
             where TSource : IEnumerable<int>, IList<int>
-            where T3: new()
+            where T3 : new()
     {
         public int? Count { get; set; }
 

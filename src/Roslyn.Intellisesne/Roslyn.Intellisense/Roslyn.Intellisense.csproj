@@ -85,8 +85,10 @@
   <ItemGroup>
     <Compile Include="Autocompleter.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="Extensions\ISymbolExtensions.cs" />
+    <Compile Include="Extensions\RoslynExtensions.cs" />
     <Compile Include="Formatter.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Extensions\GenericExtensions.cs" />
     <Compile Include="NppDocumentationProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
