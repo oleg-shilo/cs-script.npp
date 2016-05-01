@@ -21,7 +21,7 @@ namespace CSScriptIntellisense.Test
         Val2 = 33,
 
         /// <summary>Value 3</summary>
-        Val3 = 33,
+        aVal3 = 33,
 
         /// <summary>Value 4</summary>
         Val4 = 34
@@ -106,10 +106,16 @@ namespace CSScriptIntellisense.Test
     public abstract class TestAbstractClass
     {
         public abstract int MyProperty { get; set; }
-    }
+        public abstract void MyMethod();    }
 
     public class CustomIndex
     {
+    }
+
+
+    public static class TestClass27
+    {
+        public static void TestMethod(this int r, ref string data, out string data2, string separator = "test", char separator2 = 'r', StringComparison sc = StringComparison.Ordinal, params string[] items) { data2 = null; }
     }
 
     public class TestApiDocClass
@@ -325,9 +331,10 @@ namespace CSScriptIntellisense.Test
             where TSource : IEnumerable<int>, IList<int>
             where T3 : new()
     {
-        public int? Count { get; set; }
-
+        public int? Count { get; protected set; }
         static public int MyProperty { get; set; }
+        static public int MyPropertyIndex { get;  }
+        static public int MyPropertyIndex2 { set { }  }
 
         internal int internalFld;
         private int privateFld;
