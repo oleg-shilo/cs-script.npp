@@ -326,7 +326,7 @@ namespace CSScriptIntellisense.Test
         public void Reconstruct_Interface()
         {
             var type = LoadType("CSScriptIntellisense.Test.TestInterf|ace");
-            
+
             string code = type.Reconstruct(false);
 
             Assert.Equal(
@@ -428,7 +428,7 @@ namespace CSScriptIntellisense.Test
         //        [Fact]
         //        public void Reconstruct_AssemblyInfo()
         //        {
-        //            ITypeDefinition type = LoadLocalType("TestClass1");
+        //            var type = LoadType("TestClass1");
         //            var reflector = new Reflector(usedNamespaces);
 
         //            string[] code = reflector.Process(type.ParentAssembly, type, type.Members[2])
@@ -441,68 +441,25 @@ namespace CSScriptIntellisense.Test
         //            Assert.Equal(@"//", code[2]);
         //        }
 
-        //        [Fact]
-        //        public void Reconstruct_WithLookupPositions()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestClass1");
-        //            var reflector = new Reflector(usedNamespaces);
 
-        //            Func<string, Reflector.Result> ReconstructAndLookup = (name) =>
-        //                    reflector.Process(null, type, type.Members.Where(m => m.Name == name).FirstOrDefault());
+        [Fact]
+        public void Reconstruct_Struct()
+        {
+            var type = LoadType<TestStruct1>();
 
-        //            string code = ReconstructAndLookup("").Code;
-        //            int pos = ReconstructAndLookup("PropRW").MemberPosition;
+            string code = type.Reconstruct(false);
 
-        //            Assert.Equal(400, ReconstructAndLookup("MyFieldName").MemberPosition);
-        //            Assert.Equal(84, ReconstructAndLookup("").MemberPosition);
-        //            Assert.Equal(601, ReconstructAndLookup("PropRW").MemberPosition);
-        //            Assert.Equal(1086, ReconstructAndLookup("TestVoidmethod").MemberPosition);
-        //            Assert.Equal(734, ReconstructAndLookup("OnLoad").MemberPosition);
-        //        }
+            Assert.Equal(
+@"using System;
 
-        //        [Fact]
-        //        public void Reconstruct_WithLookupPositionsEnums()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestEnum");
-        //            var reflector = new Reflector(usedNamespaces);
-
-        //            Func<string, Reflector.Result> ReconstructAndLookup = (name) =>
-        //                    reflector.Process(null, type, type.Members.Where(m => m.Name == name).FirstOrDefault());
-
-        //            var result = ReconstructAndLookup("");
-
-        //            Assert.Equal(61, ReconstructAndLookup("").MemberPosition);
-        //            Assert.Equal(115, ReconstructAndLookup("Val1").MemberPosition);
-        //        }
-
-        //        [Fact]
-        //        public void Reconstruct_WithLookupPositionsNestedType()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestNestedClass1");
-        //            var reflector = new Reflector(usedNamespaces);
-
-        //            Func<string, Reflector.Result> ReconstructAndLookup = (name) =>
-        //                    reflector.Process(null, type, type.Members.Where(m => m.Name == name).FirstOrDefault());
-
-        //            Assert.Equal(84, ReconstructAndLookup("").MemberPosition);
-        //        }
-
-        //        [Fact]
-        //        public void Reconstruct_Struct()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestStruct1");
-
-        //            string code = new Reflector().Process(type)
-        //                                         .Code;
-        //            Assert.Equal(
-        //@"namespace CSScriptIntellisense.Test
-        //{
-        //    public sealed struct TestStruct1 : System.ValueType
-        //    {
-        //        public int MyProperty { get; set; }
-        //    }
-        //}", code);
-        //        }
+namespace CSScriptIntellisense.Test
+{
+    public sealed struct TestStruct1
+    {
+        public int MyProperty { get; set; }
+    }
+}", code);
+        }
 
         [Fact]
         public void Reconstruct_Delegate()
@@ -568,193 +525,66 @@ namespace CSScriptIntellisense.Test
 }", code);
         }
 
-        //        [Fact]
-        //        public void Reconstruct_HidingDefaultConstructors()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestBaseClassDefC");
+        [Fact]
+        public void Reconstruct_HidingDefaultConstructors()
+        {
+            var type = LoadType<TestBaseClassDefC>();
 
-        //            string code = new Reflector().Process(type)
-        //                                         .Code;
-        //            Assert.Equal(
-        //@"namespace CSScriptIntellisense.Test
-        //{
-        //    public class TestBaseClassDefC : object
-        //    {
-        //    }
-        //}", code);
-        //        }
+            string code = type.Reconstruct(false);
 
-        //        [Fact]
-        //        public void Reconstruct_NestedGenericClassParent()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestNestedParentGenericClass`1");
+            Assert.Equal(
+@"using System;
 
-        //            string code = new Reflector().Process(type)
-        //                                         .Code;
-        //            Assert.Equal(
-        //@"namespace CSScriptIntellisense.Test
-        //{
-        //    public partial class TestNestedGrandParentGenericClass
-        //    {
-        //        public class TestNestedParentGenericClass<T0, T1> : object
-        //        {
-        //            public partial class TestNestedChildStsticClass { }
-        //            public partial class TestNestedChildGenericClass { }
-        //            public partial struct TestNestedStruct { }
-        //            public string Name { get; set; }
-        //        }
-        //    }
-        //}", code);
-        //        }
+namespace CSScriptIntellisense.Test
+{
+    public class TestBaseClassDefC
+    {
+    }
+}", code);
+        }
 
-        //        [Fact]
-        //        public void Reconstruct_NestedGenericClassConstraints()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestBaseGenericClass3`2");
+        [Fact]
+        public void Reconstruct_NestedGenericClassConstraints()
+        {
+            var type = LoadType("CSScriptIntellisense.Test.TestBaseGeneri|cClass3<string, List<int>>");
 
-        //            string code = new Reflector().Process(type)
-        //                                         .Code;
-        //            Assert.Equal(
-        //@"namespace CSScriptIntellisense.Test
-        //{
-        //    public class TestBaseGenericClass3<T, T2> where T: class, new() where T2: TestBaseClass, System.Collections.Generic.IEnumerable<int>, System.Collections.Generic.IList<int> : object
-        //    {
-        //    }
-        //}", code);
-        //        }
+            string code = type.Reconstruct(false);
 
-        //        [Fact]
-        //        public void Reconstruct_NestedGenericClass()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestNestedChildGenericClass`1");
+            Assert.Equal(
+@"using System;
 
-        //            string code = new Reflector().Process(type)
-        //                                         .Code;
-        //            Assert.Equal(
-        //@"namespace CSScriptIntellisense.Test
-        //{
-        //    public partial class TestNestedGrandParentGenericClass
-        //    {
-        //        public partial class TestNestedParentGenericClass
-        //        {
-        //            public class TestNestedChildGenericClass<T0, T1, T2> : object
-        //            {
-        //                public T0 T0_Prop { get; set; }
-        //                public T1 T1_Prop { get; set; }
-        //                public T2 T2_Prop { get; set; }
-        //                public int[] ArrayProp { get; set; }
-        //            }
-        //        }
-        //    }
-        //}", code);
-        //        }
+namespace CSScriptIntellisense.Test
+{
+    public class TestBaseGenericClass3<T, T2>
+        where T: class, new()
+        where T2: TestBaseClass, IEnumerable<int>, IList<int>
+    {
+    }
+}", code);
+        }
 
-        //        [Fact]
-        //        public void Reconstruct_SyetsTaskClass()
-        //        {
-        //            ITypeDefinition type = LoadType<System.Threading.Tasks.Task>();
+        [Fact]
+        public void Reconstruct_FieldsClass()
+        {
+            var type = LoadType<TestFieldsClass>();
 
-        //            string code = new Reflector().Process(type)
-        //                                         .Code;
-        //        }
+            string code = type.Reconstruct(false);
 
-        //        [Fact]
-        //        public void Reconstruct_FieldsClass()
-        //        {
-        //            ITypeDefinition type = LoadLocalType("TestFieldsClass");
+            Assert.Equal(
+@"using System;
 
-        //            string code = new Reflector().Process(type)
-        //                                         .Code;
-        //            Assert.Equal(
-        //@"namespace CSScriptIntellisense.Test
-        //{
-        //    public class TestFieldsClass : object
-        //    {
-        //        public int Count;
-        //        public int Count2;
-        //        public static int Count3;
-        //        public const int Count4 = 44;
-        //    }
-        //}", code);
-        //        }
+namespace CSScriptIntellisense.Test
+{
+    public class TestFieldsClass
+    {
+        public int Count;
+        public int Count2;
+        public static int Count3;
+        public static const int Count4 = 44;
+    }
+}", code);
+        }
 
-        //        [Fact]
-        //        public void ResolveMember()
-        //        {
-        //            SimpleCodeCompletion.ResetProject();
-
-        //            //str|ing( => 85
-        //            //Tes|t(   => 116
-        //            //Con|sole => 132
-        //            //Console.Write|Line => 142
-        //            //Test|Cls => 172
-        //            //int.Ma|xValue => 202
-        //            //Even|tHandler => 223
-        //            //System.IO.File.De|lete => 267
-
-        //            var result = SimpleCodeCompletion.ResolveMember(@"using System;
-        //using System.Linq;
-
-        //class Script
-        //{
-        //    static public void Main(string[] args)
-        //    {
-        //        Test();
-        //        Console.WriteLine(""test"");
-        //        TestCls t;
-        //        int m = int.MaxValue;
-        //        EventHandler handler;
-        //        System.IO.File.Delete(""file"");
-        //        System.Threading.Tasks.Task.Run(()=>Thread.Sleep(1000));
-        //    }
-
-        //    static void Test()
-        //    {
-        //    }
-        //}
-
-        //class TestCls<T>
-        //{
-        //}", 267, "test.cs");
-        //            Assert.True(result.FileName.EndsWith(".cs"));
-        //            Assert.Equal(165, result.BeginLine);
-        //            Assert.Equal(165, result.EndLine);
-        //        }
-
-        //        [Fact]
-        //        public void ResolveConstructor()
-        //        {
-        //            var tt = AppDomain.CurrentDomain.BaseDirectory;
-        //            tt = Environment.CurrentDirectory;
-        //            tt = Assembly.GetExecutingAssembly().Location;
-
-        //            SimpleCodeCompletion.ResetProject();
-
-        //            //Te|st(   => 127
-
-        //            var result = SimpleCodeCompletion.ResolveMember(@"using System;
-        //using System.Linq;
-
-        //class Script
-        //{
-        //    static public void Main(string[] args)
-        //    {
-        //        var t = new Test();
-        //        Console.WriteLine(""test"");
-        //        System.IO.File.Delete(""file"");
-        //    }
-        //}
-
-        //class Test
-        //{
-        //    //public Test(int count){}
-
-        //}", 127, "test.cs");
-
-        //            Assert.True(result.FileName.EndsWith(".cs"));
-        //            Assert.Equal(15, result.BeginLine);
-        //            Assert.Equal(18, result.EndLine);
-        //        }
 
 
         [Fact]
