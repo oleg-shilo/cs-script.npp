@@ -90,7 +90,10 @@ namespace CSScriptIntellisense.Test
             public string Name { get; set; }
         }
 
-        public delegate int TestDelgt3();
+        public class NestedParentClass
+        {
+            public delegate int TestDelgt3();
+        }
     }
 
     public struct TestStruct1
