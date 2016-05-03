@@ -32,6 +32,15 @@ namespace RoslynIntellisense
             }
         }
 
+        Dictionary<string, object> options = new Dictionary<string, object>();
+        public void SetOption(string name, object value)
+        {
+            if (name == "ReflectionOutDir")
+                Autocompleter.OutputDir = value.ToString();
+            else
+                options[name] = value;
+        }
+
         public string[] FindReferences(string editorText, int offset, string fileName)
         {
             return Autocompleter.FindReferencess(editorText, offset, fileName,

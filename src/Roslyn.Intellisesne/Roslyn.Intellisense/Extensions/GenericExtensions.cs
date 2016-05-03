@@ -1,5 +1,7 @@
 using Microsoft.CodeAnalysis;
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +13,52 @@ namespace RoslynIntellisense
 {
     public static class GenericExtensions
     {
+        public static string NormalizeAsPath(this string obj)
+        {
+            return obj.Replace("\\", "_")
+                      .Replace("/", "_")
+                      .Replace(":", "_")
+                      .Replace("*", "_")
+                      .Replace("?", "_")
+                      .Replace("\"", "_")
+                      .Replace("<", "_")
+                      .Replace(">", "_")
+                      .Replace("|", "_");
+        }
+
+        public static string ToLiteral(this string input)
+        {
+            using (var writer = new StringWriter())
+            using (var provider = CodeDomProvider.CreateProvider("CSharp"))
+            {
+                provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
+                return writer.ToString();
+            }
+        }
+
+        public static string ToLiteral(this char input)
+        {
+            using (var writer = new StringWriter())
+            using (var provider = CodeDomProvider.CreateProvider("CSharp"))
+            {
+                provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
+                return writer.ToString();
+            }
+        }
+
+        public static int LineNumberOf(this string text, int pos)
+        {
+            return text.Take(pos).Count(c => c == '\n') + 1;
+        }
+
+        public static int LastLineStart(this string text)
+        {
+            var start = text.LastIndexOf('\n'); //<doc>\r\n<declaration>
+            if (start != -1)
+                return start + Environment.NewLine.Length;
+            return 0;
+        }
+
         public static bool HasText(this string text)
         {
             return !string.IsNullOrEmpty(text);

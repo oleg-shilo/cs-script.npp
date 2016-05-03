@@ -211,6 +211,7 @@ namespace RoslynIntellisense
                 }
                 else if (location.IsInMetadata)
                 {
+                    var result = new DomRegion();
 
                     // Will not work if the asm name (Identity.Name) is not the same as the file name.
                     // But unfortunately location.MetadataModule doesn't preserve the asm file name
@@ -220,42 +221,35 @@ namespace RoslynIntellisense
                                              .Where(x => string.Compare(Path.GetFileNameWithoutExtension(x), asmName, true) == 0)
                                              .FirstOrDefault();
 
-                    string typeName, memberName;
+                    int pos;
+                    string reconstructed = symbol.Reconstruct(out pos);
 
-                    if (symbol.Kind == SymbolKind.NamedType)
-                    {
-                        typeName =
-                        memberName = symbol.ToString();
-                    }
-                    else
-                    {
-                        //int pos;
-                        //string reconstructed = symbol.Reconstruct(out pos);
+                    result.FileName = SaveReflectedCode(symbol.GetRootType().GetFullName(), reconstructed);
+                    result.BeginLine =
+                    result.EndLine = reconstructed.LineNumberOf(pos);
 
-
-                        //Temporary work around: making it Reflector.Cecil compatible
-                        //Cannot use symbol.ContainingType.ToString() as it will use aliases for built-in types
-                        //Reflector.Cecil require aliased params but proper member names 
-                        string displayName = symbol.ToString();
-                        typeName = symbol.ContainingType.GetFullName();
-                        //Need to generate: 'System.String.Replace(string, string)'
-                        if (displayName.Contains("(")) //method
-                            memberName = typeName + "." + symbol.Name + "(" + displayName.Split('(').Last();
-                        else
-                            memberName = typeName + "." + symbol.Name;
-                    }
-                    return new DomRegion
-                    {
-                        FileName = asmFile,
-                        BeginLine = 0,
-                        EndLine = 0,
-                        BeginColumn = 0,
-                        Hint = $"asm|{typeName}|{memberName}"
-                    };
+                    return result; 
                 }
             }
             catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
             return DomRegion.Empty;
+        }
+
+        static public string OutputDir = Path.Combine(Path.GetTempPath(), "Roslyn.Intellisense\\ReflctedTypes");
+
+        static string SaveReflectedCode(string typeName, string code)
+        {
+            if (!Directory.Exists(OutputDir))
+                Directory.CreateDirectory(OutputDir);
+
+            string file = Path.Combine(OutputDir, typeName.NormalizeAsPath());
+
+            file += "." + code.GetHashCode() + ".r.cs"; //simple caching mechanism for avoiding overrating the file
+
+            if (!File.Exists(file))
+                File.WriteAllText(file, code);
+
+            return file;
         }
 
         public static IEnumerable<string> GetMemberInfo(string code, int position, out int methodStartPos, string[] references = null, IEnumerable<Tuple<string, string>> includes = null, bool includeOverloads = false)

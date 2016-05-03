@@ -401,9 +401,10 @@ namespace CSScriptIntellisense.Test
         public TestClass1();
         public TestClass1(int count);
 
+        public static const char MyChar = '\n';
         public int MyField;
         public static const int MyFieldConst = 77;
-        public static const string MyFieldName = ""test"";
+        public static const string MyFieldName = ""test\r\ntest"";
         public static int MyFieldStat;
 
         public event Action OnLoad;
@@ -414,13 +415,13 @@ namespace CSScriptIntellisense.Test
         public int PropRW { get; set; }
         protected virtual int MyVirtualProperty { protected get; protected set; }
 
-        public static Dictionary<int, Dictionary<TSource?, TDestination>> TestGenericMethod<TSource, TDestination>(IEnumerable<TSource> intParam) where TSource: struct;
+        public static Dictionary<int, Dictionary<TSource?, TDestination>> TestGenericMethod<TSource, TDestination>(IEnumerable<TSource> intParam) where TSource : struct;
         public static int TestMethod(int intParam = 0);
         public static List<int?> TestMethodWithRefOut(List<int?> nullableIntParam, out int count, ref string name);
         public void TestVoidmethod();
 
-        public partial class NestedParentClass {}
-        public partial class TestNestedClass1 {}
+        public partial class NestedParentClass { }
+        public partial class TestNestedClass1 { }
     }
 }", code);
         }

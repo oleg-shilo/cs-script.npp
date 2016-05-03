@@ -1,6 +1,7 @@
 using Intellisense.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace CSScriptIntellisense
@@ -183,26 +184,7 @@ namespace CSScriptIntellisense
         static DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
         {
             if (Config.Instance.RoslynIntellisense)
-            {
-                var result = RoslynEngine.ResolveCSharpMember(editorText, offset, fileName);
-
-                if (result.Hint?.StartsWith("asm|") ?? false)
-                {
-                    try
-                    {
-                        string[] parts = result.Hint.Split('|');
-                        var reconstructedResult = (MonoEngine as MonoCompletionEngine).ResolveTypeByName(parts[1], parts[2]);
-                        reconstructedResult.Hint = result.Hint;
-                        return reconstructedResult;
-                    }
-                    catch
-                    {
-                        return DomRegion.Empty;
-                    }
-                }
-
-                return result;
-            }
+                return  RoslynEngine.ResolveCSharpMember(editorText, offset, fileName);
             else
                 return MonoEngine.ResolveCSharpMember(editorText, offset, fileName);
         }
@@ -266,7 +248,7 @@ namespace CSScriptIntellisense
             //need to allow 'space' as we are looking for a CS-Script line not a token
             var delimiters = SimpleCodeCompletion.CSS_Delimiters.Where(x => x != ' ');
 
-            if (editorText[offset] != '.') //we may be at the partially complete word
+            if (editorText[offset-1] != '.') //we may be at the partially complete word
                 for (i = offset - 1; i >= 0; i--)
                     if (delimiters.Contains(editorText[i]))
                     {

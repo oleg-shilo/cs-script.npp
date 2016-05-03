@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,23 @@ using System.Windows.Forms;
 
 namespace Testpad
 {
+    static class GenericExtensions
+    {
+        public static int IndexOfFirst<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        {
+            var indexOf = collection.Select((item, index) => new { item, index })
+                                    .FirstOrDefault(entry => condition(entry.item))?.index ?? -1;
+            return indexOf;
+        }
+
+        public static int IndexOfLast<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        {
+            var indexOf = collection.Select((item, index) => new { item, index })
+                                    .LastOrDefault(entry => condition(entry.item))?.index ?? -1;
+            return indexOf;
+        }
+    }
+
     static class Program
     {
         /// <summary>
@@ -14,6 +32,13 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
+            var arr = new[] { 1, 2, 3, 5, 5, 5, 6, 6 };
+            var first = arr.IndexOfFirst(x => x == 5);
+            var last = arr.IndexOfLast(x => x == 5);
+
+            first = arr.IndexOfFirst(x => x == 8);
+            last = arr.IndexOfLast(x => x == 8);
+
             var logData = string.Format("{0:s}|{1:00000000}|{2}|{3}", DateTime.Now, Process.GetCurrentProcess().Id, "type", "message");
 
 

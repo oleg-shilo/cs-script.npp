@@ -226,9 +226,17 @@ namespace CSScriptNpp
         {
             using (var form = new ConfigForm(Config.Instance))
             {
+                bool oldUseContextMenu = CSScriptIntellisense.Config.Instance.UseCmdContextMenu;
                 form.ShowDialog();
-                //Config.Instance.Save();
+
                 ReflectorExtensions.IgnoreDocumentationExceptions = CSScriptIntellisense.Config.Instance.IgnoreDocExceptions;
+
+                if (oldUseContextMenu != CSScriptIntellisense.Config.Instance.UseCmdContextMenu)
+                {
+                    CSScriptIntellisense.Config.Instance.ProcessContextMenuVisibility();
+                    Config.Instance.Save(); //config may be updated as the result of ProcessContextMenu...
+                    MessageBox.Show("You configure the context menu.\nThe changes will take effect only after Notepad++ is restarted.", "CS-Script");
+                }
             }
         }
 

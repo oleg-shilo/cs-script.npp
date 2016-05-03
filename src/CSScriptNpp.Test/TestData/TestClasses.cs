@@ -44,8 +44,9 @@ namespace CSScriptIntellisense.Test
 
         public const int MyFieldConst = 77;
         public static int MyFieldStat = 33;
-        public int MyField;
-        public const string MyFieldName = "test";
+        public int MyField = 33333;
+        public const char MyChar = '\n';
+        public const string MyFieldName = "test\r\ntest";
 
         public int PropRW { get; set; }
 

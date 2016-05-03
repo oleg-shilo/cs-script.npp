@@ -26,9 +26,10 @@ namespace CSScriptIntellisense
             intercept.Checked = data.InterceptCtrlSpace;
             ignoreDocExceptions.Checked = data.IgnoreDocExceptions;
             formatAsYouType.Checked = data.FormatAsYouType;
-            roslynFormatter.Checked = data.RoslynFormatting;
             autoInsertSingle.Checked = data.AutoInsertSingeSuggestion;
+            roslynFormatter.Checked = data.RoslynFormatting;
             roslynIntellisense.Checked = data.RoslynIntellisense;
+            useContextMenu.Checked = data.UseCmdContextMenu;
 
             this.FormClosed += (s, e) =>
                 {
@@ -43,9 +44,10 @@ namespace CSScriptIntellisense
             data.UseMethodBrackets = useMethodBrackets.Checked;
             data.IgnoreDocExceptions = ignoreDocExceptions.Checked;
             data.FormatAsYouType = formatAsYouType.Checked;
-            data.RoslynFormatting = roslynFormatter.Checked;
             data.AutoInsertSingeSuggestion = autoInsertSingle.Checked;
+            data.RoslynFormatting = //roslynFormatter.Checked;
             data.RoslynIntellisense = roslynIntellisense.Checked;
+            data.UseCmdContextMenu = useContextMenu.Checked;
         }
 
         void ConfigForm_Load(object sender, EventArgs e)

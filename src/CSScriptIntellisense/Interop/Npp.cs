@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -56,7 +56,7 @@ namespace CSScriptIntellisense
         static public void SetIndicatorStyle(int indicator, SciMsg style, Color color)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int)style);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int) style);
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, indicator, ColorTranslator.ToWin32(color));
         }
 
@@ -123,9 +123,9 @@ namespace CSScriptIntellisense
                 //probe for 4 : 4..6
                 //probe for 6 : 4..10
 
-                int rangeStart = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, indicator, testPosition);
-                int rangeEnd = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, indicator, testPosition);
-                int value = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, indicator, testPosition);
+                int rangeStart = (int) Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, indicator, testPosition);
+                int rangeEnd = (int) Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, indicator, testPosition);
+                int value = (int) Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, indicator, testPosition);
                 if (value == 1) //indicator is present
                     ranges.Add(new Point(rangeStart, rangeEnd));
 
@@ -142,7 +142,7 @@ namespace CSScriptIntellisense
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
 
-            int length = (int)Win32.SendMessage(sci, SciMsg.SCI_LINELENGTH, line, 0);
+            int length = (int) Win32.SendMessage(sci, SciMsg.SCI_LINELENGTH, line, 0);
             var buffer = new StringBuilder(length + 1);
             Win32.SendMessage(sci, SciMsg.SCI_GETLINE, line, buffer);
             buffer.Length = length; //NPP may inject some rubbish at the end of the line
@@ -152,19 +152,19 @@ namespace CSScriptIntellisense
         static public int GetLineNumber(int position)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, position, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, position, 0);
         }
 
         static public int GetLineStart(int line)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0);
         }
 
         static public int GetFirstVisibleLine()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
         }
 
         static public void SetFirstVisibleLine(int line)
@@ -176,12 +176,20 @@ namespace CSScriptIntellisense
         static public int GetLineCount()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_GETLINECOUNT, 0, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_GETLINECOUNT, 0, 0);
         }
 
         static public string GetShortcutsFile()
         {
             return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.GetConfigDir())), "shortcuts.xml");
+        }
+
+        static public string ContextMenuFile
+        {
+            get
+            {
+                return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.GetConfigDir())), "contextMenu.xml");
+            }
         }
 
         [DllImport("user32")]
@@ -196,9 +204,9 @@ namespace CSScriptIntellisense
         static public Point GetCaretScreenLocation()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            int pos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
-            int x = (int)Win32.SendMessage(sci, SciMsg.SCI_POINTXFROMPOSITION, 0, pos);
-            int y = (int)Win32.SendMessage(sci, SciMsg.SCI_POINTYFROMPOSITION, 0, pos);
+            int pos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int x = (int) Win32.SendMessage(sci, SciMsg.SCI_POINTXFROMPOSITION, 0, pos);
+            int y = (int) Win32.SendMessage(sci, SciMsg.SCI_POINTYFROMPOSITION, 0, pos);
 
             Point point = new Point(x, y);
             ClientToScreen(sci, ref point);
@@ -212,7 +220,7 @@ namespace CSScriptIntellisense
             Point point = Cursor.Position;
             ScreenToClient(sci, ref point);
 
-            int pos = (int)Win32.SendMessage(sci, SciMsg.SCI_CHARPOSITIONFROMPOINTCLOSE, point.X, point.Y);
+            int pos = (int) Win32.SendMessage(sci, SciMsg.SCI_CHARPOSITIONFROMPOINTCLOSE, point.X, point.Y);
 
             return pos;
         }
@@ -220,7 +228,7 @@ namespace CSScriptIntellisense
         static public void Exit()
         {
             const int WM_COMMAND = 0x111;
-            Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WM_COMMAND, (int)NppMenuCmd.IDM_FILE_EXIT, 0);
+            Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg) WM_COMMAND, (int) NppMenuCmd.IDM_FILE_EXIT, 0);
         }
 
         static public string GetTextBetween(Point point)
@@ -233,7 +241,7 @@ namespace CSScriptIntellisense
             IntPtr sci = Plugin.GetCurrentScintilla();
 
             if (end == -1)
-                end = (int)Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
+                end = (int) Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
 
             using (var tr = new Sci_TextRange(start, end, end - start + 1)) //+1 for null termination
             {
@@ -253,7 +261,7 @@ namespace CSScriptIntellisense
             IntPtr sci = Plugin.GetCurrentScintilla();
 
             if (end == -1)
-                end = (int)Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
+                end = (int) Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
 
             Win32.SendMessage(sci, SciMsg.SCI_SETTARGETSTART, start, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETTARGETEND, end, 0);
@@ -263,7 +271,7 @@ namespace CSScriptIntellisense
         static public string TextAfterCursor(int maxLength)
         {
             IntPtr hCurrentEditView = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             return TextAfterPosition(currentPos, maxLength);
         }
 
@@ -272,7 +280,7 @@ namespace CSScriptIntellisense
             int bufCapacity = maxLength + 1;
             IntPtr hCurrentEditView = Plugin.GetCurrentScintilla();
             int currentPos = position;
-            int fullLength = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETLENGTH, 0, 0);
+            int fullLength = (int) Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETLENGTH, 0, 0);
             int startPos = currentPos;
             int endPos = Math.Min(currentPos + bufCapacity, fullLength);
             int size = endPos - startPos;
@@ -311,7 +319,7 @@ namespace CSScriptIntellisense
         static public string GetWordAtCursor(out Point point, char[] wordDelimiters = null)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             return GetWordAtPosition(currentPos, out point, wordDelimiters);
         }
 
@@ -338,7 +346,7 @@ namespace CSScriptIntellisense
             IntPtr sci = Plugin.GetCurrentScintilla();
 
             int currentPos = position;
-            int fullLength = (int)Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
+            int fullLength = (int) Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
 
             string leftText = Npp.TextBeforePosition(currentPos, 512);
             string rightText = Npp.TextAfterPosition(currentPos, 512);
@@ -393,23 +401,23 @@ namespace CSScriptIntellisense
         public static int GetCaretPosition()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             return currentPos;
         }
 
         public static int GetCaretLineNumber()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
 
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
         }
 
         public static int SetCaretPosition(int pos)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETCURRENTPOS, pos, 0);
-            return (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0); 
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
         }
 
         public static void Undo()
@@ -421,13 +429,13 @@ namespace CSScriptIntellisense
         public static bool CanUndo()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return 0 != (int)Win32.SendMessage(sci, SciMsg.SCI_CANUNDO, 0, 0);
+            return 0 != (int) Win32.SendMessage(sci, SciMsg.SCI_CANUNDO, 0, 0);
         }
 
         public static void ClearSelection()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0);
         }
@@ -436,7 +444,7 @@ namespace CSScriptIntellisense
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, start, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, end, 0); 
+            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, end, 0);
         }
 
         public static void SetSelectionText(string text)
@@ -448,7 +456,7 @@ namespace CSScriptIntellisense
         static public int GrabFocus()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GRABFOCUS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GRABFOCUS, 0, 0);
             return currentPos;
         }
 
@@ -486,7 +494,7 @@ namespace CSScriptIntellisense
             GetWindowRect(sci, ref r);
             return r;
         }
-       
+
         static public Rectangle GetWindowRect()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -520,7 +528,7 @@ namespace CSScriptIntellisense
         static public string TextBeforeCursor(int maxLength)
         {
             IntPtr hCurrentEditView = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
 
             return TextBeforePosition(currentPos, maxLength);
         }
@@ -530,7 +538,7 @@ namespace CSScriptIntellisense
         /// </summary>
         static public int GetTextHeight(int line)
         {
-            return (int)Win32.SendMessage(CurrentScintilla, SciMsg.SCI_TEXTHEIGHT, line, 0);
+            return (int) Win32.SendMessage(CurrentScintilla, SciMsg.SCI_TEXTHEIGHT, line, 0);
         }
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -565,11 +573,11 @@ namespace CSScriptIntellisense
             {
 
                 //cut current text
-                var size = (int)SendMessage(statusBarHandle, SB_GETTEXTLENGTH, 0, IntPtr.Zero);
+                var size = (int) SendMessage(statusBarHandle, SB_GETTEXTLENGTH, 0, IntPtr.Zero);
                 var buffer = new StringBuilder(size);
-                Win32.SendMessage(statusBarHandle, (NppMsg)SB_GETTEXT, 0, buffer);
+                Win32.SendMessage(statusBarHandle, (NppMsg) SB_GETTEXT, 0, buffer);
                 retval = buffer.ToString();
-                
+
                 // set text for the existing part with index 0
                 IntPtr text = Marshal.StringToHGlobalAuto(labelText);
                 SendMessage(statusBarHandle, SB_SETTEXT, 0, text);
@@ -596,6 +604,23 @@ namespace CSScriptIntellisense
                 //Marshal.FreeHGlobal(text0);
             }
             return retval;
+        }
+    }
+
+    static class GenericExtensions
+    {
+        public static int IndexOfFirst<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        {
+            var indexOf = collection.Select((item, index) => new { item, index })
+                                    .FirstOrDefault(entry => condition(entry.item))?.index ?? -1;
+            return indexOf;
+        }
+
+        public static int IndexOfLast<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        {
+            var indexOf = collection.Select((item, index) => new { item, index })
+                                    .LastOrDefault(entry => condition(entry.item))?.index ?? -1;
+            return indexOf;
         }
     }
 }

@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CSScriptIntellisense
 {
@@ -20,6 +22,7 @@ namespace CSScriptIntellisense
 
         Config()
         {
+            //Debug.Assert(false);
             HostedByOtherPlugin = !Location.EndsWith("CSharpIntellisense");
 
             base.file = Path.Combine(Location, "settings.ini");
@@ -43,6 +46,8 @@ namespace CSScriptIntellisense
         public bool ShowQuickInfoInStatusBar = false;
         public bool ShowQuickInfoAsNativeNppTooltip = false;
         public bool UseMethodBrackets = false;
+        public bool UseCmdContextMenu = true;
+        public string ContextMenuCommands = "Go To Definition;Find All References;Auto-add missing 'usings';Format Document";
         public bool RoslynIntellisense = false;
         public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
@@ -79,6 +84,8 @@ namespace CSScriptIntellisense
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
                 SetValue(Section, "RoslynFormatting", RoslynFormatting);
                 SetValue(Section, "RoslynIntellisense_v2", RoslynIntellisense);
+                SetValue(Section, "UseCmdContextMenu", UseCmdContextMenu);
+                SetValue(Section, "ContextMenuCommands", ContextMenuCommands);
                 SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 SetValue(Section, "DefaultRefAsms", DefaultRefAsms);
                 SetValue(Section, "DefaultNamespaces", DefaultNamespaces);
@@ -89,6 +96,8 @@ namespace CSScriptIntellisense
 
         public void Open()
         {
+            //Debug.Assert(false);
+
             lock (this)
             {
                 UseTabToAccept = GetValue(Section, "UseTabToAccept", UseTabToAccept);
@@ -110,8 +119,84 @@ namespace CSScriptIntellisense
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
                 RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);
                 RoslynIntellisense = GetValue(Section, "RoslynIntellisense_v2", RoslynIntellisense);
-                
+                ContextMenuCommands = GetValue(Section, "ContextMenuCommands", ContextMenuCommands);
+                UseCmdContextMenu = GetValue(Section, "UseCmdContextMenu", ref contextMenuCommandsJustConfigured, UseCmdContextMenu);
+
+                if (contextMenuCommandsJustConfigured)
+                    Save();
             }
+
+            ProcessContextMenuVisibility();
+        }
+
+        bool contextMenuCommandsJustConfigured = false;
+
+        public bool ProcessContextMenuVisibility()
+        {
+            bool updated = false;
+            try
+            {
+                var currentProcessExe = System.Diagnostics.Process.GetCurrentProcess().Modules[0].FileName;
+                if (!currentProcessExe.EndsWith("notepad++.exe", System.StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                var lines = File.ReadAllLines(Npp.ContextMenuFile).ToList();
+                bool actuallyConfigured = lines.Any(x => x.Contains("PluginEntryName=\"CS-Script\""));
+                if (UseCmdContextMenu != actuallyConfigured)
+                {
+                    if (!UseCmdContextMenu)
+                    {
+                        //remove
+                        int separator = lines.IndexOfFirst(x => x.Contains("<Item id = \"0\" />"));
+                        int lastItem = lines.IndexOfLast(x => x.Contains("PluginEntryName=\"CS-Script\""));
+
+                        if (separator != lastItem + 1)
+                            separator = -1; //not our separator
+
+                        if (separator != -1)
+                            lines.RemoveAt(separator);
+                        lines.RemoveAll(x => x.Contains("PluginEntryName=\"CS-Script\""));
+
+                        File.WriteAllLines(Npp.ContextMenuFile, lines.ToArray());
+                        updated = true;
+                    }
+                    else
+                    {
+                        //insert
+                        int start = lines.IndexOfFirst(x => x.Contains("<Item "));
+
+                        var group = "C# Intellisense";
+                        var plugin = "CS-Script";
+                        var commands = this.ContextMenuCommands.Split(';')
+                                           .Select(x => x.Trim())
+                                           .Where(x => !string.IsNullOrEmpty(x))
+                                           .Reverse();
+
+                        lines.Insert(start, "        <Item id = \"0\" />");
+                        foreach (var item in commands)
+                            lines.Insert(start, $"        <Item FolderName=\"{group}\" PluginEntryName=\"{plugin}\" PluginCommandItemName=\"{item}\" ItemNameAs=\"{item}\"/>");
+
+                        File.WriteAllLines(Npp.ContextMenuFile, lines.ToArray());
+                        updated = true;
+                    }
+                }
+            }
+            catch
+            {
+                try
+                {
+                    UseCmdContextMenu = File.ReadAllLines(Npp.ContextMenuFile)
+                                            .Any(x => x.Contains("PluginEntryName=\"CS-Script\""));
+                }
+                catch { }
+            }
+
+            if (contextMenuCommandsJustConfigured)
+            {
+                contextMenuCommandsJustConfigured = false;
+                MessageBox.Show("Notepad++ context menu has been updated as the result of the plugin installation/update.\n\nThe changes will take effect only after Notepad++ is restarted.", "CS-Script");
+            }
+            return updated;
         }
     }
 }

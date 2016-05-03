@@ -40,10 +40,31 @@ namespace CSScriptIntellisense
             {
                 var retval = new StringBuilder(size);
                 GetPrivateProfileString(section, key, defaultValue.ToString(), retval, size, file);
-                return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFrom(retval.ToString());
+                return (T) TypeDescriptor.GetConverter(typeof(T)).ConvertFrom(retval.ToString());
             }
             catch
             {
+                return defaultValue;
+            }
+        }
+
+        public T GetValue<T>(string section, string key, ref bool defaulted, T defaultValue, int size = 255)
+        {
+            try
+            {
+                var retval = new StringBuilder(size);
+                GetPrivateProfileString(section, key, "", retval, size, file);
+                if (retval.Length == 0)
+                {
+                    defaulted = true;
+                    return defaultValue;
+                }
+                else
+                    return (T) TypeDescriptor.GetConverter(typeof(T)).ConvertFrom(retval.ToString());
+            }
+            catch
+            {
+                defaulted = true;
                 return defaultValue;
             }
         }

@@ -67,6 +67,7 @@ namespace CSScriptIntellisense
 
                 intellisense = Assembly.LoadFrom(file);
                 engine = (IEngine) intellisense.CreateInstance("RoslynIntellisense.Engine");
+                engine.SetOption("ReflectionOutDir", Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes"));
             });
 
             Task.Factory.StartNew(() => WithCompatibilityCheck(engine.Preload));

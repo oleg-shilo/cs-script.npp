@@ -1,14 +1,18 @@
-v1.0.51.3
-* After the initial feedback Roslyn Intellisense support has been disabled by default. You can still enable it from the Config panel. 
-Please report any problems with Roslyn as your feedback is vital for improving C# 6 support
-* Added additional checking for Roslyn running compilers locking plugin files during update. 
+v1.0.52.0
+* Full support for C# 6:
+  - Auto-completion
+  - Go To Definition (in source)
+  - Go To Definition (in assembly)
+  - Find References
+  - Symbol info tooltip 
+  - Method parameters info
+  - Add missing 'usings'
+  - Format document
+* Added context menu with C# Intellisense commands
+* Added auto-disabling C# 6 Intellisense if it fails to initialize (e.g. .NET v4.6 is missing).
+  In this case Intellisense is configured back to C# 5 syntax. 
+-------------
+C# 6 syntax support is based on Roslyn (requires .NET v4.6).
+It is disabled by default but can be enabled from the settings dialog.
 
-v1.0.51.0
-* Added support for "add event handler" scenario (Roslyn)
-    - add lambda handler
-    - add delegate handler
-    - add method handler
-* Added support for add member assignment 
-* Added "AutoInsertSingeSuggestion" config option
-* Issue#14: Currently not compatible with Notepad++ v6.9.1.
-* NLog based logging replaced with more reliable custom logging (to address Issue#14).
+Roslyn is a MS technology that is constantly evolving. Please report any problems with Roslyn as your feedback is vital for improving C# 6 support

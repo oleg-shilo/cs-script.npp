@@ -52,8 +52,12 @@ namespace CSScriptNpp
         {
             panel.OnClosing();
             data.CheckUpdatesOnStartup = checkUpdates.Checked;
-            data.UseRoslynProvider = useCS6.Checked;
             data.UseEmbeddedEngine = embeddedEngine.Checked;
+            
+            //data.UseRoslynProvider = useCS6.Checked;
+            //all Roslyn individual config values are merged into RoslynIntellisense;
+            data.UseRoslynProvider = CSScriptIntellisense.Config.Instance.RoslynIntellisense;
+
             if (customEngine.Checked)
             {
                 data.UseCustomEngine = customEngineLocation.Text;

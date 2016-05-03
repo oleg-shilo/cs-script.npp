@@ -49,6 +49,10 @@ namespace CSScriptIntellisense
             builtInLibs.Value.ToString(); //anything just to de-reference it
         }
 
+        public void SetOption(string name, object value)
+        {
+        }
+
         public void Preload()
         {
         }

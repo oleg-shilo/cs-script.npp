@@ -282,12 +282,14 @@ namespace CSScriptIntellisense
         static void InvokeShortcutHandler(Action action)
         {
             //notepad++ plugins invoked with Keyboard interceptor are reentrant !!!!!
+            Cursor.Current = Cursors.WaitCursor;
             if (!invokeInProgress)
             {
                 invokeInProgress = true;
                 action();
                 invokeInProgress = false;
             }
+            Cursor.Current = Cursors.Default;
         }
 
         static void HandleErrors(Action action)
@@ -1171,7 +1173,7 @@ namespace CSScriptIntellisense
 
             if (decorated && result.FileName == file)
                 CSScriptHelper.Undecorate(text, ref result);
-           
+
             return result;
         }
 

@@ -16,6 +16,7 @@ namespace Intellisense.Common
         IEnumerable<TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName);
         DomRegion ResolveCSharpMember(string editorText, int offset, string fileName);
         void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies);
+        void SetOption(string name, object value);
     }
 
     public interface ICompletionData

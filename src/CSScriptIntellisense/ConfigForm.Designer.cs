@@ -40,6 +40,7 @@
             this.ContentPanel = new System.Windows.Forms.Panel();
             this.roslynIntellisense = new System.Windows.Forms.CheckBox();
             this.roslynFormatter = new System.Windows.Forms.CheckBox();
+            this.useContextMenu = new System.Windows.Forms.CheckBox();
             this.ContentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,7 +49,7 @@
             this.useArrow.AutoSize = true;
             this.useArrow.Location = new System.Drawing.Point(0, 9);
             this.useArrow.Name = "useArrow";
-            this.useArrow.Size = new System.Drawing.Size(205, 17);
+            this.useArrow.Size = new System.Drawing.Size(248, 17);
             this.useArrow.TabIndex = 0;
             this.useArrow.Text = "Use Right Arrow to accept selected suggestion";
             this.useArrow.UseVisualStyleBackColor = true;
@@ -123,6 +124,7 @@
             this.ContentPanel.Controls.Add(this.useMethodBrackets);
             this.ContentPanel.Controls.Add(this.useArrow);
             this.ContentPanel.Controls.Add(this.autoInsertSingle);
+            this.ContentPanel.Controls.Add(this.useContextMenu);
             this.ContentPanel.Controls.Add(this.roslynIntellisense);
             this.ContentPanel.Controls.Add(this.roslynFormatter);
             this.ContentPanel.Controls.Add(this.ignoreDocExceptions);
@@ -138,20 +140,31 @@
             this.roslynIntellisense.AutoSize = true;
             this.roslynIntellisense.Location = new System.Drawing.Point(0, 125);
             this.roslynIntellisense.Name = "roslynIntellisense";
-            this.roslynIntellisense.Size = new System.Drawing.Size(135, 17);
+            this.roslynIntellisense.Size = new System.Drawing.Size(225, 17);
             this.roslynIntellisense.TabIndex = 2;
-            this.roslynIntellisense.Text = "Use Roslyn Intellisense";
+            this.roslynIntellisense.Text = "C# 6 support (Roslyn) - Requires .NET 4.6";
             this.roslynIntellisense.UseVisualStyleBackColor = true;
             // 
             // roslynFormatter
             // 
             this.roslynFormatter.AutoSize = true;
-            this.roslynFormatter.Location = new System.Drawing.Point(0, 102);
+            this.roslynFormatter.Location = new System.Drawing.Point(163, 79);
             this.roslynFormatter.Name = "roslynFormatter";
             this.roslynFormatter.Size = new System.Drawing.Size(127, 17);
             this.roslynFormatter.TabIndex = 2;
             this.roslynFormatter.Text = "Use Roslyn Formatter";
             this.roslynFormatter.UseVisualStyleBackColor = true;
+            this.roslynFormatter.Visible = false;
+            // 
+            // useContextMenu
+            // 
+            this.useContextMenu.AutoSize = true;
+            this.useContextMenu.Location = new System.Drawing.Point(0, 102);
+            this.useContextMenu.Name = "useContextMenu";
+            this.useContextMenu.Size = new System.Drawing.Size(183, 17);
+            this.useContextMenu.TabIndex = 2;
+            this.useContextMenu.Text = "Use Context Menu for commands";
+            this.useContextMenu.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 
@@ -187,5 +200,6 @@
         private System.Windows.Forms.CheckBox roslynFormatter;
         private System.Windows.Forms.CheckBox roslynIntellisense;
         private System.Windows.Forms.CheckBox autoInsertSingle;
+        private System.Windows.Forms.CheckBox useContextMenu;
     }
 }

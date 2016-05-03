@@ -109,7 +109,7 @@ namespace CSScriptNpp
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
                     CSScriptNpp.Plugin.OnNppReady();
-                    Npp.SetCalltipTime(200);
+                    Npp.SetCalltipTime(500);
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
                 {
