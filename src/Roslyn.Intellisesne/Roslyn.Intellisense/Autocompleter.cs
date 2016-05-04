@@ -221,14 +221,18 @@ namespace RoslynIntellisense
                                              .Where(x => string.Compare(Path.GetFileNameWithoutExtension(x), asmName, true) == 0)
                                              .FirstOrDefault();
 
+                    string asmHeader = $"#region Assembly {symbol.ContainingAssembly.Identity}" + Environment.NewLine +
+                                       $"// {asmFile}" + Environment.NewLine +
+                                        "#endregion" + Environment.NewLine + Environment.NewLine;
+
                     int pos;
-                    string reconstructed = symbol.Reconstruct(out pos);
+                    string reconstructed = symbol.Reconstruct(out pos, header: asmHeader);
 
                     result.FileName = SaveReflectedCode(symbol.GetRootType().GetFullName(), reconstructed);
                     result.BeginLine =
                     result.EndLine = reconstructed.LineNumberOf(pos);
 
-                    return result; 
+                    return result;
                 }
             }
             catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
@@ -248,6 +252,14 @@ namespace RoslynIntellisense
 
             if (!File.Exists(file))
                 File.WriteAllText(file, code);
+
+            Directory.GetFiles(OutputDir, typeName.NormalizeAsPath() + ".*")
+                     .Where(x => x != file).ToList()
+                     .ForEach(x =>
+                     {
+                         try { File.Delete(x); } //delete old
+                         catch { }
+                     });
 
             return file;
         }

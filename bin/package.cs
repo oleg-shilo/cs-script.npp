@@ -16,6 +16,7 @@ void main(string[] args)
 
     string releaseNotesFile = @"..\src\CSScriptNpp\Resources\WhatsNew.txt";
     File.Copy(releaseNotesFile, @".\CSScriptNpp."+version+".ReleaseNotes.txt", true);
+    File.Copy(releaseNotesFile, @".\CSScriptNpp."+version+".ReleaseInfo.txt", true);
     
     string content = File.ReadAllText(releaseNotesFile).Replace("\n", "</br>");
     File.WriteAllText(@".\CSScriptNpp."+version+".ReleaseNotes.html", content);

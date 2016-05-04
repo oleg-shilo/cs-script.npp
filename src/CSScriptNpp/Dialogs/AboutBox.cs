@@ -21,6 +21,8 @@ namespace CSScriptNpp
                 SetUpdateStatus("Downloading...");
         }
 
+        public Action PostCloseAction = () => { };
+
         #region Assembly Attribute Accessors
 
         public string AssemblyTitle
@@ -181,8 +183,13 @@ namespace CSScriptNpp
                 }
                 else if (nppVersion < latestVersion)
                 {
-                    using (var dialog = new UpdateOptionsPanel(version))
-                        dialog.ShowDialog();
+                    PostCloseAction = //Task.Factory.StartNew(
+                        () =>
+                    {
+                        using (var dialog = new UpdateOptionsPanel(version))
+                            dialog.ShowDialog();
+                    };//);
+                    Close();
                 }
             }
         }

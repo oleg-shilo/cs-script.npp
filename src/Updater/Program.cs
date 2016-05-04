@@ -75,6 +75,8 @@ namespace CSScriptNpp.Deployment
                 {
                     if (IsAdmin())
                     {
+                        //Debug.Assert(false);
+
                         if (args.Contains(elevationIndicatorArg))
                             args = args.Where(a => a != elevationIndicatorArg).ToArray();
 
@@ -116,7 +118,7 @@ namespace CSScriptNpp.Deployment
             }
             catch (Exception e)
             {
-                MessageBox.Show("Update has not succeeded.\nError: " + e, "CS-Script Update");
+                MessageBox.Show("Update has not succeeded.\nError: " + e.Message, "CS-Script Update");
             }
         }
 

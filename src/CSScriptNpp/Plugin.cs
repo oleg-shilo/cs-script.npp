@@ -94,7 +94,7 @@ namespace CSScriptNpp
         static public Action DebugScript;
 
         //must be in a separate method to allow proper assembly probing
-         static void LoadIntellisenseCommands(ref int cmdIndex)
+        static void LoadIntellisenseCommands(ref int cmdIndex)
         {
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
                  (index, name, handler, shortcut) =>
@@ -106,18 +106,18 @@ namespace CSScriptNpp
                  });
         }
 
-         static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
+        static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
         {
             ShortcutKey shortcut = shortcutSpec.ParseAsShortcutKey(displayName);
 
             internalShortcuts.Add(shortcut, new Tuple<string, Action>(displayName, handler));
 
-            var key = (Keys)shortcut._key;
+            var key = (Keys) shortcut._key;
             if (!uniqueKeys.ContainsKey(key))
                 uniqueKeys.Add(key, 0);
         }
 
-         static IEnumerable<Keys> BindInteranalShortcuts()
+        static IEnumerable<Keys> BindInteranalShortcuts()
         {
             var uniqueKeys = new Dictionary<Keys, int>();
 
@@ -198,10 +198,10 @@ namespace CSScriptNpp
             return uniqueKeys.Keys;
         }
 
-         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
+        static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
             foreach (var shortcut in internalShortcuts.Keys)
-                if ((byte)key == shortcut._key && !IsDocumentHotKeyExcluded())
+                if ((byte) key == shortcut._key && !IsDocumentHotKeyExcluded())
                 {
                     Modifiers modifiers = KeyInterceptor.GetModifiers();
 
@@ -243,7 +243,10 @@ namespace CSScriptNpp
         static public void ShowAbout()
         {
             using (var dialog = new AboutBox())
+            {
                 dialog.ShowDialog();
+                dialog.PostCloseAction();
+            }
         }
 
         static internal void Log(string format, params object[] args)
@@ -442,7 +445,7 @@ namespace CSScriptNpp
             return Plugin.OutputPanel;
         }
 
-         static Process runningScript;
+        static Process runningScript;
 
         public static Process RunningScript
         {
@@ -457,7 +460,7 @@ namespace CSScriptNpp
             }
         }
 
-         static void UpdateLocalDebugInfo()
+        static void UpdateLocalDebugInfo()
         {
             if (runningScript == null)
                 Plugin.OutputPanel.localDebugPrefix = null;
@@ -505,7 +508,7 @@ namespace CSScriptNpp
 
         internal static string HomeUrl = "https://csscriptnpp.codeplex.com/";
 
-         static void StartCheckForUpdates()
+        static void StartCheckForUpdates()
         {
             lock (typeof(Plugin))
             {
@@ -523,7 +526,7 @@ namespace CSScriptNpp
             }
         }
 
-         static void CheckForUpdates()
+        static void CheckForUpdates()
         {
             Thread.Sleep(2000); //let Notepad++ to complete all initialization
 

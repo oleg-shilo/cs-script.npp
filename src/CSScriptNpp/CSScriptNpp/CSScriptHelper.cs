@@ -622,6 +622,25 @@ class Script
                 return null;
             }
         }
+
+        static public string GetLatestReleaseInfo(string version)
+        {
+            try
+            {
+                string url = "http://csscript.net/npp/CSScriptNpp." + version + ".ReleaseInfo.txt";
+
+                string text = DownloadText(url);
+                if (text.Trim().StartsWith("<html>"))
+                    text = "Complete release notes can be found here:\r\n\r\n" + url.Replace("ReleaseInfo", "ReleaseNotes");
+
+                return text;
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
         static public string GetLatestAvailableVersion()
         {
             string url = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL") ?? "http://csscript.net/npp/latest_version.txt";
@@ -632,7 +651,7 @@ class Script
 
             if (Config.Instance.CheckPrereleaseUpdates)
             {
-                string prereleaseVersion = GetLatestAvailableVersion(url.Replace(".txt", ".pre.txt") );
+                string prereleaseVersion = GetLatestAvailableVersion(url.Replace(".txt", ".pre.txt"));
                 if (stableVersion.IsEmpty())
                 {
                     return prereleaseVersion;
@@ -661,7 +680,7 @@ class Script
         {
             try
             {
-                return DownloadText(url);
+                return DownloadText(url).Trim();
             }
             catch
             {

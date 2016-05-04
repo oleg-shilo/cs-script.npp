@@ -24,6 +24,9 @@ namespace CSScriptNpp.Deployment
             string srcDir = Path.GetFullPath(source);
             string detsDir = Path.GetFullPath(destination);
 
+            if (!Directory.Exists(srcDir))
+                throw new System.Exception("Plugin binaries could not be downloaded.");
+
             string[] srcFiles = Directory.GetFiles(srcDir, "*", SearchOption.AllDirectories);
 
             foreach (string srcFile in srcFiles)

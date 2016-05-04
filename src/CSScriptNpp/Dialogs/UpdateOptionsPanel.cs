@@ -24,6 +24,8 @@ namespace CSScriptNpp.Dialogs
             customDeployment.Checked = (Config.Instance.UpdateMode == (string)customDeployment.Tag);
             msiDeployment.Checked = (Config.Instance.UpdateMode == (string)msiDeployment.Tag);
             manualDeployment.Checked = (Config.Instance.UpdateMode == (string)manualDeployment.Tag);
+
+            releaseInfo.Text = CSScriptHelper.GetLatestReleaseInfo(version);
         }
 
         void UpdateProgress(long currentStep, long totalSteps)
@@ -178,11 +180,11 @@ namespace CSScriptNpp.Dialogs
 
         void DoLayout()
         {
-            optionsGroup.Visible = showOptions.Checked;
-            if (showOptions.Checked)
-                this.Height = 300;
-            else
-                this.Height = 130;
+            //optionsGroup.Visible = showOptions.Checked;
+            //if (showOptions.Checked)
+            //    this.Height = 300;
+            //else
+            //    this.Height = 130;
         }
 
         void customDeployment_CheckedChanged(object sender, EventArgs e)
