@@ -38,6 +38,17 @@ namespace Testing
         public static ISymbol LoadType(string typeName, params string[] refs)
         {
             var code = $"class Test {{  void Init() {{ var t = typeof({typeName}|); }} }}";
+            return LoadCode(code, refs);
+        }
+
+        public static ISymbol LoadExpression(string expression, params string[] refs)
+        {
+            var code = $"using CSScriptIntellisense.Test; using System.Linq; using System; class Test {{  void Init() {{ {expression}|; }} }}";
+            return LoadCode(code, refs);
+        }
+
+        public static ISymbol LoadCode(string code, params string[] refs)
+        {
             int position = code.IndexOf("|") - 1;
             code = code.Replace("|", "");
 

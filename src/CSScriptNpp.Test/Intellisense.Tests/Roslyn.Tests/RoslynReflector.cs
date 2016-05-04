@@ -215,7 +215,7 @@ namespace CSScriptIntellisense.Test
         }
 
         [Fact]
-        public void Reconstruct_ExtensionMethods()
+        public void Reconstruct_ExtensionMethodsClass()
         {
             var symbol = LoadType("CSScriptIntellisense.Test.ExtensionsCla|ss");
 
@@ -230,6 +230,37 @@ namespace CSScriptIntellisense.Test
         public static bool IsEmpty(this string obj);
     }
 }", code);
+        }
+
+        [Fact]
+        public void Reconstruct_SrcExtensionMethodUse()
+        {
+            var symbol = LoadExpression("var empty = \"test\".IsEmp|ty()");
+
+            string code = symbol.Reconstruct(false);
+
+            Assert.Equal(@"using System;
+
+namespace CSScriptIntellisense.Test
+{
+    public static class ExtensionsClass
+    {
+        public static bool IsEmpty(this string obj);
+    }
+}", code);
+        }
+
+        [Fact]
+        public void Reconstruct_AsmExtensionMethodUse()
+        {
+            var symbol = LoadExpression("var t = \"dd\".ToA|rray();");
+
+            int pos;
+            string code = symbol.Reconstruct(out pos, false);
+
+            string fragment = code.Substring(pos).TrimStart();
+
+            Assert.StartsWith(@"public static TSource[] ToArray<TSource>(this IEnumerable<TSource> source);", fragment);
         }
 
         [Fact]
@@ -415,13 +446,13 @@ namespace CSScriptIntellisense.Test
         public int PropRW { get; set; }
         protected virtual int MyVirtualProperty { protected get; protected set; }
 
-        public static Dictionary<int, Dictionary<TSource?, TDestination>> TestGenericMethod<TSource, TDestination>(IEnumerable<TSource> intParam) where TSource : struct;
+        public static Dictionary<int, Dictionary<TSource?, TDestination>> TestGenericMethod<TSource, TDestination>(IEnumerable<TSource> intParam) where TSource: struct;
         public static int TestMethod(int intParam = 0);
         public static List<int?> TestMethodWithRefOut(List<int?> nullableIntParam, out int count, ref string name);
         public void TestVoidmethod();
 
-        public partial class NestedParentClass { }
-        public partial class TestNestedClass1 { }
+        public partial class NestedParentClass {}
+        public partial class TestNestedClass1 {}
     }
 }", code);
         }
