@@ -111,6 +111,55 @@ namespace CSScriptIntellisense.Test
         }
 
         [Fact]
+        public void Reconstruct_NestedEnumAsParam()
+        {
+            var enumSymbol = LoadExpression("var ttt = Environment.GetFolder|Path(Environment.SpecialFolder.AdminTools);");
+
+            string code = enumSymbol.Reconstruct(false);
+
+            Assert.StartsWith(@"using System.Collections;
+
+namespace System
+{
+    public static class Environment
+    {
+        public static string CommandLine { get; }
+        public static string CurrentDirectory { get; set; }
+        public static int CurrentManagedThreadId { get; }", code);
+
+        }
+
+        [Fact]
+        public void Reconstruct_NestedEnum()
+        {
+            var enumSymbol = LoadExpression("var ttt = Environment.GetFolderPath(Environment.SpecialFolder.Ad|minTools);");
+
+            string code = enumSymbol.Reconstruct(false);
+            { }
+            Assert.StartsWith(@"namespace System
+{
+    public class Environment
+    {
+        public enum SpecialFolder
+        {
+            ApplicationData = 26,
+            CommonApplicationData = 35,
+            LocalApplicationData = 28,
+            Cookies = 33,
+            Desktop = 0,
+            Favorites = 6,
+            History = 34,
+            InternetCache = 32,
+            Programs = 2,
+            MyComputer = 17,
+            MyMusic = 13,
+            MyPictures = 39,
+            MyVideos = 14,
+            Recent = 8,
+", code);
+        }
+
+        [Fact]
         public void Reconstruct_GenericClass()
         {
             var enumSymbol = LoadType("CSScriptIntellisense.Test.GTest|Class1<List<int>, int, object>>");
@@ -521,9 +570,9 @@ namespace CSScriptIntellisense.Test
 
 namespace CSScriptIntellisense.Test
 {
-    public class classNestedParentClass
+    public class NestedParentClass
     {
-        public class classTestClass1
+        public class TestClass1
         {
             public delegate int TestDelgt3();
         }
@@ -543,7 +592,7 @@ namespace CSScriptIntellisense.Test
 
 namespace CSScriptIntellisense.Test
 {
-    public class classTestNestedGrandParentClass
+    public class TestNestedGrandParentClass
     {
         public class TestNestedParentClass
         {
