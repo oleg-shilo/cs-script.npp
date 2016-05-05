@@ -192,6 +192,8 @@ namespace CSScriptIntellisense
             }
         }
 
+        //public delegate void NppFuncItemDelegate();
+
         [DllImport("user32")]
         public static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
 

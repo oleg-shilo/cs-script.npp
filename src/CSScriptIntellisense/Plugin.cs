@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UltraSharp.Cecil;
+using System.Runtime.InteropServices;
 
 namespace CSScriptIntellisense
 {
@@ -950,10 +951,30 @@ namespace CSScriptIntellisense
             }
         }
 
+        static MouseMonitor mouseHook = new MouseMonitor();
+
         static public void OnNppReady()
         {
+            mouseHook.MouseLClick += MouseHook_MouseLClick;
+            mouseHook.Install();
+
             Plugin.EnsureCurrentFileParsedAsynch();
             Snippets.Init();
+        }
+
+        private static void MouseHook_MouseLClick()
+        {
+            if (Config.Instance.GoToDefinitionOnCtrlClick)
+            {
+                var modifiers = KeyInterceptor.GetModifiers();
+
+                if (modifiers.IsCtrl && !modifiers.IsShift && !modifiers.IsAlt)
+                {
+                    var caret = Npp.GetPositionFromMouseLocation();
+                    if (caret != -1)
+                        Task.Factory.StartNew(GoToDefinition); //let click to get handled, otherwise accidental selection will occur
+                }
+            }
         }
 
         static public void EnsureCurrentFileParsedAsynch()

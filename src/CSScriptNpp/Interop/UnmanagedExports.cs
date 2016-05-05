@@ -76,6 +76,7 @@ namespace CSScriptNpp
             //WM_ACTIVATEAPP                  0x001C
             if (Message == 0x001C || Message == 0x0006)
                 CSScriptNpp.Plugin.Repaint(); //some nasty painting artifacts need to be fixed when switching between apps
+
             return 1;
         }
 
@@ -199,6 +200,7 @@ namespace CSScriptNpp
                     //CSScriptIntellisense.Plugin.OnSavedOrUndo();
                 }
 
+                
                 Plugin.OnNotification(nc);
             }
             catch { }//this is indeed the last line of defense as all CS-S calls have the error handling inside

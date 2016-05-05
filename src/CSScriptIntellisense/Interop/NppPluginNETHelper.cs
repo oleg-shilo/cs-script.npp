@@ -18,8 +18,6 @@ namespace CSScriptIntellisense
         public IntPtr _scintillaSecondHandle;
     }
 
-    //public delegate void NppFuncItemDelegate();
-
     [StructLayout(LayoutKind.Sequential)]
     public struct ShortcutKey
     {

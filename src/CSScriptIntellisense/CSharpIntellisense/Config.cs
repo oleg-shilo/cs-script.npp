@@ -46,6 +46,7 @@ namespace CSScriptIntellisense
         public bool ShowQuickInfoInStatusBar = false;
         public bool ShowQuickInfoAsNativeNppTooltip = false;
         public bool UseMethodBrackets = false;
+        public bool GoToDefinitionOnCtrlClick = true;
         public bool UseCmdContextMenu = true;
         public string ContextMenuCommands = "Go To Definition;Find All References;Auto-add missing 'usings';Format Document";
         public bool RoslynIntellisense = false;
@@ -85,6 +86,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "RoslynFormatting", RoslynFormatting);
                 SetValue(Section, "RoslynIntellisense_v2", RoslynIntellisense);
                 SetValue(Section, "UseCmdContextMenu", UseCmdContextMenu);
+                SetValue(Section, "GoToDefinitionOnCtrlClick", GoToDefinitionOnCtrlClick);
                 SetValue(Section, "ContextMenuCommands", ContextMenuCommands);
                 SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 SetValue(Section, "DefaultRefAsms", DefaultRefAsms);
@@ -119,6 +121,7 @@ namespace CSScriptIntellisense
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
                 RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);
                 RoslynIntellisense = GetValue(Section, "RoslynIntellisense_v2", RoslynIntellisense);
+                GoToDefinitionOnCtrlClick = GetValue(Section, "GoToDefinitionOnCtrlClick", GoToDefinitionOnCtrlClick);
                 ContextMenuCommands = GetValue(Section, "ContextMenuCommands", ContextMenuCommands);
                 UseCmdContextMenu = GetValue(Section, "UseCmdContextMenu", ref contextMenuCommandsJustConfigured, UseCmdContextMenu);
 

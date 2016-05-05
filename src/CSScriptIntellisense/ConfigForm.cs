@@ -30,6 +30,7 @@ namespace CSScriptIntellisense
             roslynFormatter.Checked = data.RoslynFormatting;
             roslynIntellisense.Checked = data.RoslynIntellisense;
             useContextMenu.Checked = data.UseCmdContextMenu;
+            F12OnCtrlClick.Checked = data.GoToDefinitionOnCtrlClick;
 
             this.FormClosed += (s, e) =>
                 {
@@ -48,6 +49,7 @@ namespace CSScriptIntellisense
             data.RoslynFormatting = //roslynFormatter.Checked;
             data.RoslynIntellisense = roslynIntellisense.Checked;
             data.UseCmdContextMenu = useContextMenu.Checked;
+            data.GoToDefinitionOnCtrlClick = F12OnCtrlClick.Checked;
         }
 
         void ConfigForm_Load(object sender, EventArgs e)

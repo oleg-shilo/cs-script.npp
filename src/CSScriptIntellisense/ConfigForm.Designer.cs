@@ -38,9 +38,10 @@
             this.formatAsYouType = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.ContentPanel = new System.Windows.Forms.Panel();
+            this.useContextMenu = new System.Windows.Forms.CheckBox();
             this.roslynIntellisense = new System.Windows.Forms.CheckBox();
             this.roslynFormatter = new System.Windows.Forms.CheckBox();
-            this.useContextMenu = new System.Windows.Forms.CheckBox();
+            this.F12OnCtrlClick = new System.Windows.Forms.CheckBox();
             this.ContentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -111,7 +112,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(12, 163);
+            this.linkLabel1.Location = new System.Drawing.Point(12, 183);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 4;
@@ -124,6 +125,7 @@
             this.ContentPanel.Controls.Add(this.useMethodBrackets);
             this.ContentPanel.Controls.Add(this.useArrow);
             this.ContentPanel.Controls.Add(this.autoInsertSingle);
+            this.ContentPanel.Controls.Add(this.F12OnCtrlClick);
             this.ContentPanel.Controls.Add(this.useContextMenu);
             this.ContentPanel.Controls.Add(this.roslynIntellisense);
             this.ContentPanel.Controls.Add(this.roslynFormatter);
@@ -132,13 +134,23 @@
             this.ContentPanel.Controls.Add(this.formatAsYouType);
             this.ContentPanel.Location = new System.Drawing.Point(13, 3);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 142);
+            this.ContentPanel.Size = new System.Drawing.Size(290, 163);
             this.ContentPanel.TabIndex = 5;
+            // 
+            // useContextMenu
+            // 
+            this.useContextMenu.AutoSize = true;
+            this.useContextMenu.Location = new System.Drawing.Point(0, 102);
+            this.useContextMenu.Name = "useContextMenu";
+            this.useContextMenu.Size = new System.Drawing.Size(183, 17);
+            this.useContextMenu.TabIndex = 2;
+            this.useContextMenu.Text = "Use Context Menu for commands";
+            this.useContextMenu.UseVisualStyleBackColor = true;
             // 
             // roslynIntellisense
             // 
             this.roslynIntellisense.AutoSize = true;
-            this.roslynIntellisense.Location = new System.Drawing.Point(0, 125);
+            this.roslynIntellisense.Location = new System.Drawing.Point(0, 148);
             this.roslynIntellisense.Name = "roslynIntellisense";
             this.roslynIntellisense.Size = new System.Drawing.Size(225, 17);
             this.roslynIntellisense.TabIndex = 2;
@@ -156,21 +168,21 @@
             this.roslynFormatter.UseVisualStyleBackColor = true;
             this.roslynFormatter.Visible = false;
             // 
-            // useContextMenu
+            // F12OnCtrlClick
             // 
-            this.useContextMenu.AutoSize = true;
-            this.useContextMenu.Location = new System.Drawing.Point(0, 102);
-            this.useContextMenu.Name = "useContextMenu";
-            this.useContextMenu.Size = new System.Drawing.Size(183, 17);
-            this.useContextMenu.TabIndex = 2;
-            this.useContextMenu.Text = "Use Context Menu for commands";
-            this.useContextMenu.UseVisualStyleBackColor = true;
+            this.F12OnCtrlClick.AutoSize = true;
+            this.F12OnCtrlClick.Location = new System.Drawing.Point(0, 125);
+            this.F12OnCtrlClick.Name = "F12OnCtrlClick";
+            this.F12OnCtrlClick.Size = new System.Drawing.Size(227, 17);
+            this.F12OnCtrlClick.TabIndex = 2;
+            this.F12OnCtrlClick.Text = "\"Go To Definition\" on mouse Ctrl+LeftClick";
+            this.F12OnCtrlClick.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 186);
+            this.ClientSize = new System.Drawing.Size(315, 213);
             this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -201,5 +213,6 @@
         private System.Windows.Forms.CheckBox roslynIntellisense;
         private System.Windows.Forms.CheckBox autoInsertSingle;
         private System.Windows.Forms.CheckBox useContextMenu;
+        private System.Windows.Forms.CheckBox F12OnCtrlClick;
     }
 }

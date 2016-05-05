@@ -69,16 +69,25 @@ namespace CSScriptIntellisense
     public class MouseMonitor : WinHook<MouseMonitor>
     {
         public event Action MouseMove;
+        public event Action MouseLClick;
 
         override protected bool HandleHookEvent(IntPtr wParam, IntPtr lParam)
         {
             const int WM_MOUSEMOVE = 0x0200;
             const int WM_NCMOUSEMOVE = 0x00A0;
+            const int WM_LBUTTONUP = 0x0202;
+            const int MK_CONTROL = 0x0008;
 
             if ((wParam.ToInt32() == WM_MOUSEMOVE || wParam.ToInt32() == WM_NCMOUSEMOVE) && MouseMove != null)
             {
                 MouseMove();
             }
+
+            if (wParam.ToInt32() == WM_LBUTTONUP && MouseLClick != null)
+            {
+                MouseLClick();
+            }
+
             return false;
         }
 
@@ -103,7 +112,7 @@ namespace CSScriptIntellisense
         public static bool IsPressed(Keys key)
         {
             const int KEY_PRESSED = 0x8000;
-            return Convert.ToBoolean(GetKeyState((int)key) & KEY_PRESSED);
+            return Convert.ToBoolean(GetKeyState((int) key) & KEY_PRESSED);
         }
 
         public static Modifiers GetModifiers()
@@ -149,8 +158,8 @@ namespace CSScriptIntellisense
 
         override protected bool HandleHookEvent(IntPtr wParam, IntPtr lParam)
         {
-            int key = (int)wParam;
-            int context = (int)lParam;
+            int key = (int) wParam;
+            int context = (int) lParam;
 
             if (KeysToIntercept.Contains(key))
             {
@@ -159,7 +168,7 @@ namespace CSScriptIntellisense
                 if (down && KeyDown != null)
                 {
                     bool handled = false;
-                    KeyDown((Keys)key, repeatCount, ref handled);
+                    KeyDown((Keys) key, repeatCount, ref handled);
                     return handled;
                 }
             }
