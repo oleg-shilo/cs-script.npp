@@ -13,44 +13,6 @@ using static CSScriptIntellisense.Test.TestClass1;
 
 namespace Testing
 {
-    /*
-        Type
-           + class
-           + nullable
-           + struct
-           + enum
-                + normal
-                + inherited (base uint)
-           + delegate
-           + generic
-           + interface
-           + abstract
-           + sealed
-           + nested class
-           + static
-           + inheritance 
-                + base class
-                + interfaces
-           + private/internal/protected/public
-
-        Members   
-           + private/internal/protected/public
-           + indexer
-           + static
-           + readonly 
-           + event
-           + field
-               + const
-               + const value
-           property
-                const
-                const value
-           + method
-                + ref/out
-                + extension method
-           + operators
-       + Namespaces     
-            */
     public class RoslynReflector : RoslynHost
     {
         [Fact]
@@ -500,8 +462,8 @@ namespace CSScriptIntellisense.Test
         public static List<int?> TestMethodWithRefOut(List<int?> nullableIntParam, out int count, ref string name);
         public void TestVoidmethod();
 
-        public partial class NestedParentClass {}
-        public partial class TestNestedClass1 {}
+        public class NestedParentClass { /*hidden*/ }
+        public class TestNestedClass1 { /*hidden*/ }
     }
 }", code);
         }

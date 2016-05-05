@@ -688,6 +688,19 @@ namespace UltraSharp.Cecil
                                 MemberType = "Property"
                             });
                         }
+
+                        if (member is EnumMemberDeclaration)
+                        {
+                            var property = (EntityDeclaration) member;
+                            map.Add(new CodeMapItem
+                            {
+                                Line = property.StartLocation.Line,
+                                Column = property.StartLocation.Column,
+                                DisplayName = property.Name,
+                                ParentDisplayName = type.GetFullName(),
+                                MemberType = "EnumValue"
+                            });
+                        }
                     }
                 }
             }
