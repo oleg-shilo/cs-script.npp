@@ -34,6 +34,7 @@ namespace CSScriptNpp
             installedEngineLocation.SelectionStart = installedEngineLocation.Text.Length - 1;
 
             embeddedEngine.Checked = data.UseEmbeddedEngine;
+            restorePanels.Checked = data.RestorePanelsAtStartup;
             if (!data.UseEmbeddedEngine)
             {
                 if (data.UseCustomEngine.IsEmpty())
@@ -53,7 +54,8 @@ namespace CSScriptNpp
             panel.OnClosing();
             data.CheckUpdatesOnStartup = checkUpdates.Checked;
             data.UseEmbeddedEngine = embeddedEngine.Checked;
-            
+            data.RestorePanelsAtStartup = restorePanels.Checked;
+
             //data.UseRoslynProvider = useCS6.Checked;
             //all Roslyn individual config values are merged into RoslynIntellisense;
             data.UseRoslynProvider = CSScriptIntellisense.Config.Instance.RoslynIntellisense;

@@ -43,6 +43,7 @@ namespace CSScriptNpp
         public bool CheckUpdatesOnStartup = true;
         public bool CheckPrereleaseUpdates = false;
         public bool UseRoslynProvider = false;
+        public bool RestorePanelsAtStartup = true;
         public bool StartRoslynServerAtStartup = false;
         public bool ImproveWin10ListVeiwRendering = true;
         public bool WordWrapInVisualizer = true;
@@ -118,6 +119,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                     SetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
+                    SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
                     SetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
                     SetValue(Section, nameof(LastExternalProcess), LastExternalProcess);
@@ -186,6 +188,7 @@ namespace CSScriptNpp
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                 UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                 StartRoslynServerAtStartup = GetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
+                RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);

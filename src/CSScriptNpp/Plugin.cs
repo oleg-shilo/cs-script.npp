@@ -470,14 +470,17 @@ namespace CSScriptNpp
 
         static internal void OnNppReady()
         {
-            if (Config.Instance.ShowProjectPanel)
-                DoProjectPanel();
+            if (Config.Instance.RestorePanelsAtStartup)
+            {
+                if (Config.Instance.ShowProjectPanel)
+                    DoProjectPanel();
 
-            if (Config.Instance.ShowOutputPanel)
-                DoOutputPanel();
+                if (Config.Instance.ShowOutputPanel)
+                    DoOutputPanel();
 
-            if (Config.Instance.ShowDebugPanel)
-                DoDebugPanel();
+                if (Config.Instance.ShowDebugPanel)
+                    DoDebugPanel();
+            }
 
             StartCheckForUpdates();
 
