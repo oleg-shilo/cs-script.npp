@@ -56,24 +56,22 @@ namespace CSScriptNpp
         public void RefreshContent()
         {
             string file = Npp.GetCurrentFile();
+            if (file.IsScriptFile())
             {
-                if (file.IsScriptFile())
+                mapTxt.Visible = true;
+                if (file != currentFile)
                 {
-                    mapTxt.Visible = true;
-                    if (file != currentFile)
-                    {
-                        currentFile = file;
+                    currentFile = file;
 
-                        watcher.Path = Path.GetDirectoryName(currentFile);
-                        watcher.Filter = Path.GetFileName(currentFile);
-                    }
-
-                    mapTxt.Text = "";
-                    GenerateContent(Npp.GetTextBetween(0));
+                    watcher.Path = Path.GetDirectoryName(currentFile);
+                    watcher.Filter = Path.GetFileName(currentFile);
                 }
-                else
-                    mapTxt.Visible = false;
+
+                mapTxt.Text = "";
+                GenerateContent(Npp.GetTextBetween(0));
             }
+            else
+                mapTxt.Visible = false;
         }
 
         void watcher_Changed(object sender, FileSystemEventArgs e)
@@ -98,6 +96,8 @@ namespace CSScriptNpp
                             {
                                 if (line.Contains("sealed struct") && line.Contains(": ValueType"))
                                     safeCode.AppendLine(line.Replace("sealed struct", "class").Replace(": ValueType", "//: ValueType"));
+                                else if (line.Contains("partial enum"))
+                                    safeCode.AppendLine(line.Replace("partial enum", "partial class"));
                                 else
                                     safeCode.AppendLine(line);
                             });

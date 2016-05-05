@@ -181,6 +181,14 @@ namespace RoslynIntellisense
             return new string[0];
         }
 
+        public static DomRegion ResolveType(string typeName,string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        {
+            var code = $"class Test {{  void Init() {{ var t = typeof({typeName}|); }} }}";
+            int position = code.IndexOf("|") - 1;
+            code = code.Replace("|", "");
+
+            return ResolveSymbol(code, position, "dummy.cs", references, includes);
+        }
 
         public static DomRegion ResolveSymbol(string code, int position, string file, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
@@ -198,6 +206,15 @@ namespace RoslynIntellisense
 
                 if (location.IsInSource)
                 {
+                    if (file.EndsWith(".r.cs")) //reflected file
+                    {
+                        var text = code.GetLineAt(location.SourceSpan.Start);
+
+                        bool isPlaceholder = text.Contains("{ /*hidden*/ }");
+                        if (isPlaceholder)
+                            return ResolveType(symbol.GetFullName(), references, includes);
+                    }
+
                     var linePosition = location.GetLineSpan().StartLinePosition;
 
                     //DomRegion is 1-based Editor friendly struct

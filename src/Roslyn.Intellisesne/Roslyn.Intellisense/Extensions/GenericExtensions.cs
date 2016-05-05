@@ -51,6 +51,14 @@ namespace RoslynIntellisense
             return text.Take(pos).Count(c => c == '\n') + 1;
         }
 
+        public static string GetLineAt(this string text, int pos)
+        {
+            int start = text.Substring(0, pos).LastIndexOf('\n');
+            int end = text.IndexOf('\n', pos);
+
+            return text.Substring(start, end-start).Trim();
+        }
+
         public static int LastLineStart(this string text)
         {
             var start = text.LastIndexOf('\n'); //<doc>\r\n<declaration>
