@@ -34,6 +34,7 @@
             this.useCS6 = new System.Windows.Forms.CheckBox();
             this.contentControl = new System.Windows.Forms.TabControl();
             this.generalPage = new System.Windows.Forms.TabPage();
+            this.restorePanels = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -43,7 +44,6 @@
             this.installedEngine = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
-            this.restorePanels = new System.Windows.Forms.CheckBox();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -98,6 +98,17 @@
             this.generalPage.Text = "General";
             this.generalPage.UseVisualStyleBackColor = true;
             // 
+            // restorePanels
+            // 
+            this.restorePanels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.restorePanels.AutoSize = true;
+            this.restorePanels.Location = new System.Drawing.Point(13, 177);
+            this.restorePanels.Name = "restorePanels";
+            this.restorePanels.Size = new System.Drawing.Size(147, 17);
+            this.restorePanels.TabIndex = 8;
+            this.restorePanels.Text = "Restore panels on startup";
+            this.restorePanels.UseVisualStyleBackColor = true;
+            // 
             // linkLabel1
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -116,7 +127,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(415, 200);
+            this.tabPage2.Size = new System.Drawing.Size(415, 246);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "CS-Script";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -200,17 +211,6 @@
             this.embeddedEngine.Text = "Embedded";
             this.embeddedEngine.UseVisualStyleBackColor = true;
             this.embeddedEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
-            // 
-            // restorePanels
-            // 
-            this.restorePanels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.restorePanels.AutoSize = true;
-            this.restorePanels.Location = new System.Drawing.Point(13, 177);
-            this.restorePanels.Name = "restorePanels";
-            this.restorePanels.Size = new System.Drawing.Size(141, 17);
-            this.restorePanels.TabIndex = 8;
-            this.restorePanels.Text = "Restor panels on startup";
-            this.restorePanels.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 

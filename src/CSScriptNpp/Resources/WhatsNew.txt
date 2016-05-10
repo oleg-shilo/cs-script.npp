@@ -12,6 +12,7 @@ v1.0.52.0
 * Added context menu with C# Intellisense commands
 * Added auto-disabling C# 6 Intellisense if it fails to initialize (e.g. .NET v4.6 is missing).
   In this case Intellisense is configured back to C# 5 syntax. 
+* Added 'RestorePanelsAtStartup' option
 -------------
 C# 6 syntax support is based on Roslyn (requires .NET v4.6).
 It is disabled by default but can be enabled from the settings dialog.
