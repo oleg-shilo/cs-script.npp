@@ -315,6 +315,15 @@ namespace CSScriptNpp
             Plugin.SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
         }
 
+        static public void HideSecondaryPanels()
+        {
+            if (Plugin.OutputPanel != null)
+                Plugin.SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, false);
+
+            if (Plugin.DebugPanel != null)
+                Plugin.SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, false);
+        }
+
         static public void DoProjectPanel()
         {
             ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);

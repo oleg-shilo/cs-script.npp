@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using CSScriptIntellisense;
 using CSScriptLibrary;
 using CSScriptNpp.Dialogs;
-
+using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
@@ -21,6 +20,8 @@ namespace CSScriptNpp
         public ProjectPanel()
         {
             InitializeComponent();
+
+            this.VisibleChanged += ProjectPanel_VisibleChanged;
 
             UpdateButtonsTooltips();
 
@@ -54,6 +55,12 @@ namespace CSScriptNpp
             //watcher.NotifyFilter = NotifyFilters.LastWrite;
             //watcher.Changed += watcher_Changed;
             //watcher.EnableRaisingEvents = true;
+        }
+
+        private void ProjectPanel_VisibleChanged(object sender, EventArgs e)
+        {
+            if (Config.Instance.SyncSecondaryPanelsWithProjecvtPanel && !this.Visible)
+                Plugin.HideSecondaryPanels();
         }
 
         ToolStripPersistance toolStripPersistance;
@@ -998,6 +1005,7 @@ void main(string[] args)
         void ProjectPanel_Deactivate(object sender, EventArgs e)
         {
             this.Refresh();
+            System.Diagnostics.Debug.WriteLine("ProjectPanel_Deactivate");
         }
 
         void favoritesBtn_Click(object sender, EventArgs e)

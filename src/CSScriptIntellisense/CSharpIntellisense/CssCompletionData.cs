@@ -90,6 +90,19 @@ Example:
     //css_args /dbg, /ac, ""argument one"";"
             },
 
+//            new CssCompletionData
+//            {
+//                CompletionText = "css_co", DisplayText="//css_co",
+//                Description =
+//@"'Set compiler options' CS-Script directive
+////css_co <options>;
+
+//Example:
+//    //css_co /d:TRACE pass /d:TRACE option to C# compiler
+//    //css_co /platform:x86 to produce Win32 executable
+//    //css_co /unsafe to allow unsafe code"
+//            },
+
             new CssCompletionData
             {
                 CompletionText = "css_dir", DisplayText="//css_dir",
