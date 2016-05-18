@@ -59,7 +59,7 @@ namespace CSScriptNpp
 
         private void ProjectPanel_VisibleChanged(object sender, EventArgs e)
         {
-            if (Config.Instance.SyncSecondaryPanelsWithProjecvtPanel && !this.Visible)
+            if (Config.Instance.SyncSecondaryPanelsWithProjectPanel && !this.Visible)
                 Plugin.HideSecondaryPanels();
         }
 
@@ -397,8 +397,7 @@ void main(string[] args)
 
         public void Debug(bool breakOnFirstStep)
         {
-            if (Plugin.DebugPanel == null)
-                Plugin.DoDebugPanel();
+            Plugin.InitDebugPanel();
 
             if (currentScript == null)
                 loadBtn.PerformClick();
@@ -484,7 +483,7 @@ void main(string[] args)
         void OnRunStart(Process proc)
         {
             Plugin.RunningScript = proc;
-            this.Invoke((Action)RefreshControls);
+            this.Invoke((Action) RefreshControls);
         }
 
         void OnConsoleOut(string line)

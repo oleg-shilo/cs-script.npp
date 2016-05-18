@@ -1,3 +1,4 @@
+using CSScriptNpp.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -5,7 +6,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSScriptNpp.Dialogs;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -17,26 +17,26 @@ namespace CSScriptNpp
      *  + Locals doesn't allow changing the value
      *  - Button to update doc. breakpoints from the .dbg file content
      *  + QuickWatch should not allow changing the name in the grid
-     *  - Debugger 
+     *  - Debugger
      *      - Debugger does not treat DateTime members as primitives
      *      - Some objects cannot be inspected:
      *          - new FileInfo(this.GetType().Assembly.Location);
      *          - Process.GetCurrentProcess();
      *      - in CS-S.Npp allow calling object inspector and redirecting the output to the debug window.
-     *  - Integrate surrogate hosting //css_host /version:v4.0 /platform:x86; 
+     *  - Integrate surrogate hosting //css_host /version:v4.0 /platform:x86;
      *      - Debugging
-     *      
+     *
      * -------------------------------------------------------------------
-     * 
+     *
      *  - Desirable but not essential features:
-     *  
+     *
      *     - Debugger attach to process
      *          - check presence of dbg info and open source file if possible
      *          - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
-     *     
+     *
      *     - Rendering current step indicator sometimes (very rare occasions) is not reliable (e.g. at first breakpoint hit)
      *       Very hard to reproduce. Pressing "Break" fixes it anyway
-     *     
+     *
      *     - Debug panel
      *          - Locals panel cached update (not recommended as it requires asynch funcevals)
      *              - clear the tree on frame change (embedded in 'locals update' message)
@@ -67,9 +67,9 @@ namespace CSScriptNpp
             SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
             SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
             SetCommand(index++, "---", null);
-            SetCommand(projectPanelId = index++, "Project Panel", DoProjectPanel, Config.Instance.ShowProjectPanel);
-            SetCommand(outputPanelId = index++, "Output Panel", DoOutputPanel, Config.Instance.ShowOutputPanel);
-            SetCommand(debugPanelId = index++, "Debug Panel", DoDebugPanel, Config.Instance.ShowDebugPanel);
+            SetCommand(projectPanelId = index++, "Project Panel", InitProjectPanel, Config.Instance.ShowProjectPanel);
+            SetCommand(outputPanelId = index++, "Output Panel", InitOutputPanel, Config.Instance.ShowOutputPanel);
+            SetCommand(debugPanelId = index++, "Debug Panel", InitDebugPanel, Config.Instance.ShowDebugPanel);
             SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
             SetCommand(index++, "About", ShowAbout);
@@ -86,7 +86,11 @@ namespace CSScriptNpp
             //setup dependency injection, which may be overwritten by other plugins (e.g. NppScripts)
             Plugin.RunScript = () => Plugin.ProjectPanel.Run();
             Plugin.RunScriptAsExternal = () => Plugin.ProjectPanel.RunAsExternal();
-            Plugin.DebugScript = () => Plugin.ProjectPanel.Debug(false);
+            Plugin.DebugScript = () =>
+            {
+                InitProjectPanel();
+                Plugin.ProjectPanel.Debug(false);
+            };
         }
 
         static public Action RunScript;
@@ -128,7 +132,7 @@ namespace CSScriptNpp
             AddInternalShortcuts("LoadCurrentDocument:Ctrl+F7",
                                  "Load Current Document", () =>
                                   {
-                                      DoProjectPanel();
+                                      InitProjectPanel();
                                       ShowProjectPanel();
                                       ProjectPanel.LoadCurrentDoc();
                                   }, uniqueKeys);
@@ -261,10 +265,48 @@ namespace CSScriptNpp
 #endif
         }
 
-        static public OutputPanel OutputPanel;
+        static OutputPanel outputPanel;
+
+        static public OutputPanel OutputPanel
+        {
+            get
+            {
+                InitOutputPanel();
+                return outputPanel;
+            }
+        }
+
         static public ProjectPanel ProjectPanel;
         static public CodeMapPanel CodeMapPanel;
-        static public DebugPanel DebugPanel;
+
+        static DebugPanel debugPanel;
+
+        static public DebugPanel DebugPanel
+        {
+            get
+            {
+                InitDebugPanel();
+                return debugPanel;
+            }
+        }
+
+        static public void InitOutputPanel()
+        {
+            if (Plugin.outputPanel == null)
+            {
+                Plugin.outputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+                Application.DoEvents();
+            }
+        }
+
+        static public void InitDebugPanel()
+        {
+            if (Plugin.debugPanel == null)
+            {
+                Plugin.debugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+                Application.DoEvents();
+            }
+        }
 
         static public void Repaint()
         {
@@ -272,62 +314,44 @@ namespace CSScriptNpp
                 CSScriptNpp.Plugin.ProjectPanel.Refresh();
             if (CSScriptNpp.Plugin.CodeMapPanel != null)
                 CSScriptNpp.Plugin.CodeMapPanel.Refresh();
-            if (CSScriptNpp.Plugin.DebugPanel != null)
-                CSScriptNpp.Plugin.DebugPanel.Refresh();
-            if (CSScriptNpp.Plugin.OutputPanel != null)
-                CSScriptNpp.Plugin.OutputPanel.Refresh();
-
+            if (CSScriptNpp.Plugin.debugPanel != null)
+                CSScriptNpp.Plugin.debugPanel.Refresh();
+            if (CSScriptNpp.Plugin.outputPanel != null)
+                CSScriptNpp.Plugin.outputPanel.Refresh();
         }
 
         static public DebugPanel GetDebugPanel()
         {
-            if (Plugin.DebugPanel == null)
-                Plugin.DoDebugPanel();
             return Plugin.DebugPanel;
         }
 
         static public ProjectPanel GetProjectPanel()
         {
             if (Plugin.ProjectPanel == null)
-                Plugin.DoProjectPanel();
+                Plugin.InitProjectPanel();
             return Plugin.ProjectPanel;
-        }
-
-        static public void DoOutputPanel()
-        {
-            Plugin.OutputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-        }
-
-        static public void DoDebugPanel()
-        {
-            Plugin.DebugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
         }
 
         static public void ShowSecondaryPanels()
         {
-            if (Plugin.OutputPanel == null)
-                DoOutputPanel();
-
-            if (Plugin.DebugPanel == null)
-                DoDebugPanel();
-
             Plugin.SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
             Plugin.SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
         }
 
         static public void HideSecondaryPanels()
         {
-            if (Plugin.OutputPanel != null)
-                Plugin.SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, false);
+            if (Plugin.outputPanel != null)
+                Plugin.SetDockedPanelVisible(Plugin.outputPanel, outputPanelId, false);
 
-            if (Plugin.DebugPanel != null)
-                Plugin.SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, false);
+            if (Plugin.debugPanel != null)
+                Plugin.SetDockedPanelVisible(Plugin.debugPanel, debugPanelId, false);
         }
 
-        static public void DoProjectPanel()
+        static public void InitProjectPanel()
         {
             ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
             ProjectPanel.Focus();
+            Application.DoEvents();
         }
 
         static public void ShowProjectPanel()
@@ -365,7 +389,7 @@ namespace CSScriptNpp
             if (runningScript == null)
             {
                 if (Plugin.ProjectPanel == null)
-                    DoProjectPanel();
+                    InitProjectPanel();
                 Plugin.ProjectPanel.Build();
             }
         }
@@ -387,7 +411,7 @@ namespace CSScriptNpp
             else if (Npp.IsCurrentScriptFile() && runningScript == null)
             {
                 if (Plugin.ProjectPanel == null)
-                    DoProjectPanel();
+                    InitProjectPanel();
                 Plugin.RunScript();
             }
         }
@@ -397,7 +421,7 @@ namespace CSScriptNpp
             if (!Debugger.IsRunning)
             {
                 if (Plugin.ProjectPanel == null)
-                    DoProjectPanel();
+                    InitProjectPanel();
                 DebugExternal.ShowModal();
             }
         }
@@ -407,7 +431,7 @@ namespace CSScriptNpp
             if (!Debugger.IsRunning)
             {
                 if (Plugin.ProjectPanel == null)
-                    DoProjectPanel();
+                    InitProjectPanel();
                 Plugin.DebugScript();
             }
         }
@@ -438,17 +462,15 @@ namespace CSScriptNpp
             if (runningScript == null)
             {
                 if (Plugin.ProjectPanel == null)
-                    DoProjectPanel();
+                    InitProjectPanel();
                 Plugin.RunScriptAsExternal();
             }
         }
 
         static public OutputPanel ShowOutputPanel()
         {
-            if (Plugin.OutputPanel == null)
-                DoOutputPanel();
-            else
-                SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
+            InitOutputPanel();
+            SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
 
             UpdateLocalDebugInfo();
             return Plugin.OutputPanel;
@@ -482,13 +504,13 @@ namespace CSScriptNpp
             if (Config.Instance.RestorePanelsAtStartup)
             {
                 if (Config.Instance.ShowProjectPanel)
-                    DoProjectPanel();
+                    InitProjectPanel();
 
                 if (Config.Instance.ShowOutputPanel)
-                    DoOutputPanel();
+                    InitOutputPanel();
 
                 if (Config.Instance.ShowDebugPanel)
-                    DoDebugPanel();
+                    InitDebugPanel();
             }
 
             StartCheckForUpdates();
