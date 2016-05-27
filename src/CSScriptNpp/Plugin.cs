@@ -277,7 +277,12 @@ namespace CSScriptNpp
         }
 
         static public ProjectPanel ProjectPanel;
-        static public CodeMapPanel CodeMapPanel;
+
+        static public CodeMapPanel CodeMapPanel
+        {
+            get { return ProjectPanel?.mapPanel; }
+
+        }
 
         static DebugPanel debugPanel;
 

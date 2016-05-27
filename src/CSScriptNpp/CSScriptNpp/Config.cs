@@ -49,7 +49,7 @@ namespace CSScriptNpp
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
         public bool RunExternalInDebugMode = true;
-        public bool SyncSecondaryPanelsWithProjecvtPanel = true;
+        public bool SyncSecondaryPanelsWithProjectPanel = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
         public string SkipUpdateVersion = "";
@@ -95,7 +95,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(WordWrapInVisualizer), WordWrapInVisualizer);
                     SetValue(Section, nameof(ListManagedProcessesOnly), ListManagedProcessesOnly);
                     SetValue(Section, nameof(RunExternalInDebugMode), RunExternalInDebugMode);
-                    SetValue(Section, nameof(SyncSecondaryPanelsWithProjecvtPanel), SyncSecondaryPanelsWithProjecvtPanel);
+                    SetValue(Section, nameof(SyncSecondaryPanelsWithProjectPanel), SyncSecondaryPanelsWithProjectPanel);
                     SetValue(Section, nameof(OutputPanelCapacity), OutputPanelCapacity);
                     SetValue(Section, nameof(HotkeyDocumentsExclusions), HotkeyDocumentsExclusions);
                     SetValue(Section, nameof(NavigateToRawCodeOnDblClickInOutput), NavigateToRawCodeOnDblClickInOutput);
@@ -160,7 +160,7 @@ namespace CSScriptNpp
                 WordWrapInVisualizer = GetValue(Section, nameof(WordWrapInVisualizer), WordWrapInVisualizer);
                 ListManagedProcessesOnly = GetValue(Section, nameof(ListManagedProcessesOnly), ListManagedProcessesOnly);
                 RunExternalInDebugMode = GetValue(Section, nameof(RunExternalInDebugMode), RunExternalInDebugMode);
-                SyncSecondaryPanelsWithProjecvtPanel = GetValue(Section, nameof(SyncSecondaryPanelsWithProjecvtPanel), SyncSecondaryPanelsWithProjecvtPanel);
+                SyncSecondaryPanelsWithProjectPanel = GetValue(Section, nameof(SyncSecondaryPanelsWithProjectPanel), SyncSecondaryPanelsWithProjectPanel);
                 //ShowDebugPanel = GetValue(Section, nameof(ShowDebugPanel), ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
                 DebugStepPointColor = GetValue(Section, nameof(DebugStepPointColor), DebugStepPointColor, 1024 * 4);
                 DebugStepPointForeColor = GetValue(Section, nameof(DebugStepPointForeColor), DebugStepPointForeColor, 1024 * 4);

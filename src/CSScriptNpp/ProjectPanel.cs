@@ -14,7 +14,7 @@ namespace CSScriptNpp
     public partial class ProjectPanel : Form
     {
         static internal string currentScript;
-        CodeMapPanel mapPanel;
+        internal CodeMapPanel mapPanel;
         FavoritesPanel favPanel;
 
         public ProjectPanel()
