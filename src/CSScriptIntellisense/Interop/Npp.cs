@@ -215,6 +215,11 @@ namespace CSScriptIntellisense
             return point;
         }
 
+        static public int GetPositionFromLineColumn(int line, int column)
+        {
+            return Npp.GetLineStart(line) + column;
+        }
+
         static public int GetPositionFromMouseLocation()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();

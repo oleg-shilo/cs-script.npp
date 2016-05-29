@@ -106,6 +106,12 @@
     </Compile>
     <Compile Include="CSharpIntellisense\Reflector.Cecil.cs" />
     <Compile Include="CodeSnippets\Snippets.cs" />
+    <Compile Include="RenameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RenameForm.Designer.cs">
+      <DependentUpon>RenameForm.cs</DependentUpon>
+    </Compile>
     <None Include="app.config" />
     <None Include="CodeSnippets\snippets.data" />
     <None Include="Interop\DllExport\CheckILDasmPath.cs" />
@@ -199,6 +205,9 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RenameForm.resx">
+      <DependentUpon>RenameForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

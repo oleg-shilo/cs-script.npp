@@ -74,6 +74,7 @@ namespace CSScriptIntellisense
                 if (!Config.Instance.DisableMethodInfo)
                     setCommand(cmdIndex++, "Show Method Info", ShowMethodInfo, "_ShowMethodInfo:F6");
                 setCommand(cmdIndex++, "Format Document", FormatDocument, "_FormatDocument:Ctrl+F8");
+                setCommand(cmdIndex++, "Rename", RenameMemberAtCaret, "_Rename:Ctrl+Shift+F2");
                 setCommand(cmdIndex++, "Go To Definition", GoToDefinition, "_GoToDefinition:F12");
                 setCommand(cmdIndex++, "Find All References", FindAllReferences, "_FindAllReferences:Shift+F12");
                 setCommand(cmdIndex++, "---", null, null);
@@ -365,6 +366,101 @@ namespace CSScriptIntellisense
                             string.Join(Environment.NewLine, references));
 
                         DisplayInOutputPanel(text);
+                    }
+                }
+            });
+        }
+
+        static void RenameMemberAtCaret()
+        {
+            //adjust caret pos after replacement
+            //handle external files refs
+            //+ add defenition ref (e.g. F12) instead of caretRef
+            //Hook to Ctrl+R+R
+            HandleErrors(() =>
+            {
+                if (Npp.IsCurrentScriptFile())
+                {
+                    //note initial state
+                    string currentDocFile = Npp.GetCurrentFile();
+                    int initialCaretPos = Npp.GetCaretPosition();
+                    Point wordAtCaretLocation;
+                    string wordToReplace = Npp.GetWordAtCursor(out wordAtCaretLocation, SimpleCodeCompletion.Delimiters);
+
+                    //resolve
+                    DomRegion definition = ResolveMemberAtCaret();
+                    string[] references = FindAllReferencesAtCaret();
+
+                    //prompt user
+                    using (var input = new RenameForm(wordToReplace))
+                    {
+                        input.ShowDialog();
+
+                        if (input.RenameTo.Any())
+                        {
+                            string replacementWord = input.RenameTo;
+                            //consolidate references
+                            var replacements = references.Select(refString =>
+                                                                 {
+                                                                     string file;
+                                                                     int line, column;
+                                                                
+                                                                     //Example" "C:\Users\osh\Documents\C# Scripts\dev.cs(20,5):"
+                                                                     //add word 'error' to comply with ParseAsErrorFileReference
+                                                                
+                                                                     if (CSScriptIntellisense.StringExtesnions.ParseAsErrorFileReference(refString + "error", out file, out line, out column))
+                                                                     {
+                                                                         CSScriptIntellisense.StringExtesnions.NormaliseFileReference(ref file, ref line);
+                                                                         var pos = Npp.GetPositionFromLineColumn(line - 1, column - 1);
+                                                                         return new
+                                                                         {
+                                                                             File = file,
+                                                                             Start = pos,
+                                                                             End = pos + wordToReplace.Length
+                                                                         };
+                                                                     }
+                                                                     else
+                                                                         return null;
+                                                                 });
+                                                                
+                            if (!definition.IsEmpty)
+                            {
+                                var pos = Npp.GetPositionFromLineColumn(definition.BeginLine-1, definition.BeginColumn-1);
+
+                                replacements = replacements.Concat(new[] { new
+                                {
+                                    File = definition.FileName,
+                                    Start = pos,
+                                    End = pos+ wordToReplace.Length
+                                } });
+                            }
+
+                            //do the replacement
+                            var fileReplecements = replacements.Where(x => x != null)
+                                                               .OrderByDescending(x => x.Start)
+                                                               .GroupBy(x=>x.File)
+                                                               .ToDictionary(x=>x.Key, x=>x);
+
+                            foreach (var file in fileReplecements.Keys)
+                            {
+                                if (file == currentDocFile)
+                                {
+                                    var items = fileReplecements[file];
+
+                                    int itemsBeforeCaret = items.Count(x=>x.Start < wordAtCaretLocation.X);
+                                    int diff = (wordToReplace.Length - replacementWord.Length)* itemsBeforeCaret;
+                                    
+                                    foreach (var item in items)
+                                        Npp.SetTextBetween(input.RenameTo, item.Start, item.End);
+
+                                    Npp.SetCaretPosition(initialCaretPos-diff);
+                                    Npp.ClearSelection();
+                                }
+                                else
+                                {
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -919,14 +1015,7 @@ namespace CSScriptIntellisense
                 else if (autocompleteForm != null && autocompleteForm.Visible)
                 {
                     if (c >= ' ' || c == 8) //8 is backspace
-                    {
                         OnAutocompleteKeyPress(c);
-                    }
-                    //else
-                    //{
-                    //    autocompleteForm.Close();
-                    //    autocompleteForm = null;
-                    //}
                 }
                 else
                     SourceCodeFormatter.OnCharTyped(c);
