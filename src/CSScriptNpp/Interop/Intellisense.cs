@@ -12,7 +12,12 @@ namespace CSScriptNpp
             //Merge Configs
             CSScriptIntellisense.Config.Location = CSScriptNpp.Config.Location;
             CSScriptIntellisense.Plugin.SuppressCodeTolltips = () => Debugger.IsInBreak;
-            CSScriptIntellisense.Plugin.DisplayInOutputPanel = CSScriptNpp.OutputPanel.DisplayInGenericOutputPanel;
+            CSScriptIntellisense.Plugin.DisplayInOutputPanel = message =>
+            {
+                Plugin.EnsureOutputPanelVisible();
+                OutputPanel.DisplayInGenericOutputPanel(message);
+            };
+
             CSScriptIntellisense.Plugin.ResolveCurrentFile =
                 () =>
                 {

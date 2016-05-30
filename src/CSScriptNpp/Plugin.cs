@@ -343,6 +343,11 @@ namespace CSScriptNpp
             Plugin.SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
         }
 
+        static public void EnsureOutputPanelVisible()
+        {
+            Plugin.SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
+        }
+
         static public void HideSecondaryPanels()
         {
             if (Plugin.outputPanel != null)

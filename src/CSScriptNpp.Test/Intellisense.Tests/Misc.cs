@@ -87,6 +87,21 @@ namespace NSTest
         }
 
         [Fact]
+        public void GetPosition()
+        {
+            var file = Environment.ExpandEnvironmentVariables(@"C:\Users\%username%\Documents\C# Scripts\script.cs");
+
+            if (File.Exists(file))
+            {
+                var pos = StringExtesnions.GetPosition(file, 7, 12);
+                Assert.True(pos == 103);
+
+                pos = StringExtesnions.GetPosition(file, 10, 22);
+                Assert.True(pos == 146);
+            }
+        }
+
+        [Fact]
         public void TypeNamespaceRemoved()
         {
             SimpleCodeCompletion.ResetProject();

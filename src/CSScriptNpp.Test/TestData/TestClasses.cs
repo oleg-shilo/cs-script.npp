@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-#pragma warning disable 67
+#pragma warning disable 67, 660, 661, 169, 649
 
 public class TestClassNoNS
 {

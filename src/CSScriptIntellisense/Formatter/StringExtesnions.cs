@@ -20,6 +20,35 @@ namespace CSScriptIntellisense
             return file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".csx", StringComparison.InvariantCultureIgnoreCase);
         }
 
+        //need to read text as we cannot ask NPP to calculate the position as the file may not be opened (e.g. auto-generated)
+        public static int GetPosition(string file, int line, int column) //offsets are 0-based
+        {
+            using (var reader = new StreamReader(file))
+            {
+                int lineCount = 0;
+                int columnCount = 0;
+                int pos = 0;
+
+                while (reader.Peek() >= 0)
+                {
+                    var c = (char) reader.Read();
+
+                    if (lineCount == line && columnCount == column)
+                        break;
+
+                    pos++;
+
+                    if (lineCount == line)
+                        columnCount++;
+
+                    if (c == '\n')
+                        lineCount++;
+                }
+
+                return pos;
+            }
+        }
+
         public static bool IsToken(this string text, string pattern, int position)
         {
             if (position < text.Length)

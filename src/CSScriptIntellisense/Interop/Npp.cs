@@ -45,6 +45,11 @@ namespace CSScriptIntellisense
             return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
         }
 
+        static public void ReloadFile(bool showAlert, string file)
+        {
+            Win32.SendMessage(Plugin.NppData._nppHandle, NppMsg.NPPM_RELOADFILE, showAlert ? 1 : 0, file);
+        }
+
         static public bool IsCurrentScriptFile()
         {
             var path = new StringBuilder(Win32.MAX_PATH);

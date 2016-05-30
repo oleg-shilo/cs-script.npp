@@ -634,39 +634,10 @@ namespace CSScriptNpp
                     var coordinates = x.Split(':');
                     var line = int.Parse(coordinates.First()) - 1;
                     var column = int.Parse(coordinates.Last()) - 1;
-                    return new { Line = line, Column = column, Position = GetPosition(file, line, column) }; //debugger offsets are 1-based; editor offsets are 0-based
+                    return new { Line = line, Column = column, Position = CSScriptIntellisense.StringExtesnions.GetPosition(file, line, column) }; //debugger offsets are 1-based; editor offsets are 0-based
                 });
 
                 return new FileLocation { File = file, Line = points.First().Line, Start = points.First().Position, End = points.Last().Position };
-            }
-
-            //need to read text as we cannot ask NPP to calculate the position as the file may not be opened (e.g. auto-generated)
-            private static int GetPosition(string file, int line, int column) //offsets are 1-based
-            {
-                using (var reader = new StreamReader(file))
-                {
-                    int lineCount = 0;
-                    int columnCount = 0;
-                    int pos = 0;
-
-                    while (reader.Peek() >= 0)
-                    {
-                        var c = (char)reader.Read();
-
-                        if (lineCount == line && columnCount == column)
-                            break;
-
-                        pos++;
-
-                        if (lineCount == line)
-                            columnCount++;
-
-                        if (c == '\n')
-                            lineCount++;
-                    }
-
-                    return pos;
-                }
             }
         }
 

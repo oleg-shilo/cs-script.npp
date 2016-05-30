@@ -74,7 +74,7 @@ namespace CSScriptIntellisense
                 if (!Config.Instance.DisableMethodInfo)
                     setCommand(cmdIndex++, "Show Method Info", ShowMethodInfo, "_ShowMethodInfo:F6");
                 setCommand(cmdIndex++, "Format Document", FormatDocument, "_FormatDocument:Ctrl+F8");
-                setCommand(cmdIndex++, "Rename", RenameMemberAtCaret, "_Rename:Ctrl+Shift+F2");
+                setCommand(cmdIndex++, "Rename... (Ctrl+R,R)", RenameMemberAtCaret, null);
                 setCommand(cmdIndex++, "Go To Definition", GoToDefinition, "_GoToDefinition:F12");
                 setCommand(cmdIndex++, "Find All References", FindAllReferences, "_FindAllReferences:Shift+F12");
                 setCommand(cmdIndex++, "---", null, null);
@@ -100,6 +100,7 @@ namespace CSScriptIntellisense
                 KeyInterceptor.Instance.Add(Keys.Right);
                 KeyInterceptor.Instance.Add(Keys.Left);
                 KeyInterceptor.Instance.Add(Keys.Tab);
+                KeyInterceptor.Instance.Add(Keys.R);
                 KeyInterceptor.Instance.Add(Keys.Return);
                 KeyInterceptor.Instance.Add(Keys.Escape);
                 KeyInterceptor.Instance.Add(Keys.Z);
@@ -233,7 +234,23 @@ namespace CSScriptIntellisense
                         }
                     }
             }
+
+            if (key == Keys.R && Npp.IsCurrentScriptFile())
+            {
+                Modifiers modifiers = KeyInterceptor.GetModifiers();
+
+                if (modifiers.IsCtrl)
+                {
+                    handled = true;
+                    if (Environment.TickCount - lastKeyEvent < 1000)
+                        RenameMemberAtCaret();
+                    else
+                        lastKeyEvent = Environment.TickCount;
+                }
+            }
         }
+
+        static int lastKeyEvent = 0;
 
         public static void OnSavedOrUndo()
         {
@@ -371,14 +388,26 @@ namespace CSScriptIntellisense
             });
         }
 
+        static int GetDocPosition(string file, int line, int column) //offsets are 1-based
+        {
+            var pos = 0;
+            if (file == Npp.GetCurrentFile())
+                pos = Npp.GetPositionFromLineColumn(line - 1, column - 1); //more accurate as the file can be modified
+            else
+                pos = StringExtesnions.GetPosition(file, line - 1, column - 1);
+            return pos;
+        }
+
         static void RenameMemberAtCaret()
         {
-            //adjust caret pos after replacement
+            //+ adjust caret pos after replacement
             //handle external files refs
             //+ add defenition ref (e.g. F12) instead of caretRef
-            //Hook to Ctrl+R+R
+            //+ Hook to Ctrl+R+R
             HandleErrors(() =>
             {
+                Cursor.Current = Cursors.WaitCursor;
+
                 if (Npp.IsCurrentScriptFile())
                 {
                     //note initial state
@@ -387,31 +416,37 @@ namespace CSScriptIntellisense
                     Point wordAtCaretLocation;
                     string wordToReplace = Npp.GetWordAtCursor(out wordAtCaretLocation, SimpleCodeCompletion.Delimiters);
 
-                    //resolve
-                    DomRegion definition = ResolveMemberAtCaret();
-                    string[] references = FindAllReferencesAtCaret();
-
                     //prompt user
                     using (var input = new RenameForm(wordToReplace))
                     {
                         input.ShowDialog();
+                        string replacementWord = input.RenameTo;
 
-                        if (input.RenameTo.Any())
+                        Cursor.Current = Cursors.WaitCursor;
+
+                        if (replacementWord.Any() && replacementWord != wordToReplace)
                         {
-                            string replacementWord = input.RenameTo;
+                            //resolve
+                            List<string> references = FindAllReferencesAtCaret().ToList();
+                            DomRegion definition = ResolveMemberAtCaret();
+
+                            if (!definition.IsEmpty)
+                                references.Add($"{definition.FileName}({definition.BeginLine},{definition.BeginColumn}): " + wordToReplace);
+
                             //consolidate references
                             var replacements = references.Select(refString =>
                                                                  {
                                                                      string file;
                                                                      int line, column;
-                                                                
-                                                                     //Example" "C:\Users\osh\Documents\C# Scripts\dev.cs(20,5):"
-                                                                     //add word 'error' to comply with ParseAsErrorFileReference
-                                                                
-                                                                     if (CSScriptIntellisense.StringExtesnions.ParseAsErrorFileReference(refString + "error", out file, out line, out column))
+
+                                                                     //Example" "C:\Users\osh\Documents\C# Scripts\dev.cs(20,5): new Test..."
+
+                                                                     if (StringExtesnions.ParseAsErrorFileReference(refString, out file, out line, out column))
                                                                      {
-                                                                         CSScriptIntellisense.StringExtesnions.NormaliseFileReference(ref file, ref line);
-                                                                         var pos = Npp.GetPositionFromLineColumn(line - 1, column - 1);
+                                                                         StringExtesnions.NormaliseFileReference(ref file, ref line);
+
+                                                                         var pos = GetDocPosition(file, line, column);
+
                                                                          return new
                                                                          {
                                                                              File = file,
@@ -422,47 +457,64 @@ namespace CSScriptIntellisense
                                                                      else
                                                                          return null;
                                                                  });
-                                                                
-                            if (!definition.IsEmpty)
-                            {
-                                var pos = Npp.GetPositionFromLineColumn(definition.BeginLine-1, definition.BeginColumn-1);
 
-                                replacements = replacements.Concat(new[] { new
-                                {
-                                    File = definition.FileName,
-                                    Start = pos,
-                                    End = pos+ wordToReplace.Length
-                                } });
-                            }
+                            replacements = replacements.ToArray();
+
+
 
                             //do the replacement
                             var fileReplecements = replacements.Where(x => x != null)
                                                                .OrderByDescending(x => x.Start)
-                                                               .GroupBy(x=>x.File)
-                                                               .ToDictionary(x=>x.Key, x=>x);
+                                                               .GroupBy(x => x.File)
+                                                               .ToDictionary(x => x.Key, x => x);
 
                             foreach (var file in fileReplecements.Keys)
                             {
+                                var items = fileReplecements[file];
+
                                 if (file == currentDocFile)
                                 {
-                                    var items = fileReplecements[file];
+                                    int itemsBeforeCaret = items.Count(x => x.Start < wordAtCaretLocation.X);
+                                    int diff = (wordToReplace.Length - replacementWord.Length) * itemsBeforeCaret;
 
-                                    int itemsBeforeCaret = items.Count(x=>x.Start < wordAtCaretLocation.X);
-                                    int diff = (wordToReplace.Length - replacementWord.Length)* itemsBeforeCaret;
-                                    
                                     foreach (var item in items)
-                                        Npp.SetTextBetween(input.RenameTo, item.Start, item.End);
+                                        Npp.SetTextBetween(replacementWord, item.Start, item.End);
 
-                                    Npp.SetCaretPosition(initialCaretPos-diff);
+                                    Npp.SetCaretPosition(initialCaretPos - diff);
                                     Npp.ClearSelection();
                                 }
                                 else
                                 {
+                                    string code = File.ReadAllText(file);
+                                    var newCode = new StringBuilder(500);
+
+                                    var entries = items.OrderBy(x => x.Start).ToArray();
+
+                                    int latsItemEnd = 0;
+                                    foreach (var item in entries)
+                                    {
+                                        int start = item.Start;
+                                        int end = item.End;
+                                        Debug.WriteLine(start);
+
+                                        newCode.Append(code.Substring(latsItemEnd, start - latsItemEnd));
+                                        newCode.Append(replacementWord);
+                                        latsItemEnd = end;
+                                    }
+
+                                    newCode.Append(code.Substring(latsItemEnd, code.Length - latsItemEnd));
+
+                                    File.WriteAllText(file, newCode.ToString());
+
+                                    Npp.ReloadFile(false, file);
                                 }
                             }
+
                         }
                     }
                 }
+
+                Cursor.Current = Cursors.Default;
             });
         }
 

@@ -14,7 +14,10 @@ namespace CSScriptIntellisense
         public RenameForm(string from)
         {
             InitializeComponent();
+            toTextBox.Text =
             fromTextBox.Text = from;
+            toTextBox.SelectionStart = 0;
+            toTextBox.SelectionLength = from.Length;
         }
 
         private void RenameForm_Deactivate(object sender, EventArgs e)

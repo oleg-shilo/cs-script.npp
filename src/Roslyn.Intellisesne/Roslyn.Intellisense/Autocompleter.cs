@@ -163,15 +163,16 @@ namespace RoslynIntellisense
                                               var column = start.Character + 1;
                                               var filePath = x.SourceTree.FilePath;
 
-                                              var hint = File.ReadAllText(filePath).Substring(x.SourceSpan.Start).Split('\n').First().Trim();
-
                                               var fileContent = x.SourceTree.GetText().ToString();
                                               int pos = fileContent.IndexOf("///CS-Script auto-class generation");
-                                              if (pos != 1)
+                                              if (pos != -1)
                                               {
                                                   if (pos < x.SourceSpan.Start)
                                                       line--;
                                               }
+
+                                              var hint = fileContent.Substring(x.SourceSpan.Start).Split('\n').First().Trim();
+
                                               return $"{filePath}({line},{column}): {hint}";
                                           }).ToArray();
 
