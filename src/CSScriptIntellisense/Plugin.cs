@@ -74,7 +74,7 @@ namespace CSScriptIntellisense
                 if (!Config.Instance.DisableMethodInfo)
                     setCommand(cmdIndex++, "Show Method Info", ShowMethodInfo, "_ShowMethodInfo:F6");
                 setCommand(cmdIndex++, "Format Document", FormatDocument, "_FormatDocument:Ctrl+F8");
-                setCommand(cmdIndex++, "Rename... (Ctrl+R,R)", RenameMemberAtCaret, null);
+                setCommand(cmdIndex++, "Rename...   (Ctrl+R,R)", RenameMemberAtCaret, null);
                 setCommand(cmdIndex++, "Go To Definition", GoToDefinition, "_GoToDefinition:F12");
                 setCommand(cmdIndex++, "Find All References", FindAllReferences, "_FindAllReferences:Shift+F12");
                 setCommand(cmdIndex++, "---", null, null);
@@ -431,6 +431,8 @@ namespace CSScriptIntellisense
                     Point wordAtCaretLocation;
                     string wordToReplace = Npp.GetWordAtCursor(out wordAtCaretLocation, SimpleCodeCompletion.Delimiters);
 
+                    Npp.SetSelection(wordAtCaretLocation.X, wordAtCaretLocation.Y);
+
                     //prompt user
                     using (var input = new RenameForm(wordToReplace))
                     {
@@ -441,6 +443,9 @@ namespace CSScriptIntellisense
 
                         if (replacementWord.Any() && replacementWord != wordToReplace)
                         {
+                            Npp.ClearSelection();
+                            Npp.SaveCurrentFile();
+
                             //resolve
                             List<string> references = FindAllReferencesAtCaret().ToList();
 
@@ -485,6 +490,7 @@ namespace CSScriptIntellisense
                                                                .OrderByDescending(x => x.Start)
                                                                .GroupBy(x => x.File)
                                                                .ToDictionary(x => x.Key, x => x);
+
                             foreach (var file in fileReplecements.Keys)
                             {
                                 var items = fileReplecements[file];
@@ -495,49 +501,39 @@ namespace CSScriptIntellisense
                                     int itemsBeforeCaret = items.Count(x => x.Start < wordAtCaretLocation.X);
                                     diff = (wordToReplace.Length - replacementWord.Length) * itemsBeforeCaret;
                                 }
-                                //else
+
+                                string code = File.ReadAllText(file);
+                                var newCode = new StringBuilder(500);
+
+                                var entries = items.OrderBy(x => x.Start).ToArray();
+
+                                int latsItemEnd = 0;
+                                foreach (var item in entries)
                                 {
-                                    string code = File.ReadAllText(file);
-                                    var newCode = new StringBuilder(500);
+                                    int start = item.Start;
+                                    int end = item.End;
 
-                                    var entries = items.OrderBy(x => x.Start).ToArray();
-
-                                    int latsItemEnd = 0;
-                                    foreach (var item in entries)
-                                    {
-                                        int start = item.Start;
-                                        int end = item.End;
-
-                                        newCode.Append(code.Substring(latsItemEnd, start - latsItemEnd));
-                                        newCode.Append(replacementWord);
-                                        latsItemEnd = end;
-                                    }
-
-                                    newCode.Append(code.Substring(latsItemEnd, code.Length - latsItemEnd));
-
-                                    File.WriteAllText(file, newCode.ToString());
-                                    //if (file == currentDocFile)
-                                    //    File.WriteAllText(@"E:\Dev\PyQt\Explorer\dev.cs", newCode.ToString());
-                                    //else
-                                    //    File.WriteAllText(@"E:\Dev\PyQt\Explorer\test.cs", newCode.ToString());
-                                    Debug.WriteLine(file);
-                                    Npp.ReloadFile(false, file);
+                                    newCode.Append(code.Substring(latsItemEnd, start - latsItemEnd));
+                                    newCode.Append(replacementWord);
+                                    latsItemEnd = end;
                                 }
+
+                                newCode.Append(code.Substring(latsItemEnd, code.Length - latsItemEnd));
+
+                                File.WriteAllText(file, newCode.ToString());
+                                Debug.WriteLine(file);
+                                Npp.ReloadFile(false, file);
 
                                 if (file == currentDocFile)
                                 {
-                                    //int itemsBeforeCaret = items.Count(x => x.Start < wordAtCaretLocation.X);
-                                    //int diff = (wordToReplace.Length - replacementWord.Length) * itemsBeforeCaret;
-
-                                    //foreach (var item in items)
-                                    //    Npp.SetTextBetween(replacementWord, item.Start, item.End);
-
                                     Npp.SetCaretPosition(initialCaretPos - diff);
                                     Npp.ClearSelection();
                                 }
                             }
 
                         }
+
+                        Npp.ClearSelection();
                     }
                 }
 

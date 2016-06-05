@@ -1,4 +1,4 @@
-v1.0.53.0
+Release v1.0.53.0
 * "Rename symbol at caret" completed
 * Fixed problem with CodeMap not being auto-refreshed on tab/document switch.
 * Improved startup loading behaver (no more panels flickering)
