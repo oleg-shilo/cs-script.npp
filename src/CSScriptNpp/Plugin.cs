@@ -88,7 +88,8 @@ namespace CSScriptNpp
             Plugin.RunScriptAsExternal = () => Plugin.ProjectPanel.RunAsExternal();
             Plugin.DebugScript = () =>
             {
-                InitProjectPanel();
+                if(ProjectPanel == null)
+                    InitProjectPanel();
                 Plugin.ProjectPanel.Debug(false);
             };
         }

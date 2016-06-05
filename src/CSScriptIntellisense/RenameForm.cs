@@ -39,5 +39,14 @@ namespace CSScriptIntellisense
         }
 
         public string RenameTo { get; set; } = "";
+
+        private void toTextBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            //if (e.KeyCode == Keys.Return)
+            //{
+            //    RenameTo = toTextBox.Text;
+            //    Close();
+            //}
+        }
     }
 }

@@ -373,7 +373,19 @@ namespace CSScriptIntellisense
             {
                 if (Npp.IsCurrentScriptFile())
                 {
+                    DisplayInOutputPanel("Searching for references...");
+
                     string[] references = FindAllReferencesAtCaret();
+                    if (references.Count() == 0)
+                    {
+                        //It's hard to believe but Roslyn may return some references if just executed second time. 
+                        //Somehow timing matters. Most likely it's be fixed in the Roslyn production release.
+                        Thread.Sleep(100);
+                        Npp.SaveCurrentFile();
+                        EnsureCurrentFileParsed();
+                        references = FindAllReferencesAtCaret();
+                    }
+
                     if (references.Count() > 0)
                     {
                         string text = string.Format("{0} reference{1} found:{2}{3}",
@@ -384,6 +396,9 @@ namespace CSScriptIntellisense
 
                         DisplayInOutputPanel(text);
                     }
+                    else
+                        DisplayInOutputPanel("0 references found");
+
                 }
             });
         }
@@ -428,10 +443,13 @@ namespace CSScriptIntellisense
                         {
                             //resolve
                             List<string> references = FindAllReferencesAtCaret().ToList();
+
                             DomRegion definition = ResolveMemberAtCaret();
 
                             if (!definition.IsEmpty)
+                            {
                                 references.Add($"{definition.FileName}({definition.BeginLine},{definition.BeginColumn}): " + wordToReplace);
+                            }
 
                             //consolidate references
                             var replacements = references.Select(refString =>
@@ -439,7 +457,7 @@ namespace CSScriptIntellisense
                                                                      string file;
                                                                      int line, column;
 
-                                                                     //Example" "C:\Users\osh\Documents\C# Scripts\dev.cs(20,5): new Test..."
+                                                                     //Example" "C:\Users\<user>\Documents\C# Scripts\dev.cs(20,5): new Test..."
 
                                                                      if (StringExtesnions.ParseAsErrorFileReference(refString, out file, out line, out column))
                                                                      {
@@ -467,23 +485,17 @@ namespace CSScriptIntellisense
                                                                .OrderByDescending(x => x.Start)
                                                                .GroupBy(x => x.File)
                                                                .ToDictionary(x => x.Key, x => x);
-
                             foreach (var file in fileReplecements.Keys)
                             {
                                 var items = fileReplecements[file];
 
+                                int diff = 0;
                                 if (file == currentDocFile)
                                 {
                                     int itemsBeforeCaret = items.Count(x => x.Start < wordAtCaretLocation.X);
-                                    int diff = (wordToReplace.Length - replacementWord.Length) * itemsBeforeCaret;
-
-                                    foreach (var item in items)
-                                        Npp.SetTextBetween(replacementWord, item.Start, item.End);
-
-                                    Npp.SetCaretPosition(initialCaretPos - diff);
-                                    Npp.ClearSelection();
+                                    diff = (wordToReplace.Length - replacementWord.Length) * itemsBeforeCaret;
                                 }
-                                else
+                                //else
                                 {
                                     string code = File.ReadAllText(file);
                                     var newCode = new StringBuilder(500);
@@ -495,7 +507,6 @@ namespace CSScriptIntellisense
                                     {
                                         int start = item.Start;
                                         int end = item.End;
-                                        Debug.WriteLine(start);
 
                                         newCode.Append(code.Substring(latsItemEnd, start - latsItemEnd));
                                         newCode.Append(replacementWord);
@@ -505,8 +516,24 @@ namespace CSScriptIntellisense
                                     newCode.Append(code.Substring(latsItemEnd, code.Length - latsItemEnd));
 
                                     File.WriteAllText(file, newCode.ToString());
-
+                                    //if (file == currentDocFile)
+                                    //    File.WriteAllText(@"E:\Dev\PyQt\Explorer\dev.cs", newCode.ToString());
+                                    //else
+                                    //    File.WriteAllText(@"E:\Dev\PyQt\Explorer\test.cs", newCode.ToString());
+                                    Debug.WriteLine(file);
                                     Npp.ReloadFile(false, file);
+                                }
+
+                                if (file == currentDocFile)
+                                {
+                                    //int itemsBeforeCaret = items.Count(x => x.Start < wordAtCaretLocation.X);
+                                    //int diff = (wordToReplace.Length - replacementWord.Length) * itemsBeforeCaret;
+
+                                    //foreach (var item in items)
+                                    //    Npp.SetTextBetween(replacementWord, item.Start, item.End);
+
+                                    Npp.SetCaretPosition(initialCaretPos - diff);
+                                    Npp.ClearSelection();
                                 }
                             }
 
