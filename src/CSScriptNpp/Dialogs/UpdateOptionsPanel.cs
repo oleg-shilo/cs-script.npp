@@ -116,6 +116,9 @@ namespace CSScriptNpp.Dialogs
                                 string targetDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                                 string updater = DeployUpdater(targetDir, downloadDir);
 
+                                try { Invoke((Action) Close); }
+                                catch { }
+
                                 if (updateAfterExit.Checked)
                                 {
                                     MessageBox.Show("The plugin will be updated after you close Notepad++", "CS-Script");
@@ -123,7 +126,7 @@ namespace CSScriptNpp.Dialogs
                                 }
                                 else
                                 {
-                                    if (DialogResult.Yes == MessageBox.Show(@"Same installation steps still need an to be completed. Notepad++ needs to be restarted in older to complete thse steps. Would you like to restart now?",
+                                    if (DialogResult.Yes == MessageBox.Show(@"Some installation steps still need and to be completed. Notepad++ needs to be restarted in older to complete thse steeps. Would you like to restart now?",
                                                                               "CS-Script", MessageBoxButtons.YesNo))
                                     {
                                         Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
