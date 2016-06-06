@@ -170,20 +170,36 @@ namespace Microsoft.Samples.Debugging.MdbgEngine
         /// </summary>
         public void Dispose()
         {
-            // Our funtion list may hold onto unmanaged SymbolMethod objects, so dispose that too.
+            FlushSymbolReader();
+
+            // Our function list may hold onto unmanaged SymbolMethod objects, so dispose that too.
             m_functions.Dispose();
             m_functions = null;
 
+            m_module = null;
+            m_importer = null;
+        }
+
+        // Special thanks to Frank Stegerwald for fixing mem leak associated with the symbol reader 
+        private void FlushSymbolReader()
+        {
             // Release unmanaged resources
             if (m_symReader != null)
             {
                 // Disposing the symbol reader will release the file lock on the PDB (even when other
                 // reader COM objects have yet to be released by the garbage collector).
-                ((IDisposable)m_symReader).Dispose();
+                if (m_symReader is IDisposable)
+                    ((IDisposable) m_symReader).Dispose();
                 m_symReader = null;
             }
-            m_module = null;
-            m_importer = null;
+
+            // clear the cache of functions. This is necessary since the cache contains also
+            // information from symbol files. Reloading the files might cause the information
+            // in the cache to become stale.
+            if (m_functions != null)
+                m_functions.Clear();
+
+            m_isSymReaderInitialized = false;
         }
 
         /// <summary>
