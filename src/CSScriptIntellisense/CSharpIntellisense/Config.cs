@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -55,6 +56,7 @@ namespace CSScriptIntellisense
         public bool AutoInsertSingeSuggestion = false;
         public bool FallbackFormatting = false;
         public bool FormatAsYouType = true;
+        public string ScriptsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "NppScripts");
         public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
         public string DefaultRefAsms = "System.Linq, System.Xml, System.Xml.Linq, System.Windows.Forms, System.Drawing, System.Core, Microsoft.CSharp";
         public int MemberInfoMaxCharWidth = 100;
@@ -93,6 +95,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 SetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 SetValue(Section, "FormatAsYouType", FormatAsYouType);
+                SetValue(Section, "ScriptsDir", ScriptsDir);
             }
         }
 
@@ -110,6 +113,7 @@ namespace CSScriptIntellisense
                 SmartIndenting = GetValue(Section, "SmartIndenting", SmartIndenting);
                 CodeSnippetsEnabled = GetValue(Section, "CodeSnippetsEnabled", CodeSnippetsEnabled);
                 FormatAsYouType = GetValue(Section, "FormatAsYouType", FormatAsYouType);
+                ScriptsDir = GetValue(Section, "ScriptsDir", ScriptsDir);
                 ShowQuickInfoAsNativeNppTooltip = GetValue(Section, "ShowQuickInfoAsNativeNppTooltip", ShowQuickInfoAsNativeNppTooltip);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 MemberInfoMaxCharWidth = GetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);

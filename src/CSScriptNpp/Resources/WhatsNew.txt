@@ -1,5 +1,6 @@
-Release v1.0.53.0
+Release v1.1.0.0
 * "Rename symbol at caret" completed
+* Added setting custom 'Scripts Directory' from config panel. 
 * Fixed problem with CodeMap not being auto-refreshed on tab/document switch.
 * Improved startup loading behaver (no more panels flickering)
 * Added synchronization of closing secondary output panels with project panel

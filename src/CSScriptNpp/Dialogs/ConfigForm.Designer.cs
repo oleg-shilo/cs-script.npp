@@ -44,6 +44,8 @@
             this.installedEngine = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
+            this.scriptsDir = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -123,6 +125,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label1);
+            this.tabPage2.Controls.Add(this.scriptsDir);
             this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -143,7 +147,7 @@
             this.groupBox1.Controls.Add(this.installedEngine);
             this.groupBox1.Controls.Add(this.radioButton2);
             this.groupBox1.Controls.Add(this.embeddedEngine);
-            this.groupBox1.Location = new System.Drawing.Point(9, 16);
+            this.groupBox1.Location = new System.Drawing.Point(9, 60);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(398, 176);
             this.groupBox1.TabIndex = 0;
@@ -212,6 +216,22 @@
             this.embeddedEngine.UseVisualStyleBackColor = true;
             this.embeddedEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
             // 
+            // scriptsDir
+            // 
+            this.scriptsDir.Location = new System.Drawing.Point(9, 27);
+            this.scriptsDir.Name = "scriptsDir";
+            this.scriptsDir.Size = new System.Drawing.Size(398, 20);
+            this.scriptsDir.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(5, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Scripts Directory";
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -229,6 +249,7 @@
             this.generalPage.ResumeLayout(false);
             this.generalPage.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -252,5 +273,7 @@
         private System.Windows.Forms.TextBox installedEngineLocation;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.CheckBox restorePanels;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox scriptsDir;
     }
 }

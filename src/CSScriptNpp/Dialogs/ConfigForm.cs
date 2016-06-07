@@ -32,6 +32,7 @@ namespace CSScriptNpp
 
             installedEngineLocation.Text = CSScriptHelper.SystemCSScriptDir ?? "<not detected>";
             installedEngineLocation.SelectionStart = installedEngineLocation.Text.Length - 1;
+            scriptsDir.Text = CSScriptIntellisense.Config.Instance.ScriptsDir;
 
             embeddedEngine.Checked = data.UseEmbeddedEngine;
             restorePanels.Checked = data.RestorePanelsAtStartup;
@@ -51,14 +52,16 @@ namespace CSScriptNpp
 
         private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            CSScriptIntellisense.Config.Instance.ScriptsDir = scriptsDir.Text;
             panel.OnClosing();
+
             data.CheckUpdatesOnStartup = checkUpdates.Checked;
             data.UseEmbeddedEngine = embeddedEngine.Checked;
             data.RestorePanelsAtStartup = restorePanels.Checked;
-
             //data.UseRoslynProvider = useCS6.Checked;
             //all Roslyn individual config values are merged into RoslynIntellisense;
             data.UseRoslynProvider = CSScriptIntellisense.Config.Instance.RoslynIntellisense;
+
 
             if (customEngine.Checked)
             {

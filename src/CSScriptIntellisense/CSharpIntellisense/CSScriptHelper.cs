@@ -254,12 +254,20 @@ namespace CSScriptIntellisense
         {
             get
             {
-                string rootDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                string scriptDir = Path.Combine(rootDir, "NppScripts");
-
-                if (!Directory.Exists(scriptDir))
-                    Directory.CreateDirectory(scriptDir);
-
+                string scriptDir = Config.Instance.ScriptsDir;
+                try
+                {
+                    if (!Directory.Exists(scriptDir))
+                        Directory.CreateDirectory(scriptDir);
+                }
+                catch
+                {
+                    scriptDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "NppScripts");
+                    if (!Directory.Exists(scriptDir))
+                        Directory.CreateDirectory(scriptDir);
+                    Config.Instance.ScriptsDir = scriptDir;
+                    Config.Instance.Save();
+                }
                 return scriptDir;
             }
         }
