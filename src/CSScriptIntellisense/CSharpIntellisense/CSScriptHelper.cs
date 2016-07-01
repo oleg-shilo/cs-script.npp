@@ -89,10 +89,10 @@ namespace CSScriptIntellisense
 
             //some assemblies are referenced from code and some will need to be resolved from the namespaces
             bool disableNamespaceResolving = (parser.IgnoreNamespaces.Count() == 1 && parser.IgnoreNamespaces[0] == "*");
-            
+
             if (!disableNamespaceResolving)
             {
-                var asmNames = refAsms.Select(x=>Path.GetFileNameWithoutExtension(x).ToUpper()).ToArray();
+                var asmNames = refAsms.Select(x => Path.GetFileNameWithoutExtension(x).ToUpper()).ToArray();
 
                 var refNsAsms = parser.ReferencedNamespaces
                                       .Where(name => !string.IsNullOrEmpty(name))
@@ -112,7 +112,7 @@ namespace CSScriptIntellisense
         static public T CreateInstanceFromAndUnwrap<T>(this AppDomain domain)
         {
             Type type = typeof(T);
-            return (T)domain.CreateInstanceFromAndUnwrap(type.Assembly.Location, type.ToString());
+            return (T) domain.CreateInstanceFromAndUnwrap(type.Assembly.Location, type.ToString());
         }
 
         class RemoteResolver : MarshalByRefObject
@@ -254,20 +254,9 @@ namespace CSScriptIntellisense
         {
             get
             {
-                string scriptDir = Config.Instance.ScriptsDir;
-                try
-                {
-                    if (!Directory.Exists(scriptDir))
-                        Directory.CreateDirectory(scriptDir);
-                }
-                catch
-                {
-                    scriptDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "NppScripts");
-                    if (!Directory.Exists(scriptDir))
-                        Directory.CreateDirectory(scriptDir);
-                    Config.Instance.ScriptsDir = scriptDir;
-                    Config.Instance.Save();
-                }
+                string scriptDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "NppScripts");
+                if (!Directory.Exists(scriptDir))
+                    Directory.CreateDirectory(scriptDir);
                 return scriptDir;
             }
         }

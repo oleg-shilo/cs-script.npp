@@ -52,6 +52,7 @@ namespace CSScriptNpp
         public bool SyncSecondaryPanelsWithProjectPanel = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
+        public string ScriptsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "C# Scripts");
         public string SkipUpdateVersion = "";
         //public string ScriptEngineLocation = "";
         public string CsSConsoleEncoding = "utf-8";
@@ -118,6 +119,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
                     SetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
+                    SetValue(Section, nameof(ScriptsDir), ScriptsDir);
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                     SetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
@@ -189,6 +191,7 @@ namespace CSScriptNpp
                 CheckUpdatesOnStartup = GetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
                 CheckPrereleaseUpdates = GetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
+                ScriptsDir = GetValue(Section, nameof(ScriptsDir), ScriptsDir);
                 UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                 StartRoslynServerAtStartup = GetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
