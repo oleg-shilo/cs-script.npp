@@ -12,6 +12,7 @@ namespace CompatibilityTest
     {
         static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             var file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Notepad++\plugins\CSScriptNpp.dll");
 
             if (args.Any())
@@ -42,6 +43,12 @@ namespace CompatibilityTest
 
             Console.WriteLine("\n\nPress 'Enter' to continue . . .");
             Console.ReadLine();
+        }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            Console.WriteLine("Trying to resolve " + args.Name);
+            return null;
         }
     }
 }

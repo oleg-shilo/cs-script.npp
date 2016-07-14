@@ -309,6 +309,11 @@ namespace CSScriptNpp
 
     static class MouseControlledZoomingBehavier
     {
+        static public void ChangeFontSize(this Control control, int sizeDelta)
+        {
+            control.Font = new Font(control.Font.FontFamily, control.Font.Size + sizeDelta);
+        }
+
         static public void AttachMouseControlledZooming(this Control control, Action<Control, bool> customHandler = null)
         {
             AttachTo(control, customHandler);
@@ -329,7 +334,7 @@ namespace CSScriptNpp
                 else
                 {
                     var fontSizeDelta = e.Delta > 0 ? 2 : -2;
-                    control.Font = new Font(control.Font.FontFamily, control.Font.Size + fontSizeDelta);
+                    control.ChangeFontSize(fontSizeDelta);
                 }
             }
         }

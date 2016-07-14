@@ -15,7 +15,6 @@ namespace CSScriptNpp.Dialogs
         {
             InitializeComponent();
             scriptsList.AttachMouseControlledZooming(ScriptsList_OnZoom);
-            scriptsList.DrawMode = DrawMode.OwnerDrawFixed;
             Reload();
             Save();
         }
@@ -23,7 +22,7 @@ namespace CSScriptNpp.Dialogs
         private void ScriptsList_OnZoom(Control sender, bool zoomIn)
         {
             var fontSizeDelta = zoomIn ? 2 : -2;
-            scriptsList.Font = new Font(scriptsList.Font.FontFamily, scriptsList.Font.Size + fontSizeDelta);
+            sender.ChangeFontSize(fontSizeDelta);
             UpdateItemHeight();
         }
 

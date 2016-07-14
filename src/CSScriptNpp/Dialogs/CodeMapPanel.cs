@@ -13,6 +13,18 @@ namespace CSScriptNpp
 {
     public partial class CodeMapPanel : Form
     {
+        class MemberInfo
+        {
+            public int Line = -1;
+            public string Content = "";
+            public string ContentType = "";
+            public string ContentIndent = "";
+            public override string ToString()
+            {
+                return Content;
+            }
+        }
+
         static public CodeMapPanel Instance;
 
         public CodeMapPanel()
@@ -25,6 +37,44 @@ namespace CSScriptNpp
             watcher.EnableRaisingEvents = false;
             mapTxt.AttachMouseControlledZooming();
             ErrorMessage = null;
+            membersList.AttachMouseControlledZooming(MembersList_OnZoom);
+            UpdateItemHeight();
+        }
+
+        private void MembersList_OnZoom(Control sender, bool zoomIn)
+        {
+            var fontSizeDelta = zoomIn ? 2 : -2;
+            sender.ChangeFontSize(fontSizeDelta);
+            UpdateItemHeight();
+        }
+
+        void UpdateItemHeight()
+        {
+            var textHeight = (int) membersList.CreateGraphics().MeasureString("H", membersList.Font).Height;
+            membersList.ItemHeight = textHeight + 2;
+        }
+
+        void MembersList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (membersList.SelectedItem != null)
+            {
+                var info = (membersList.SelectedItem as MemberInfo);
+                try
+                {
+                    membersList.SelectedItem = null;
+                    if (info.Line != -1)
+                    {
+                        Npp.GrabFocus();
+                        int currentLineNum = Npp.GetCaretLineNumber();
+                        int prevLineEnd = Npp.GetLineStart(currentLineNum) - Environment.NewLine.Length;
+                        int topScrollOffset = currentLineNum - Npp.GetFirstVisibleLine();
+
+                        Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, info.Line, 0);
+                        Npp.SetFirstVisibleLine(info.Line - topScrollOffset);
+                    }
+                }
+                catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
+            }
         }
 
         void mapTxt_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -60,7 +110,7 @@ namespace CSScriptNpp
             string file = Npp.GetCurrentFile();
             if (file.IsScriptFile() || file.IsPythonFile())
             {
-                mapTxt.Visible = true;
+                membersList.Visible = true;
                 if (file != currentFile)
                 {
                     currentFile = file;
@@ -76,7 +126,47 @@ namespace CSScriptNpp
                     GenerateContentPython(Npp.GetTextBetween(0));
             }
             else
-                mapTxt.Visible = false;
+            {
+                membersList.Visible = false;
+            }
+        }
+
+        StringFormat format = new StringFormat
+        {
+            FormatFlags = StringFormatFlags.NoWrap,
+            Trimming = StringTrimming.None
+        };
+
+        void memberList_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index != -1)
+            {
+                e.DrawBackground();
+                var info = membersList.Items[e.Index] as MemberInfo;
+
+                var brush = Brushes.Black;
+
+                if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                    brush = Brushes.White;
+                else
+                    e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+
+                var bounds = e.Bounds;
+                var normalFont = e.Font;
+                var italicFont = new Font(e.Font, FontStyle.Italic);
+                
+                bounds.Offset(info.ContentIndent.Length*3, 0);
+
+                var font = italicFont;
+                e.Graphics.DrawString(info.ContentType, font, brush, bounds, StringFormat.GenericDefault);
+                var size = e.Graphics.MeasureString(info.ContentType, font);
+                bounds.Offset((int) size.Width, 0);
+
+                font = normalFont;
+                e.Graphics.DrawString(info.Content, font, brush, bounds, format);
+
+                //e.DrawFocusRectangle();
+            }
         }
 
         void watcher_Changed(object sender, FileSystemEventArgs e)
@@ -117,45 +207,25 @@ namespace CSScriptNpp
                     }
                     var members = Reflector.GetMapOf(code).OrderBy(x => x.ParentDisplayName).ToArray();
 
-                    var builder = new StringBuilder();
-
-                    currentMapping.Clear();
-                    int lineNumber = 0;
+                    membersList.Items.Clear();
 
                     string currentType = null;
 
                     foreach (Reflector.CodeMapItem item in members)
                     {
-                        //eventually coordinates should go to the attached object instead
-                        //of being embedded into text
-
                         if (currentType != item.ParentDisplayName)
                         {
                             currentType = item.ParentDisplayName;
 
-                            if (builder.Length != 0)
-                            {
-                                builder.AppendLine(); //separator
-                                currentMapping.Add(lineNumber, -1);
-                                lineNumber++;
-                            }
+                            if (membersList.Items.Count != 0)
+                                membersList.Items.Add(new MemberInfo { Line = -1 });
 
-                            builder.AppendLine(item.ParentDisplayName);
-                            currentMapping.Add(lineNumber, -1);
-                            lineNumber++;
+                            membersList.Items.Add(new MemberInfo { Content = item.ParentDisplayName, Line = -1 });
                         }
 
-                        string entry = "    " + item.DisplayName;
-                        if (Config.Instance.ShowLineNuberInCodeMap)
-                            entry += ": Line " + item.Line;
-
-                        builder.AppendLine(entry);
-                        currentMapping.Add(lineNumber, item.Line);
-                        lineNumber++;
-
+                        membersList.Items.Add(new MemberInfo { Content = item.DisplayName, ContentIndent = "    ",  Line = item.Line-1 });
                     }
 
-                    mapTxt.Text = builder.ToString();
                     ErrorMessage = null;
                 }
             }
@@ -181,11 +251,7 @@ namespace CSScriptNpp
                     else
                         code = File.ReadAllLines(currentFile);
 
-                    var builder = new StringBuilder();
-
-                    currentMapping.Clear();
-
-                    int lineNumber = 0;
+                    membersList.Items.Clear();
 
                     for (int i = 0; i < code.Length; i++)
                     {
@@ -193,26 +259,26 @@ namespace CSScriptNpp
 
                         if (line.StartsWithAny("def ", "class "))
                         {
+                            var info = new MemberInfo();
+                            info.ContentIndent = new string(' ', (code[i].Length - line.Length));
+                            info.Line = i;
+
                             if (line.StartsWith("class "))
                             {
-                                builder.AppendLine();
-                                lineNumber++;
+                                membersList.Items.Add(new MemberInfo { Line = -1 });
+                                info.ContentType = "class ";
+                                info.Content = line.Substring("class ".Length).TrimEnd();
+                            }
+                            else
+                            {
+                                info.ContentType = "def ";
+                                info.Content = line.Substring("def ".Length).TrimEnd();
                             }
 
-                            string indent = new string(' ', (code[i].Length - line.Length) / 2);
-                            string entry = indent + line.TrimEnd();
-
-                            var memberLineNumber = (i + 1);
-                            if (Config.Instance.ShowLineNuberInCodeMap)
-                                entry += ": Line " + memberLineNumber;
-
-                            builder.AppendLine(entry);
-                            currentMapping.Add(lineNumber, memberLineNumber);
-                            lineNumber++;
+                            membersList.Items.Add(info);
                         }
                     }
 
-                    mapTxt.Text = builder.ToString();
                     ErrorMessage = null;
                 }
             }

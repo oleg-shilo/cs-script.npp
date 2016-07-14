@@ -20,6 +20,11 @@ namespace CSScriptIntellisense
             return file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".csx", StringComparison.InvariantCultureIgnoreCase);
         }
 
+        public static bool IsPythonFile(this string file)
+        {
+            return file.EndsWith(".py", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".pyw", StringComparison.InvariantCultureIgnoreCase);
+        }
+
         //need to read text as we cannot ask NPP to calculate the position as the file may not be opened (e.g. auto-generated)
         public static int GetPosition(string file, int line, int column) //offsets are 0-based
         {

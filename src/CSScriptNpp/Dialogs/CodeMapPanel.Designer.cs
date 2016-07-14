@@ -31,6 +31,7 @@
             this.mapTxt = new System.Windows.Forms.TextBox();
             this.refreshLabel = new System.Windows.Forms.LinkLabel();
             this.error = new System.Windows.Forms.TextBox();
+            this.membersList = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // mapTxt
@@ -44,6 +45,7 @@
             this.mapTxt.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.mapTxt.Size = new System.Drawing.Size(284, 261);
             this.mapTxt.TabIndex = 0;
+            this.mapTxt.Visible = false;
             this.mapTxt.WordWrap = false;
             this.mapTxt.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mapTxt_MouseDoubleClick);
             // 
@@ -75,14 +77,26 @@
             this.error.Size = new System.Drawing.Size(195, 64);
             this.error.TabIndex = 3;
             // 
+            // membersList
+            // 
+            this.membersList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.membersList.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.membersList.Location = new System.Drawing.Point(0, 0);
+            this.membersList.Name = "membersList";
+            this.membersList.Size = new System.Drawing.Size(284, 261);
+            this.membersList.TabIndex = 4;
+            this.membersList.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.memberList_DrawItem);
+            this.membersList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MembersList_MouseDoubleClick);
+            // 
             // CodeMapPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Controls.Add(this.error);
             this.Controls.Add(this.refreshLabel);
+            this.Controls.Add(this.error);
+            this.Controls.Add(this.membersList);
             this.Controls.Add(this.mapTxt);
             this.Name = "CodeMapPanel";
             this.Text = "CS-Script Code Map";
@@ -97,5 +111,6 @@
         private System.Windows.Forms.TextBox mapTxt;
         private System.Windows.Forms.LinkLabel refreshLabel;
         private System.Windows.Forms.TextBox error;
+        private System.Windows.Forms.ListBox membersList;
     }
 }
