@@ -213,6 +213,7 @@ namespace CSScriptNpp
             textBox.Font = new Font("Courier New", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textBox.MouseDoubleClick += textBox_MouseDoubleClick;
             textBox.KeyDown += TextBox_KeyDown; 
+            textBox.AttachMouseControlledZooming();
 
             textBox.Visible = true;
 

@@ -1,6 +1,8 @@
 ﻿using CSScriptIntellisense;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,7 +23,7 @@ namespace CSScriptNpp
             watcher.NotifyFilter = NotifyFilters.LastWrite;
             watcher.Changed += watcher_Changed;
             watcher.EnableRaisingEvents = false;
-
+            mapTxt.AttachMouseControlledZooming();
             ErrorMessage = null;
         }
 
@@ -56,7 +58,7 @@ namespace CSScriptNpp
         public void RefreshContent()
         {
             string file = Npp.GetCurrentFile();
-            if (file.IsScriptFile())
+            if (file.IsScriptFile() || file.IsPythonFile())
             {
                 mapTxt.Visible = true;
                 if (file != currentFile)
@@ -68,7 +70,10 @@ namespace CSScriptNpp
                 }
 
                 mapTxt.Text = "";
-                GenerateContent(Npp.GetTextBetween(0));
+                if (file.IsScriptFile())
+                    GenerateContent(Npp.GetTextBetween(0));
+                else if (file.IsPythonFile())
+                    GenerateContentPython(Npp.GetTextBetween(0));
             }
             else
                 mapTxt.Visible = false;
@@ -148,6 +153,63 @@ namespace CSScriptNpp
                         currentMapping.Add(lineNumber, item.Line);
                         lineNumber++;
 
+                    }
+
+                    mapTxt.Text = builder.ToString();
+                    ErrorMessage = null;
+                }
+            }
+            catch (Reflector.SyntaxErrorException e)
+            {
+                mapTxt.Text = "";
+                ErrorMessage = e.Message;
+            }
+            catch
+            {
+            }
+        }
+
+        public void GenerateContentPython(string codeToAnalyse = null)
+        {
+            try
+            {
+                if (currentFile.IsPythonFile())
+                {
+                    string[] code;
+                    if (codeToAnalyse != null)
+                        code = codeToAnalyse.Split('\n');
+                    else
+                        code = File.ReadAllLines(currentFile);
+
+                    var builder = new StringBuilder();
+
+                    currentMapping.Clear();
+
+                    int lineNumber = 0;
+
+                    for (int i = 0; i < code.Length; i++)
+                    {
+                        var line = code[i].TrimStart();
+
+                        if (line.StartsWithAny("def ", "class "))
+                        {
+                            if (line.StartsWith("class "))
+                            {
+                                builder.AppendLine();
+                                lineNumber++;
+                            }
+
+                            string indent = new string(' ', (code[i].Length - line.Length) / 2);
+                            string entry = indent + line.TrimEnd();
+
+                            var memberLineNumber = (i + 1);
+                            if (Config.Instance.ShowLineNuberInCodeMap)
+                                entry += ": Line " + memberLineNumber;
+
+                            builder.AppendLine(entry);
+                            currentMapping.Add(lineNumber, memberLineNumber);
+                            lineNumber++;
+                        }
                     }
 
                     mapTxt.Text = builder.ToString();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,8 +14,23 @@ namespace CSScriptNpp.Dialogs
         public FavoritesPanel()
         {
             InitializeComponent();
+            scriptsList.AttachMouseControlledZooming(ScriptsList_OnZoom);
+            scriptsList.DrawMode = DrawMode.OwnerDrawFixed;
             Reload();
             Save();
+        }
+
+        private void ScriptsList_OnZoom(Control sender, bool zoomIn)
+        {
+            var fontSizeDelta = zoomIn ? 2 : -2;
+            scriptsList.Font = new Font(scriptsList.Font.FontFamily, scriptsList.Font.Size + fontSizeDelta);
+            UpdateItemHeight();
+        }
+
+        void UpdateItemHeight()
+        {
+            var textHeight = (int) scriptsList.CreateGraphics().MeasureString("H", scriptsList.Font).Height;
+            scriptsList.ItemHeight = textHeight + 2;
         }
 
         public void Add(string script)
@@ -147,6 +163,11 @@ namespace CSScriptNpp.Dialogs
             }
             else
                 toolTip1.SetToolTip(scriptsList, null);
+        }
+
+        private void FavoritesPanel_Load(object sender, EventArgs e)
+        {
+            UpdateItemHeight();
         }
     }
 

@@ -43,6 +43,8 @@ namespace CSScriptNpp
             ReloadScriptHistory();
             LoadReleaseNotes();
 
+            treeView1.AttachMouseControlledZooming();
+
             toolStripPersistance = new ToolStripPersistance(toolStrip1, settingsFile);
             toolStripPersistance.Load();
 

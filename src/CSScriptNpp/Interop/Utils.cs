@@ -68,12 +68,12 @@ namespace CSScriptNpp
                         index = colors.Count + 65;
                         colors.Add(col);
                         if (index > 90) index += 6;
-                        c = Encoding.ASCII.GetChars(new byte[] { (byte)(index & 0xff) })[0];
+                        c = Encoding.ASCII.GetChars(new byte[] { (byte) (index & 0xff) })[0];
                         chars.Add(c);
                         sb.Insert(colorsIndex, ",\"" + c + " c " + col + "\"");
                         colorsIndex += 14;
                     }
-                    else c = (char)chars[index];
+                    else c = (char) chars[index];
                     sb.Append(c);
                 }
                 sb.Append("\"");
@@ -149,6 +149,11 @@ namespace CSScriptNpp
         public static bool IsEmpty(this string text)
         {
             return string.IsNullOrEmpty(text);
+        }
+
+        public static bool StartsWithAny(this string text, params string[] patterns)
+        {
+            return patterns.Any(x => text.StartsWith(x));
         }
 
         //type.member       - resolve
@@ -302,4 +307,31 @@ namespace CSScriptNpp
         }
     }
 
+    static class MouseControlledZoomingBehavier
+    {
+        static public void AttachMouseControlledZooming(this Control control, Action<Control, bool> customHandler = null)
+        {
+            AttachTo(control, customHandler);
+        }
+
+        static public void AttachTo(Control control, Action<Control, bool> customHandler = null)
+        {
+            control.MouseWheel += (s, e) => MapTxt_MouseWheel(s, e, customHandler);
+        }
+
+        static void MapTxt_MouseWheel(object sender, MouseEventArgs e, Action<Control, bool> customHandler)
+        {
+            if (KeyInterceptor.IsPressed(Keys.ControlKey))
+            {
+                var control = (Control) sender;
+                if (customHandler != null)
+                    customHandler(control, e.Delta > 0);
+                else
+                {
+                    var fontSizeDelta = e.Delta > 0 ? 2 : -2;
+                    control.Font = new Font(control.Font.FontFamily, control.Font.Size + fontSizeDelta);
+                }
+            }
+        }
+    }
 }

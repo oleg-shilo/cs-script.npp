@@ -98,6 +98,7 @@
             this.Controls.Add(this.scriptsList);
             this.Name = "FavoritesPanel";
             this.Text = "FavoritesPanel";
+            this.Load += new System.EventHandler(this.FavoritesPanel_Load);
             this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
