@@ -447,14 +447,14 @@ using System.Windows.Forms;
 
 class Script
 {
-	[STAThread]
-	static public void Main(string[] args)
-	{
-		for (int i = 0; i < args.Length; i++)
-		{
-			Console.WriteLine(args[i]);
-		}
-	}
+    [STAThread]
+    static public void Main(string[] args)
+    {
+        for (int i = 0; i < args.Length; i++)
+        {
+            Console.WriteLine(args[i]);
+        }
+    }
 }");
                 File.SetLastWriteTimeUtc(file, DateTime.Now.ToUniversalTime());
 

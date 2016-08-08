@@ -1,6 +1,6 @@
-Release v1.1.0.0
-* "Rename symbol at caret" completed
-* Added setting custom 'Scripts Directory' from config panel. 
-* Fixed problem with CodeMap not being auto-refreshed on tab/document switch.
-* Improved startup loading behaver (no more panels flickering)
-* Added synchronization of closing secondary output panels with project panel
+Release v1.2.0.0
+* Added CodeMap support for Python files
+* Added mouse controlled zoom for all output and project panels
+* Updated CS-Script engine (v3.14.0.0)
+  - Added wild card support for includes
+    (e.g. //css_inc helper_*.cs)

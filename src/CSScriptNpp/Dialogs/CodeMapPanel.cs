@@ -158,7 +158,7 @@ namespace CSScriptNpp
                 bounds.Offset(info.ContentIndent.Length*3, 0);
 
                 var font = italicFont;
-                e.Graphics.DrawString(info.ContentType, font, brush, bounds, StringFormat.GenericDefault);
+                e.Graphics.DrawString(info.ContentType, font, Brushes.Blue, bounds, StringFormat.GenericDefault);
                 var size = e.Graphics.MeasureString(info.ContentType, font);
                 bounds.Offset((int) size.Width, 0);
 

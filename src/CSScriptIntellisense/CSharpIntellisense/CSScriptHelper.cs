@@ -56,6 +56,7 @@ namespace CSScriptIntellisense
                     dirs.AddRange(doc.FirstChild
                                      .SelectSingleNode("searchDirs")
                                      .InnerText.Split(';')
+                                     .Where(x=>x.Any())
                                      .Select(x => Environment.ExpandEnvironmentVariables(x)));
                 }
             }

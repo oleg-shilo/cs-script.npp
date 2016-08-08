@@ -121,25 +121,28 @@
             <param name="isFile">If set to 'true' the script is a file, otherwise it is a C# code.</param>
             <param name="directivesToSearch">Additional C# script directives to search. The search result is stored in CSharpParser.CustomDirectives.</param>
         </member>
+        <member name="M:csscript.CSharpParser.#ctor(System.String,System.Boolean,System.String[],System.String[])">
+            <summary>
+            Creates an instance of CSharpParser.
+            </summary>
+            <param name="script">C# script (code or file).</param>
+            <param name="isFile">If set to 'true' the script is a file, otherwise it is a C# code.</param>
+            <param name="directivesToSearch">Additional C# script directives to search. The search result is stored in CSharpParser.CustomDirectives.</param>
+            <param name="probingDirs">Search directories for resolving wild card paths in //css_inc and //css_imp</param>
+        </member>
         <member name="F:csscript.CSharpParser.CustomDirectives">
             <summary>
             The result of search for additional C# script directives to search (directive vs. value).
             </summary>
         </member>
-        <member name="M:csscript.CSharpParser.Init(System.String,System.String)">
-            <summary>
-            Parses the C# code. Only one of the 'code' and 'file' parameters can be non empty.
-            </summary>
-            <param name="code">C# script code (empty string if code is in a file form).</param>
-            <param name="file">The script file name (empty if code is in the text form).</param>
-        </member>
-        <member name="M:csscript.CSharpParser.Init(System.String,System.String,System.String[])">
+        <member name="M:csscript.CSharpParser.Init(System.String,System.String,System.String[],System.String[])">
             <summary>
             Parses the C# code.
             </summary>
             <param name="code">C# script (code or file).</param>
             <param name="file">If set to 'true' the script is a file, otherwise it is a C# code.</param>
             <param name="directivesToSearch">Additional C# script directives to search. The search result is stored in CSharpParser.CustomDirectives.</param>
+            <param name="probingDirs">Search directories for resolving wild card paths in //css_inc and //css_imp</param>
         </member>
         <member name="M:csscript.CSharpParser.DoRenaming(System.String[][],System.Boolean)">
             <summary>
@@ -362,6 +365,15 @@
             </summary>
         </member>
         <member name="T:csscript.ResolveSourceFileHandler">
+            <summary>
+            Delegate implementing source file probing algorithm.
+            </summary>
+            <param name="file">The file.</param>
+            <param name="searchDirs">The extra dirs.</param>
+            <param name="throwOnError">if set to <c>true</c> [throw on error].</param>
+            <returns></returns>
+        </member>
+        <member name="T:csscript.ResolveSourceFileAlgorithm">
             <summary>
             Delegate implementing source file probing algorithm.
             </summary>
@@ -3137,6 +3149,13 @@
             </summary>
             <value><c>true</c> if 'debug build'; otherwise, <c>false</c>.</value>
         </member>
+        <member name="P:CSScriptLibrary.IEvaluator.DisableReferencingFromCode">
+            <summary>
+            Gets or sets the flag indicating if the script code should be analyzed and the assemblies 
+            that the script depend on (via '//css_...' and 'using ...' directives) should be referenced.
+            </summary>
+            <value></value>
+        </member>
         <member name="M:CSScriptLibrary.CodeDomEvaluator.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:CSScriptLibrary.CodeDomEvaluator"/> class.
@@ -3530,6 +3549,13 @@
             <para>Note, currently only CodeDom fully supports generation of debugging symbols.</para>
             </summary>
             <value><c>true</c> if 'debug build'; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CSScriptLibrary.CodeDomEvaluator.DisableReferencingFromCode">
+            <summary>
+            Gets or sets the flag indicating if the script code should be analyzed and the assemblies 
+            that the script depend on (via '//css_...' and 'using ...' directives) should be referenced.
+            </summary>
+            <value></value>
         </member>
         <member name="T:CSScriptLibrary.BuildConfiguration">
             <summary>
@@ -4015,6 +4041,13 @@
             </summary>
             <value>The throw on error.</value>
         </member>
+        <member name="P:CSScriptLibrary.MonoEvaluator.DisableReferencingFromCode">
+            <summary>
+            Gets or sets the flag indicating if the script code should be analyzed and the assemblies 
+            that the script depend on (via '//css_...' and 'using ...' directives) should be referenced.
+            </summary>
+            <value></value>
+        </member>
         <member name="P:CSScriptLibrary.MonoEvaluator.AutoResetEvaluatorOnError">
             <summary>
             Gets or sets a value indicating whether to reset <c>Mono.Evaluator</c> automatically after it fails
@@ -4432,6 +4465,12 @@
             Default value of the <see cref="T:CSScriptLibrary.IEvaluator"/>.DebugBuild property controlling the generation of the debug symbols.
             </summary>
         </member>
+        <member name="P:CSScriptLibrary.EvaluatorConfig.RefernceDomainAsemblies">
+            <summary>
+            Flag that controls if the host AppDo,main referenced assemblies are automatically referenced at creation 
+            of <see cref="T:CSScriptLibrary.IEvaluator"/>.
+            </summary>
+        </member>
         <member name="P:CSScriptLibrary.EvaluatorConfig.Engine">
             <summary>
             Gets or sets the default evaluator engine type.
@@ -4647,6 +4686,13 @@
             </example>
             </para>
             </summary>
+        </member>
+        <member name="M:CSScriptLibrary.Sandbox.With``1(``0,System.Action{``0})">
+            <summary>
+            Extension method. To assist with Fluent API.
+            </summary>
+            <param name="obj">The object that is a subject of Fluent invocation.</param>
+            <param name="action">The action to be performed against object.</param>
         </member>
         <member name="M:CSScriptLibrary.Sandbox.Execute(System.Security.PermissionSet,CSScriptLibrary.Sandbox.Action)">
             <summary>
