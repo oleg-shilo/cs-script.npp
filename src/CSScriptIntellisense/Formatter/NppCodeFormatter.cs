@@ -8,15 +8,17 @@ namespace CSScriptIntellisense
     {
         public static void OnCharTyped(char c)
         {
-            if (Config.Instance.SmartIndenting)
-            {
-                switch (c)
-                {
-                    //case '\n': OnNewLine(); break; //it conflicts with N++ auto-indent
-                    case '{': OnOpenBracket(); break;
-                    case '}': OnCloseBracket(); break;
-                }
-            }
+            //it conflicts with N++ auto-indent (at least from v6.9.2)
+            //if (Config.Instance.SmartIndenting)
+            //{
+            //    switch (c)
+            //    {
+            //        //case '\n': OnNewLine(); break; //it conflicts with N++ auto-indent
+            //        case '{': OnOpenBracket(); break;
+            //        case '}': OnCloseBracket(); break;
+            //    }
+            //}
+
             //it conflicts with N++ auto-indent
             //else if (Config.Instance.FormatAsYouType)
             //{
@@ -37,8 +39,10 @@ namespace CSScriptIntellisense
                 if (prevLineText != "")
                     SourceCodeFormatter.FormatDocumentPrevLines();
             }
-            if (Config.Instance.SmartIndenting)
-                FormatCurrentLine();
+
+            //it conflicts with N++ auto-indent (at least from v6.9.2)
+            //if (Config.Instance.SmartIndenting)
+            //    FormatCurrentLine();
         }
 
         static void FormatCurrentLine()
