@@ -54,6 +54,14 @@ namespace CSScriptIntellisense
             }
         }
 
+        public static string NormalizeNewLines(this string code)
+        {
+            return code.Replace("\r\n", "${NL}")
+                       .Replace("\r", "${NL}")
+                       .Replace("\n", "${NL}")
+                       .Replace("${NL}", Environment.NewLine);
+        }
+
         public static bool IsToken(this string text, string pattern, int position)
         {
             if (position < text.Length)

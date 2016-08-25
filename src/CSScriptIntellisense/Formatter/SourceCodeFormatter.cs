@@ -19,6 +19,9 @@ namespace CSScriptIntellisense
             int currentPos = Npp.GetCaretPosition();
             CaretBeforeLastFormatting = currentPos;
             string code = Npp.GetTextBetween(0, Npp.DocEnd);
+
+            code = NormalizeNewLines(code, ref currentPos);
+
             int topScrollOffset = Npp.GetLineNumber(currentPos) - Npp.GetFirstVisibleLine();
             TopScrollOffsetBeforeLastFormatting = topScrollOffset;
 
@@ -31,6 +34,17 @@ namespace CSScriptIntellisense
 
             Npp.SetFirstVisibleLine(Npp.GetLineNumber(currentPos) - topScrollOffset);
         }
+
+        static public string NormalizeNewLines(string code, ref int currentPos)
+        {
+            var codeLeft = code.Substring(0, currentPos).NormalizeNewLines();
+            var codeRight = code.Substring(currentPos, code.Length - currentPos).NormalizeNewLines();
+
+            currentPos = codeLeft.Length;
+
+            return codeLeft + codeRight;
+        }
+        
 
         public static void FormatDocumentPrevLines()
         {

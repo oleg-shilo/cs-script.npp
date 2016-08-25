@@ -671,19 +671,19 @@ return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-00
         [Fact]
         public void ShouldMapPositionInFormattedCode()
         {
-            string rawCode = 
+            string rawCode =
 @"void main()
 {
       Cons|ole.WriteLine(""Hello World!"");
     Debug.WriteLine(""Hello World!"");
 }";
 
-            string formattedCode = 
+            string formattedCode =
 @"void main()
 {
     Cons|ole.WriteLine(""Hello World!"");
     Debug.WriteLine(""Hello World!"");
-}"; 
+}";
             int pos = rawCode.IndexOf('|');
             int expectedNewPos = formattedCode.IndexOf('|');
 
@@ -721,6 +721,22 @@ return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-00
             int pos = 0;
             int newPos = SyntaxMapper.MapAbsPosition(rawCode, pos, formattedCode);
             Assert.Equal(pos, newPos);
+        }
+
+        [Fact]
+        public void ShouldNormalizeMizedNewLines()
+        {
+            var before = "ab\r\n" +
+                         "ab\r" +
+                         "ab\r\n" +
+                         "ab\n" +
+                         "ab\r\n";
+            int offset = 8;
+
+            var after = SourceCodeFormatter.NormalizeNewLines(before, ref offset);
+
+            Assert.Equal("ab\r\nab\r\nab\r\nab\r\nab\r\n", after);
+            Assert.Equal(9, offset);
         }
 
         [Fact]
