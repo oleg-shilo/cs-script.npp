@@ -25,12 +25,12 @@ namespace CSScriptNpp
             this.file = file;
         }
 
-        public void SetValue<T>(string section, string key, T value)
+        public void SetValue<T>(string section, string key, T value, bool forceWriting = false)
         {
             try
             {
                 var val = value.ToString().Trim();
-                if(!val.IsEmpty())
+                if(!val.IsEmpty() || forceWriting)
                     WritePrivateProfileString(section, key.Trim(), value.ToString().Trim(), file);
             }
             catch { }

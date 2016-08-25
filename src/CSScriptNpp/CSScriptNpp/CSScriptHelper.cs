@@ -194,6 +194,18 @@ namespace CSScriptNpp
                     return Path.Combine(Plugin.PluginDir, name);
             }
         }
+        internal static string css_exe
+        {
+            get
+            {
+                string name = "css.exe";
+                var file = Path.Combine(ScriptEngineLocation, name);
+                if (File.Exists(file))
+                    return file;
+                else
+                    return Path.Combine(Plugin.PluginDir, name);
+            }
+        }
 
         internal static string csws_exe
         {
@@ -479,12 +491,26 @@ class Script
             if (!Config.Instance.RunExternalInDebugMode)
                 debugFlag = " ";
 
-            string args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateDefaultArgs(), script, debugFlag);
+            string args;
+            string host;
+
+            if (!Config.Instance.CustomAsyncHost.IsEmpty())
+            {
+                host = Config.Instance.CustomAsyncHost;
+                if (!Path.IsPathRooted(host))
+                    host = Path.Combine(Path.GetDirectoryName(cscs_exe), host);
+                args = string.Format("/nl {2}/l {0} {1}", GenerateDefaultArgs(), script, debugFlag);
+            }
+            else
+            {
+                host = ConsoleHostPath;
+                args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateDefaultArgs(), script, debugFlag);
+            }
 
             if (!RunningAsAdmin)
-                ProcessStart(ConsoleHostPath, args, IsAsAdminScriptFile(scriptFile));
+                ProcessStart(host, args, IsAsAdminScriptFile(scriptFile));
             else
-                ProcessStart(ConsoleHostPath, args);
+                ProcessStart(host, args);
         }
 
         static public void ExecuteDebug(string scriptFileCmd)
