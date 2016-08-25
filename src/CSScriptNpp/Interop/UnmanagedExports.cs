@@ -185,8 +185,11 @@ namespace CSScriptNpp
                     Debugger.RefreshBreakPointsFromContent();
                     Debugger.SaveBreakPointsFor(file);
 
-                    if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
+                    if (nc.nmhdr.code == (uint) NppMsg.NPPN_FILESAVED)
+                    {
                         Plugin.OnDocumentSaved();
+                        CSScriptIntellisense.Plugin.OnDocumentSaved();
+                    }
                 }
                 else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {

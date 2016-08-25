@@ -53,6 +53,7 @@ namespace CSScriptIntellisense
         public bool RoslynIntellisense = false;
         public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
+        public bool FormatOnSave = true;
         public bool AutoInsertSingeSuggestion = false;
         public bool FallbackFormatting = false;
         public bool FormatAsYouType = true;
@@ -83,6 +84,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 SetValue(Section, "SmartIndenting", SmartIndenting);
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
+                SetValue(Section, "FormatOnSave", FormatOnSave);
                 SetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
                 SetValue(Section, "RoslynFormatting", RoslynFormatting);
@@ -119,6 +121,7 @@ namespace CSScriptIntellisense
                 DefaultNamespaces = GetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
+                FormatOnSave = GetValue(Section, "FormatOnSave", FormatOnSave);
                 AutoInsertSingeSuggestion = GetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
                 RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);

@@ -37,6 +37,8 @@
             this.restorePanels = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
+            this.scriptsDir = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.customEngineLocation = new System.Windows.Forms.TextBox();
             this.installedEngineLocation = new System.Windows.Forms.TextBox();
@@ -44,8 +46,6 @@
             this.installedEngine = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
-            this.scriptsDir = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -56,7 +56,7 @@
             // 
             this.checkUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkUpdates.AutoSize = true;
-            this.checkUpdates.Location = new System.Drawing.Point(13, 200);
+            this.checkUpdates.Location = new System.Drawing.Point(13, 222);
             this.checkUpdates.Name = "checkUpdates";
             this.checkUpdates.Size = new System.Drawing.Size(160, 17);
             this.checkUpdates.TabIndex = 7;
@@ -67,7 +67,7 @@
             // 
             this.useCS6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.useCS6.AutoSize = true;
-            this.useCS6.Location = new System.Drawing.Point(143, 124);
+            this.useCS6.Location = new System.Drawing.Point(143, 146);
             this.useCS6.Name = "useCS6";
             this.useCS6.Size = new System.Drawing.Size(222, 17);
             this.useCS6.TabIndex = 7;
@@ -83,7 +83,7 @@
             this.contentControl.Location = new System.Drawing.Point(0, 0);
             this.contentControl.Name = "contentControl";
             this.contentControl.SelectedIndex = 0;
-            this.contentControl.Size = new System.Drawing.Size(423, 272);
+            this.contentControl.Size = new System.Drawing.Size(423, 294);
             this.contentControl.TabIndex = 8;
             // 
             // generalPage
@@ -95,7 +95,7 @@
             this.generalPage.Location = new System.Drawing.Point(4, 22);
             this.generalPage.Name = "generalPage";
             this.generalPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalPage.Size = new System.Drawing.Size(415, 246);
+            this.generalPage.Size = new System.Drawing.Size(415, 268);
             this.generalPage.TabIndex = 0;
             this.generalPage.Text = "General";
             this.generalPage.UseVisualStyleBackColor = true;
@@ -104,7 +104,7 @@
             // 
             this.restorePanels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.restorePanels.AutoSize = true;
-            this.restorePanels.Location = new System.Drawing.Point(13, 177);
+            this.restorePanels.Location = new System.Drawing.Point(13, 199);
             this.restorePanels.Name = "restorePanels";
             this.restorePanels.Size = new System.Drawing.Size(147, 17);
             this.restorePanels.TabIndex = 8;
@@ -115,7 +115,7 @@
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(10, 226);
+            this.linkLabel1.Location = new System.Drawing.Point(10, 248);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 5;
@@ -135,6 +135,22 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "CS-Script";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(5, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Scripts Directory";
+            // 
+            // scriptsDir
+            // 
+            this.scriptsDir.Location = new System.Drawing.Point(9, 27);
+            this.scriptsDir.Name = "scriptsDir";
+            this.scriptsDir.Size = new System.Drawing.Size(398, 20);
+            this.scriptsDir.TabIndex = 1;
             // 
             // groupBox1
             // 
@@ -216,27 +232,11 @@
             this.embeddedEngine.UseVisualStyleBackColor = true;
             this.embeddedEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
             // 
-            // scriptsDir
-            // 
-            this.scriptsDir.Location = new System.Drawing.Point(9, 27);
-            this.scriptsDir.Name = "scriptsDir";
-            this.scriptsDir.Size = new System.Drawing.Size(398, 20);
-            this.scriptsDir.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Scripts Directory";
-            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(423, 272);
+            this.ClientSize = new System.Drawing.Size(423, 294);
             this.Controls.Add(this.contentControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.KeyPreview = true;

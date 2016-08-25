@@ -42,6 +42,7 @@
             this.useContextMenu = new System.Windows.Forms.CheckBox();
             this.roslynIntellisense = new System.Windows.Forms.CheckBox();
             this.roslynFormatter = new System.Windows.Forms.CheckBox();
+            this.formatOnSave = new System.Windows.Forms.CheckBox();
             this.ContentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -112,7 +113,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(10, 172);
+            this.linkLabel1.Location = new System.Drawing.Point(10, 196);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 4;
@@ -122,6 +123,7 @@
             // 
             // ContentPanel
             // 
+            this.ContentPanel.Controls.Add(this.formatOnSave);
             this.ContentPanel.Controls.Add(this.useMethodBrackets);
             this.ContentPanel.Controls.Add(this.useArrow);
             this.ContentPanel.Controls.Add(this.autoInsertSingle);
@@ -134,13 +136,13 @@
             this.ContentPanel.Controls.Add(this.formatAsYouType);
             this.ContentPanel.Location = new System.Drawing.Point(13, 3);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 166);
+            this.ContentPanel.Size = new System.Drawing.Size(290, 190);
             this.ContentPanel.TabIndex = 5;
             // 
             // F12OnCtrlClick
             // 
             this.F12OnCtrlClick.AutoSize = true;
-            this.F12OnCtrlClick.Location = new System.Drawing.Point(0, 125);
+            this.F12OnCtrlClick.Location = new System.Drawing.Point(0, 147);
             this.F12OnCtrlClick.Name = "F12OnCtrlClick";
             this.F12OnCtrlClick.Size = new System.Drawing.Size(227, 17);
             this.F12OnCtrlClick.TabIndex = 2;
@@ -150,7 +152,7 @@
             // useContextMenu
             // 
             this.useContextMenu.AutoSize = true;
-            this.useContextMenu.Location = new System.Drawing.Point(0, 102);
+            this.useContextMenu.Location = new System.Drawing.Point(0, 124);
             this.useContextMenu.Name = "useContextMenu";
             this.useContextMenu.Size = new System.Drawing.Size(183, 17);
             this.useContextMenu.TabIndex = 2;
@@ -160,7 +162,7 @@
             // roslynIntellisense
             // 
             this.roslynIntellisense.AutoSize = true;
-            this.roslynIntellisense.Location = new System.Drawing.Point(0, 148);
+            this.roslynIntellisense.Location = new System.Drawing.Point(0, 170);
             this.roslynIntellisense.Name = "roslynIntellisense";
             this.roslynIntellisense.Size = new System.Drawing.Size(225, 17);
             this.roslynIntellisense.TabIndex = 2;
@@ -178,11 +180,21 @@
             this.roslynFormatter.UseVisualStyleBackColor = true;
             this.roslynFormatter.Visible = false;
             // 
+            // formatOnSave
+            // 
+            this.formatOnSave.AutoSize = true;
+            this.formatOnSave.Location = new System.Drawing.Point(0, 102);
+            this.formatOnSave.Name = "formatOnSave";
+            this.formatOnSave.Size = new System.Drawing.Size(99, 17);
+            this.formatOnSave.TabIndex = 3;
+            this.formatOnSave.Text = "Format on save";
+            this.formatOnSave.UseVisualStyleBackColor = true;
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 193);
+            this.ClientSize = new System.Drawing.Size(315, 220);
             this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -214,5 +226,6 @@
         private System.Windows.Forms.CheckBox autoInsertSingle;
         private System.Windows.Forms.CheckBox useContextMenu;
         private System.Windows.Forms.CheckBox F12OnCtrlClick;
+        private System.Windows.Forms.CheckBox formatOnSave;
     }
 }

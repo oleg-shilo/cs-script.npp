@@ -26,6 +26,7 @@ namespace CSScriptIntellisense
             intercept.Checked = data.InterceptCtrlSpace;
             ignoreDocExceptions.Checked = data.IgnoreDocExceptions;
             formatAsYouType.Checked = data.FormatAsYouType;
+            formatOnSave.Checked = data.FormatOnSave;
             autoInsertSingle.Checked = data.AutoInsertSingeSuggestion;
             roslynFormatter.Checked = data.RoslynFormatting;
             roslynIntellisense.Checked = data.RoslynIntellisense;
@@ -42,9 +43,10 @@ namespace CSScriptIntellisense
         {
             data.UseArrowToAccept = useArrow.Checked;
             data.InterceptCtrlSpace = intercept.Checked;
-            data.UseMethodBrackets = useMethodBrackets.Checked;
             data.IgnoreDocExceptions = ignoreDocExceptions.Checked;
             data.FormatAsYouType = formatAsYouType.Checked;
+            data.UseMethodBrackets = useMethodBrackets.Checked;
+            data.FormatOnSave = formatOnSave.Checked;
             data.AutoInsertSingeSuggestion = autoInsertSingle.Checked;
             data.RoslynFormatting = //roslynFormatter.Checked;
             data.RoslynIntellisense = roslynIntellisense.Checked;

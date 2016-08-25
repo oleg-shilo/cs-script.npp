@@ -79,6 +79,10 @@ namespace CSScriptIntellisense
             {
                 Plugin.OnNppReady();
             }
+            else if (Plugin.Enabled && nc.nmhdr.code == (uint) NppMsg.NPPN_FILESAVED)
+            {
+                Plugin.OnDocumentSaved();
+            }
             else if (Plugin.Enabled && nc.nmhdr.code == (uint)NppMsg.NPPN_FILEOPENED)
             {
                 Plugin.OnCurrentFileChanegd();
