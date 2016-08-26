@@ -599,7 +599,7 @@ namespace CSScriptNpp
             if (CodeMapPanel != null)
                 CodeMapPanel.RefreshContent();
 
-            if (Npp.IsCurrentScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtStartup)
+            if (Npp.IsCurrentScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtNppStartup)
             {
                 CSScriptHelper.InitRoslyn();
             }

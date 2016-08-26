@@ -44,7 +44,7 @@ namespace CSScriptNpp
         public bool CheckPrereleaseUpdates = false;
         public bool UseRoslynProvider = false;
         public bool RestorePanelsAtStartup = true;
-        public bool StartRoslynServerAtStartup = false;
+        public bool StartRoslynServerAtNppStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
@@ -123,7 +123,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                     SetValue(Section, nameof(ScriptsDir), ScriptsDir);
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
-                    SetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
+                    SetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                     SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
@@ -196,7 +196,7 @@ namespace CSScriptNpp
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                 ScriptsDir = GetValue(Section, nameof(ScriptsDir), ScriptsDir);
                 UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
-                StartRoslynServerAtStartup = GetValue(Section, nameof(StartRoslynServerAtStartup), StartRoslynServerAtStartup);
+                StartRoslynServerAtNppStartup = GetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);
