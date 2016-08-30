@@ -1,6 +1,5 @@
-Release v1.2.0.0
-* Added CodeMap support for Python files
-* Added mouse controlled zoom for all output and project panels
-* Updated CS-Script engine (v3.14.0.0)
-  - Added wild card support for includes
-    (e.g. //css_inc helper_*.cs)
+Release v1.2.1.0
+* Fixed 'competition' between N++ and CSScript.Npp auto-indentation 
+* Asynchronous starting Roslyn server at N++ startup is made a default behavior. The change dramatically improves UX by eliminating/hiding Roslyn startup delay. 
+The change became justified after long testing over numerous releases didn't reveal any serious issues associated with Roslyn.
+* Implemented setting the custom host for script AsyncRun.
