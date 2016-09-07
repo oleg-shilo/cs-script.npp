@@ -24,6 +24,8 @@ namespace RoslynIntellisense
             //IntellisenseSimple();
             //Intellisense();
 
+            Autocompleter.GetMapOf(File.ReadAllText(@"E:\Galos\Projects\TailRecursion\src\TailRecursion\samples.cs"), false);
+
 
              
             if (args.Contains("/test"))

@@ -152,6 +152,11 @@ namespace CSScriptIntellisense
             return data.PrepareForDisplay().ToCommon();
         }
 
+        public Common.CodeMapItem[] GetMapOf(string code, bool decorated)
+        {
+            return Reflector.GetMapOfImpl(code, decorated);
+        }
+
         public IEnumerable<Common.ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true) // not the best way to put in the whole string every time
         {
             try

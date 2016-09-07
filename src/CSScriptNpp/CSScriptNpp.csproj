@@ -417,6 +417,10 @@
       <Project>{eb8fc3a3-93e8-457b-b281-fafa5119611a}</Project>
       <Name>CSScriptIntellisense</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
+      <Project>{C67D7ED7-F350-4FD4-81B5-5E635FB08765}</Project>
+      <Name>Intellisense.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="CSScriptNpp\MDbg\enc.dll">

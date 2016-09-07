@@ -124,6 +124,32 @@ namespace CSScriptIntellisense
         }
 
         //----------------------------------
+        public static CodeMapItem[] GetMapOf(string code)
+        {
+            bool injected = CSScriptHelper.DecorateIfRequired(ref code);
+            CodeMapItem[] map;
+
+            if (Config.Instance.RoslynIntellisense)
+                map = RoslynEngine.GetMapOf(code, injected);
+            else
+                map = MonoEngine.GetMapOf(code, injected);
+
+            if (injected)
+            {
+                int injectedLineOffset = CSScriptHelper.GetDecorationInfo(code).Item1;
+                int injectedLineNumber = code.Substring(0, injectedLineOffset).Split('\n').Count();
+
+                map = map.Where(i => i.Line != injectedLineNumber).ToArray();
+
+                foreach (CodeMapItem item in map)
+                {
+                    if (item.Line >= injectedLineNumber)
+                        item.Line -= 1;
+                }
+            }
+            return map;
+        }
+        //----------------------------------
         public static IEnumerable<Intellisense.Common.TypeInfo> GetMissingUsings(string editorText, int offset, string fileName) // not the best way to put in the whole string every time
         {
             string nameToResolve = GetWordAt(editorText, offset);

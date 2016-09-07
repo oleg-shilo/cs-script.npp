@@ -182,7 +182,7 @@ namespace RoslynIntellisense
             return new string[0];
         }
 
-        public static DomRegion ResolveType(string typeName,string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        public static DomRegion ResolveType(string typeName, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             var code = $"class Test {{  void Init() {{ var t = typeof({typeName}|); }} }}";
             int position = code.IndexOf("|") - 1;
@@ -619,7 +619,92 @@ namespace RoslynIntellisense
 
             return suggestions;
         }
-    }
 
+        public static CodeMapItem[] GetMapOf(string code, bool decorated)
+        {
+            var root = CSharpSyntaxTree.ParseText(code)
+                                       .GetRoot();
+
+            var map = new List<CodeMapItem>();
+
+            var nodes = root.DescendantNodes();
+
+            var types = nodes.OfType<TypeDeclarationSyntax>()
+                             .OrderBy(x => x.FullSpan.End)
+                             .ToArray();
+
+
+            foreach (EnumDeclarationSyntax type in nodes.OfType<EnumDeclarationSyntax>())
+            {
+                var parentType = type.Parent as BaseTypeDeclarationSyntax;
+
+                map.Add(new CodeMapItem
+                {
+                    Line =   type.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                    Column = type.GetLocation().GetLineSpan().StartLinePosition.Character,
+                    DisplayName = type.Identifier.Text,
+                    ParentDisplayName = parentType.GetFullName(),
+                    MemberType = "Enum"
+                });
+            }
+
+            foreach (TypeDeclarationSyntax type in types)
+            {
+                foreach (var member in type.ChildNodes().OfType<MemberDeclarationSyntax>())
+                {
+                    if (member is MethodDeclarationSyntax)
+                    {
+                        var method = (member as MethodDeclarationSyntax);
+                        map.Add(new CodeMapItem
+                        {
+                            Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                            Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
+                            DisplayName = method.Identifier.Text + method.ParameterList,
+                            ParentDisplayName = type.GetFullName(),
+                            MemberType = "Method"
+                        });
+                    }
+                    else if (member is PropertyDeclarationSyntax)
+                    {
+                        var prop = (member as PropertyDeclarationSyntax);
+                        map.Add(new CodeMapItem
+                        {
+                            Line = prop.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                            Column = prop.GetLocation().GetLineSpan().StartLinePosition.Character,
+                            DisplayName = prop.Identifier.ValueText,
+                            ParentDisplayName = type.GetFullName(),
+                            MemberType = "Property"
+                        });
+                    }
+                    else if (member is FieldDeclarationSyntax)
+                    {
+                        var field = (member as FieldDeclarationSyntax);
+                        map.Add(new CodeMapItem
+                        {
+                            Line = field.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                            Column = field.GetLocation().GetLineSpan().StartLinePosition.Character,
+                            DisplayName = field.Declaration.Variables.First().Identifier.Text,
+                            ParentDisplayName = type.GetFullName(),
+                            MemberType = "Field"
+                        });
+                    }
+                }
+            }
+
+            if (decorated && map.Any())
+            {
+                string rootClassName = map.First().ParentDisplayName;
+                foreach (var item in map.Skip(1))
+                {
+                    if (item.ParentDisplayName == rootClassName)
+                        item.ParentDisplayName = "<Global>";
+                    else if (item.ParentDisplayName.StartsWith(rootClassName + "."))
+                        item.ParentDisplayName = item.ParentDisplayName.Substring(rootClassName.Length + 1);
+                }
+            }
+
+            return map.ToArray();
+        }
+    }
     //for member info SemanticModel.LookupSymbols can be tried
 }

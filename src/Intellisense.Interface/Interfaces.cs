@@ -15,6 +15,7 @@ namespace Intellisense.Common
         string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos);
         IEnumerable<TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName);
         DomRegion ResolveCSharpMember(string editorText, int offset, string fileName);
+        CodeMapItem[] GetMapOf(string code, bool decorated);
         void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies);
         void SetOption(string name, object value);
     }
@@ -37,6 +38,20 @@ namespace Intellisense.Common
         IEnumerable<ICompletionData> OverloadedData { get; }
 
         void AddOverload(ICompletionData data);
+    }
+
+    public class CodeMapItem
+    {
+        public int Column;
+        public int Line;
+        public string DisplayName;
+        public string ParentDisplayName;
+        public string MemberType;
+
+        public override string ToString()
+        {
+            return ParentDisplayName + "." + DisplayName;
+        }
     }
 
     public class TypeInfo

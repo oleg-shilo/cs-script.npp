@@ -1,4 +1,5 @@
 ﻿using CSScriptIntellisense;
+using Intellisense.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -205,13 +206,14 @@ namespace CSScriptNpp
                         else
                             code = File.ReadAllText(currentFile);
                     }
-                    var members = Reflector.GetMapOf(code).OrderBy(x => x.ParentDisplayName).ToArray();
+
+                    var members = SimpleCodeCompletion.GetMapOf(code).OrderBy(x => x.ParentDisplayName).ToArray();
 
                     membersList.Items.Clear();
 
                     string currentType = null;
 
-                    foreach (Reflector.CodeMapItem item in members)
+                    foreach (CodeMapItem item in members)
                     {
                         if (currentType != item.ParentDisplayName)
                         {

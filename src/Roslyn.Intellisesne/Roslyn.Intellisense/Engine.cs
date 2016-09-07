@@ -81,6 +81,11 @@ namespace RoslynIntellisense
             return result;
         }
 
+        public CodeMapItem[] GetMapOf(string code, bool decorated)
+        {
+            return Autocompleter.GetMapOf(code, decorated);
+        }
+
         List<Tuple<string, string>> sources = new List<Tuple<string, string>>();
         List<string> assemblies = new List<string>();
 

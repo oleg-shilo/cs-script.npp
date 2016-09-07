@@ -1,7 +1,9 @@
 using CSScriptIntellisense;
+using Intellisense.Common;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.NRefactory.TypeSystem;
+using NRefTypes=ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using System;
 using System.Collections.Generic;
@@ -18,16 +20,16 @@ namespace UltraSharp.Cecil
         public int StartPosition;
         public int EndPosition;
 
-        public DomRegion ToDomRegion()
+        public NRefTypes.DomRegion ToDomRegion()
         {
             if (string.IsNullOrEmpty(FileName))
-                return DomRegion.Empty;
+                return NRefTypes.DomRegion.Empty;
 
             string text = File.ReadAllText(FileName);
             var doc = new ReadOnlyDocument(text);
             var startLocation = doc.GetLocation(StartPosition);
             var endLocation = doc.GetLocation(EndPosition);
-            return new DomRegion(FileName, startLocation, endLocation);
+            return new NRefTypes.DomRegion(FileName, startLocation, endLocation);
         }
     }
 
@@ -597,7 +599,7 @@ namespace UltraSharp.Cecil
             return (param.Type as DefaultResolvedTypeDefinition).GetTypeName(usedNamespaces);
         }
 
-        public static CodeMapItem[] GetMapOf(string code)
+        public static Intellisense.Common.CodeMapItem[] GetMapOf(string code)
         {
             bool injected = CSScriptHelper.DecorateIfRequired(ref code);
             var map = GetMapOfImpl(code, injected);
@@ -609,7 +611,7 @@ namespace UltraSharp.Cecil
 
                 map = map.Where(i => i.Line != injectedLineNumber).ToArray();
 
-                foreach (Reflector.CodeMapItem item in map)
+                foreach (Intellisense.Common.CodeMapItem item in map)
                 {
                     if (item.Line >= injectedLineNumber)
                         item.Line -= 1;
@@ -638,7 +640,7 @@ namespace UltraSharp.Cecil
         }
 
 
-        private static CodeMapItem[] GetMapOfImpl(string code, bool decorated)
+        internal static CodeMapItem[] GetMapOfImpl(string code, bool decorated)
         {
             //NRefactory cannot handle C#6
             code = code.Replace("using static", "using ")
@@ -649,7 +651,7 @@ namespace UltraSharp.Cecil
             if (syntaxTree.Errors.Any())
                 throw new SyntaxErrorException("The document contains error(s)...");
 
-            var map = new List<CodeMapItem>();
+            var map = new List<Intellisense.Common.CodeMapItem>();
 
             var types = syntaxTree.Children.DeepAll(x => x.NodeType == NodeType.TypeDeclaration)
                                            .OfType<TypeDeclaration>()
@@ -698,7 +700,7 @@ namespace UltraSharp.Cecil
                                 Column = property.StartLocation.Column,
                                 DisplayName = property.Name,
                                 ParentDisplayName = type.GetFullName(),
-                                MemberType = "EnumValue"
+                                MemberType = "Enum"
                             });
                         }
                     }
@@ -720,19 +722,19 @@ namespace UltraSharp.Cecil
             return map.ToArray();
         }
 
-        public class CodeMapItem
-        {
-            public int Column;
-            public int Line;
-            public string DisplayName;
-            public string ParentDisplayName;
-            public string MemberType;
+        //public class CodeMapItem
+        //{
+        //    public int Column;
+        //    public int Line;
+        //    public string DisplayName;
+        //    public string ParentDisplayName;
+        //    public string MemberType;
 
-            public override string ToString()
-            {
-                return ParentDisplayName + "." + DisplayName;
-            }
-        }
+        //    public override string ToString()
+        //    {
+        //        return ParentDisplayName + "." + DisplayName;
+        //    }
+        //}
     }
 
     public static class ReflectorExtensions
@@ -779,7 +781,7 @@ namespace UltraSharp.Cecil
             return result.ToString();
         }
 
-        public static string[] GetDocumentationLines(this IEntity entity)
+        public static string[] GetDocumentationLines(this NRefTypes.IEntity entity)
         {
             if (entity.Documentation != null)
                 return entity.Documentation.Xml.Text.XmlToPlainText(true, IgnoreDocumentationExceptions)
