@@ -8,6 +8,7 @@ using CSScriptIntellisense;
 using CSScriptLibrary;
 using CSScriptNpp.Dialogs;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace CSScriptNpp
 {
@@ -251,13 +252,28 @@ namespace CSScriptNpp
         {
             string file;
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
+            return DocumentBelongsToProject(file);
+        }
 
+        bool DocumentBelongsToProject(string file)
+        {
             if (treeView1.Nodes.Count > 0)
                 foreach (TreeNode item in treeView1.Nodes[0].Nodes)
                     if (item.Tag is ProjectItem && string.Compare((item.Tag as ProjectItem).File, file, true) == 0)
                         return true;
 
             return false;
+        }
+
+        string[] GetProjectDocuments()
+        {
+            var files = new List<string>();
+            if (treeView1.Nodes.Count > 0)
+                foreach (TreeNode item in treeView1.Nodes[0].Nodes)
+                    if (item.Tag is ProjectItem)
+                        files.Add((item.Tag as ProjectItem).File);
+
+            return files.ToArray();
         }
 
         const string defaultScriptCode =
@@ -332,7 +348,8 @@ void main(string[] args)
                     if (!CurrentDocumentBelongsToProject())
                         EditItem(currentScript);
 
-                    Npp.SaveAllButNew();
+                    Npp.SaveDocuments(GetProjectDocuments());
+                    
 
                     if (asExternal)
                     {
@@ -541,7 +558,7 @@ void main(string[] args)
                         if (!CurrentDocumentBelongsToProject())
                             EditItem(currentScript);
 
-                        Npp.SaveAllButNew();
+                        Npp.SaveDocuments(GetProjectDocuments());
 
                         CSScriptHelper.Build(currentScript);
 
@@ -951,7 +968,7 @@ void main(string[] args)
                         {
                             EditItem(currentScript);
 
-                            Npp.SaveAllButNew();
+                            Npp.SaveDocuments(GetProjectDocuments());
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
                             string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp);

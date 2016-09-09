@@ -189,6 +189,11 @@ namespace CSScriptIntellisense
             return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.GetConfigDir())), "shortcuts.xml");
         }
 
+        static public string GetNppConfigFile()
+        {
+            return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.GetConfigDir())), "config.xml");
+        }
+
         static public string ContextMenuFile
         {
             get

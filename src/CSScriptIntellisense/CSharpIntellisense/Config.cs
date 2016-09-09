@@ -60,6 +60,7 @@ namespace CSScriptIntellisense
         
         public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
         public string DefaultRefAsms = "System.Linq, System.Xml, System.Xml.Linq, System.Windows.Forms, System.Drawing, System.Core, Microsoft.CSharp";
+        public string DefaultSearchDirs = "";
         public int MemberInfoMaxCharWidth = 100;
         public int MemberInfoMaxLines = 15;
         public bool SmartIndenting = true;
@@ -94,6 +95,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "ContextMenuCommands", ContextMenuCommands);
                 SetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 SetValue(Section, "DefaultRefAsms", DefaultRefAsms);
+                SetValue(Section, "DefaultSearchDirs", DefaultSearchDirs);
                 SetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 SetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 SetValue(Section, "FormatAsYouType", FormatAsYouType);
@@ -117,6 +119,7 @@ namespace CSScriptIntellisense
                 ShowQuickInfoAsNativeNppTooltip = GetValue(Section, "ShowQuickInfoAsNativeNppTooltip", ShowQuickInfoAsNativeNppTooltip);
                 IgnoreDocExceptions = GetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 MemberInfoMaxCharWidth = GetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
+                DefaultSearchDirs = GetValue(Section, "DefaultSearchDirs", DefaultSearchDirs);
                 DefaultRefAsms = GetValue(Section, "DefaultRefAsms", DefaultRefAsms);
                 DefaultNamespaces = GetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);

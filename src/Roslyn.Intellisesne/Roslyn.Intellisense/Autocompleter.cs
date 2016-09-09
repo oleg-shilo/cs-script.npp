@@ -659,7 +659,8 @@ namespace RoslynIntellisense
                         {
                             Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
                             Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
-                            DisplayName = method.Identifier.Text + method.ParameterList,
+                            //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
+                            DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
                             ParentDisplayName = type.GetFullName(),
                             MemberType = "Method"
                         });

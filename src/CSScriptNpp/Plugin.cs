@@ -2,10 +2,13 @@ using CSScriptNpp.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -72,6 +75,7 @@ namespace CSScriptNpp
             SetCommand(debugPanelId = index++, "Debug Panel", InitDebugPanel, Config.Instance.ShowDebugPanel);
             SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
+
             SetCommand(index++, "About", ShowAbout);
 
             IEnumerable<Keys> keysToIntercept = BindInteranalShortcuts();
@@ -88,7 +92,7 @@ namespace CSScriptNpp
             Plugin.RunScriptAsExternal = () => Plugin.ProjectPanel.RunAsExternal();
             Plugin.DebugScript = () =>
             {
-                if(ProjectPanel == null)
+                if (ProjectPanel == null)
                     InitProjectPanel();
                 Plugin.ProjectPanel.Debug(false);
             };
@@ -98,9 +102,49 @@ namespace CSScriptNpp
         static public Action RunScriptAsExternal;
         static public Action DebugScript;
 
+        static public void CheckNativeAutocompletionConflict()
+        {
+            if (!Config.Instance.NativeAutoCompletionChecked)
+            {
+                //<GUIConfig name="auto-completion" autoCAction="3" triggerFromNbChar="1" funcParams="yes"/>
+                //<GUIConfig name="auto-completion" autoCAction="0" triggerFromNbChar="1" funcParams="no" />
+                try
+                {
+                    var config = XDocument.Load(CSScriptIntellisense.Npp.GetNppConfigFile())
+                                                        .Root
+                                                        .Descendants("GUIConfig")
+                                                        .Where(x => x.Attribute("name")?.Value == "auto-completion")
+                                                        .FirstOrDefault();
+                    if (config != null)
+                    {
+                        if (config.Attribute("autoCAction")?.Value == "3" ||
+                            config.Attribute("autoCAction")?.Value == "2" ||
+                            config.Attribute("autoCAction")?.Value == "1" ||
+                            config.Attribute("funcParams")?.Value == "yes")
+                        {
+                            MessageBox.Show("CS-Script has detected that Notepad++ has its own auto-completion enabled.\n" +
+                                            "This will not prevent C# Intellisense (CS-Script) from working but it may affect your user experience " +
+                                            "because these two solutions will be both active at the same time.\n\n"+
+                                            "It is recommended that you disable Notepad++ auto-completion via\n"+
+                                            "Settings->Preferences->Auto-Completion", "CS-Script");
+
+                            Config.Instance.NativeAutoCompletionChecked = true;
+                            Config.Instance.Save();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.LogAsError();
+                }
+            }
+        }
+
         //must be in a separate method to allow proper assembly probing
         static void LoadIntellisenseCommands(ref int cmdIndex)
         {
+            Task.Factory.StartNew(CheckNativeAutocompletionConflict);
+
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
                  (index, name, handler, shortcut) =>
                  {

@@ -46,6 +46,7 @@ namespace CSScriptNpp
         public bool RestorePanelsAtStartup = true;
         public bool StartRoslynServerAtNppStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
+        public bool HideDevaultAssemblies = true;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
         public bool RunExternalInDebugMode = true;
@@ -61,6 +62,7 @@ namespace CSScriptNpp
         public string LastExternalProcess = "";
         public string LastExternalProcessArgs = "";
         public int LastExternalProcessCpu = 0;
+        public bool NativeAutoCompletionChecked = false;
         public string ReleaseNotesViewedFor = "";
         public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
         public string ScriptHistory = "";
@@ -125,12 +127,14 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                     SetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
+                    SetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
                     SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
                     SetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
                     SetValue(Section, nameof(LastExternalProcess), LastExternalProcess);
                     SetValue(Section, nameof(LastExternalProcessArgs), LastExternalProcessArgs);
                     SetValue(Section, nameof(LastExternalProcessCpu), LastExternalProcessCpu);
+                    SetValue(Section, nameof(NativeAutoCompletionChecked), NativeAutoCompletionChecked);
                     SetValue(Section, nameof(TargetVersion), TargetVersion);
                     SetValue(Section, nameof(CsSConsoleEncoding), CsSConsoleEncoding);
                     SetValue(Section, nameof(ClasslessScriptByDefault), ClasslessScriptByDefault);
@@ -187,6 +191,7 @@ namespace CSScriptNpp
                 LastExternalProcess = GetValue(Section, nameof(LastExternalProcess), LastExternalProcess);
                 LastExternalProcessArgs = GetValue(Section, nameof(LastExternalProcessArgs), LastExternalProcessArgs);
                 LastExternalProcessCpu = GetValue(Section, nameof(LastExternalProcessCpu), LastExternalProcessCpu);
+                NativeAutoCompletionChecked = GetValue(Section, nameof(NativeAutoCompletionChecked), NativeAutoCompletionChecked);
                 ReleaseNotesViewedFor = GetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
                 BreakOnException = GetValue(Section, nameof(BreakOnException), BreakOnException);
                 UpdateAfterExit = GetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
@@ -199,6 +204,7 @@ namespace CSScriptNpp
                 StartRoslynServerAtNppStartup = GetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
+                HideDevaultAssemblies = GetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
                 ClasslessScriptByDefault = GetValue(Section, nameof(ClasslessScriptByDefault), ClasslessScriptByDefault);
@@ -206,6 +212,7 @@ namespace CSScriptNpp
                 DistributeScriptAsWindowApp = GetValue(Section, nameof(DistributeScriptAsWindowApp), DistributeScriptAsWindowApp);
 
                 CSScriptIntellisense.Config.Instance.Open();
+
                 Debug.WriteLine("<--- Config.Open");
             }
         }

@@ -31,11 +31,12 @@ namespace CSScriptIntellisense
             get
             {
                 return Config.Instance.DefaultRefAsms
-                                           .Split(';', ',')
-                                           .Where(x => !string.IsNullOrWhiteSpace(x))
-                                           .Select(x => x.Trim())
-                                           .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, CompletionType = CompletionType._namespace })
-                                           .ToArray();
+                                      .Split(';', ',')
+                                      .Where(x => !string.IsNullOrWhiteSpace(x))
+                                      .Select(x => x.Trim())
+                                      .Distinct()
+                                      .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, CompletionType = CompletionType._namespace })
+                                      .ToArray();
             }
         }
         public static ICompletionData[] DefaultNamespaces
@@ -43,11 +44,12 @@ namespace CSScriptIntellisense
             get
             {
                 return Config.Instance.DefaultNamespaces
-                                        .Split(';', ',')
-                                        .Where(x => !string.IsNullOrWhiteSpace(x))
-                                        .Select(x => x.Trim())
-                                        .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, CompletionType = CompletionType._namespace })
-                                        .ToArray();
+                                      .Split(';', ',')
+                                      .Where(x => !string.IsNullOrWhiteSpace(x))
+                                      .Select(x => x.Trim())
+                                      .Distinct()
+                                      .Select(x => new CssCompletionData { CompletionText = x, DisplayText = x, CompletionType = CompletionType._namespace })
+                                      .ToArray();
             }
         }
 

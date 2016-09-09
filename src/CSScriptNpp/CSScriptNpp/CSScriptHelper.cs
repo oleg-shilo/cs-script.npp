@@ -530,8 +530,13 @@ class Script
                 var retval = new Project { PrimaryScript = script };
 
                 var searchDirs = new List<string>();
-                //searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-                searchDirs.AddRange(CSScriptIntellisense.CSScriptHelper.GetGlobalSearchDirs());
+
+                var globalConfig = CSScriptIntellisense.CSScriptHelper.GetGlobalConfigItems();
+                string[] defaultSearchDirs = globalConfig.Item1;
+                string[] defaultRefAsms = globalConfig.Item2;
+                string[] defaultNamespaces = globalConfig.Item3;
+
+                searchDirs.AddRange(defaultSearchDirs);
 
                 var parser = new ScriptParser(script, searchDirs.ToArray(), false);
 
@@ -547,7 +552,11 @@ class Script
                     oldNotificationMessage = NotifyClient("Processing NuGet packages...");
                 }
 
-                retval.Assemblies = parser.AgregateReferences(searchDirs).ToArray();
+                if (Config.Instance.HideDevaultAssemblies)
+                    retval.Assemblies = parser.AgregateReferences(searchDirs, new string[0], new string[0]).ToArray();
+                else
+                    retval.Assemblies = parser.AgregateReferences(searchDirs, defaultRefAsms, defaultNamespaces).ToArray();
+
                 return retval;
             }
             finally
@@ -859,9 +868,14 @@ class Script
 
         static public void OpenAsVSProjectFor(string script)
         {
+            var globalConfig = CSScriptIntellisense.CSScriptHelper.GetGlobalConfigItems();
+            string[] defaultSearchDirs = globalConfig.Item1;
+            string[] defaultRefAsms = globalConfig.Item2;
+            string[] defaultNamespaces = globalConfig.Item3;
+
             var searchDirs = new List<string>();
-            //searchDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-            searchDirs.AddRange(CSScriptIntellisense.CSScriptHelper.GetGlobalSearchDirs());
+
+            searchDirs.AddRange(defaultSearchDirs);
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
             searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined in the script
@@ -873,12 +887,16 @@ class Script
             sourceFiles.Add(script);
 
             //some assemblies are referenced from code and some will need to be resolved from the namespaces
+            bool disableNamespaceResolving = (parser.IgnoreNamespaces.Count() == 1 && parser.IgnoreNamespaces[0] == "*");
+
             var refAsms = parser.ReferencedNamespaces
-                                .Where(name => !parser.IgnoreNamespaces.Contains(name))
+                                .Union(defaultNamespaces)
+                                .Where(name => !disableNamespaceResolving && !parser.IgnoreNamespaces.Contains(name))
                                 .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
                                 .Union(parser.ResolvePackages(suppressDownloading: true)) //it is not the first time we are loading the script so we already tried to download the packages
                                 .Union(parser.ReferencedAssemblies
                                              .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"", ""), searchDirs.ToArray())))
+                                .Union(defaultRefAsms)
                                 .Distinct()
                                 .ToArray();
 
@@ -1052,8 +1070,11 @@ class Script
         {
             string probingDirArg = "";
 
-            if (NppScripts_ScriptsDir != null)
-                probingDirArg = " \"/dir:" + NppScripts_ScriptsDir + "\"";
+            if (NppScripts_ScriptsDir != null || !CSScriptIntellisense.Config.Instance.DefaultSearchDirs.IsEmpty())
+                probingDirArg = (NppScripts_ScriptsDir + ","+ CSScriptIntellisense.Config.Instance.DefaultSearchDirs).Trim('\'');
+
+            if (!probingDirArg.IsEmpty())
+                probingDirArg = " \"/dir:" + probingDirArg + "\"";
 
             return probingDirArg;
         }

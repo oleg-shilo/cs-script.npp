@@ -58,7 +58,7 @@ namespace CSScriptNpp
                 Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, line, 0); //SCI lines are 0-based
 
                 //at this point the caret is at the most left position (col=0)
-                int currentPos = (int)Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+                int currentPos = (int) Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETCURRENTPOS, 0, 0);
                 Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOPOS, currentPos + column - 1, 0); //SCI columns are 0-based
             }
             catch { }
@@ -180,7 +180,7 @@ namespace CSScriptNpp
             IntPtr sci = Plugin.GetCurrentScintilla();
 
             if (end == -1)
-                end = (int)Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
+                end = (int) Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
 
             using (var tr = new Sci_TextRange(start, end, end - start + 1)) //+1 for null termination
             {
@@ -192,9 +192,9 @@ namespace CSScriptNpp
         public static int GetCaretLineNumber()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
 
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
         }
 
         public static int GetLineFromPosition(int pos)
@@ -207,7 +207,7 @@ namespace CSScriptNpp
             int count = execute(NppMsg.NPPM_GETNBOPENFILES, 0, 0);
             using (var cStrArray = new ClikeStringArray(count, Win32.MAX_PATH))
             {
-                if (execute(NppMsg.NPPM_GETOPENFILENAMES, (int)cStrArray.NativePointer, count) != 0)
+                if (execute(NppMsg.NPPM_GETOPENFILENAMES, (int) cStrArray.NativePointer, count) != 0)
                     return cStrArray.ManagedStringsUnicode.ToArray();
                 else
                     return new string[0];
@@ -217,7 +217,7 @@ namespace CSScriptNpp
         static public int GetLineStart(int line)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0);
         }
 
         public static void SetCaretPosition(int pos)
@@ -268,7 +268,7 @@ namespace CSScriptNpp
         public static void ClearSelection()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0); ;
         }
@@ -283,13 +283,13 @@ namespace CSScriptNpp
         static public int GetFirstVisibleLine()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
         }
 
         static public int GetLinesOnScreen()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINESONSCREEN, 0, 0);
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_LINESONSCREEN, 0, 0);
         }
 
         static public void SetFirstVisibleLine(int line)
@@ -300,7 +300,7 @@ namespace CSScriptNpp
 
         static public int GrabFocus()
         {
-            int currentPos = (int)Win32.SendMessage(CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+            int currentPos = (int) Win32.SendMessage(CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
             return currentPos;
         }
 
@@ -317,6 +317,26 @@ namespace CSScriptNpp
                     Npp.OpenFile(item);
                     Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
 
+                }
+            }
+            Npp.OpenFile(current);
+        }
+
+        static public void SaveDocuments(string[] files)
+        {
+            var filesToSave = files.Select(x => Path.GetFullPath(x));
+            var openFiles = Npp.GetOpenFiles();
+            var current = Npp.GetCurrentFile();
+            foreach (var item in files)
+            {
+                if (Path.IsPathRooted(item))  //the "new" file is not saved so it has no root
+                {
+                    var path = Path.GetFullPath(item);
+                    if (filesToSave.Contains(path))
+                    {
+                        Npp.OpenFile(item);
+                        Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+                    }
                 }
             }
             Npp.OpenFile(current);
@@ -345,13 +365,13 @@ namespace CSScriptNpp
         static public int GetPosition(int line, int column)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0) + column;
+            return (int) Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0) + column;
         }
 
         static public void SetIndicatorStyle(int indicator, SciMsg style, Color color)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int)style);
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int) style);
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, indicator, ColorTranslator.ToWin32(color));
         }
 
@@ -382,7 +402,7 @@ namespace CSScriptNpp
         static public void SetMarkerStyle(int marker, SciMsg style, Color foreColor, Color backColor)
         {
             int mask = execute(SciMsg.SCI_GETMARGINMASKN, 1, 0);
-            execute(SciMsg.SCI_MARKERDEFINE, marker, (int)style);
+            execute(SciMsg.SCI_MARKERDEFINE, marker, (int) style);
             execute(SciMsg.SCI_MARKERSETFORE, marker, ColorTranslator.ToWin32(foreColor));
             execute(SciMsg.SCI_MARKERSETBACK, marker, ColorTranslator.ToWin32(backColor));
             execute(SciMsg.SCI_SETMARGINMASKN, 1, (1 << marker) | mask);
@@ -401,17 +421,17 @@ namespace CSScriptNpp
         static int execute(SciMsg msg, int wParam, int lParam = 0)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int)Win32.SendMessage(sci, msg, wParam, lParam);
+            return (int) Win32.SendMessage(sci, msg, wParam, lParam);
         }
 
         static int execute(NppMsg msg, int wParam, int lParam = 0)
         {
-            return (int)Win32.SendMessage(Npp.NppHandle, msg, wParam, lParam);
+            return (int) Win32.SendMessage(Npp.NppHandle, msg, wParam, lParam);
         }
 
         static public IntPtr PlaceMarker(int markerId, int line)
         {
-            return (IntPtr)execute(SciMsg.SCI_MARKERADD, line, markerId);       //'line, marker#
+            return (IntPtr) execute(SciMsg.SCI_MARKERADD, line, markerId);       //'line, marker#
         }
 
         static public int HasMarker(int line)
@@ -421,7 +441,7 @@ namespace CSScriptNpp
 
         static public int GetLineOfMarker(IntPtr markerHandle)
         {
-            return execute(SciMsg.SCI_MARKERLINEFROMHANDLE, (int)markerHandle);
+            return execute(SciMsg.SCI_MARKERLINEFROMHANDLE, (int) markerHandle);
         }
 
         static public void DeleteAllMarkers(int markerId)
@@ -433,7 +453,7 @@ namespace CSScriptNpp
         static public void DeleteMarker(IntPtr handle)
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
-            Win32.SendMessage(sci, SciMsg.SCI_MARKERDELETEHANDLE, (int)handle, 0);
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDELETEHANDLE, (int) handle, 0);
         }
     }
 }

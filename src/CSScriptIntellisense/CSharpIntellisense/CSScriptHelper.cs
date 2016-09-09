@@ -31,38 +31,61 @@ namespace CSScriptIntellisense
 
         static public string GetGlobalCSSConfig()
         {
-            var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
-            if (csscriptDir != null)
-                return Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\css_config.xml");
-            else
-                return null;
+            try
+            {
+                string cscs_exe = GetEngineExe();
+                if (cscs_exe != null)
+                {
+                    var file = Path.Combine(Path.GetDirectoryName(cscs_exe), "css_config.xml");
+                    if (File.Exists(file))
+                        return file;
+                }
+            }
+            catch { }
+            return null;
+
+            //var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
+            //if (csscriptDir != null)
+            //    return Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\css_config.xml");
+            //else
+            //    return null;
         }
 
         public static Func<string> GetEngineExe = () => null;
 
-        static public string[] GetGlobalSearchDirs()
+        static public Tuple<string[], string[], string[]> GetGlobalConfigItems()
         {
             var dirs = new List<string>();
+            var asms = new List<string>();
+            var namespaces = new List<string>();
 
+            Func<string, string[]> splitPathItems = text => text.Split(';', ',')
+                                                                .Where(x => !string.IsNullOrWhiteSpace(x))
+                                                                .Select(x => Environment.ExpandEnvironmentVariables(x.Trim()))
+                                                                .ToArray();
             try
             {
+
+                dirs.AddRange(splitPathItems(Config.Instance.DefaultSearchDirs ?? ""));
+                asms.AddRange(splitPathItems(Config.Instance.DefaultRefAsms ?? ""));
+                namespaces.AddRange(splitPathItems(Config.Instance.DefaultNamespaces ?? ""));
+
                 var configFile = GetGlobalCSSConfig();
                 if (configFile != null && File.Exists(configFile))
                 {
-                    dirs.Add(Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\Lib"));
 
                     var doc = new XmlDocument();
                     doc.Load(configFile);
-                    dirs.AddRange(doc.FirstChild
-                                     .SelectSingleNode("searchDirs")
-                                     .InnerText.Split(';')
-                                     .Where(x=>x.Any())
-                                     .Select(x => Environment.ExpandEnvironmentVariables(x)));
+
+                    dirs.AddRange(splitPathItems(doc.FirstChild.SelectSingleNode("searchDirs").InnerText));
+                    dirs.Add(Path.Combine(Path.GetDirectoryName(configFile), "Lib"));
+
+                    asms.AddRange(splitPathItems(doc.FirstChild.SelectSingleNode("defaultRefAssemblies").InnerText));
                 }
             }
             catch { }
 
-            return dirs.ToArray();
+            return new Tuple<string[], string[], string[]>(dirs.Distinct().ToArray(), asms.ToArray(), namespaces.ToArray());
         }
 
         static public List<string> RemoveEmptyAndDulicated(this List<string> collection)
@@ -74,7 +97,7 @@ namespace CSScriptIntellisense
             return collection;
         }
 
-        static public List<string> AgregateReferences(this ScriptParser parser, IEnumerable<string> searchDirs)
+        static public List<string> AgregateReferences(this ScriptParser parser, IEnumerable<string> searchDirs, IEnumerable<string> defaultRefAsms, IEnumerable<string> defaultNamespacess)
         {
             var probingDirs = searchDirs.ToArray();
 
@@ -85,8 +108,10 @@ namespace CSScriptIntellisense
 
             var refAsms = refPkAsms.Union(refPkAsms)
                                    .Union(refCodeAsms)
+                                   .Union(defaultRefAsms.SelectMany(name =>AssemblyResolver.FindAssembly(name, probingDirs)))
                                    .Distinct()
                                    .ToArray();
+
 
             //some assemblies are referenced from code and some will need to be resolved from the namespaces
             bool disableNamespaceResolving = (parser.IgnoreNamespaces.Count() == 1 && parser.IgnoreNamespaces[0] == "*");
@@ -96,14 +121,21 @@ namespace CSScriptIntellisense
                 var asmNames = refAsms.Select(x => Path.GetFileNameWithoutExtension(x).ToUpper()).ToArray();
 
                 var refNsAsms = parser.ReferencedNamespaces
+                                      .Union(defaultNamespacess)
                                       .Where(name => !string.IsNullOrEmpty(name))
                                       .Where(name => !parser.IgnoreNamespaces.Contains(name))
                                       .Where(name => !asmNames.Contains(name.ToUpper()))
-                                      .SelectMany(name => AssemblyResolver.FindAssembly(name, probingDirs))
+                                      .Distinct()
+                                      .SelectMany(name =>
+                                      {
+                                          var asms = AssemblyResolver.FindAssembly(name, probingDirs);
+                                          return asms;
+                                      })
                                       .ToArray();
 
                 refAsms = refAsms.Union(refNsAsms).ToArray();
             }
+
 
             refAsms = FilterDuplicatedAssembliesByFileName(refAsms);
             //refAsms = FilterDuplicatedAssembliesWithReflection(refAsms); //for possible more comprehensive filtering in future
@@ -177,8 +209,14 @@ namespace CSScriptIntellisense
 
         static public Tuple<string[], string[]> GetProjectFiles(string script)
         {
+            var globalConfig = GetGlobalConfigItems();
+            string[] defaultSearchDirs = globalConfig.Item1;
+            string[] defaultRefAsms = globalConfig.Item2;
+            string[] defaultNamespaces = globalConfig.Item3;
+
             var searchDirs = new List<string>();
-            searchDirs.AddRange(GetGlobalSearchDirs());
+
+            searchDirs.AddRange(defaultSearchDirs);
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
 
@@ -190,7 +228,7 @@ namespace CSScriptIntellisense
             sourceFiles.Add(script);
 
             //some assemblies are referenced from code and some will need to be resolved from the namespaces
-            var refAsms = parser.AgregateReferences(searchDirs);
+            var refAsms = parser.AgregateReferences(searchDirs, defaultRefAsms, defaultNamespaces);
 
             if (NppScriptsAsm != null)
                 refAsms.Add(NppScriptsAsm);
