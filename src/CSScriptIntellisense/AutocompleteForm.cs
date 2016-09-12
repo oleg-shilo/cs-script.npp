@@ -114,6 +114,7 @@ namespace CSScriptIntellisense
                 case CompletionType.method: return Res.Images.method;
                 case CompletionType._event: return Res.Images._event;
                 case CompletionType.field: return Res.Images.field;
+                case CompletionType.type: return Res.Images.constructor;
                 case CompletionType.property: return Res.Images.property;
                 case CompletionType._namespace: return Res.Images._namespace;
                 case CompletionType.unresolved: return Res.Images.unresolved;

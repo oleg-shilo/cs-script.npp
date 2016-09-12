@@ -110,6 +110,7 @@ namespace Intellisense.Common
         _event,
         field,
         property,
+        type,
         _namespace,
         unresolved
     }

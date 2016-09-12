@@ -339,7 +339,7 @@ namespace RoslynIntellisense
 
             try
             {
-                var result = completions.Where(s => s.DisplayText.CanComplete(partialWord))
+                var result = completions.Where(s => s.DisplayText.HasText() && s.DisplayText.CanComplete(partialWord))
                                         .OrderByDescending(c => c.DisplayText.StartsWith(partialWord))
                                         .ThenByDescending(c => c.DisplayText.StartsWith(partialWord, StringComparison.OrdinalIgnoreCase))
                                         .ThenByDescending(c => c.DisplayText.IsCamelCaseMatch(partialWord))
