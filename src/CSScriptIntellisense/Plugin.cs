@@ -541,7 +541,7 @@ namespace CSScriptIntellisense
             });
         }
 
-        static public void OnDocumentSaved()
+        static public void OnBeforeDocumentSaved()
         {
             if(Config.Instance.FormatOnSave)
                 FormatDocument();
