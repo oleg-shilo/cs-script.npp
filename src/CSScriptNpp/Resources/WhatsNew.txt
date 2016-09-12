@@ -1,6 +1,8 @@
 Release 
 
-v1.2.1.1
+v1.2.1.1-2
+* Issue#18: Class name auto-completion may fail.
+* Issue#17: Problem with Format-on-Save option
 * Added CodeMap support for C#6
 * CS-Script execution improvements
   - Defining SearchDirs from the settings file
