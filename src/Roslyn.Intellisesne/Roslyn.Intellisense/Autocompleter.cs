@@ -56,7 +56,9 @@ namespace RoslynIntellisense
             if (references != null)
                 refs.AddRange(references.Select(a => MetadataReference.CreateFromFile(a, documentation: NppDocumentationProvider.NewFor(a))));
 
-            var projectInfo = ProjectInfo.Create(projectId, versionStamp, projName, projName, LanguageNames.CSharp, metadataReferences: refs);
+            var lng = Autocompleter.Language == "C#" ? LanguageNames.CSharp : LanguageNames.VisualBasic;
+            var projectInfo = ProjectInfo.Create(projectId, versionStamp, projName, projName, lng, metadataReferences: refs);
+
             var newProject = workspace.AddProject(projectInfo);
             var newDocument = workspace.AddDocument(newProject.Id, docName, SourceText.From(code));
 
@@ -258,6 +260,7 @@ namespace RoslynIntellisense
         }
 
         static public string OutputDir = Path.Combine(Path.GetTempPath(), "Roslyn.Intellisense\\ReflctedTypes");
+        static public string Language = "C#";
 
         static string SaveReflectedCode(string typeName, string code)
         {
@@ -640,7 +643,7 @@ namespace RoslynIntellisense
 
                 map.Add(new CodeMapItem
                 {
-                    Line =   type.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                    Line = type.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
                     Column = type.GetLocation().GetLineSpan().StartLinePosition.Character,
                     DisplayName = type.Identifier.Text,
                     ParentDisplayName = parentType.GetFullName(),

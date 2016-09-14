@@ -46,6 +46,11 @@ namespace RoslynIntellisense
             }
         }
 
+        public static bool IsVbFile(this string file)
+        {
+            return file.EndsWith(".vb", StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public static int LineNumberOf(this string text, int pos)
         {
             return text.Take(pos).Count(c => c == '\n') + 1;

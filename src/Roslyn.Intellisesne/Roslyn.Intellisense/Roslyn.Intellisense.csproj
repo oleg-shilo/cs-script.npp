@@ -43,6 +43,14 @@
     <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
       <HintPath>Microsoft.CodeAnalysis.CSharp.1.1.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Microsoft.CodeAnalysis.VisualBasic.1.1.0\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.1.0\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces">
       <HintPath>Microsoft.CodeAnalysis.CSharp.1.1.0\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
     </Reference>

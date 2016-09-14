@@ -18,6 +18,10 @@ namespace Intellisense.Common
         CodeMapItem[] GetMapOf(string code, bool decorated);
         void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies);
         void SetOption(string name, object value);
+        /// <summary>
+        /// "C#" and "VB"
+        /// </summary>
+        string Language { get; set; } 
     }
 
     public interface ICompletionData

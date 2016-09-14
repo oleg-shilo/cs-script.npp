@@ -24,10 +24,6 @@ namespace RoslynIntellisense
             //IntellisenseSimple();
             //Intellisense();
 
-            Autocompleter.GetMapOf(File.ReadAllText(@"E:\Galos\Projects\TailRecursion\src\TailRecursion\samples.cs"), false);
-
-
-             
             if (args.Contains("/test"))
                 return Test();
             else if (args.Contains("/detect"))
@@ -42,7 +38,8 @@ namespace RoslynIntellisense
             //Autocompleter.FindMissingUsings();
             //Autocompleter.FindMissingUsings11();
             //Intellisense2();
-            ResolveNamespaces();
+            //ResolveNamespaces();
+            IntellisenseVb();
             return 0;
         }
 
@@ -67,6 +64,7 @@ namespace RoslynIntellisense
             result = engine.GetPossibleNamespaces(code, "Form", "script.cs");
             return 0;
         }
+
 
         static int Detect()
         {
@@ -111,6 +109,40 @@ namespace RoslynIntellisense
             var result = engine.GetCompletionData(code, 598, script);
         }
 
+        static int IntellisenseVb()
+        {
+            var asms = new[]
+            {
+                @"C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Text.RegularExpressions\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Text.RegularExpressions.dll",
+                @"C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Linq\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Linq.dll",
+                @"C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.IO\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.IO.dll",
+                @"C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll",
+                typeof(Form).Assembly.Location
+            };
+
+            var code = @"
+Imports System
+Imports System.Windows.Forms
+
+Module Module1
+    Sub Main()
+        Console.|WriteLine(""Hello World!(VB)"")
+        MessageBox.Show(""Hello World! (VB)"")
+    End Sub
+End Module";
+
+            var sources = new List<Tuple<string, string>> { };
+
+            int carret = code.IndexOf("|");
+            code = code.Replace("|", "");
+
+            var result = Autocompleter.GetAutocompletionFor(code, carret, asms.ToArray(), sources);
+
+            Console.WriteLine("----------------------------------");
+            Console.ReadLine();
+            return 0;
+        }
+
         static int Intellisense2()
         {
             var asms = new[]
@@ -140,7 +172,7 @@ public class TestA
         Console.WriteLine(""TestA"");
     }
     }";
-            var sources = new List<Tuple<string, string>> { new Tuple<string, string> (includeCode, "code.cs") };
+            var sources = new List<Tuple<string, string>> { new Tuple<string, string>("", "code.cs") };
 
             int carret = code.IndexOf("|");
             code = code.Replace("|", "");

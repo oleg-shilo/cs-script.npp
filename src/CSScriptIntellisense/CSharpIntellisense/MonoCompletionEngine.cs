@@ -22,6 +22,8 @@ namespace CSScriptIntellisense
 {
     public class MonoCompletionEngine : Common.IEngine
     {
+        public string Language { get; set; } = "C#";
+
         IProjectContent Project;
 
         static internal Lazy<IList<IUnresolvedAssembly>> builtInLibs = new Lazy<IList<IUnresolvedAssembly>>(
