@@ -62,5 +62,15 @@ namespace CSScriptNpp
             catch { }
             return null;
         }
+
+        //for future use
+        static Assembly Probe(string dir, string asmName)
+        {
+            var file = Path.Combine(dir, asmName.Split(',')[0] + ".dll");
+            if (File.Exists(file))
+                return Assembly.LoadFrom(file);
+            else
+                return null;
+        }
     }
 }
