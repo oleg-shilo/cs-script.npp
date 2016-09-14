@@ -349,7 +349,7 @@ void main(string[] args)
                         EditItem(currentScript);
 
                     Npp.SaveDocuments(GetProjectDocuments());
-                    
+
 
                     if (asExternal)
                     {
@@ -740,6 +740,7 @@ void main(string[] args)
         const int folderImage = 0;
         const int assemblyImage = 2;
         const int includeImage = 3;
+        const int scriptVbImage = 4;
 
         void UnloadScript()
         {
@@ -781,7 +782,7 @@ void main(string[] args)
                         TreeNode references = root.Nodes.Add("References");
 
                         root.SelectedImageIndex =
-                        root.ImageIndex = scriptImage;
+                        root.ImageIndex = scriptFile.IsVbFile() ? scriptVbImage : scriptImage;
                         references.SelectedImageIndex =
                         references.ImageIndex = assemblyImage;
                         references.ContextMenuStrip = itemContextMenu;
@@ -797,7 +798,7 @@ void main(string[] args)
                                     int imageIndex = includeImage;
                                     var info = new ProjectItem(file) { IsPrimary = (file == project.PrimaryScript) };
                                     if (info.IsPrimary)
-                                        imageIndex = scriptImage;
+                                        imageIndex = file.IsVbFile() ? scriptVbImage : scriptImage;
                                     if (info.IsAssembly)
                                         imageIndex = assemblyImage;
                                     node.Nodes.Add(new TreeNode(info.Name) { ImageIndex = imageIndex, SelectedImageIndex = imageIndex, Tag = info, ToolTipText = file, ContextMenuStrip = itemContextMenu });

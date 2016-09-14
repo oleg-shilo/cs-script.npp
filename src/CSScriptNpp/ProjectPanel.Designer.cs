@@ -120,6 +120,7 @@
             this.imageList1.Images.SetKeyName(1, "css_logo_16x16_tb.png");
             this.imageList1.Images.SetKeyName(2, "references.png");
             this.imageList1.Images.SetKeyName(3, "includes.png");
+            this.imageList1.Images.SetKeyName(4, "css_logo_vb_16x16_tb.png");
             // 
             // toolStrip1
             // 

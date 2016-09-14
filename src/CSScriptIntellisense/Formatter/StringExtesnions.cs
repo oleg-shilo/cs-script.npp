@@ -19,8 +19,13 @@ namespace CSScriptIntellisense
         {
             //return file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".csx", StringComparison.InvariantCultureIgnoreCase);
             return file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase) || 
-                   (Config.Instance.VbSupportEnabled && file.EndsWith(".vb", StringComparison.InvariantCultureIgnoreCase))|| 
+                   (Config.Instance.VbSupportEnabled && file.IsVbFile()) || 
                    file.EndsWith(".csx", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public static bool IsVbFile(this string file)
+        {
+            return file.EndsWith(".vb", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public static bool IsPythonFile(this string file)

@@ -548,6 +548,7 @@
     <None Include="Resources\DebugScript.sln" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\css_logo_vb_16x16_tb.png" />
     <None Include="Resources\DebugScript .csproj.user" />
     <None Include="CSScriptNpp\Roslyn\csc.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

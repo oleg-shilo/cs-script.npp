@@ -143,6 +143,16 @@ namespace CSScriptNpp.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap css_logo_vb_16x16_tb {
+            get {
+                object obj = ResourceManager.GetObject("css_logo_vb_16x16_tb", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dbg_addwatch {
             get {
                 object obj = ResourceManager.GetObject("dbg_addwatch", resourceCulture);
@@ -632,16 +642,20 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to v1.0.44.0
-        ///* Added support for C# 6.0 via Roslyn provider. It is disabled by default. You can enable it from the Settings dialog.
+        ///   Looks up a localized string similar to Release 
         ///
-        ///* Fixed collision between Npp and CSScript.Npp auto-indent
+        ///v1.2.1.1-2
+        ///* Issue#18: Class name auto-completion may fail.
+        ///* Issue#17: Problem with Format-on-Save option
+        ///* Added CodeMap support for C#6
+        ///* CS-Script execution improvements
+        ///  - Defining SearchDirs from the settings file
+        ///  - Processing css_conig.xml if present
+        ///* Added N++ settings compatibility checking/report
         ///
-        ///* Improved &quot;add missing &apos;usings&apos;&quot;
-        ///
-        ///* Implemented reliable KnownFolders.UserDownloads in response to discussions/637474
-        ///
-        ///.
+        ///v1.2.1.0
+        ///* Fixed &apos;competition&apos; between N++ and CSScript.Npp auto-indentation 
+        ///* Asynchronous starting Roslyn server at N++ startup is made a default behavior. The change dramat [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WhatsNew {
             get {
