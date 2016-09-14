@@ -9,6 +9,13 @@ namespace CSScriptNpp
     /// </summary>
     public class Config : IniFile
     {
+        public static void InitData()
+        {
+            //the rest will be initialized from their corresponding static constructors
+            Config.Instance.Open();
+            Config.Instance.VbSupportEnabled = CSScriptIntellisense.Config.Instance.VbSupportEnabled;
+        }
+
         public static string Location = Plugin.ConfigDir;
 
         public static Shortcuts Shortcuts = new Shortcuts();
@@ -20,7 +27,6 @@ namespace CSScriptNpp
         public Config()
         {
             base.file = Path.Combine(Location, "settings.ini");
-            Open();
         }
 
         public string GetFileName()
@@ -43,6 +49,7 @@ namespace CSScriptNpp
         public bool CheckUpdatesOnStartup = true;
         public bool CheckPrereleaseUpdates = false;
         public bool UseRoslynProvider = false;
+        public bool VbSupportEnabled = true;
         public bool RestorePanelsAtStartup = true;
         public bool StartRoslynServerAtNppStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
@@ -56,7 +63,7 @@ namespace CSScriptNpp
         public string TargetVersion = "v4.0.30319";
         public string ScriptsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "C# Scripts");
         public string SkipUpdateVersion = "";
-        //public string ScriptEngineLocation = "";
+        public string VbCodeProvider= "CSSCodeProvider.v4.0.dll";
         public string CsSConsoleEncoding = "utf-8";
         public string HotkeyDocumentsExclusions = ".cmd;.bat;.test";
         public string LastExternalProcess = "";
@@ -123,6 +130,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
                     SetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
+                    SetValue(Section, nameof(VbCodeProvider), VbCodeProvider);
                     SetValue(Section, nameof(ScriptsDir), ScriptsDir);
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                     SetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
@@ -200,6 +208,7 @@ namespace CSScriptNpp
                 CheckPrereleaseUpdates = GetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                 ScriptsDir = GetValue(Section, nameof(ScriptsDir), ScriptsDir);
+                VbCodeProvider = GetValue(Section, nameof(VbCodeProvider), VbCodeProvider);
                 UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                 StartRoslynServerAtNppStartup = GetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);

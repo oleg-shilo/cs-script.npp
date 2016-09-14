@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace CSScriptNpp
 {
     public class Intellisense
@@ -9,8 +11,11 @@ namespace CSScriptNpp
 
         public static void EnsureIntellisenseIntegration()
         {
+            //Debug.Assert(false);
             //Merge Configs
-            CSScriptIntellisense.Config.Location = CSScriptNpp.Config.Location;
+            CSScriptIntellisense.Config.Location = Plugin.ConfigDir;
+            CSScriptNpp.Config.InitData(); //will also exchange required data between configs
+
             CSScriptIntellisense.Plugin.SuppressCodeTolltips = () => Debugger.IsInBreak;
             CSScriptIntellisense.Plugin.DisplayInOutputPanel = message =>
             {

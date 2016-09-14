@@ -31,7 +31,7 @@ namespace CSScriptIntellisense
             if (!Directory.Exists(Location))
                 Directory.CreateDirectory(Location);
 
-            Open();
+            //Open();
         }
 
         public string GetFileName()
@@ -56,6 +56,7 @@ namespace CSScriptIntellisense
         public bool FormatOnSave = true;
         public bool AutoInsertSingeSuggestion = false;
         public bool FallbackFormatting = false;
+        public bool VbSupportEnabled = true;
         public bool FormatAsYouType = true;
         
         public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
@@ -84,6 +85,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "ShowQuickInfoAsNativeNppTooltip", ShowQuickInfoAsNativeNppTooltip);
                 SetValue(Section, "IgnoreDocExceptions", IgnoreDocExceptions);
                 SetValue(Section, "SmartIndenting", SmartIndenting);
+                SetValue(Section, "VbSupportEnabled", VbSupportEnabled);
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 SetValue(Section, "FormatOnSave", FormatOnSave);
                 SetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
@@ -121,6 +123,7 @@ namespace CSScriptIntellisense
                 MemberInfoMaxCharWidth = GetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 DefaultSearchDirs = GetValue(Section, "DefaultSearchDirs", DefaultSearchDirs);
                 DefaultRefAsms = GetValue(Section, "DefaultRefAsms", DefaultRefAsms);
+                VbSupportEnabled = GetValue(Section, "VbSupportEnabled", VbSupportEnabled);
                 DefaultNamespaces = GetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);

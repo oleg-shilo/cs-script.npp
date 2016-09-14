@@ -38,11 +38,12 @@
             this.formatAsYouType = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.ContentPanel = new System.Windows.Forms.Panel();
+            this.formatOnSave = new System.Windows.Forms.CheckBox();
             this.F12OnCtrlClick = new System.Windows.Forms.CheckBox();
             this.useContextMenu = new System.Windows.Forms.CheckBox();
             this.roslynIntellisense = new System.Windows.Forms.CheckBox();
             this.roslynFormatter = new System.Windows.Forms.CheckBox();
-            this.formatOnSave = new System.Windows.Forms.CheckBox();
+            this.vbSupport = new System.Windows.Forms.CheckBox();
             this.ContentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -113,7 +114,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(10, 196);
+            this.linkLabel1.Location = new System.Drawing.Point(10, 215);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 4;
@@ -123,6 +124,7 @@
             // 
             // ContentPanel
             // 
+            this.ContentPanel.Controls.Add(this.vbSupport);
             this.ContentPanel.Controls.Add(this.formatOnSave);
             this.ContentPanel.Controls.Add(this.useMethodBrackets);
             this.ContentPanel.Controls.Add(this.useArrow);
@@ -136,8 +138,18 @@
             this.ContentPanel.Controls.Add(this.formatAsYouType);
             this.ContentPanel.Location = new System.Drawing.Point(13, 3);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 190);
+            this.ContentPanel.Size = new System.Drawing.Size(290, 209);
             this.ContentPanel.TabIndex = 5;
+            // 
+            // formatOnSave
+            // 
+            this.formatOnSave.AutoSize = true;
+            this.formatOnSave.Location = new System.Drawing.Point(0, 102);
+            this.formatOnSave.Name = "formatOnSave";
+            this.formatOnSave.Size = new System.Drawing.Size(99, 17);
+            this.formatOnSave.TabIndex = 3;
+            this.formatOnSave.Text = "Format on save";
+            this.formatOnSave.UseVisualStyleBackColor = true;
             // 
             // F12OnCtrlClick
             // 
@@ -180,21 +192,22 @@
             this.roslynFormatter.UseVisualStyleBackColor = true;
             this.roslynFormatter.Visible = false;
             // 
-            // formatOnSave
+            // vbSupport
             // 
-            this.formatOnSave.AutoSize = true;
-            this.formatOnSave.Location = new System.Drawing.Point(0, 102);
-            this.formatOnSave.Name = "formatOnSave";
-            this.formatOnSave.Size = new System.Drawing.Size(99, 17);
-            this.formatOnSave.TabIndex = 3;
-            this.formatOnSave.Text = "Format on save";
-            this.formatOnSave.UseVisualStyleBackColor = true;
+            this.vbSupport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.vbSupport.AutoSize = true;
+            this.vbSupport.Location = new System.Drawing.Point(0, 192);
+            this.vbSupport.Name = "vbSupport";
+            this.vbSupport.Size = new System.Drawing.Size(181, 17);
+            this.vbSupport.TabIndex = 8;
+            this.vbSupport.Text = "Support for VB.NET (.NET v4.0) ";
+            this.vbSupport.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 220);
+            this.ClientSize = new System.Drawing.Size(315, 239);
             this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -227,5 +240,6 @@
         private System.Windows.Forms.CheckBox useContextMenu;
         private System.Windows.Forms.CheckBox F12OnCtrlClick;
         private System.Windows.Forms.CheckBox formatOnSave;
+        private System.Windows.Forms.CheckBox vbSupport;
     }
 }

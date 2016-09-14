@@ -32,6 +32,7 @@ namespace CSScriptIntellisense
             roslynIntellisense.Checked = data.RoslynIntellisense;
             useContextMenu.Checked = data.UseCmdContextMenu;
             F12OnCtrlClick.Checked = data.GoToDefinitionOnCtrlClick;
+            vbSupport.Checked = data.VbSupportEnabled;
 
             this.FormClosed += (s, e) =>
                 {
@@ -52,6 +53,7 @@ namespace CSScriptIntellisense
             data.RoslynIntellisense = roslynIntellisense.Checked;
             data.UseCmdContextMenu = useContextMenu.Checked;
             data.GoToDefinitionOnCtrlClick = F12OnCtrlClick.Checked;
+            data.VbSupportEnabled = vbSupport.Checked;
         }
 
         void ConfigForm_Load(object sender, EventArgs e)

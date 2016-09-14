@@ -35,6 +35,7 @@ namespace CSScriptNpp
             scriptsDir.Text = data.ScriptsDir;
 
             embeddedEngine.Checked = data.UseEmbeddedEngine;
+           
             restorePanels.Checked = data.RestorePanelsAtStartup;
             if (!data.UseEmbeddedEngine)
             {
@@ -61,7 +62,7 @@ namespace CSScriptNpp
             //data.UseRoslynProvider = useCS6.Checked;
             //all Roslyn individual config values are merged into RoslynIntellisense;
             data.UseRoslynProvider = CSScriptIntellisense.Config.Instance.RoslynIntellisense;
-
+            data.VbSupportEnabled = CSScriptIntellisense.Config.Instance.VbSupportEnabled;
 
             if (customEngine.Checked)
             {

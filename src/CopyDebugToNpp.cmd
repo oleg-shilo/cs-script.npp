@@ -40,6 +40,7 @@ copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%plugins%\CSScriptNpp\Mdbg"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\csc.exe" "%plugins%\CSScriptNpp\Roslyn\csc.exe"
 copy "CSScriptNpp\CSScriptNpp\roslyn\CSSCodeProvider.v4.6.dll" "%plugins%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
+copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%plugins%\CSScriptNpp\CSSCodeProvider.v4.0.dll"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe"
 copy "CSScriptNpp\CSScriptNpp\roslyn\VBCSCompiler.exe.config" "%plugins%\CSScriptNpp\Roslyn\VBCSCompiler.exe.config"

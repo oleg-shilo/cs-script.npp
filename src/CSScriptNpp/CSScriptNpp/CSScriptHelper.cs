@@ -133,10 +133,10 @@ namespace CSScriptNpp
             }
         }
 
-        static public void Build(string scriptFileCmd)
+        static public void Build(string scriptFile)
         {
             string compilerOutput;
-            bool success = Build(scriptFileCmd, out compilerOutput);
+            bool success = Build(scriptFile, out compilerOutput);
             if (!success)
                 throw new ApplicationException(compilerOutput.Replace("csscript.CompilerException: ", "")); //for a better appearance remove CS-Script related stuff
         }
@@ -232,7 +232,7 @@ namespace CSScriptNpp
             }
         }
 
-        static bool Build(string scriptFileCmd, out string compilerOutput)
+        static bool Build(string scriptFile, out string compilerOutput)
         {
             string oldNotificationMessage = null;
             try
@@ -241,7 +241,7 @@ namespace CSScriptNpp
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
-                p.StartInfo.Arguments = "/nl /ca " + GenerateDefaultArgs() + " \"" + scriptFileCmd + "\"";
+                p.StartInfo.Arguments = "/nl /ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.CreateNoWindow = true;
@@ -342,7 +342,7 @@ namespace CSScriptNpp
             {
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
-                p.StartInfo.Arguments = "/nl /l /dbg " + GenerateDefaultArgs() + " \"" + scriptFile + "\"";
+                p.StartInfo.Arguments = "/nl /l /dbg " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
                 bool useFileRedirection = false;
@@ -470,7 +470,7 @@ class Script
 }");
                 File.SetLastWriteTimeUtc(file, DateTime.Now.ToUniversalTime());
 
-                string args = string.Format("/dbg /l {0} \"{1}\"", GenerateDefaultArgs(), file);
+                string args = string.Format("/dbg /l {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
                 //Process.Start(csws_exe, args);
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
@@ -499,12 +499,12 @@ class Script
                 host = Config.Instance.CustomAsyncHost;
                 if (!Path.IsPathRooted(host))
                     host = Path.Combine(Path.GetDirectoryName(cscs_exe), host);
-                args = string.Format("/nl {2}/l {0} {1}", GenerateDefaultArgs(), script, debugFlag);
+                args = string.Format("/nl {2}/l {0} {1}", GenerateDefaultArgs(scriptFile), script, debugFlag);
             }
             else
             {
                 host = ConsoleHostPath;
-                args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateDefaultArgs(), script, debugFlag);
+                args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script, debugFlag);
             }
 
             if (!RunningAsAdmin)
@@ -515,7 +515,7 @@ class Script
 
         static public void ExecuteDebug(string scriptFileCmd)
         {
-            ProcessStart("cmd.exe", "/K \"\"" + cscs_exe + "\" /nl /l /dbg " + GenerateDefaultArgs() + " \"" + scriptFileCmd + "\" //x\"");
+            ProcessStart("cmd.exe", "/K \"\"" + cscs_exe + "\" /nl /l /dbg " + GenerateDefaultArgs(scriptFileCmd) + " \"" + scriptFileCmd + "\" //x\"");
         }
 
         static public Func<string, string> NotifyClient;
@@ -837,7 +837,7 @@ class Script
                 string script = "\"" + scriptFile + "\"";
 
                 string cscs = engineFile;
-                string args = string.Format("/e{2} {0} {1}", GenerateDefaultArgs(), script, (windowApp ? "w" : ""));
+                string args = string.Format("/e{2} {0} {1}", GenerateDefaultArgs(scriptFile), script, (windowApp ? "w" : ""));
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs;
@@ -859,7 +859,7 @@ class Script
                 {
                     //just show why building has failed
                     cscs = "\"" + cscs + "\"";
-                    args = string.Format("{0} /e  {1} {2}", cscs, GenerateDefaultArgs(), script);
+                    args = string.Format("{0} /e  {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script);
                     Process.Start(ConsoleHostPath, args);
                     return null;
                 }
@@ -946,7 +946,7 @@ class Script
             p.StartInfo.FileName = cscs_exe;
             //NOTE: it is important to always pass /dbg otherwise NPP will not be able to debug.
             //particularly important to do for //css_host scripts
-            p.StartInfo.Arguments = "/nl /l /dbg /ca " + GenerateDefaultArgs() + " \"" + scriptFile + "\"";
+            p.StartInfo.Arguments = "/nl /l /dbg /ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.RedirectStandardOutput = true;
@@ -1039,20 +1039,29 @@ class Script
                 Directory.CreateDirectory(dir);
         }
 
-        internal static string GenerateDefaultArgs()
+        internal static string GenerateDefaultArgs(string scriptFile)
         {
-            return GenerateConfigFileExecutionArg() + GenerateProbingDirArg() + GenerateNppExecutionArg();
+            return GenerateConfigFileExecutionArg() + GenerateProbingDirArg() + GenerateNppExecutionArg(scriptFile);
         }
 
-        static string GenerateNppExecutionArg()
+        static string GenerateNppExecutionArg(string scriptFile)
         {
             string result = "";
 
-            if (Config.Instance.UseRoslynProvider)
+            var language = Path.GetExtension(scriptFile).Replace(".", "").ToUpper();
+
+            if (language == "VB" && CSScriptIntellisense.Config.Instance.VbSupportEnabled)
+            {
+                //only CSSCodeProvider.v4.0.dll can support VB
+                var provider = Path.Combine(Plugin.PluginDir, Config.Instance.VbCodeProvider);
+                result = " \"/provider:" + provider + "\"";
+            }
+            else if (Config.Instance.UseRoslynProvider)
             {
                 var provider = Path.Combine(Plugin.PluginDir, "Roslyn", "CSSCodeProvider.v4.6.dll");
                 result = " \"/provider:" + provider + "\"";
             }
+
             return result;
         }
 
