@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis;
 using System.Text;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.CodeAnalysis.CSharp;
+using VB = Microsoft.CodeAnalysis.VisualBasic;
 using msFormatter = Microsoft.CodeAnalysis.Formatting.Formatter;
 
 namespace RoslynIntellisense
@@ -31,39 +32,65 @@ namespace RoslynIntellisense
             }
         }
 
-        public static string Format(string code)
+        public static string Format(string code, string file)
         {
-            return Format(code, false);
+            return Format(code, false, file);
         }
 
-        public static string FormatHybrid(string code)
+        public static string FormatHybrid(string code, string file)
         {
-            return Format(code, true);
+            return Format(code, true, file);
         }
 
-        static string Format(string code, bool normaliseLines)
+        static string Format(string code, bool normaliseLines, string file)
         {
             var result = "";
-            var tree = CSharpSyntaxTree.ParseText(code.Trim());
+            bool isVB = file.EndsWith(".vb", StringComparison.OrdinalIgnoreCase);
+
+            SyntaxTree tree;
+            if (isVB)
+                tree = VB.VisualBasicSyntaxTree.ParseText(code.Trim());
+            else
+                tree = CSharpSyntaxTree.ParseText(code.Trim());
+
             var root = msFormatter.Format(tree.GetRoot(), DummyWorkspace);
 
             if (normaliseLines)
+            //if (normaliseLines && !isVB)
             {
                 //injecting line-breaks to separate declarations
-                root = root.ReplaceNodes(root.DescendantNodes()
-                                             .Where(n => n.IsKind(SyntaxKind.MethodDeclaration) ||
-                                                         n.IsKind(SyntaxKind.ClassDeclaration) ||
-                                                         n.IsNewBlockStatement() ||
-                                                         n.IsNewDeclarationBlock()),
-                                         (_, node) =>
-                                         {
-                                             var existingTrivia = node.GetLeadingTrivia().ToFullString();
-                                             if (existingTrivia.Contains(Environment.NewLine))
-                                                 return node;
-                                             else
-                                                 return node.WithLeadingTrivia(SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
-                                         });
-
+                if (!isVB)
+                {
+                    root = root.ReplaceNodes(root.DescendantNodes()
+                                                 .Where(n => n.IsKind(SyntaxKind.MethodDeclaration) ||
+                                                             n.IsKind(SyntaxKind.ClassDeclaration) ||
+                                                             n.IsNewBlockStatement() ||
+                                                             n.IsNewDeclarationBlock()),
+                                             (_, node) =>
+                                             {
+                                                 var existingTrivia = node.GetLeadingTrivia().ToFullString();
+                                                 if (existingTrivia.Contains(Environment.NewLine))
+                                                     return node;
+                                                 else
+                                                     return node.WithLeadingTrivia(SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
+                                             });
+                }
+                else
+                {
+                    root = root.ReplaceNodes(root.DescendantNodes()
+                                                 .Where(n => VisualBasicExtensions.IsKind(n, VB.SyntaxKind.DeclareSubStatement /*MethodDeclaration*/) ||
+                                                             VisualBasicExtensions.IsKind(n, VB.SyntaxKind.EndClassStatement /*ClassDeclaration*/) ||
+                                                             n.IsNewBlockStatement() ||
+                                                             n.IsNewDeclarationBlock(isVB)),
+                                             (_, node) =>
+                                             {
+                                                 var existingTrivia = node.GetLeadingTrivia().ToFullString();
+                                                 if (existingTrivia.Contains(Environment.NewLine))
+                                                     return node;
+                                                 else
+                                                     return node.WithLeadingTrivia(SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
+                                             });
+                }
                 //Removing multiple line breaks.
                 //doesn't visit all "\r\n\r\n" cases. No time for this right now.
                 //Using primitive RemoveDoubleLineBreaks instead but may need to be solved in the future
@@ -271,16 +298,22 @@ namespace RoslynIntellisense
             return true;
         }
 
-        public static bool IsNewBlockStatement(this SyntaxNode node)
+        public static bool IsNewBlockStatement(this SyntaxNode node, bool isVB = false)
         {
             var prevNode = node.NodeAbove();
-            return node.IsBlockStatement() && prevNode != null && prevNode.Kind() == SyntaxKind.LocalDeclarationStatement;
+            if (isVB)
+                return node.IsVbBlockStatement() && prevNode != null && VB.VisualBasicExtensions.Kind(prevNode) == VB.SyntaxKind.LocalDeclarationStatement;
+            else
+                return node.IsBlockStatement() && prevNode != null && prevNode.Kind() == SyntaxKind.LocalDeclarationStatement;
         }
 
-        public static bool IsNewDeclarationBlock(this SyntaxNode node)
+        public static bool IsNewDeclarationBlock(this SyntaxNode node, bool isVB = false)
         {
             var prevNode = node.NodeAbove();
-            return node.Kind() == SyntaxKind.LocalDeclarationStatement && prevNode != null && prevNode.Kind() != SyntaxKind.LocalDeclarationStatement;
+            if (isVB)
+                return VB.VisualBasicExtensions.Kind(node) == VB.SyntaxKind.LocalDeclarationStatement && prevNode != null && VB.VisualBasicExtensions.Kind(prevNode) != VB.SyntaxKind.LocalDeclarationStatement;
+            else
+                return node.Kind() == SyntaxKind.LocalDeclarationStatement && prevNode != null && prevNode.Kind() != SyntaxKind.LocalDeclarationStatement;
         }
 
         public static bool IsBlockStatement(this SyntaxNode node)
@@ -300,6 +333,24 @@ namespace RoslynIntellisense
                 case SyntaxKind.SwitchStatement:
                 case SyntaxKind.TryStatement:
                 case SyntaxKind.Block:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsVbBlockStatement(this SyntaxNode node)
+        {
+            switch (VB.VisualBasicExtensions.Kind(node))
+            {
+                case VB.SyntaxKind.WhileStatement:
+                case VB.SyntaxKind.DoUntilStatement:
+                case VB.SyntaxKind.ForStatement:
+                case VB.SyntaxKind.ForEachStatement:
+                case VB.SyntaxKind.UsingStatement:
+                case VB.SyntaxKind.SyncLockKeyword:
+                case VB.SyntaxKind.IfStatement:
+                case VB.SyntaxKind.TryStatement:
                     return true;
                 default:
                     return false;

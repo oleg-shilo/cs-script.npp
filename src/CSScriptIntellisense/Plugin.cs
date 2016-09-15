@@ -1,5 +1,3 @@
-using Intellisense.Common;
-using CSScriptIntellisense.Interop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,8 +8,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense.Interop;
+using Intellisense.Common;
 using UltraSharp.Cecil;
-using System.Runtime.InteropServices;
 
 namespace CSScriptIntellisense
 {
@@ -728,7 +727,11 @@ namespace CSScriptIntellisense
                                     if (items.Count() == 1) //do only if there is no ambiguity about what namespace it is
                                     {
                                         string resolvedNamespace = items.First().Namespace;
-                                        namespacesToInsert.Add("using " + resolvedNamespace + ";");
+                                        if (Npp.GetCurrentFile().IsVbFile())
+                                            namespacesToInsert.Add("Imports " + resolvedNamespace);
+                                        else
+                                            namespacesToInsert.Add("using " + resolvedNamespace + ";");
+
                                         presentUsings.Add(resolvedNamespace);
                                         usingInserted = true;
                                     }
@@ -771,7 +774,13 @@ namespace CSScriptIntellisense
                         namespaceMenu.Top = point.Y + 18;
 
                         var usings = items.Where(x => !x.IsNested)
-                                          .Select(x => "using " + x.Namespace + ";");
+                                          .Select(x =>
+                                          {
+                                              if (Npp.GetCurrentFile().IsVbFile())
+                                                  return "Imports " + x.Namespace;
+                                              else
+                                                  return "using " + x.Namespace + ";";
+                                          });
 
                         var inline = items.Select(x => x.FullName);
 

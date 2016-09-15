@@ -87,7 +87,7 @@ namespace RoslynIntellisense
             args = new[] { file };
             var code = File.ReadAllText(args.First());
 
-            string formattedCode = RoslynIntellisense.Formatter.FormatHybrid(code);
+            string formattedCode = RoslynIntellisense.Formatter.FormatHybrid(code, "code.cs");
 
             Console.WriteLine(formattedCode);
         }

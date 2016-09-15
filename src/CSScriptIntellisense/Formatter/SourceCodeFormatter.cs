@@ -25,7 +25,7 @@ namespace CSScriptIntellisense
             int topScrollOffset = Npp.GetLineNumber(currentPos) - Npp.GetFirstVisibleLine();
             TopScrollOffsetBeforeLastFormatting = topScrollOffset;
 
-            string newCode = FormatCode(code, ref currentPos);
+            string newCode = FormatCode(code, ref currentPos, Npp.GetCurrentFile());
 
             Npp.SetTextBetween(newCode, 0, Npp.DocEnd);
 
@@ -54,7 +54,7 @@ namespace CSScriptIntellisense
 
             string code = Npp.GetTextBetween(0, prevLineEnd);
             int currentPos = Npp.GetCaretPosition();
-            string newCode = FormatCode(code, ref currentPos);
+            string newCode = FormatCode(code, ref currentPos, Npp.GetCurrentFile());
             Npp.SetTextBetween(newCode, 0, prevLineEnd);
 
             //no need to set the caret as it is after the formatted text anyway
@@ -89,14 +89,14 @@ namespace CSScriptIntellisense
             return syntaxTree.GetText(option);
         }
 
-        public static string FormatCode(string code, ref int pos)
+        public static string FormatCode(string code, ref int pos, string file)
         {
             if (Config.Instance.FallbackFormatting)
                 return FallbackSourceCodeFormatter.FormatCodeManually(code, ref pos);
             else
             {
                 if (Config.Instance.RoslynFormatting)
-                    return FormatCodeWithRoslyn(code, ref pos);
+                    return FormatCodeWithRoslyn(code, ref pos, file);
                 else
                     return FormatCodeManually(code, ref pos);
             }
@@ -104,11 +104,11 @@ namespace CSScriptIntellisense
             //return FormatCodeWithNRefactory(code, ref pos);
         }
 
-        delegate string FormatMethod(string code);
+        delegate string FormatMethod(string code, string file);
 
         static FormatMethod RoslynFormat;
 
-        static string FormatCodeWithRoslyn(string code, ref int pos)
+        static string FormatCodeWithRoslyn(string code, ref int pos, string file)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace CSScriptIntellisense
 
                 if (RoslynFormat != null)
                 {
-                    var newCode = RoslynFormat(code);
+                    var newCode = RoslynFormat(code, file);
 
                     pos = SyntaxMapper.MapAbsPosition(code, pos, newCode);
 

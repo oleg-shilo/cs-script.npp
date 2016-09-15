@@ -9,6 +9,8 @@ namespace CSScriptIntellisense
     {
         public static void InsertNamespace(string text)
         {
+            bool isVB = Npp.GetCurrentFile().IsVbFile();
+
             //it is unlikely all 'usings' take more than 2000 lines
             for (int i = 0; i < Math.Min(Npp.GetLineCount(), 2000); i++)
             {
@@ -20,7 +22,8 @@ namespace CSScriptIntellisense
                 if (line.Trim() == text) //the required 'using' statement is already there
                     return;
 
-                if (line.TrimStart().StartsWith("using ")) //first 'using' statement
+                var usingKeyword = isVB ? "Imports " : "using ";
+                if (line.TrimStart().StartsWith(usingKeyword)) //first 'using' statement
                 {
                     var pos = Npp.GetLineStart(i);
                     Npp.SetTextBetween(text + Environment.NewLine, pos, pos);
