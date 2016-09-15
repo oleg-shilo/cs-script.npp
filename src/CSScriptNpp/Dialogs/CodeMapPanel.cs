@@ -36,7 +36,6 @@ namespace CSScriptNpp
             watcher.NotifyFilter = NotifyFilters.LastWrite;
             watcher.Changed += watcher_Changed;
             watcher.EnableRaisingEvents = false;
-            mapTxt.AttachMouseControlledZooming();
             ErrorMessage = null;
             membersList.AttachMouseControlledZooming(MembersList_OnZoom);
             UpdateItemHeight();
@@ -78,31 +77,6 @@ namespace CSScriptNpp
             }
         }
 
-        void mapTxt_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                int lineNum = mapTxt.Text.Substring(0, mapTxt.SelectionStart).Split('\n').Count() - 1;
-                mapTxt.SelectionLength = 0;
-                if (currentMapping.ContainsKey(lineNum))
-                {
-                    Npp.GrabFocus();
-                    int currentLineNum = Npp.GetCaretLineNumber();
-                    int prevLineEnd = Npp.GetLineStart(currentLineNum) - Environment.NewLine.Length;
-                    int topScrollOffset = currentLineNum - Npp.GetFirstVisibleLine();
-
-                    int location = currentMapping[lineNum];
-                    if (location != -1)
-                    {
-                        int newCaretLine = location - 1; //SCI lines are 0-based
-                        Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, newCaretLine, 0);
-                        Npp.SetFirstVisibleLine(newCaretLine - topScrollOffset);
-                    }
-                }
-            }
-            catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
-        }
-
         string currentFile;
         Dictionary<int, int> currentMapping = new Dictionary<int, int>();
 
@@ -120,7 +94,6 @@ namespace CSScriptNpp
                     watcher.Filter = Path.GetFileName(currentFile);
                 }
 
-                mapTxt.Text = "";
                 if (file.IsScriptFile())
                     GenerateContent(Npp.GetTextBetween(0));
                 else if (file.IsPythonFile())
@@ -233,7 +206,7 @@ namespace CSScriptNpp
             }
             catch (SyntaxErrorParsingException e)
             {
-                mapTxt.Text = "";
+                membersList.Items.Clear();
                 ErrorMessage = e.Message;
             }
             catch
@@ -286,7 +259,7 @@ namespace CSScriptNpp
             }
             catch (SyntaxErrorParsingException e)
             {
-                mapTxt.Text = "";
+                membersList.Items.Clear();
                 ErrorMessage = e.Message;
             }
             catch

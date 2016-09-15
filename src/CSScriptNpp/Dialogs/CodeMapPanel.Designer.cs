@@ -28,26 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.mapTxt = new System.Windows.Forms.TextBox();
             this.refreshLabel = new System.Windows.Forms.LinkLabel();
-            this.error = new System.Windows.Forms.TextBox();
             this.membersList = new System.Windows.Forms.ListBox();
+            this.error = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // mapTxt
-            // 
-            this.mapTxt.BackColor = System.Drawing.Color.White;
-            this.mapTxt.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mapTxt.Location = new System.Drawing.Point(0, 0);
-            this.mapTxt.Multiline = true;
-            this.mapTxt.Name = "mapTxt";
-            this.mapTxt.ReadOnly = true;
-            this.mapTxt.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.mapTxt.Size = new System.Drawing.Size(284, 261);
-            this.mapTxt.TabIndex = 0;
-            this.mapTxt.Visible = false;
-            this.mapTxt.WordWrap = false;
-            this.mapTxt.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mapTxt_MouseDoubleClick);
             // 
             // refreshLabel
             // 
@@ -61,22 +45,6 @@
             this.refreshLabel.Text = "Refresh";
             this.refreshLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.refreshLabel_LinkClicked);
             // 
-            // error
-            // 
-            this.error.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.error.BackColor = System.Drawing.Color.White;
-            this.error.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.error.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.error.ForeColor = System.Drawing.Color.Red;
-            this.error.Location = new System.Drawing.Point(12, 12);
-            this.error.Multiline = true;
-            this.error.Name = "error";
-            this.error.ReadOnly = true;
-            this.error.Size = new System.Drawing.Size(195, 64);
-            this.error.TabIndex = 3;
-            // 
             // membersList
             // 
             this.membersList.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -88,16 +56,28 @@
             this.membersList.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.memberList_DrawItem);
             this.membersList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MembersList_MouseDoubleClick);
             // 
+            // error
+            // 
+            this.error.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.error.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.error.ForeColor = System.Drawing.Color.Red;
+            this.error.Location = new System.Drawing.Point(12, 9);
+            this.error.Name = "error";
+            this.error.Size = new System.Drawing.Size(200, 243);
+            this.error.TabIndex = 5;
+            this.error.Text = "Error Message";
+            // 
             // CodeMapPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Controls.Add(this.refreshLabel);
             this.Controls.Add(this.error);
+            this.Controls.Add(this.refreshLabel);
             this.Controls.Add(this.membersList);
-            this.Controls.Add(this.mapTxt);
             this.Name = "CodeMapPanel";
             this.Text = "CS-Script Code Map";
             this.VisibleChanged += new System.EventHandler(this.CodeMapPanel_VisibleChanged);
@@ -107,10 +87,8 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox mapTxt;
         private System.Windows.Forms.LinkLabel refreshLabel;
-        private System.Windows.Forms.TextBox error;
         private System.Windows.Forms.ListBox membersList;
+        private System.Windows.Forms.Label error;
     }
 }
