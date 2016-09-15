@@ -799,16 +799,47 @@ class Script
             return words.Any() && words.First() == "//css_npp" && (words.Contains("asadmin") || words.Contains("asadmin,") || words.Contains("asadmin;"));
         }
 
+        static public void CreateProviderWarningFileIfNeeded(string destDir, string scriptFile)
+        {
+            var executionArg = GenerateNppExecutionArg(scriptFile);
+
+            var warning = new StringBuilder();
+            if (scriptFile.IsVbFile())
+            {
+                warning.AppendLine("Your script requires a custom code compiler (Code Provider) for handling VB.NET syntax.");
+                warning.AppendLine("It means that you will need to distribute the provider file(s) along with the script.");
+            }
+            else if (Config.Instance.UseRoslynProvider)
+            {
+                warning.AppendLine("Notepad++ CS-Script plugin is configured to use Roslyn as a compiler. This usually indicates that " +
+                                   "your script execution requires Roslyn code provider (e.g. to handle C#6 syntax).");
+                warning.AppendLine("If indeed it is case then you will need to distribute the provider file(s) along with the script.");
+            }
+
+            if (warning.Length > 0)
+            {
+                warning.AppendLine("You will also need to modify run.cmd as follows:");
+                warning.AppendLine();
+                warning.AppendLine($"cscs.exe {executionArg} \"{Path.GetFileName(scriptFile)}\"");
+                warning.AppendLine();
+                warning.AppendLine("Also make sure the provider's TargetRuntime is compatible with the runtime of the target system.");
+                File.WriteAllText(Path.Combine(destDir, "warning.txt"), warning.ToString());
+            }
+        }
+
         static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion, bool windowApp)
         {
             string dir = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile));
 
             EnsureCleanDirectory(dir);
 
+            bool net4 = (targerRuntimeVersion == "v4.0.30319");
+            bool net2 = (targerRuntimeVersion == "v2.0.50727");
+
             string engineFile;
-            if (targerRuntimeVersion == "v4.0.30319")
+            if (net4)
                 engineFile = cscs_exe;
-            else if (targerRuntimeVersion == "v2.0.50727")
+            else if (net2)
                 engineFile = cscs_v35_exe;
             else
                 throw new Exception("The requested Target Runtime version (" + targerRuntimeVersion + ") is not supported.");
@@ -825,7 +856,29 @@ class Script
 
                 string batchFile = Path.Combine(dir, "run.cmd");
                 string engineName = Path.GetFileName(engineFile);
-                File.WriteAllText(batchFile, engineName + " \"" + Path.GetFileName(scriptFile) + "\"\r\npause");
+
+                if (scriptFile.IsVbFile())
+                {
+                    if (net4 && Config.Instance.VbCodeProvider.EndsWith("CSSCodeProvider.v4.0.dll"))
+                    {
+                        //single file code provider
+                        var providerSrc = Path.Combine(Plugin.PluginDir, Config.Instance.VbCodeProvider);
+                        var providerDest = providerSrc.PathChangeDir(dir);
+                        File.Copy(providerSrc, providerDest);
+                    }
+                    else
+                    {
+                        //code provider potentially is a set of many files of a substantial size (e.g. Roslyn)
+                        CreateProviderWarningFileIfNeeded(dir, scriptFile);
+                    }
+
+                    File.WriteAllText(batchFile, $"echo off\r\n{engineName} {GenerateNppExecutionArg(scriptFile)} \"{Path.GetFileName(scriptFile)}\"\r\npause");
+                }
+                else
+                {
+                    CreateProviderWarningFileIfNeeded(dir, scriptFile);
+                    File.WriteAllText(batchFile, $"echo off\r\n{engineName} \"{Path.GetFileName(scriptFile)}\"\r\npause");
+                }
 
                 return dir;
             }

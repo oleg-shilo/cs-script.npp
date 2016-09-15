@@ -124,15 +124,15 @@ namespace CSScriptIntellisense
         }
 
         //----------------------------------
-        public static CodeMapItem[] GetMapOf(string code)
+        public static CodeMapItem[] GetMapOf(string code, string codeFile)
         {
             bool injected = CSScriptHelper.DecorateIfRequired(ref code);
             CodeMapItem[] map;
 
             if (Config.Instance.RoslynIntellisense)
-                map = RoslynEngine.GetMapOf(code, injected);
+                map = RoslynEngine.GetMapOf(code, injected, codeFile);
             else
-                map = MonoEngine.GetMapOf(code, injected);
+                map = MonoEngine.GetMapOf(code, injected, codeFile);
 
             if (injected)
             {

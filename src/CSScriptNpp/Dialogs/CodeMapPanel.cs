@@ -207,7 +207,7 @@ namespace CSScriptNpp
                             code = File.ReadAllText(currentFile);
                     }
 
-                    var members = SimpleCodeCompletion.GetMapOf(code).OrderBy(x => x.ParentDisplayName).ToArray();
+                    var members = SimpleCodeCompletion.GetMapOf(code, currentFile).OrderBy(x => x.ParentDisplayName).ToArray();
 
                     membersList.Items.Clear();
 
@@ -231,7 +231,7 @@ namespace CSScriptNpp
                     ErrorMessage = null;
                 }
             }
-            catch (Reflector.SyntaxErrorException e)
+            catch (SyntaxErrorParsingException e)
             {
                 mapTxt.Text = "";
                 ErrorMessage = e.Message;
@@ -284,7 +284,7 @@ namespace CSScriptNpp
                     ErrorMessage = null;
                 }
             }
-            catch (Reflector.SyntaxErrorException e)
+            catch (SyntaxErrorParsingException e)
             {
                 mapTxt.Text = "";
                 ErrorMessage = e.Message;

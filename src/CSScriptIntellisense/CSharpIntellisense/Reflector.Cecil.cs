@@ -35,14 +35,6 @@ namespace UltraSharp.Cecil
 
     public class Reflector
     {
-        public class SyntaxErrorException : ApplicationException
-        {
-            public SyntaxErrorException(string message)
-                : base(message)
-            {
-            }
-        }
-
         public class Result
         {
             public string Code;
@@ -649,7 +641,7 @@ namespace UltraSharp.Cecil
             var syntaxTree = new CSharpParser().Parse(code, "demo.cs");
 
             if (syntaxTree.Errors.Any())
-                throw new SyntaxErrorException("The document contains error(s)...");
+                throw new SyntaxErrorParsingException("The document contains error(s)...");
 
             var map = new List<Intellisense.Common.CodeMapItem>();
 

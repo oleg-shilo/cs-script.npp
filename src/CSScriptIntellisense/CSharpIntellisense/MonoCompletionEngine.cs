@@ -154,7 +154,7 @@ namespace CSScriptIntellisense
             return data.PrepareForDisplay().ToCommon();
         }
 
-        public Common.CodeMapItem[] GetMapOf(string code, bool decorated)
+        public Common.CodeMapItem[] GetMapOf(string code, bool decorated, string codeFile)
         {
             return Reflector.GetMapOfImpl(code, decorated);
         }

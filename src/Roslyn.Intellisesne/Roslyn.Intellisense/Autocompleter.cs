@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Recommendations;
 using Microsoft.CodeAnalysis.Text;
 using System.Windows.Forms;
+using VB = Microsoft.CodeAnalysis.VisualBasic;
 using System.Diagnostics;
 
 namespace RoslynIntellisense
@@ -625,8 +626,12 @@ namespace RoslynIntellisense
 
         public static CodeMapItem[] GetMapOf(string code, bool decorated)
         {
-            var root = CSharpSyntaxTree.ParseText(code)
-                                       .GetRoot();
+            if (Autocompleter.Language == "VB")
+                throw new SyntaxErrorParsingException("VB syntax is not supported for Code Map.");
+                      //VB.VisualBasicSyntaxTree.ParseText(code) : 
+                 
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+            var root = tree.GetRoot();
 
             var map = new List<CodeMapItem>();
 

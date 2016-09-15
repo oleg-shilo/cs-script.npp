@@ -28,6 +28,11 @@ namespace CSScriptIntellisense
             return file.EndsWith(".vb", StringComparison.InvariantCultureIgnoreCase);
         }
 
+        public static string PathChangeDir(this string file, string newDir)
+        {
+            return Path.Combine(newDir, Path.GetFileName(file));
+        }
+
         public static bool IsPythonFile(this string file)
         {
             return file.EndsWith(".py", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".pyw", StringComparison.InvariantCultureIgnoreCase);

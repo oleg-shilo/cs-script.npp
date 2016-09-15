@@ -120,4 +120,8 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="vbSupport.ToolTip" xml:space="preserve">
+    <value>Enable experimental support for VB.NET syntax (within scope of .NET4). 
+This setting directly controls only VB scripts execution. If you wnt to enable VB Intellisense you will also need to enable "C# 6 Roslyn services".</value>
+  </data>
 </root>

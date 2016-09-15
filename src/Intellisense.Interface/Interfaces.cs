@@ -15,13 +15,21 @@ namespace Intellisense.Common
         string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos);
         IEnumerable<TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName);
         DomRegion ResolveCSharpMember(string editorText, int offset, string fileName);
-        CodeMapItem[] GetMapOf(string code, bool decorated);
+        CodeMapItem[] GetMapOf(string code, bool decorated, string codeFile);
         void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies);
         void SetOption(string name, object value);
         /// <summary>
         /// "C#" and "VB"
         /// </summary>
         string Language { get; set; } 
+    }
+
+    public class SyntaxErrorParsingException : ApplicationException
+    {
+        public SyntaxErrorParsingException(string message)
+            : base(message)
+        {
+        }
     }
 
     public interface ICompletionData

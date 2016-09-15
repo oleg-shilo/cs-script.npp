@@ -120,10 +120,11 @@ namespace RoslynIntellisense
             }
         }
 
-        public CodeMapItem[] GetMapOf(string code, bool decorated)
+        public CodeMapItem[] GetMapOf(string code, bool decorated, string fileName)
         {
             lock (typeof(Autocompleter))
             {
+                Autocompleter.Language = GetLanguageFor(fileName);
                 return Autocompleter.GetMapOf(code, decorated);
             }
         }

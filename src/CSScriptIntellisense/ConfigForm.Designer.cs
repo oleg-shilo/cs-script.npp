@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigForm));
             this.useArrow = new System.Windows.Forms.CheckBox();
             this.intercept = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -38,12 +39,12 @@
             this.formatAsYouType = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.ContentPanel = new System.Windows.Forms.Panel();
+            this.vbSupport = new System.Windows.Forms.CheckBox();
             this.formatOnSave = new System.Windows.Forms.CheckBox();
             this.F12OnCtrlClick = new System.Windows.Forms.CheckBox();
             this.useContextMenu = new System.Windows.Forms.CheckBox();
             this.roslynIntellisense = new System.Windows.Forms.CheckBox();
             this.roslynFormatter = new System.Windows.Forms.CheckBox();
-            this.vbSupport = new System.Windows.Forms.CheckBox();
             this.ContentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -141,6 +142,18 @@
             this.ContentPanel.Size = new System.Drawing.Size(290, 209);
             this.ContentPanel.TabIndex = 5;
             // 
+            // vbSupport
+            // 
+            this.vbSupport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.vbSupport.AutoSize = true;
+            this.vbSupport.Location = new System.Drawing.Point(0, 192);
+            this.vbSupport.Name = "vbSupport";
+            this.vbSupport.Size = new System.Drawing.Size(120, 17);
+            this.vbSupport.TabIndex = 8;
+            this.vbSupport.Text = "Support for VB.NET";
+            this.toolTip1.SetToolTip(this.vbSupport, resources.GetString("vbSupport.ToolTip"));
+            this.vbSupport.UseVisualStyleBackColor = true;
+            // 
             // formatOnSave
             // 
             this.formatOnSave.AutoSize = true;
@@ -191,17 +204,6 @@
             this.roslynFormatter.Text = "Use Roslyn Formatter";
             this.roslynFormatter.UseVisualStyleBackColor = true;
             this.roslynFormatter.Visible = false;
-            // 
-            // vbSupport
-            // 
-            this.vbSupport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.vbSupport.AutoSize = true;
-            this.vbSupport.Location = new System.Drawing.Point(0, 192);
-            this.vbSupport.Name = "vbSupport";
-            this.vbSupport.Size = new System.Drawing.Size(181, 17);
-            this.vbSupport.TabIndex = 8;
-            this.vbSupport.Text = "Support for VB.NET (.NET v4.0) ";
-            this.vbSupport.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 

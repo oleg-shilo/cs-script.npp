@@ -122,12 +122,16 @@ namespace CSScriptNpp
                             config.Attribute("autoCAction")?.Value == "1" ||
                             config.Attribute("funcParams")?.Value == "yes")
                         {
-                            MessageBox.Show("CS-Script has detected that Notepad++ has its auto-completion configured to be triggered 'on input' (as you type).\n" +
+                            MessageBox.Show("CS-Script has detected that Notepad++ has its auto-completion configured to be auto-triggered 'on input' (as you type).\n\n" +
                                             "This will not prevent C# Intellisense (CS-Script) from working but it may affect your user experience " +
-                                            "because these two solutions may get activated at the same time .\n\n"+
+                                            "because these two solutions may get activated at the same time.\n\n"+
                                             "It is recommended that you disable Notepad++ 'auto-completion on input' via\n"+
-                                            "Settings->Preferences->Auto-Completion", "CS-Script");
+                                            "Settings->Preferences->Auto-Completion\n\n"+
+                                            "Note: Disabling 'auto-completion on input' will not disable auto-completion for other languages but only its automatic triggering. " +
+                                            "The auto-completion can be triggered at any time manually by pressing Ctrl+Space key combination.", "CS-Script");
 
+                            try { Process.Start("https://csscriptnpp.codeplex.com/wikipage?title=Dealing%20with%20Notepad%2b%2b%20native%20auto-complete"); }
+                            catch  { }
                             Config.Instance.NativeAutoCompletionChecked = true;
                             Config.Instance.Save();
                         }
