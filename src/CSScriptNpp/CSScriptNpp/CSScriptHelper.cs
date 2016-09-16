@@ -138,7 +138,7 @@ namespace CSScriptNpp
             string compilerOutput;
             bool success = Build(scriptFile, out compilerOutput);
             if (!success)
-                throw new ApplicationException(compilerOutput.Replace("csscript.CompilerException: ", "")); //for a better appearance remove CS-Script related stuff
+                throw new ApplicationException(compilerOutput.RemoveNonUserCompilingInfo());
         }
 
         static public string[] GetCodeCompileOutput(string scriptFile)
@@ -146,7 +146,7 @@ namespace CSScriptNpp
             string compilerOutput;
             bool success = Build(scriptFile, out compilerOutput);
             if (!success)
-                return compilerOutput.Replace("csscript.CompilerException: ", "").Split('\n');
+                return compilerOutput.RemoveNonUserCompilingInfo().Split('\n');
             else
                 return new string[0];
         }
@@ -272,7 +272,8 @@ namespace CSScriptNpp
                 }
                 p.WaitForExit();
 
-                compilerOutput = output.ToString();
+                compilerOutput = output.ToString().RemoveNonUserCompilingInfo();
+
                 return !error;
             }
             finally
@@ -413,7 +414,7 @@ namespace CSScriptNpp
                 }
 
                 if (output.Length > 0 && output.ToString().StartsWith("Error: Specified file could not be compiled."))
-                    throw new ApplicationException(output.ToString().Replace("csscript.CompilerException: ", ""));
+                    throw new ApplicationException(output.ToString().RemoveNonUserCompilingInfo());
             }
             finally
             {
@@ -1015,7 +1016,7 @@ class Script
             }
             p.WaitForExit();
 
-            string stdOutput = output.ToString();
+            string stdOutput = output.ToString().RemoveNonUserCompilingInfo();
 
             if (stdOutput.Contains("Error: Specified file could not be compiled."))
                 return false;
@@ -1133,7 +1134,7 @@ class Script
             string probingDirArg = "";
 
             if (NppScripts_ScriptsDir != null || !CSScriptIntellisense.Config.Instance.DefaultSearchDirs.IsEmpty())
-                probingDirArg = (NppScripts_ScriptsDir + ","+ CSScriptIntellisense.Config.Instance.DefaultSearchDirs).Trim('\'');
+                probingDirArg = (NppScripts_ScriptsDir + "," + CSScriptIntellisense.Config.Instance.DefaultSearchDirs).Trim('\'');
 
             if (!probingDirArg.IsEmpty())
                 probingDirArg = " \"/dir:" + probingDirArg + "\"";
@@ -1199,6 +1200,14 @@ class Script
 
     static class GenericExtensions
     {
+        public static string RemoveNonUserCompilingInfo(this string compilerOutput)
+        {
+            //for a better appearance remove CS-Script related stuff
+            return compilerOutput.Replace("csscript.CompilerException: ", "")
+                                 .Replace("vbc : Command line (0,0): warning BC2007: unrecognized option 'warn:0'; ignored\r\n", "")
+                                 .Replace("vbc : Command line (0,0): warning BC2007: unrecognized option 'warn:0'; ignored", "");
+        }
+
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> collection, T item)
         {
             return collection.Concat(new[] { item });
