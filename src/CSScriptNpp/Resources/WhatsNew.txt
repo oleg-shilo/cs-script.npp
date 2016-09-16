@@ -1,6 +1,10 @@
 Release 
-
-v1.2.1.1-2
+v1.3.0
+* VB.NET Support
+** Execution
+** Debugging
+** Intellisense
+** Code Formatting
 * Issue#18: Class name auto-completion may fail.
 * Issue#17: Problem with Format-on-Save option
 * Added CodeMap support for C#6
@@ -9,8 +13,3 @@ v1.2.1.1-2
   - Processing css_conig.xml if present
 * Added N++ settings compatibility checking/report
 
-v1.2.1.0
-* Fixed 'competition' between N++ and CSScript.Npp auto-indentation 
-* Asynchronous starting Roslyn server at N++ startup is made a default behavior. The change dramatically improves UX by eliminating/hiding Roslyn startup delay. 
-The change became justified after long testing over numerous releases didn't reveal any serious issues associated with Roslyn.
-* Implemented setting the custom host for script AsyncRun.

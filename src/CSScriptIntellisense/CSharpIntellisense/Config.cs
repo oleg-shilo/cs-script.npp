@@ -50,7 +50,7 @@ namespace CSScriptIntellisense
         public bool GoToDefinitionOnCtrlClick = true;
         public bool UseCmdContextMenu = true;
         public string ContextMenuCommands = "Go To Definition;Find All References;Auto-add missing 'usings';Rename... (Ctrl+R,R);Format Document";
-        public bool RoslynIntellisense = false;
+        public bool RoslynIntellisense = true;
         public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
         public bool FormatOnSave = true;

@@ -156,6 +156,7 @@ namespace CSScriptNpp
             {
                 if (currentFile.IsScriptFile())
                 {
+                    Debug.WriteLine("GenerateContent");
                     string code;
                     if (currentFile.Contains("CSScriptNpp\\ReflctedType"))
                     {

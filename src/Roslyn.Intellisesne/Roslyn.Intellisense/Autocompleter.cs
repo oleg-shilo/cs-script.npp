@@ -627,10 +627,15 @@ namespace RoslynIntellisense
         public static CodeMapItem[] GetMapOf(string code, bool decorated)
         {
             if (Autocompleter.Language == "VB")
-                throw new SyntaxErrorParsingException("VB syntax is not supported for Code Map.");
-                      //VB.VisualBasicSyntaxTree.ParseText(code) : 
-                 
+                return GetMapOfVB(code, decorated);
+            else
+                return GetMapOfCSharp(code, decorated);
+        }
+
+        static CodeMapItem[] GetMapOfCSharp(string code, bool decorated)
+        {
             SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+
             var root = tree.GetRoot();
 
             var map = new List<CodeMapItem>();
@@ -711,6 +716,96 @@ namespace RoslynIntellisense
                         item.ParentDisplayName = item.ParentDisplayName.Substring(rootClassName.Length + 1);
                 }
             }
+
+            return map.ToArray();
+        }
+
+        static CodeMapItem[] GetMapOfVB(string code, bool decorated)
+        {
+            throw new SyntaxErrorParsingException("VB syntax is not supported for Code Map.");
+            SyntaxTree tree = VB.VisualBasicSyntaxTree.ParseText(code);
+
+            var root = tree.GetRoot();
+
+            var map = new List<CodeMapItem>();
+
+            var nodes = root.DescendantNodes();
+
+            var types = nodes.OfType<VB.Syntax.TypeBlockSyntax>()
+                             .OrderBy(x => x.FullSpan.End)
+                             .ToArray();
+
+
+            //not sure what is the VB equivalent
+            //foreach (VB.Syntax.EnumBlockSyntax type in nodes.OfType<VB.Syntax.EnumBlockSyntax>())
+            //{
+            //    var parentType = type.Parent as VB.Syntax.DeclarationStatementSyntax;
+
+            //    map.Add(new CodeMapItem
+            //    {
+            //        Line = type.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+            //        Column = type.GetLocation().GetLineSpan().StartLinePosition.Character,
+            //        DisplayName = type.Identifier.Text,
+            //        ParentDisplayName = parentType.GetFullName(),
+            //        MemberType = "Enum"
+            //    });
+            //}
+
+            foreach (VB.Syntax.TypeBlockSyntax type in types)
+            {
+                foreach (var member in type.ChildNodes().OfType< VB.Syntax.MethodBlockSyntax>())
+                {
+                    if (member is VB.Syntax.MethodBlockSyntax)
+                    {
+                    //    var method = (member as VB.Syntax.MethodStatementSyntax);
+                    //    map.Add(new CodeMapItem
+                    //    {
+                    //        Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                    //        Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
+                    //        //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
+                    //        DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
+                    //        ParentDisplayName = type.GetFullName(),
+                    //        MemberType = "Method"
+                    //    });
+                    }
+                    else if (member is PropertyDeclarationSyntax)
+                    {
+                        //var prop = (member as PropertyDeclarationSyntax);
+                        //map.Add(new CodeMapItem
+                        //{
+                        //    Line = prop.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                        //    Column = prop.GetLocation().GetLineSpan().StartLinePosition.Character,
+                        //    DisplayName = prop.Identifier.ValueText,
+                        //    ParentDisplayName = type.GetFullName(),
+                        //    MemberType = "Property"
+                        //});
+                    }
+                    else if (member is FieldDeclarationSyntax)
+                    {
+                        //var field = (member as FieldDeclarationSyntax);
+                        //map.Add(new CodeMapItem
+                        //{
+                        //    Line = field.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                        //    Column = field.GetLocation().GetLineSpan().StartLinePosition.Character,
+                        //    DisplayName = field.Declaration.Variables.First().Identifier.Text,
+                        //    ParentDisplayName = type.GetFullName(),
+                        //    MemberType = "Field"
+                        //});
+                    }
+                }
+            }
+
+            //if (decorated && map.Any())
+            //{
+            //    string rootClassName = map.First().ParentDisplayName;
+            //    foreach (var item in map.Skip(1))
+            //    {
+            //        if (item.ParentDisplayName == rootClassName)
+            //            item.ParentDisplayName = "<Global>";
+            //        else if (item.ParentDisplayName.StartsWith(rootClassName + "."))
+            //            item.ParentDisplayName = item.ParentDisplayName.Substring(rootClassName.Length + 1);
+            //    }
+            //}
 
             return map.ToArray();
         }

@@ -65,7 +65,7 @@
             this.error.ForeColor = System.Drawing.Color.Red;
             this.error.Location = new System.Drawing.Point(12, 9);
             this.error.Name = "error";
-            this.error.Size = new System.Drawing.Size(200, 243);
+            this.error.Size = new System.Drawing.Size(200, 225);
             this.error.TabIndex = 5;
             this.error.Text = "Error Message";
             // 

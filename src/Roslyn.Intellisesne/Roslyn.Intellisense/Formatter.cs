@@ -55,8 +55,7 @@ namespace RoslynIntellisense
 
             var root = msFormatter.Format(tree.GetRoot(), DummyWorkspace);
 
-            if (normaliseLines)
-            //if (normaliseLines && !isVB)
+            if (normaliseLines && !isVB) //VB doesn't do formatting nicely so limit it to default Roslyn handling
             {
                 //injecting line-breaks to separate declarations
                 if (!isVB)
@@ -78,8 +77,8 @@ namespace RoslynIntellisense
                 else
                 {
                     root = root.ReplaceNodes(root.DescendantNodes()
-                                                 .Where(n => VisualBasicExtensions.IsKind(n, VB.SyntaxKind.DeclareSubStatement /*MethodDeclaration*/) ||
-                                                             VisualBasicExtensions.IsKind(n, VB.SyntaxKind.EndClassStatement /*ClassDeclaration*/) ||
+                                                 .Where(n => n.IsKind(VB.SyntaxKind.DeclareSubStatement /*MethodDeclaration*/) ||
+                                                             n.IsKind(VB.SyntaxKind.EndClassStatement /*ClassDeclaration*/) ||
                                                              n.IsNewBlockStatement() ||
                                                              n.IsNewDeclarationBlock(isVB)),
                                              (_, node) =>
@@ -88,7 +87,7 @@ namespace RoslynIntellisense
                                                  if (existingTrivia.Contains(Environment.NewLine))
                                                      return node;
                                                  else
-                                                     return node.WithLeadingTrivia(SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
+                                                     return node.WithLeadingTrivia(VB.SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
                                              });
                 }
                 //Removing multiple line breaks.
@@ -109,7 +108,7 @@ namespace RoslynIntellisense
 
 
                 result = root.ToFullString()
-                             .NormalizeLine(root);
+                             .NormalizeLine(root, isVB);
             }
             else
                 result = root.ToFullString();
@@ -145,10 +144,10 @@ namespace RoslynIntellisense
             return next;
         }
 
-        static string NormalizeLine(this string formattedCode, SyntaxNode root)
+        static string NormalizeLine(this string formattedCode, SyntaxNode root, bool isVB)
         {
             var strings = root.DescendantNodes()
-                              .Where(n => n.Kind() == SyntaxKind.StringLiteralExpression)
+                              .Where(n => n.IsKind(VB.SyntaxKind.StringLiteralExpression)  || n.IsKind(SyntaxKind.StringLiteralExpression))
                               .Select(x => new { Start = x.FullSpan.Start, End = x.FullSpan.End })
                               .ToArray();
 
@@ -302,18 +301,18 @@ namespace RoslynIntellisense
         {
             var prevNode = node.NodeAbove();
             if (isVB)
-                return node.IsVbBlockStatement() && prevNode != null && VB.VisualBasicExtensions.Kind(prevNode) == VB.SyntaxKind.LocalDeclarationStatement;
+                return node.IsVbBlockStatement() && prevNode != null && prevNode.IsKind(VB.SyntaxKind.LocalDeclarationStatement);
             else
-                return node.IsBlockStatement() && prevNode != null && prevNode.Kind() == SyntaxKind.LocalDeclarationStatement;
+                return node.IsBlockStatement() && prevNode != null && prevNode.IsKind(SyntaxKind.LocalDeclarationStatement);
         }
 
         public static bool IsNewDeclarationBlock(this SyntaxNode node, bool isVB = false)
         {
             var prevNode = node.NodeAbove();
             if (isVB)
-                return VB.VisualBasicExtensions.Kind(node) == VB.SyntaxKind.LocalDeclarationStatement && prevNode != null && VB.VisualBasicExtensions.Kind(prevNode) != VB.SyntaxKind.LocalDeclarationStatement;
+                return node.IsKind(VB.SyntaxKind.LocalDeclarationStatement) && prevNode != null && prevNode.IsKind(VB.SyntaxKind.LocalDeclarationStatement);
             else
-                return node.Kind() == SyntaxKind.LocalDeclarationStatement && prevNode != null && prevNode.Kind() != SyntaxKind.LocalDeclarationStatement;
+                return node.IsKind(SyntaxKind.LocalDeclarationStatement) && prevNode != null && prevNode.IsKind(SyntaxKind.LocalDeclarationStatement);
         }
 
         public static bool IsBlockStatement(this SyntaxNode node)
