@@ -1198,7 +1198,7 @@ class Script
         }
     }
 
-    static class GenericExtensions
+    static class GenericExtensionsved 
     {
         public static string RemoveNonUserCompilingInfo(this string compilerOutput)
         {
