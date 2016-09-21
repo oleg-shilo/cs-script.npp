@@ -1134,7 +1134,7 @@ class Script
             string probingDirArg = "";
 
             if (NppScripts_ScriptsDir != null || !CSScriptIntellisense.Config.Instance.DefaultSearchDirs.IsEmpty())
-                probingDirArg = (NppScripts_ScriptsDir + "," + CSScriptIntellisense.Config.Instance.DefaultSearchDirs).Trim('\'');
+                probingDirArg = (NppScripts_ScriptsDir + "," + CSScriptIntellisense.Config.Instance.DefaultSearchDirs).Trim('\'').Trim(',');
 
             if (!probingDirArg.IsEmpty())
                 probingDirArg = " \"/dir:" + probingDirArg + "\"";
