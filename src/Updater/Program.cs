@@ -20,13 +20,22 @@ namespace CSScriptNpp.Deployment
 
         static void Main(string[] args)
         {
+            if (!args.Any())
+            {
+                MessageBox.Show($"{Path.GetFileName(Assembly.GetExecutingAssembly().Location)} is expected to be started only by Notepad++. But not by user.", "CS-Script");
+                return;
+            }
+
             //Debug.Assert(false);
+            Thread.Sleep(1000 * 5); //need to wait just in case if this instance is started by 
+            // prev updater.exe  
             bool createdNew;
             appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
 
+
             if (!createdNew)
             {
-                MessageBox.Show("Another Notepad++ plugin update in progress.", "CS-Script");
+                MessageBox.Show($"Another Notepad++ plugin update in progress. Either wait or stop {Path.GetFileName(Assembly.GetExecutingAssembly().Location)}", "CS-Script");
                 return;
             }
 
@@ -107,7 +116,8 @@ namespace CSScriptNpp.Deployment
                                     Process.Start(nppExe);
                                 else
                                     MessageBox.Show("The update has been successfully installed.", "CS-Script Update");
-                            }                        }
+                            }
+                        }
                     }
                     else
                     {
@@ -203,7 +213,7 @@ namespace CSScriptNpp.Deployment
                     count++;
 
                     var buttons = MessageBoxButtons.OKCancel;
-                    var prompt = "Updater detected running VBCSCompiler.exe, which may lock plugin files.\n"+
+                    var prompt = "Updater detected running VBCSCompiler.exe, which may lock plugin files.\n" +
                         "Please close any running instance of VBCSCompiler.exe from Task Manager and press OK to proceed.";
 
 
