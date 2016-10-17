@@ -531,6 +531,7 @@ class Script
                 var retval = new Project { PrimaryScript = script };
 
                 var searchDirs = new List<string>();
+                searchDirs.Add(Path.GetDirectoryName(script));
 
                 var globalConfig = CSScriptIntellisense.CSScriptHelper.GetGlobalConfigItems();
                 string[] defaultSearchDirs = globalConfig.Item1;
@@ -546,7 +547,7 @@ class Script
 
                 var sources = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
                 sources.Insert(0, script);
-                retval.SourceFiles = sources.ToArray();
+                retval.SourceFiles = sources.Distinct().ToArray();
 
                 if (parser.Packages.Any() && NotifyClient != null)
                 {
@@ -928,6 +929,7 @@ class Script
             string[] defaultNamespaces = globalConfig.Item3;
 
             var searchDirs = new List<string>();
+            searchDirs.Add(Path.GetDirectoryName(script));
 
             searchDirs.AddRange(defaultSearchDirs);
 
@@ -939,6 +941,7 @@ class Script
 
             IList<string> sourceFiles = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
             sourceFiles.Add(script);
+            sourceFiles = sourceFiles.Distinct().ToArray();
 
             //some assemblies are referenced from code and some will need to be resolved from the namespaces
             bool disableNamespaceResolving = (parser.IgnoreNamespaces.Count() == 1 && parser.IgnoreNamespaces[0] == "*");

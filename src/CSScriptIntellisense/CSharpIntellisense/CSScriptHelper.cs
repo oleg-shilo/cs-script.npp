@@ -215,7 +215,7 @@ namespace CSScriptIntellisense
             string[] defaultNamespaces = globalConfig.Item3;
 
             var searchDirs = new List<string>();
-
+            searchDirs.Add(Path.GetDirectoryName(script));
             searchDirs.AddRange(defaultSearchDirs);
 
             var parser = new ScriptParser(script, searchDirs.ToArray(), false);
@@ -226,6 +226,7 @@ namespace CSScriptIntellisense
 
             IList<string> sourceFiles = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
             sourceFiles.Add(script);
+            sourceFiles = sourceFiles.Distinct().ToList();
 
             //some assemblies are referenced from code and some will need to be resolved from the namespaces
             var refAsms = parser.AgregateReferences(searchDirs, defaultRefAsms, defaultNamespaces);
