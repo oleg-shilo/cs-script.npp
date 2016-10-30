@@ -60,18 +60,27 @@ namespace RoslynIntellisense
                 //injecting line-breaks to separate declarations
                 if (!isVB)
                 {
-                    root = root.ReplaceNodes(root.DescendantNodes()
-                                                 .Where(n => n.IsKind(SyntaxKind.MethodDeclaration) ||
-                                                             n.IsKind(SyntaxKind.ClassDeclaration) ||
-                                                             n.IsNewBlockStatement() ||
-                                                             n.IsNewDeclarationBlock()),
+                    var declarations = root.DescendantNodes()
+                                           .Where(n => n.IsKind(SyntaxKind.MethodDeclaration) ||
+                                                       n.IsKind(SyntaxKind.ClassDeclaration) ||
+                                                       n.IsKind(SyntaxKind.LocalDeclarationStatement) ||
+                                                       n.IsNewBlockStatement() ||
+                                                       n.IsNewDeclarationBlock())
+                                           .ToList();
+
+                    root = root.ReplaceNodes(declarations,
                                              (_, node) =>
                                              {
-                                                 var existingTrivia = node.GetLeadingTrivia().ToFullString();
-                                                 if (existingTrivia.Contains(Environment.NewLine))
-                                                     return node;
-                                                 else
-                                                     return node.WithLeadingTrivia(SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
+                                                     var isPrevLocalDeclaration = declarations.Prev(node).IsKind(SyntaxKind.LocalDeclarationStatement);
+                                                     var isLocalDeclaration = node.IsKind(SyntaxKind.LocalDeclarationStatement);
+                                                     
+                                                     var supressEmptyLineInsertion = isPrevLocalDeclaration && isLocalDeclaration;
+
+                                                     var existingTrivia = node.GetLeadingTrivia().ToFullString();
+                                                     if (existingTrivia.Contains(Environment.NewLine) || supressEmptyLineInsertion)
+                                                         return node;
+                                                     else
+                                                         return node.WithLeadingTrivia(SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
                                              });
                 }
                 else
@@ -147,7 +156,7 @@ namespace RoslynIntellisense
         static string NormalizeLine(this string formattedCode, SyntaxNode root, bool isVB)
         {
             var strings = root.DescendantNodes()
-                              .Where(n => n.IsKind(VB.SyntaxKind.StringLiteralExpression)  || n.IsKind(SyntaxKind.StringLiteralExpression))
+                              .Where(n => n.IsKind(VB.SyntaxKind.StringLiteralExpression) || n.IsKind(SyntaxKind.StringLiteralExpression))
                               .Select(x => new { Start = x.FullSpan.Start, End = x.FullSpan.End })
                               .ToArray();
 

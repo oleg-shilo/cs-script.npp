@@ -1,15 +1,7 @@
-Release v1.3.1
-* Fixed problem with exception on script startup (discussion: [discussion:658140])
-* VB.NET Support
-** Execution
-** Debugging
-** Intellisense
-** Code Formatting
-* Issue#18: Class name auto-completion may fail.
-* Issue#17: Problem with Format-on-Save option
-* Added CodeMap support for C#6
-* CS-Script execution improvements
-  - Defining SearchDirs from the settings file
-  - Processing css_conig.xml if present
-* Added N++ settings compatibility checking/report
+Release v1.4.0
+* Improved formatting: prevented splitting consecutive local declarations in multiple lines.
+* Issue#19: Naked wild card includes scripts from subfolders
+* Fixed updater.exe race condition
+* New version of CS-Script engine (v3.17.0.0)
+
 

@@ -61,7 +61,7 @@ namespace RoslynIntellisense
             int start = text.Substring(0, pos).LastIndexOf('\n');
             int end = text.IndexOf('\n', pos);
 
-            return text.Substring(start, end-start).Trim();
+            return text.Substring(start, end - start).Trim();
         }
 
         public static int LastLineStart(this string text)
@@ -95,6 +95,15 @@ namespace RoslynIntellisense
         public static bool OneOf(this string text, params string[] items)
         {
             return items.Any(x => x == text);
+        }
+
+        public static T Prev<T>(this List<T> list, T item)
+        {
+            int index = list.IndexOf(item);
+            if (index > 0)
+                return list[index - 1];
+            else
+                return default(T);
         }
 
         public static int GetWordStartOf(this string text, int offset)

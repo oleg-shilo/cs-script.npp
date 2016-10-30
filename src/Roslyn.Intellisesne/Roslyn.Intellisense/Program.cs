@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Intellisense.Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace RoslynIntellisense
 
             //Formatting(args);
             //IntellisenseSimple();
+            //return 1;
             //Intellisense();
 
             if (args.Contains("/test"))
@@ -38,9 +40,32 @@ namespace RoslynIntellisense
             //Autocompleter.FindMissingUsings();
             //Autocompleter.FindMissingUsings11();
             //Intellisense2();
+            //IntellisenseSimple();
+            SyntaxServer();
+            //Console.ReadLine();
+            //SyntaxServer();
+            //Console.ReadLine();
             //ResolveNamespaces();
-            IntellisenseVb();
+            //IntellisenseVb();
             return 0;
+        }
+
+        static void SyntaxServer()
+        {
+            new Engine().Preload();
+            var code = @"class Script
+{
+    static void Main()
+    {
+        var test = ""ttt"";
+        System.Console.Wr|iteLine($""Hello World!{test.Ends";
+
+            int carret = code.IndexOf("|");
+            code = code.Replace("|", "");
+
+            var completions = Autocompleter.GetAutocompletionFor(code, carret).Result;
+            foreach (ICompletionData item in completions)
+                Console.WriteLine($"{item.DisplayText}\t{item.CompletionType},{item.DisplayText}");
         }
 
         static int ResolveNamespaces()
@@ -194,11 +219,11 @@ public class TestA
         var test = ""ttt"";
         System.Console.WriteLine($""Hello World!{test.Ends";
 
-            var ttt = Autocompleter.GetAutocompletionFor(code, 132);
+            var ttt = Autocompleter.GetAutocompletionFor(code, 131);
             Console.WriteLine("----------------------------------");
             Console.ReadLine();
 
-            var ttt3 = Autocompleter.GetAutocompletionFor(code, 132);
+            var ttt3 = Autocompleter.GetAutocompletionFor(code, 131);
             Console.ReadLine();
         }
     }
