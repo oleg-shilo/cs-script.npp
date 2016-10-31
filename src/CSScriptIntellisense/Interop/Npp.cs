@@ -448,7 +448,16 @@ namespace CSScriptIntellisense
             IntPtr sci = Plugin.GetCurrentScintilla();
             return 0 != (int) Win32.SendMessage(sci, SciMsg.SCI_CANUNDO, 0, 0);
         }
+        static int execute(SciMsg msg, int wParam, int lParam = 0)
+        {
+            IntPtr sci = Plugin.GetCurrentScintilla();
+            return (int) Win32.SendMessage(sci, msg, wParam, lParam);
+        }
 
+        static int execute(NppMsg msg, int wParam, int lParam = 0)
+        {
+            return (int) Win32.SendMessage(Npp.NppHandle, msg, wParam, lParam);
+        }
         public static void ClearSelection()
         {
             IntPtr sci = Plugin.GetCurrentScintilla();
@@ -462,6 +471,13 @@ namespace CSScriptIntellisense
             IntPtr sci = Plugin.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, start, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, end, 0);
+        }
+
+        public static string GetSelectedText()
+        {
+            int start = execute(SciMsg.SCI_GETSELECTIONSTART, 0, 0);
+            int end = execute(SciMsg.SCI_GETSELECTIONEND, 0, 0);
+            return GetTextBetween(start, end);
         }
 
         public static void SetSelectionText(string text)

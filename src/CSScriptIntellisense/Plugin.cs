@@ -1149,9 +1149,12 @@ namespace CSScriptIntellisense
 
                 if (modifiers.IsCtrl && !modifiers.IsShift && !modifiers.IsAlt)
                 {
-                    var caret = Npp.GetPositionFromMouseLocation();
-                    if (caret != -1)
-                        Task.Factory.StartNew(GoToDefinition); //let click to get handled, otherwise accidental selection will occur
+                    if (Npp.GetSelectedText().IsNullOrEmpty())
+                    {
+                        var caret = Npp.GetPositionFromMouseLocation();
+                        if (caret != -1)
+                            Task.Factory.StartNew(GoToDefinition); //let click to get handled, otherwise accidental selection will occur
+                    }
                 }
             }
         }
