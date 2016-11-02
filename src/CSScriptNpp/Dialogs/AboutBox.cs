@@ -13,7 +13,7 @@ namespace CSScriptNpp
         {
             InitializeComponent();
             this.Text = "About CS-Script";
-            this.label3.Text = "Version: " + AssemblyVersion;
+            this.label3.Text = $"Version: {AssemblyVersion}; CLR: v{Environment.Version.Major}.{Environment.Version.Minor}.{Environment.Version.Build}";
             this.label5.Text = AssemblyCopyright;
             this.textBoxDescription.Text = AssemblyDescription;
             this.includePrereleases.Checked = Config.Instance.CheckPrereleaseUpdates;
