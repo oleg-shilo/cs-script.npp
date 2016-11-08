@@ -408,7 +408,10 @@ namespace CSScriptNpp
 
         static public void InitProjectPanel()
         {
-            ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            if(ProjectPanel == null)
+                ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            else
+                SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, true);
             ProjectPanel.Focus();
             Application.DoEvents();
         }

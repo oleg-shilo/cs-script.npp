@@ -1,7 +1,4 @@
-Release v1.4.0
-* Improved formatting: prevented splitting consecutive local declarations in multiple lines.
-* Issue#19: Naked wild card includes scripts from subfolders
-* Fixed updater.exe race condition
-* New version of CS-Script engine (v3.17.0.0)
+Release v1.4.0+
+* Generation of the script project is now based on the script directory as "CurrentDirectory" thus script dependencies for project structure are resolved the same way as for execution.
 
 

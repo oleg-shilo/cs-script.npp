@@ -15,7 +15,6 @@ namespace CSScriptNpp
             {
                 //Debug.Assert(false);
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-                
                 //must be a separate method to allow assembly probing
                 ConnectPlugins();
             }

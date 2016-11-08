@@ -540,7 +540,17 @@ class Script
 
                 searchDirs.AddRange(defaultSearchDirs);
 
-                var parser = new ScriptParser(script, searchDirs.ToArray(), false);
+                ScriptParser parser;
+                string currDir = Environment.CurrentDirectory;
+                try
+                {
+                    Environment.CurrentDirectory = Path.GetDirectoryName(script);
+                    parser = new ScriptParser(script, searchDirs.ToArray(), false);
+                }
+                finally
+                {
+                    Environment.CurrentDirectory = currDir;
+                }
 
                 searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined n the script
                 searchDirs.RemoveEmptyAndDulicated();
@@ -1201,7 +1211,7 @@ class Script
         }
     }
 
-    static class GenericExtensionsved 
+    static class GenericExtensionsved
     {
         public static string RemoveNonUserCompilingInfo(this string compilerOutput)
         {

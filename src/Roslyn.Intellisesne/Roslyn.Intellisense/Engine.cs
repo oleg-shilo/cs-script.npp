@@ -38,7 +38,7 @@ namespace RoslynIntellisense
                                      var test = ""ttt"";
                                      System.Console.WriteLine($""Hello World!{test.Ends";
 
-                        Autocompleter.GetAutocompletionFor(code, 132);
+                        var result = Autocompleter.GetAutocompletionFor(code, 132).Result;
                     }
                 }
                 catch

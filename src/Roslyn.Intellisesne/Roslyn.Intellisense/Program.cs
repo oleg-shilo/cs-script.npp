@@ -25,10 +25,9 @@ namespace RoslynIntellisense
             //IntellisenseSimple();
             //return 1;
             //Intellisense();
-
-            if (args.Contains("/test"))
+            if (args.Contains("/test") || args.Contains("-test"))
                 return Test();
-            else if (args.Contains("/detect"))
+            else if (args.Contains("/detect") || args.Contains("-detect"))
                 return Detect();
             else
                 return 0;
