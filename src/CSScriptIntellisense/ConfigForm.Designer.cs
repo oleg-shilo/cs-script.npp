@@ -34,12 +34,12 @@
             this.intercept = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.autoInsertSingle = new System.Windows.Forms.CheckBox();
+            this.vbSupport = new System.Windows.Forms.CheckBox();
             this.useMethodBrackets = new System.Windows.Forms.CheckBox();
             this.ignoreDocExceptions = new System.Windows.Forms.CheckBox();
             this.formatAsYouType = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.ContentPanel = new System.Windows.Forms.Panel();
-            this.vbSupport = new System.Windows.Forms.CheckBox();
             this.formatOnSave = new System.Windows.Forms.CheckBox();
             this.F12OnCtrlClick = new System.Windows.Forms.CheckBox();
             this.useContextMenu = new System.Windows.Forms.CheckBox();
@@ -81,15 +81,27 @@
         "ion list.");
             this.autoInsertSingle.UseVisualStyleBackColor = true;
             // 
+            // vbSupport
+            // 
+            this.vbSupport.AutoSize = true;
+            this.vbSupport.Location = new System.Drawing.Point(0, 167);
+            this.vbSupport.Name = "vbSupport";
+            this.vbSupport.Size = new System.Drawing.Size(120, 17);
+            this.vbSupport.TabIndex = 8;
+            this.vbSupport.Text = "Support for VB.NET";
+            this.toolTip1.SetToolTip(this.vbSupport, resources.GetString("vbSupport.ToolTip"));
+            this.vbSupport.UseVisualStyleBackColor = true;
+            // 
             // useMethodBrackets
             // 
             this.useMethodBrackets.AutoSize = true;
-            this.useMethodBrackets.Location = new System.Drawing.Point(0, 56);
+            this.useMethodBrackets.Location = new System.Drawing.Point(145, 56);
             this.useMethodBrackets.Name = "useMethodBrackets";
             this.useMethodBrackets.Size = new System.Drawing.Size(191, 17);
             this.useMethodBrackets.TabIndex = 2;
             this.useMethodBrackets.Text = "End methods with an open bracket";
             this.useMethodBrackets.UseVisualStyleBackColor = true;
+            this.useMethodBrackets.Visible = false;
             // 
             // ignoreDocExceptions
             // 
@@ -105,7 +117,7 @@
             // formatAsYouType
             // 
             this.formatAsYouType.AutoSize = true;
-            this.formatAsYouType.Location = new System.Drawing.Point(0, 79);
+            this.formatAsYouType.Location = new System.Drawing.Point(0, 54);
             this.formatAsYouType.Name = "formatAsYouType";
             this.formatAsYouType.Size = new System.Drawing.Size(142, 17);
             this.formatAsYouType.TabIndex = 2;
@@ -115,7 +127,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(10, 215);
+            this.linkLabel1.Location = new System.Drawing.Point(13, 192);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 4;
@@ -139,25 +151,13 @@
             this.ContentPanel.Controls.Add(this.formatAsYouType);
             this.ContentPanel.Location = new System.Drawing.Point(13, 3);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 209);
+            this.ContentPanel.Size = new System.Drawing.Size(290, 186);
             this.ContentPanel.TabIndex = 5;
-            // 
-            // vbSupport
-            // 
-            this.vbSupport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.vbSupport.AutoSize = true;
-            this.vbSupport.Location = new System.Drawing.Point(0, 192);
-            this.vbSupport.Name = "vbSupport";
-            this.vbSupport.Size = new System.Drawing.Size(120, 17);
-            this.vbSupport.TabIndex = 8;
-            this.vbSupport.Text = "Support for VB.NET";
-            this.toolTip1.SetToolTip(this.vbSupport, resources.GetString("vbSupport.ToolTip"));
-            this.vbSupport.UseVisualStyleBackColor = true;
             // 
             // formatOnSave
             // 
             this.formatOnSave.AutoSize = true;
-            this.formatOnSave.Location = new System.Drawing.Point(0, 102);
+            this.formatOnSave.Location = new System.Drawing.Point(0, 77);
             this.formatOnSave.Name = "formatOnSave";
             this.formatOnSave.Size = new System.Drawing.Size(99, 17);
             this.formatOnSave.TabIndex = 3;
@@ -167,7 +167,7 @@
             // F12OnCtrlClick
             // 
             this.F12OnCtrlClick.AutoSize = true;
-            this.F12OnCtrlClick.Location = new System.Drawing.Point(0, 147);
+            this.F12OnCtrlClick.Location = new System.Drawing.Point(0, 122);
             this.F12OnCtrlClick.Name = "F12OnCtrlClick";
             this.F12OnCtrlClick.Size = new System.Drawing.Size(227, 17);
             this.F12OnCtrlClick.TabIndex = 2;
@@ -177,7 +177,7 @@
             // useContextMenu
             // 
             this.useContextMenu.AutoSize = true;
-            this.useContextMenu.Location = new System.Drawing.Point(0, 124);
+            this.useContextMenu.Location = new System.Drawing.Point(0, 99);
             this.useContextMenu.Name = "useContextMenu";
             this.useContextMenu.Size = new System.Drawing.Size(183, 17);
             this.useContextMenu.TabIndex = 2;
@@ -187,7 +187,7 @@
             // roslynIntellisense
             // 
             this.roslynIntellisense.AutoSize = true;
-            this.roslynIntellisense.Location = new System.Drawing.Point(0, 170);
+            this.roslynIntellisense.Location = new System.Drawing.Point(0, 145);
             this.roslynIntellisense.Name = "roslynIntellisense";
             this.roslynIntellisense.Size = new System.Drawing.Size(225, 17);
             this.roslynIntellisense.TabIndex = 2;
@@ -209,7 +209,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 239);
+            this.ClientSize = new System.Drawing.Size(315, 214);
             this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
