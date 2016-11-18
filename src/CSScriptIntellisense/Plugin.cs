@@ -121,7 +121,7 @@ namespace CSScriptIntellisense
 
             if (Snippets.Contains(token))
             {
-                Dispatcher.Shedule(10, () =>
+                Dispatcher.Schedule(10, () =>
                      InsertCodeSnippet(token, point));
                 return true;
             }
@@ -227,7 +227,7 @@ namespace CSScriptIntellisense
                         {
                             handled = true;
                             var handler = internalShortcuts[shortcut];
-                            Dispatcher.Shedule(10, () => InvokeShortcutHandler(handler.Item2));
+                            Dispatcher.Schedule(10, () => InvokeShortcutHandler(handler.Item2));
 
                             break;
                         }
@@ -898,7 +898,7 @@ namespace CSScriptIntellisense
                 autocompleteForm.FormClosed += (sender, e) =>
                 {
                     if (memberInfoWasShowing)
-                        NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
+                        NppUI.Marshal(() => Dispatcher.Schedule(100, ShowMethodInfo));
                 };
                 //form.KeyPress += (sender, e) =>
                 //{
@@ -1095,8 +1095,11 @@ namespace CSScriptIntellisense
                 }
                 else if (c == '(')
                 {
-                    if (!memberInfoPopup.IsShowing || memberInfoPopup.Simple)
-                        ShowMethodInfo();
+                    if (!Config.Instance.DisableMethodInfoAutoPopup)
+                    {
+                        if (!memberInfoPopup.IsShowing || memberInfoPopup.Simple)
+                            Dispatcher.Schedule(1, ShowMethodInfo); //to allow N++ bracket auto-insertion to proceed
+                    }
                 }
                 else if (memberInfoPopup.IsShowing)
                 {

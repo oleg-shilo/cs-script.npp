@@ -178,7 +178,7 @@ namespace CSScriptIntellisense
                     {
                         lastScheduledPoint = Cursor.Position;
                         reqiestIsPending = true;
-                        Dispatcher.Shedule(700, () =>
+                        Dispatcher.Schedule(700, () =>
                             {
                                 lock (popupRequestSynch)
                                 {

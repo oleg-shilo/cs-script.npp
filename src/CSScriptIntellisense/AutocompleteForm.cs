@@ -60,7 +60,7 @@ namespace CSScriptIntellisense
             this.Height = ((itemHeight + verticalSpacing) * Math.Min(listBox1.Items.Count, 10)) + extraHeight;
 
             if (items.Count() == 1 && items.First().DisplayText == partialName)
-                Dispatcher.Shedule(10, Close); //no need to suggest as the token is already completed
+                Dispatcher.Schedule(10, Close); //no need to suggest as the token is already completed
             //this.Width = 120;
         }
 
@@ -202,7 +202,7 @@ namespace CSScriptIntellisense
                         //handled = false; //let the editor to move the caret
                         //Close();
                     }
-                    Dispatcher.Shedule(10, () => Plugin.OnAutocompleteKeyPress());
+                    Dispatcher.Schedule(10, () => Plugin.OnAutocompleteKeyPress());
                 }
                 else
                 {
@@ -211,7 +211,7 @@ namespace CSScriptIntellisense
                        (key == Keys.Tab && Config.Instance.UseTabToAccept))
                     {
                         OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
-                        Dispatcher.Shedule(10, Close);
+                        Dispatcher.Schedule(10, Close);
 
                         handled = true;
                     }

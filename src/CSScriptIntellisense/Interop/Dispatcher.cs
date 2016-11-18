@@ -12,7 +12,7 @@ namespace CSScriptIntellisense.Interop
             instance = new Dispatcher();
         }
 
-        static public void Shedule(int interval, Action action)
+        static public void Schedule(int interval, Action action)
         {
             instance.SheduleImpl(interval, action);
         }
