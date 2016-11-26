@@ -1,9 +1,4 @@
-Release v1.5.0
-* Added preventing triggering GoToDefinition on Ctrl+LeftMouseClick when there is a text selection.
-* Added CLR version label to AboutBox.
-* Fixed flickering on project reload.
-* Generation of the script project is now based on the script directory as "CurrentDirectory" thus script dependencies during project structure generation are resolved the same way as for execution.
-* CS-Script engine update (v3.18.1)
-* Addressed "overlapping" between Notepad++ native bracket auto-insertion and C# MethodInfo tooltip.
+Release v1.5.1
+* Added editing VS project template from config dialog.
 
 

@@ -983,11 +983,11 @@ class Script
                                             refAsms.Select(file => "<Reference Include=\"" + Path.GetFileNameWithoutExtension(file) + "\"><HintPath>" + file + "</HintPath></Reference>").ToArray());
 
             File.WriteAllText(projectFile,
-                              Resources.Resources.VS2012ProjectTemplate
-                                                 .Replace("<UseVSHostingProcess>false", "<UseVSHostingProcess>true") // to ensure *.vshost.exe is created
-                                                 .Replace("<OutputType>Library", "<OutputType>Exe")
-                                                 .Replace("{$SOURCES}", sourceFilesXml)
-                                                 .Replace("{$REFERENCES}", refAsmsXml));
+                              File.ReadAllText(GetProjectTemplate())
+                                  .Replace("<UseVSHostingProcess>false", "<UseVSHostingProcess>true") // to ensure *.vshost.exe is created
+                                  .Replace("<OutputType>Library", "<OutputType>Exe")
+                                  .Replace("{$SOURCES}", sourceFilesXml)
+                                  .Replace("{$REFERENCES}", refAsmsXml));
 
             File.WriteAllText(projectFile + ".user",
                               Resources.Resources.VS2012UserTemplate
@@ -996,10 +996,29 @@ class Script
 
             File.WriteAllText(solutionFile,
                               Encoding.UTF8.GetString(Resources.Resources.VS2012SolutionTemplate)
-                                      .Replace("{$PROJECTNAME}", projectName));
+                                           .Replace("{$PROJECTNAME}", projectName));
 
 
             Process.Start(solutionFile);
+        }
+
+        internal static string GetProjectTemplate()
+        {
+            string projTemplateFile = Config.Instance.VSProjectTemplatePath;
+
+            if (projTemplateFile.IsEmpty() || !File.Exists(projTemplateFile))
+
+            {
+                Config.Instance.VSProjectTemplatePath =
+                projTemplateFile = Path.Combine(VsDir, "VisualStudio.csproj.template.txt");
+
+                if (!File.Exists(projTemplateFile))
+                    File.WriteAllText(projTemplateFile, Resources.Resources.VS2012ProjectTemplate);
+
+                Config.Instance.Save();
+            }
+
+            return projTemplateFile;
         }
 
         static public string ScriptEngineVersion()

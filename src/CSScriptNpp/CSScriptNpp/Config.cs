@@ -46,6 +46,7 @@ namespace CSScriptNpp
         public bool BreakOnException = false;
         public bool UpdateAfterExit = false;
         public string UpdateMode = "custom";
+        public string VSProjectTemplatePath = "";
         public bool CheckUpdatesOnStartup = true;
         public bool CheckPrereleaseUpdates = false;
         public bool UseRoslynProvider = false;
@@ -138,6 +139,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
                     SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
+                    SetValue(Section, nameof(VSProjectTemplatePath), VSProjectTemplatePath);
                     SetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
                     SetValue(Section, nameof(LastExternalProcess), LastExternalProcess);
                     SetValue(Section, nameof(LastExternalProcessArgs), LastExternalProcessArgs);
@@ -215,6 +217,7 @@ namespace CSScriptNpp
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                 HideDevaultAssemblies = GetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);
+                VSProjectTemplatePath = GetValue(Section, nameof(VSProjectTemplatePath), VSProjectTemplatePath);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
                 ClasslessScriptByDefault = GetValue(Section, nameof(ClasslessScriptByDefault), ClasslessScriptByDefault);
                 DistributeScriptAsScriptByDefault = GetValue(Section, nameof(DistributeScriptAsScriptByDefault), DistributeScriptAsScriptByDefault);

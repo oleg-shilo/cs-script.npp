@@ -46,6 +46,7 @@
             this.installedEngine = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -91,6 +92,7 @@
             this.generalPage.Controls.Add(this.restorePanels);
             this.generalPage.Controls.Add(this.checkUpdates);
             this.generalPage.Controls.Add(this.useCS6);
+            this.generalPage.Controls.Add(this.linkLabel2);
             this.generalPage.Controls.Add(this.linkLabel1);
             this.generalPage.Location = new System.Drawing.Point(4, 22);
             this.generalPage.Name = "generalPage";
@@ -232,6 +234,18 @@
             this.embeddedEngine.UseVisualStyleBackColor = true;
             this.embeddedEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
             // 
+            // linkLabel2
+            // 
+            this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Location = new System.Drawing.Point(240, 242);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(167, 13);
+            this.linkLabel2.TabIndex = 5;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "Edit Visual Studio project template";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -275,5 +289,6 @@
         private System.Windows.Forms.CheckBox restorePanels;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox scriptsDir;
+        private System.Windows.Forms.LinkLabel linkLabel2;
     }
 }

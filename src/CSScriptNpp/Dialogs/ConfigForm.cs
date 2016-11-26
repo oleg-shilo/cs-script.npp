@@ -110,5 +110,25 @@ namespace CSScriptNpp
         {
             customEngineLocation.ReadOnly = !customEngine.Checked;
         }
+
+        void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string file = CSScriptHelper.GetProjectTemplate();
+
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    Thread.Sleep(500);
+                    Process.Start(file);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: \n" + ex.ToString(), "Notepad++");
+                }
+            });
+
+            Close();
+        }
     }
 }
