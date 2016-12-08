@@ -1,4 +1,4 @@
-Release v1.5.1
-* Added editing VS project template from config dialog.
+Release v1.6.0
+* Fixed problem with debug symbolds not being generated during debugging (Issue#20: Debugging)
 
 
