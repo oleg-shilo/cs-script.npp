@@ -458,8 +458,7 @@ void main(string[] args)
                             {
                                 string targetType = Debugger.DebugAsConsole ? CSScriptHelper.cscs_exe : CSScriptHelper.csws_exe;
                                 string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
-                                //Debugger.Start(debuggingHost, string.Format("\"{0}\" /dbg /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs(currentScript)), Debugger.CpuType.Any);
-                                Debugger.Start(debuggingHost, string.Format("\"{0}\" /dbg /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs(currentScript)), Debugger.CpuType.Any);
+                                Debugger.Start(debuggingHost, string.Format("\"{0}\" /d /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs(currentScript)), Debugger.CpuType.Any);
                             }
 
                             if (breakOnFirstStep)

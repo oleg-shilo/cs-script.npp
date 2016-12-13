@@ -1,4 +1,7 @@
 Release v1.6.0
-* Fixed problem with debug symbolds not being generated during debugging (Issue#20: Debugging)
+* Fixed problem with debug symbols not being generated during debugging (Issue#20: Debugging)
+* Added editing VS project template from config dialog.
+* Migrated CS-Script engine to the latest release v3.19.0
+
 
 

@@ -343,7 +343,7 @@ namespace CSScriptNpp
             {
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
-                p.StartInfo.Arguments = "/nl /l /dbg " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
+                p.StartInfo.Arguments = "/nl /l /d " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
                 bool useFileRedirection = false;
@@ -471,7 +471,7 @@ class Script
 }");
                 File.SetLastWriteTimeUtc(file, DateTime.Now.ToUniversalTime());
 
-                string args = string.Format("/dbg /l {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
+                string args = string.Format("/d /l {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
                 //Process.Start(csws_exe, args);
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
@@ -488,7 +488,7 @@ class Script
         {
             string cscs = "\"" + cscs_exe + "\"";
             string script = "\"" + scriptFile + "\"";
-            string debugFlag = "/dbg ";
+            string debugFlag = "/d ";
             if (!Config.Instance.RunExternalInDebugMode)
                 debugFlag = " ";
 
@@ -516,7 +516,7 @@ class Script
 
         static public void ExecuteDebug(string scriptFileCmd)
         {
-            ProcessStart("cmd.exe", "/K \"\"" + cscs_exe + "\" /nl /l /dbg " + GenerateDefaultArgs(scriptFileCmd) + " \"" + scriptFileCmd + "\" //x\"");
+            ProcessStart("cmd.exe", "/K \"\"" + cscs_exe + "\" /nl /l /d " + GenerateDefaultArgs(scriptFileCmd) + " \"" + scriptFileCmd + "\" //x\"");
         }
 
         static public Func<string, string> NotifyClient;
@@ -1030,9 +1030,9 @@ class Script
         {
             var p = new Process();
             p.StartInfo.FileName = cscs_exe;
-            //NOTE: it is important to always pass /dbg otherwise NPP will not be able to debug.
+            //NOTE: it is important to always pass /d otherwise NPP will not be able to debug.
             //particularly important to do for //css_host scripts
-            p.StartInfo.Arguments = "/nl /l /dbg /ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
+            p.StartInfo.Arguments = "/nl /l /d /ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.RedirectStandardOutput = true;
