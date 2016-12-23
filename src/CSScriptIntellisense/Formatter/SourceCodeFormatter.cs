@@ -1,11 +1,12 @@
-using ICSharpCode.NRefactory.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace CSScriptIntellisense
 {
@@ -16,23 +17,36 @@ namespace CSScriptIntellisense
 
         public static void FormatDocument()
         {
-            int currentPos = Npp.GetCaretPosition();
-            CaretBeforeLastFormatting = currentPos;
-            string code = Npp.GetTextBetween(0, Npp.DocEnd);
+            try
+            {
+                int currentPos = Npp.GetCaretPosition();
+                CaretBeforeLastFormatting = currentPos;
+                string code = Npp.GetTextBetween(0, Npp.DocEnd);
 
-            code = NormalizeNewLines(code, ref currentPos);
+                if (code.Any() && currentPos!= -1 && currentPos < code.Length)
+                {
+                    code = NormalizeNewLines(code, ref currentPos);
 
-            int topScrollOffset = Npp.GetLineNumber(currentPos) - Npp.GetFirstVisibleLine();
-            TopScrollOffsetBeforeLastFormatting = topScrollOffset;
+                    int topScrollOffset = Npp.GetLineNumber(currentPos) - Npp.GetFirstVisibleLine();
+                    TopScrollOffsetBeforeLastFormatting = topScrollOffset;
 
-            string newCode = FormatCode(code, ref currentPos, Npp.GetCurrentFile());
+                    string newCode = FormatCode(code, ref currentPos, Npp.GetCurrentFile());
 
-            Npp.SetTextBetween(newCode, 0, Npp.DocEnd);
+                    Npp.SetTextBetween(newCode, 0, Npp.DocEnd);
 
-            Npp.SetCaretPosition(currentPos);
-            Npp.ClearSelection();
+                    Npp.SetCaretPosition(currentPos);
+                    Npp.ClearSelection();
 
-            Npp.SetFirstVisibleLine(Npp.GetLineNumber(currentPos) - topScrollOffset);
+                    Npp.SetFirstVisibleLine(Npp.GetLineNumber(currentPos) - topScrollOffset);
+                }
+            }
+            catch
+            {
+#if  DEBUG
+               throw;
+#endif
+                //formatting errors are not critical so can be ignored in release mode
+            }
         }
 
         static public string NormalizeNewLines(string code, ref int currentPos)
@@ -44,7 +58,7 @@ namespace CSScriptIntellisense
 
             return codeLeft + codeRight;
         }
-        
+
 
         public static void FormatDocumentPrevLines()
         {
@@ -124,7 +138,7 @@ namespace CSScriptIntellisense
                         method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("FormatHybrid");
                     else
                         method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("Format");
-                    RoslynFormat = (FormatMethod)Delegate.CreateDelegate(typeof(FormatMethod), method);
+                    RoslynFormat = (FormatMethod) Delegate.CreateDelegate(typeof(FormatMethod), method);
                 }
 
                 if (RoslynFormat != null)

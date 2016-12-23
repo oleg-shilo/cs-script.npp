@@ -82,10 +82,10 @@ namespace CSScriptNpp
         public int DebugPanelInitialTab = 0;
         public bool ShowLineNuberInCodeMap = false;
         public bool ShowProjectPanel = false;
+        public bool ShowDebugPanel = false;
         public bool ShowOutputPanel = false;
         public bool DebugAsConsole = true;
         public bool HandleSaveAs = true;
-        public bool ShowDebugPanel = false;
         public int OutputPanelCapacity = 10000; //num of characters
         public bool LocalDebug = true;
 
@@ -180,6 +180,7 @@ namespace CSScriptNpp
                 RunExternalInDebugMode = GetValue(Section, nameof(RunExternalInDebugMode), RunExternalInDebugMode);
                 CustomAsyncHost = GetValue(Section, nameof(CustomAsyncHost), CustomAsyncHost);
                 SyncSecondaryPanelsWithProjectPanel = GetValue(Section, nameof(SyncSecondaryPanelsWithProjectPanel), SyncSecondaryPanelsWithProjectPanel);
+                ShowDebugPanel = GetValue(Section, nameof(ShowDebugPanel), ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
                 //ShowDebugPanel = GetValue(Section, nameof(ShowDebugPanel), ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
                 DebugStepPointColor = GetValue(Section, nameof(DebugStepPointColor), DebugStepPointColor, 1024 * 4);
                 DebugStepPointForeColor = GetValue(Section, nameof(DebugStepPointForeColor), DebugStepPointForeColor, 1024 * 4);

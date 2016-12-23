@@ -9,6 +9,7 @@ using CSScriptLibrary;
 using CSScriptNpp.Dialogs;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using CSScriptIntellisense.Interop;
 
 namespace CSScriptNpp
 {
@@ -60,10 +61,23 @@ namespace CSScriptNpp
             //watcher.EnableRaisingEvents = true;
         }
 
+        bool hideSecondaryPanelsScheduled = false;
+
         private void ProjectPanel_VisibleChanged(object sender, EventArgs e)
         {
-            if (Config.Instance.SyncSecondaryPanelsWithProjectPanel && !this.Visible)
-                Plugin.HideSecondaryPanels();
+            if (Config.Instance.SyncSecondaryPanelsWithProjectPanel)
+            {
+                if (!hideSecondaryPanelsScheduled)
+                {
+                    hideSecondaryPanelsScheduled = true;
+                    Dispatcher.Schedule(300, () =>
+                    {
+                        if (!this.Visible)
+                            Plugin.HideSecondaryPanels();
+                        hideSecondaryPanelsScheduled = false;
+                    });
+                };
+            }
         }
 
         ToolStripPersistance toolStripPersistance;

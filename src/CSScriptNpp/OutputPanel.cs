@@ -420,6 +420,8 @@ namespace CSScriptNpp
                 ShowOutput(BuildOutputName);
 
                 RefreshControls();
+
+                System.Diagnostics.Debug.WriteLine("OutputPanel visible changed to -> "+this.Visible);
             }
         }
 
@@ -518,6 +520,23 @@ namespace CSScriptNpp
         void outputType_DropDown(object sender, EventArgs e)
         {
             CheckAndFixCombobox();
+        }
+
+        private void OutputPanel_Shown(object sender, EventArgs e)
+        {
+
+            //System.Diagnostics.Debug.WriteLine("OutputPanel shown");
+        }
+
+        private void OutputPanel_Activated(object sender, EventArgs e)
+        {
+            //System.Diagnostics.Debug.WriteLine("OutputPanel activated");
+
+        }
+
+        private void OutputPanel_Deactivate(object sender, EventArgs e)
+        {
+            //System.Diagnostics.Debug.WriteLine("OutputPanel deactivated");
         }
     }
 

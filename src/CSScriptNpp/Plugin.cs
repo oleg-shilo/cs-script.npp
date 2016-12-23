@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -64,15 +65,15 @@ namespace CSScriptNpp
 
             int index = 0;
 
-            //'_' prefix in the shortcutName means "pluging action shortcut" as opposite to "plugin key interceptor action"
+            //'_' prefix in the shortcutName means "plugin action shortcut" as opposite to "plugin key interceptor action"
             SetCommand(projectPanelId = index++, "Build (validate)", Build, "_BuildFromMenu:Ctrl+Shift+B");
             SetCommand(projectPanelId = index++, "Run", Run, "_Run:F5");
             SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
             SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
             SetCommand(index++, "---", null);
-            SetCommand(projectPanelId = index++, "Project Panel", InitProjectPanel, Config.Instance.ShowProjectPanel);
-            SetCommand(outputPanelId = index++, "Output Panel", InitOutputPanel, Config.Instance.ShowOutputPanel);
-            SetCommand(debugPanelId = index++, "Debug Panel", InitDebugPanel, Config.Instance.ShowDebugPanel);
+            SetCommand(projectPanelId = index++, "Show Project Panel", InitProjectPanel);
+            SetCommand(outputPanelId = index++, "Show Output Panel", InitOutputPanel);
+            SetCommand(debugPanelId = index++, "Show Debug Panel", InitDebugPanel);
             SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
 
@@ -335,6 +336,22 @@ namespace CSScriptNpp
 
         static DebugPanel debugPanel;
 
+        static public bool DebugPanelVisible
+        {
+            get
+            {
+                return debugPanel != null && debugPanel.Visible;
+            }
+        }
+        
+        static public bool OutputPanelVisible
+        {
+            get
+            {
+                return outputPanel != null && outputPanel.Visible;
+            }
+        }
+
         static public DebugPanel DebugPanel
         {
             get
@@ -421,29 +438,39 @@ namespace CSScriptNpp
             SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, true);
         }
 
-        //static int toggleScondaryPanelsCount = 0;
         static public void ToggleScondaryPanels()
         {
-            Plugin.ShowSecondaryPanels();
-            //return;
-
-            //if (toggleScondaryPanelsCount == 0 && (Plugin.OutputPanel == null || !Plugin.OutputPanel.Visible))
-            //{
-            //    Plugin.DoOutputPanel();
-            //}
-            //else if (toggleScondaryPanelsCount == 3 && (Plugin.DebugPanel == null || !Plugin.DebugPanel.Visible))
-            //{
-            //    Plugin.DoDebugPanel();
-            //}
-            //else if (toggleScondaryPanelsCount == 4)
-            //{
-            //    Plugin.DoOutputPanel();
-            //    Plugin.DoDebugPanel();
-            //}
-
-            //toggleScondaryPanelsCount++;
-            //if (toggleScondaryPanelsCount > 4)
-            //    toggleScondaryPanelsCount = 0;
+            bool simple = false;
+            if (simple)
+            {
+                Plugin.ShowSecondaryPanels();
+            }
+            else
+            {
+                if (!OutputPanelVisible && !DebugPanelVisible)
+                {
+                    InitOutputPanel();
+                    SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
+                }
+                else if (OutputPanelVisible && !DebugPanelVisible)
+                {
+                    InitDebugPanel();
+                    SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
+                }
+                else if (OutputPanelVisible && DebugPanelVisible)
+                {
+                    SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, false);
+                    SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, false);
+                }
+                else
+                {
+                    //Config.Instance.ShowOutputPanel
+                    InitOutputPanel();
+                    SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
+                    InitDebugPanel();
+                    SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
+                }
+            }
         }
 
         static public void Build()
@@ -563,6 +590,7 @@ namespace CSScriptNpp
 
         static internal void OnNppReady()
         {
+            //System.Diagnostics.Debug.Assert(false);
             if (Config.Instance.RestorePanelsAtStartup)
             {
                 if (Config.Instance.ShowProjectPanel)

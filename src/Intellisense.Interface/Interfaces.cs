@@ -58,6 +58,7 @@ namespace Intellisense.Common
         public int Line;
         public string DisplayName;
         public string ParentDisplayName;
+        public string ParentDisplayType;
         public string MemberType;
 
         public override string ToString()

@@ -665,6 +665,8 @@ namespace RoslynIntellisense
             {
                 foreach (var member in type.ChildNodes().OfType<MemberDeclarationSyntax>())
                 {
+                    string parentKind = type.ToKindDisplayName();
+
                     if (member is MethodDeclarationSyntax)
                     {
                         var method = (member as MethodDeclarationSyntax);
@@ -675,6 +677,7 @@ namespace RoslynIntellisense
                             //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
                             DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
                             ParentDisplayName = type.GetFullName(),
+                            ParentDisplayType = parentKind,
                             MemberType = "Method"
                         });
                     }
@@ -687,6 +690,7 @@ namespace RoslynIntellisense
                             Column = prop.GetLocation().GetLineSpan().StartLinePosition.Character,
                             DisplayName = prop.Identifier.ValueText,
                             ParentDisplayName = type.GetFullName(),
+                            ParentDisplayType = parentKind,
                             MemberType = "Property"
                         });
                     }
@@ -699,6 +703,7 @@ namespace RoslynIntellisense
                             Column = field.GetLocation().GetLineSpan().StartLinePosition.Character,
                             DisplayName = field.Declaration.Variables.First().Identifier.Text,
                             ParentDisplayName = type.GetFullName(),
+                            ParentDisplayType = parentKind,
                             MemberType = "Field"
                         });
                     }
@@ -711,7 +716,10 @@ namespace RoslynIntellisense
                 foreach (var item in map.Skip(1))
                 {
                     if (item.ParentDisplayName == rootClassName)
+                    {
                         item.ParentDisplayName = "<Global>";
+                        item.ParentDisplayType = "";
+                    }
                     else if (item.ParentDisplayName.StartsWith(rootClassName + "."))
                         item.ParentDisplayName = item.ParentDisplayName.Substring(rootClassName.Length + 1);
                 }

@@ -1,7 +1,4 @@
-Release v1.6.0
-* Fixed problem with debug symbols not being generated during debugging (Issue#20: Debugging)
-* Added editing VS project template from config dialog.
-* Migrated CS-Script engine to the latest release v3.19.0
-
-
-
+Release v1.6.0+
+* Fixed inadequate titles and tooltips for the output panels visibility controls.
+* Improved secondary panels visibility management
+* Improved restoring panels on startup.

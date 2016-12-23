@@ -156,6 +156,9 @@
             this.Controls.Add(this.toolStrip1);
             this.Name = "OutputPanel";
             this.Text = "CS-Script Output";
+            this.Activated += new System.EventHandler(this.OutputPanel_Activated);
+            this.Deactivate += new System.EventHandler(this.OutputPanel_Deactivate);
+            this.Shown += new System.EventHandler(this.OutputPanel_Shown);
             this.VisibleChanged += new System.EventHandler(this.OutputPanel_VisibleChanged);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

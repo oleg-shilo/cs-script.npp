@@ -126,7 +126,7 @@ namespace CSScriptNpp
 
             Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DMMREGASDCKDLG, 0, _ptrNppTbData);
 
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 1); //from this moment the panel is visible
+            //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 1); //from this moment the panel is visible
 
             if (!initiallyVisible)
                 SetDockedPanelVisible(panel, scriptId, initiallyVisible);
@@ -151,12 +151,12 @@ namespace CSScriptNpp
             if (visible)
             {
                 Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DMMSHOW, 0, panel.Handle);
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 1);
+                //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 1);
             }
             else
             {
                 Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DMMHIDE, 0, panel.Handle);
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 0);
+                //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 0);
             }
         }
 
@@ -166,7 +166,9 @@ namespace CSScriptNpp
             {
                 var panel = new T();
                 DockPanel(panel, panelId, name, null, tbMsg); //this will also add the panel to the dockedManagedPanels
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, FuncItems.Items[panelId]._cmdID, 1);
+
+                //disabled chck box in menu item since tracking of the visibility of the output panes is impossible (N++ limitation)
+                //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, FuncItems.Items[panelId]._cmdID, 1);
             }
             else
             {

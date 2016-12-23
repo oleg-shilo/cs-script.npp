@@ -291,7 +291,7 @@
             this.outputBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.outputBtn.Name = "outputBtn";
             this.outputBtn.Size = new System.Drawing.Size(23, 28);
-            this.outputBtn.Text = "Toggle output panel visibility";
+            this.outputBtn.Text = "Show/Hide secondary panels";
             this.outputBtn.Click += new System.EventHandler(this.outputBtn_Click);
             // 
             // openInVsBtn
