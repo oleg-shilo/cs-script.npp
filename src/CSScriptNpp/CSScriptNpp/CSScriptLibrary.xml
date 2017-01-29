@@ -397,29 +397,18 @@
         <member name="F:csscript.Project.SearchDirs">
             <summary>
             List of search folders where CS-Script does probing for 
-            impirted/included scripts and assemblies.
+            imported/included scripts and assemblies.
             </summary>
         </member>
         <member name="M:csscript.Project.GenerateProjectFor(System.String)">
             <summary>
             Generates the top level view project for a given script. 
             <para>
-            Note this method uses the same algorithm as CS-Script executor but it deliberatelly doesn't
+            Note this method uses the same algorithm as CS-Script executor but it deliberately doesn't
             include cached directories and auto-generated files. This method is to be used by IDs and tools. 
             </para>
             </summary>
             <param name="script">The script.</param>
-            <returns></returns>
-        </member>
-        <member name="T:csscript.ResolveSourceFileHandler">
-            <summary>
-            Delegate implementing source file probing algorithm.
-            <para>The method is deprecated because it only allows returning a single file. While in reality it can be many. 
-            For example the file and its auto-generated derivatives (e.g. *.g.cs). </para>
-            </summary>
-            <param name="file">The file.</param>
-            <param name="searchDirs">The extra dirs.</param>
-            <param name="throwOnError">if set to <c>true</c> [throw on error].</param>
             <returns></returns>
         </member>
         <member name="T:csscript.ResolveSourceFileAlgorithm">
@@ -579,6 +568,11 @@
             Creates the default config file in the CurrentDirectory.
             </summary>
         </member>
+        <member name="M:csscript.CSExecutor.PrintDefaultConfig">
+            <summary>
+            Prints the config file default content.
+            </summary>
+        </member>
         <member name="M:csscript.CSExecutor.ShowVersion">
             <summary>
             Show CS-Script version information.
@@ -593,6 +587,11 @@
             <summary>
              Contains the name of the temporary cache folder in the CSSCRIPT subfolder of Path.GetTempPath(). The cache folder is specific for every script file.
              </summary>
+        </member>
+        <member name="T:csscript.CLIException">
+            <summary>
+            The exception that is thrown when a the script CLI error occurs.
+            </summary>
         </member>
         <member name="T:csscript.CompilerException">
             <summary>
@@ -1030,18 +1029,31 @@
             </summary>
             <param name="dir">Directory path.</param>
         </member>
+        <member name="M:csscript.Settings.ToString">
+            <summary>
+            Serializes instance of Settings.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:csscript.Settings.Save(System.String)">
             <summary>
-            Saves CS-Script application settings to a file (.dat).
+            Saves CS-Script application settings to a file.
             </summary>
-            <param name="fileName">File name of the .dat file</param>
+            <param name="fileName">File name of the settings file</param>
         </member>
         <member name="M:csscript.Settings.Load(System.String)">
             <summary>
             Loads CS-Script application settings from a file. Default settings object is returned if it cannot be loaded from the file.
             </summary>
             <param name="fileName">File name of the XML file</param>
-            <returns>Setting object deserilized from the XML file</returns>
+            <returns>Setting object deserialized from the XML file</returns>
+        </member>
+        <member name="M:csscript.Settings.Load(System.Boolean)">
+            <summary>
+            Loads CS-Script application settings from the default config file (css_config.xml in the cscs.exe/csws.exe folder).
+            </summary>
+            <param name="createAlways">Create and return default settings object if it cannot be loaded from the file.</param>
+            <returns>Setting object deserialized from the XML file</returns>
         </member>
         <member name="M:csscript.Settings.Load(System.String,System.Boolean)">
             <summary>
@@ -1199,6 +1211,17 @@
             	<c>true</c> if Optimistic Concurrency model otherwise, <c>false</c>.
             </value>
         </member>
+        <member name="P:csscript.Settings.AutoClass_DecorateAsCS6">
+            <summary>
+            Gets or sets a value indicating whether auto-class decoration should allow C# 6 specific syntax. 
+            If it does the statement "using static dbg;" will be injected at the start of the auto-class definition thus the 
+            entry script may invoke static methods for object inspection with <c>dbg</c> class without specifying the 
+            class name (e.g. "print(DateTime.Now);"). 
+            </summary>
+            <value>
+            <c>true</c> if decorate auto-class as C# 6; otherwise, <c>false</c>.
+            </value>
+        </member>
         <member name="P:csscript.Settings.HideCompilerWarnings">
             <summary>
             Boolean flag that indicates if compiler warnings should be included in script compilation output.
@@ -1244,6 +1267,27 @@
             Hide all auto-generated files including the files generated by pre/post scripts.
             </summary>
         </member>
+        <member name="T:csscript.CompilingInfo">
+            <summary>
+            Class containing all information about script compilation context and the compilation result.
+            </summary>
+        </member>
+        <member name="F:csscript.CompilingInfo.ScriptFile">
+            <summary>
+            The script file that the <c>CompilingInfo</c> is associated with.
+            </summary>
+        </member>
+        <member name="F:csscript.CompilingInfo.Result">
+            <summary>
+            The script compilation result.
+            </summary>
+        </member>
+        <member name="F:csscript.CompilingInfo.Input">
+            <summary>
+            The compilation context object that contain all information about the script compilation input
+            (referenced assemblies, compiler symbols). 
+            </summary>
+        </member>
         <member name="M:csscript.Utils.WaitForFileIdle(System.String,System.Int32)">
             <summary>
             Waits for file idle.
@@ -1255,6 +1299,11 @@
         <member name="M:csscript.Utils.AddCompilerOptions(System.CodeDom.Compiler.CompilerParameters,System.String)">
             <summary>
             Adds compiler options to the CompilerParameters in a manner that it does separate every option by the space character
+            </summary>
+        </member>
+        <member name="M:csscript.CSSUtils.CompileResource(System.String,System.String)">
+            <summary>
+            Compiles ResX file into .resources 
             </summary>
         </member>
         <member name="M:csscript.CSSUtils.ParseAppArgs(System.String[],csscript.IScriptExecutor)">
@@ -1664,7 +1713,7 @@
             </summary>
             <typeparam name="T">Interface definition to align with.</typeparam>
             <param name="obj">The object to be aligned with the interface.</param>
-            <param name="refAssemblies">The string array containing file nemes to the additional dependency
+            <param name="refAssemblies">The string array containing file names to the additional dependency
             assemblies the interface depends in. </param>
             <returns>Interface object.</returns>
         </member>
@@ -1868,7 +1917,7 @@
             Creates an instance of AsmHelper for working with assembly dynamically loaded to non-current AppDomain.
             This method initializes instance and creates new ('remote') AppDomain with 'domainName' name. New AppDomain is automatically unloaded as result of "disposable" behaviour of AsmHelper.
             </summary>
-            <param name="asmFile">File name of the assembly to be loaded.</param>
+            <param name="asmPath">The fully qualified path of the assembly file to load.</param>
             <param name="domainName">Name of the domain to be created.</param>
             <param name="deleteOnExit">'true' if assembly file should be deleted when new AppDomain is unloaded; otherwise, 'false'.</param>
         </member>
@@ -2122,9 +2171,9 @@
             Compiles script code into assembly with CSExecutor
             </summary>
             <param name="scriptText">The script code to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
-            <param name="refAssemblies">The string array containing file nemes to the additional assemblies referenced by the script. </param>
+            <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly file name.</returns>
         </member>
         <member name="M:CSScriptLibrary.CSScript.GetScriptTempFile">
@@ -2144,7 +2193,7 @@
             Compiles multiple C# files into a single assembly with CSExecutor
             </summary>
             <param name="sourceFiles">Collection of the files to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly file name.</returns>
@@ -2161,8 +2210,8 @@
             <summary>
             Compiles script file into assembly with CSExecutor
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly file name.</returns>
@@ -2171,8 +2220,8 @@
             <summary>
             Compiles script file into assembly with CSExecutor
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly file name.</returns>
@@ -2182,7 +2231,7 @@
             Compiles script file into assembly (temporary file) with CSExecutor.
             This method is an equivalent of the CSScript.Compile(scriptFile, null, false);
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly file name.</returns>
         </member>
@@ -2191,7 +2240,7 @@
             Compiles script file into assembly (temporary file) with CSExecutor.
             This method is an equivalent of the CSScript.Compile(scriptFile, null, false);
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
+            <param name="scriptFile">The path to script file to be compiled.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly file name.</returns>
         </member>
@@ -2199,8 +2248,8 @@
             <summary>
             Compiles script file into assembly with CSExecutor. Uses specified config file to load script engine settings.
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="cssConfigFile">The name of CS-Script configuration file. If null the default config file will be used (appDir/css_config.xml).</param>
             <returns>Compiled assembly file name.</returns>
@@ -2209,8 +2258,8 @@
             <summary>
             Compiles script file into assembly with CSExecutor. Uses specified config file to load script engine settings and compiler specific options.
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="cssConfigFile">The name of CS-Script configuration file. If null the default config file will be used (appDir/css_config.xml).</param>
             <param name="compilerOptions">The string value to be passed directly to the language compiler. </param>
@@ -2234,8 +2283,8 @@
             <summary>
             Compiles script file into assembly with CSExecutor. Uses script engine settings object and compiler specific options.
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="scriptSettings">The script engine Settings object.</param>
             <param name="compilerOptions">The string value to be passed directly to the language compiler.  </param>
@@ -2288,7 +2337,7 @@
              </code>
              </example>
              <param name="methodCode">The C# code.</param>
-             <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+             <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
              <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
              <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
              <returns>Instance of <c>T</c> delegate.</returns>
@@ -2308,7 +2357,7 @@
             </code>
             </example>
             <param name="methodCode">The C# code.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Instance of <see cref="T:CSScriptLibrary.MethodDelegate"/>.</returns>
@@ -2329,7 +2378,7 @@
             </example>
             <typeparam name="T">The delegate return type.</typeparam>
             <param name="methodCode">The C# code.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Instance of <see cref="T:CSScriptLibrary.MethodDelegate"/>.</returns>
@@ -2500,7 +2549,7 @@
              </code>
              </summary>
              <param name="methodCode">The C# code, containing method implementation.</param>
-             <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+             <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
              <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
              <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
              <returns>Compiled assembly.</returns>
@@ -2525,7 +2574,7 @@
             not specified as a call argument but read from the file instead.</para>
             </summary>
             <param name="sourceFiles">The source files to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly.</returns>
@@ -2550,7 +2599,7 @@
             if the original location of the source file some how is incompatible with the actual C# compiler.</para>
             </summary>
             <param name="scriptFile">The script file.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly.</returns>
@@ -2567,7 +2616,7 @@
             <param name="scriptFile">The script file.</param>
             <param name="tempFileExtension">The file extension of the temporary file to hold script code during compilation. This parameter may be
             needed if custom CS-Script compilers rely on file extension to identify the script syntax.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly.</returns>
@@ -2585,7 +2634,7 @@
             Compiles script code into assembly with CSExecutor and loads it in current AppDomain.
             </summary>
             <param name="scriptText">The script code to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly.</returns>
@@ -2597,7 +2646,7 @@
             <param name="scriptText">The script code to be compiled.</param>
             <param name="tempFileExtension">The file extension of the temporary file to hold script code during compilation. This parameter may be
             needed if custom CS-Script compilers rely on file extension to identify the script syntax.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly.</returns>
@@ -2617,8 +2666,8 @@
             <summary>
             Compiles script file into assembly with CSExecutor and loads it in current AppDomain
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled/Loaded assembly.</returns>
@@ -2627,8 +2676,8 @@
             <summary>
             Compiles script file into assembly with CSExecutor and loads it in current AppDomain
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
-            <param name="assemblyFile">The name of compiled assembly. If set to null a temporary file name will be used.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
             <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
             <param name="scriptSettings">The script engine Settings object. You can pass null to load <c>CSScript.GlobalSettings</c>. </param>
             <param name="compilerOptions">The string value to be passed directly to the language compiler.  </param>
@@ -2640,7 +2689,7 @@
             Compiles script file into assembly (temporary file) with CSExecutor and loads it in current AppDomain.
             This method is an equivalent of the CSScript.Load(scriptFile, null, false);
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
             <returns>Compiled/Loaded assembly.</returns>
         </member>
         <member name="M:CSScriptLibrary.CSScript.Load(System.String,System.String[])">
@@ -2648,7 +2697,7 @@
             Compiles script file into assembly (temporary file) with CSExecutor and loads it in current AppDomain.
             This method is an equivalent of the CSScript.Load(scriptFile, null, false);
             </summary>
-            <param name="scriptFile">The name of script file to be compiled.</param>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled/Loaded assembly.</returns>
         </member>
@@ -3781,6 +3830,12 @@
             Initializes a new instance of the <see cref="T:CSScriptLibrary.MonoEvaluator"/> class.
             </summary>
         </member>
+        <member name="F:CSScriptLibrary.MonoEvaluator.debugBuild">
+            <summary>
+            Gets or sets the build configuration.
+            </summary>
+            <value>The configuration value.</value>
+        </member>
         <member name="M:CSScriptLibrary.MonoEvaluator.Reset(System.Boolean)">
             <summary>
             Resets Evaluator.
@@ -4245,12 +4300,6 @@
             Gets or sets the flag for defining the conditional compiling symbol "DEBUG".
             </summary>
             <value>The flag indicating if the "DEBUG" symbol defined.</value>
-        </member>
-        <member name="P:CSScriptLibrary.MonoEvaluator.Configuration">
-            <summary>
-            Gets or sets the build configuration.
-            </summary>
-            <value>The configuration value.</value>
         </member>
         <member name="P:CSScriptLibrary.MonoEvaluator.DebugBuild">
             <summary>

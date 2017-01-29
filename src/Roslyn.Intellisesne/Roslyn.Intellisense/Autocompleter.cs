@@ -557,7 +557,11 @@ namespace RoslynIntellisense
 
                 if (group.Count() > 1)
                     foreach (var overload in group)
+                    {
                         item.AddOverload(overload);
+                        //item.HasOverloads = true;
+                    }
+
 
                 completions.Add(item);
             }
@@ -712,8 +716,10 @@ namespace RoslynIntellisense
 
             if (decorated && map.Any())
             {
-                string rootClassName = map.First().ParentDisplayName;
-                foreach (var item in map.Skip(1))
+                //string rootClassName = map.First().ParentDisplayName;
+                string rootClassName = "ScriptClass";
+                //foreach (var item in map.Skip(1))
+                foreach (var item in map)
                 {
                     if (item.ParentDisplayName == rootClassName)
                     {
@@ -723,6 +729,11 @@ namespace RoslynIntellisense
                     else if (item.ParentDisplayName.StartsWith(rootClassName + "."))
                         item.ParentDisplayName = item.ParentDisplayName.Substring(rootClassName.Length + 1);
                 }
+
+                var customMain = map.FirstOrDefault(x => x.ParentDisplayName == "<Global>" && x.DisplayName == "main()");
+                var canonicalMain = map.FirstOrDefault(x => x.ParentDisplayName == "<Global>" && x.DisplayName == "Main()");
+                if (customMain != null && canonicalMain != null)
+                    map = map.Where(x => x != canonicalMain).ToList();
             }
 
             return map.ToArray();
@@ -761,20 +772,20 @@ namespace RoslynIntellisense
 
             foreach (VB.Syntax.TypeBlockSyntax type in types)
             {
-                foreach (var member in type.ChildNodes().OfType< VB.Syntax.MethodBlockSyntax>())
+                foreach (var member in type.ChildNodes().OfType<VB.Syntax.MethodBlockSyntax>())
                 {
                     if (member is VB.Syntax.MethodBlockSyntax)
                     {
-                    //    var method = (member as VB.Syntax.MethodStatementSyntax);
-                    //    map.Add(new CodeMapItem
-                    //    {
-                    //        Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
-                    //        Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
-                    //        //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
-                    //        DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
-                    //        ParentDisplayName = type.GetFullName(),
-                    //        MemberType = "Method"
-                    //    });
+                        //    var method = (member as VB.Syntax.MethodStatementSyntax);
+                        //    map.Add(new CodeMapItem
+                        //    {
+                        //        Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                        //        Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
+                        //        //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
+                        //        DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
+                        //        ParentDisplayName = type.GetFullName(),
+                        //        MemberType = "Method"
+                        //    });
                     }
                     else if (member is PropertyDeclarationSyntax)
                     {

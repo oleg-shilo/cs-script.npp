@@ -71,6 +71,7 @@ namespace CSScriptNpp
             else
             {
                 data.UseCustomEngine = "";
+                CSScriptHelper.SynchAutoclssDecorationSettings(useCS6.Checked);
             }
 
             Config.Instance.Save();

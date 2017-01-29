@@ -151,6 +151,61 @@ namespace CSScriptNpp
                 return new string[0];
         }
 
+        internal static void SynchAutoclssDecorationSettings(bool supportCS6Syntax)
+        {
+            try
+            {
+                //AutoClass_DecorateAsCS6: False
+                var output = Run(cscs_exe, "-nl -config:get:AutoClass_DecorateAsCS6");
+                bool injectingCS6_enabled = bool.Parse(output.Split(':').Last());
+                if (supportCS6Syntax != injectingCS6_enabled)
+                {
+                    Call(cscs_exe, "-nl -config:set:AutoClass_DecorateAsCS6:" + supportCS6Syntax, asAdmin: true);
+                }
+            }
+            catch { } //failure is not critical as future script compile errors will be informative anyway
+        }
+
+        static string Run(string file, string args)
+        {
+            var p = new Process();
+            p.StartInfo.FileName = file;
+            p.StartInfo.Arguments = args;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            p.Start();
+
+            var output = new StringBuilder();
+
+            string line = null;
+            while (null != (line = p.StandardOutput.ReadLine()))
+                output.AppendLine(line);
+
+            p.WaitForExit();
+            return output.ToString();
+        }
+
+        static void Call(string file, string args, bool asAdmin = false)
+        {
+            var p = new Process();
+            p.StartInfo.FileName = file;
+            p.StartInfo.Arguments = args;
+            if (asAdmin)
+            {
+                p.StartInfo.Verb = "runas";
+                p.StartInfo.UseShellExecute = true;
+            }
+            else
+            {
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+            }
+            p.Start();
+            p.WaitForExit();
+        }
+
         static string ScriptEngineLocation
         {
             get

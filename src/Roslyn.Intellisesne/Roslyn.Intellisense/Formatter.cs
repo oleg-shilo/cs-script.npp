@@ -53,7 +53,7 @@ namespace RoslynIntellisense
             else
                 tree = CSharpSyntaxTree.ParseText(code.Trim());
 
-            var root = msFormatter.Format(tree.GetRoot(), DummyWorkspace);
+            SyntaxNode root = msFormatter.Format(tree.GetRoot(), DummyWorkspace);
 
             if (normaliseLines && !isVB) //VB doesn't do formatting nicely so limit it to default Roslyn handling
             {
@@ -71,16 +71,16 @@ namespace RoslynIntellisense
                     root = root.ReplaceNodes(declarations,
                                              (_, node) =>
                                              {
-                                                     var isPrevLocalDeclaration = declarations.Prev(node).IsKind(SyntaxKind.LocalDeclarationStatement);
-                                                     var isLocalDeclaration = node.IsKind(SyntaxKind.LocalDeclarationStatement);
-                                                     
-                                                     var supressEmptyLineInsertion = isPrevLocalDeclaration && isLocalDeclaration;
+                                                 var isPrevLocalDeclaration = declarations.Prev(node).IsKind(SyntaxKind.LocalDeclarationStatement);
+                                                 var isLocalDeclaration = node.IsKind(SyntaxKind.LocalDeclarationStatement);
 
-                                                     var existingTrivia = node.GetLeadingTrivia().ToFullString();
-                                                     if (existingTrivia.Contains(Environment.NewLine) || supressEmptyLineInsertion)
-                                                         return node;
-                                                     else
-                                                         return node.WithLeadingTrivia(SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
+                                                 var supressEmptyLineInsertion = isPrevLocalDeclaration && isLocalDeclaration;
+
+                                                 var existingTrivia = node.GetLeadingTrivia().ToFullString();
+                                                 if (existingTrivia.Contains(Environment.NewLine) || supressEmptyLineInsertion)
+                                                     return node;
+                                                 else
+                                                     return node.WithLeadingTrivia(SyntaxFactory.Whitespace(Environment.NewLine + existingTrivia));
                                              });
                 }
                 else

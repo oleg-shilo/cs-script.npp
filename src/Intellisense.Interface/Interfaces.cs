@@ -125,7 +125,8 @@ namespace Intellisense.Common
         property,
         type,
         _namespace,
-        unresolved
+        unresolved,
+        directive
     }
 
     public interface IEntity
@@ -184,7 +185,13 @@ namespace Intellisense.Common
         public DisplayFlags DisplayFlags { get; set; }
         public string DisplayText { get; set; }
         public CompletionType CompletionType { get; set; }
-        public bool HasOverloads { get; }
+        public bool HasOverloads
+        {
+            get
+            {
+                return OverloadedData.Count() > 1;
+            }
+        } 
         public IEnumerable<ICompletionData> OverloadedData { get; }
         public bool InvokeParametersSet { get; set; }
         public IEnumerable<string> InvokeParameters { get; set; }
@@ -197,5 +204,10 @@ namespace Intellisense.Common
         }
 
         public object RawData { get; set; }
+
+        public override string ToString()
+        {
+            return DisplayText;
+        }
     }
 }
