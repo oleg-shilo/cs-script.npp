@@ -1,4 +1,6 @@
-Release v1.6.0+
+Release v1.6.1-2
+* Integration with CS-Script v3.22.0.0 
+* Added support for Python-like global `print` method 
 * Fixed inadequate titles and tooltips for the output panels visibility controls.
 * Improved secondary panels visibility management
 * Improved restoring panels on startup.
