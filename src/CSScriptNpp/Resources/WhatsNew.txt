@@ -1,6 +1,7 @@
-Release v1.6.1-2
-* Integration with CS-Script v3.22.0.0 
-* Added support for Python-like global `print` method 
-* Fixed inadequate titles and tooltips for the output panels visibility controls.
-* Improved secondary panels visibility management
-* Improved restoring panels on startup.
+Release v1.6.3
+* Integration with CS-Script v3.24.0.0
+  * Further AutoclassGenerator improvements (IDE integration related)
+  * Added inclusion of dbg.cs into building executable from the script
+  * Added auto-referencing System.Core.dll if dbg.cs is injected
+  * Added Settings.EnableDbgPrint to control inclusion of dbg.cs for Python-like `print(...)` methods
+  * Fixed problem with AutoClassGenerator incorrectly handling caret at the end of line

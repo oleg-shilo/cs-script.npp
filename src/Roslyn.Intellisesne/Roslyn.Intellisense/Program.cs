@@ -59,10 +59,10 @@ namespace RoslynIntellisense
         var test = ""ttt"";
         System.Console.Wr|iteLine($""Hello World!{test.Ends";
 
-            int carret = code.IndexOf("|");
+            int caret = code.IndexOf("|");
             code = code.Replace("|", "");
 
-            var completions = Autocompleter.GetAutocompletionFor(code, carret).Result;
+            var completions = Autocompleter.GetAutocompletionFor(code, caret);
             foreach (ICompletionData item in completions)
                 Console.WriteLine($"{item.DisplayText}\t{item.CompletionType},{item.DisplayText}");
         }
@@ -157,10 +157,10 @@ End Module";
 
             var sources = new List<Tuple<string, string>> { };
 
-            int carret = code.IndexOf("|");
+            int caret = code.IndexOf("|");
             code = code.Replace("|", "");
 
-            var result = Autocompleter.GetAutocompletionFor(code, carret, asms.ToArray(), sources);
+            var result = Autocompleter.GetAutocompletionFor(code, caret, asms.ToArray(), sources);
 
             Console.WriteLine("----------------------------------");
             Console.ReadLine();
@@ -186,22 +186,12 @@ class Script
         TestA.|Who();
     }
 }";
-            var includeCode = @"
-using System;
-
-public class TestA
-{
-    static public void Who()
-    {
-        Console.WriteLine(""TestA"");
-    }
-    }";
             var sources = new List<Tuple<string, string>> { new Tuple<string, string>("", "code.cs") };
 
-            int carret = code.IndexOf("|");
+            int caret = code.IndexOf("|");
             code = code.Replace("|", "");
 
-            var result = Autocompleter.GetAutocompletionFor(code, carret, asms.ToArray(), sources);
+            var result = Autocompleter.GetAutocompletionFor(code, caret, asms.ToArray(), sources);
 
             Console.WriteLine("----------------------------------");
             Console.ReadLine();

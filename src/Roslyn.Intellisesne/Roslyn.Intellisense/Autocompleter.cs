@@ -69,7 +69,7 @@ namespace RoslynIntellisense
 
             var proj = workspace.CurrentSolution.Projects.Single();
 
-            //EXTREMELY IMPORTANT: "return newDocument;" will not return the correct instance of the document but lookup will 
+            //EXTREMELY IMPORTANT: "return newDocument;" will not return the correct instance of the document but lookup will
             return workspace.CurrentSolution.Projects.Single().Documents.Single(x => x.Name == docName);
         }
 
@@ -181,7 +181,7 @@ namespace RoslynIntellisense
 
                 return locations;
             }
-            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
+            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes
             return new string[0];
         }
 
@@ -256,7 +256,7 @@ namespace RoslynIntellisense
                     return result;
                 }
             }
-            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
+            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes
             return DomRegion.Empty;
         }
 
@@ -320,7 +320,7 @@ namespace RoslynIntellisense
                     return result;
                 }
             }
-            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
+            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes
             return new string[0];
         }
 
@@ -330,8 +330,10 @@ namespace RoslynIntellisense
         }
 
         //position is zero-based
-        public async static Task<IEnumerable<ICompletionData>> GetAutocompletionFor(string code, int position, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        //public async static Task<IEnumerable<ICompletionData>> GetAutocompletionFor(string code, int position, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        public static IEnumerable<ICompletionData> GetAutocompletionFor(string code, int position, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
+            //Debug.Assert(false);
             string opContext;
 
             string partialWord;
@@ -339,7 +341,7 @@ namespace RoslynIntellisense
 
             GetWordFromCaret(code, position, out logicalPosition, out partialWord, out opContext);
 
-            var completions = await Resolve(code, logicalPosition, references, includes);
+            var completions = Resolve(code, logicalPosition, references, includes).Result;
 
             try
             {
@@ -392,7 +394,7 @@ namespace RoslynIntellisense
 
                 return result;
             }
-            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes 
+            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes
             return new ICompletionData[0];
         }
 
@@ -589,7 +591,7 @@ namespace RoslynIntellisense
             }";
 
             var sourceText = SourceText.From(text);
-            //Add document to project 
+            //Add document to project
             var doc = workspace.AddDocument(project.Id, "NewDoc", sourceText);
             var model = doc.GetSemanticModelAsync().Result;
             var unresolved = doc.GetSyntaxRootAsync().Result.DescendantNodes()
@@ -614,7 +616,7 @@ namespace RoslynIntellisense
             foreach (ISymbol declaration in result)
             {
                 if (declaration.Kind != SymbolKind.NamedType)
-                    continue; //limit to 
+                    continue; //limit to
 
                 var name = declaration.Name;
                 var nmspace = declaration.GetNamespace();

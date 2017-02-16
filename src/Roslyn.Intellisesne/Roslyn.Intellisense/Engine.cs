@@ -38,7 +38,7 @@ namespace RoslynIntellisense
                                      var test = ""ttt"";
                                      System.Console.WriteLine($""Hello World!{test.Ends";
 
-                        var result = Autocompleter.GetAutocompletionFor(code, 132).Result;
+                        var result = Autocompleter.GetAutocompletionFor(code, 132);
                     }
                 }
                 catch
@@ -80,8 +80,7 @@ namespace RoslynIntellisense
                 Autocompleter.Language = GetLanguageFor(fileName);
                 return Autocompleter.GetAutocompletionFor(editorText, offset,
                                                       assemblies.ToArray(),
-                                                      sources.Where(x => x.Item2 != fileName))
-                                                      .Result;
+                                                      sources.Where(x => x.Item2 != fileName));
             }
         }
 

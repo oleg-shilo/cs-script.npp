@@ -113,6 +113,13 @@
             <param name="script">C# script (code or file).</param>
             <param name="isFile">If set to 'true' the script is a file, otherwise it is a C# code.</param>
         </member>
+        <member name="M:csscript.CSharpParser.LoadFile(System.String)">
+            <summary>
+            Loads and parces the file the file.
+            </summary>
+            <param name="script">The script.</param>
+            <returns>Parser contining parsing result.</returns>
+        </member>
         <member name="M:csscript.CSharpParser.#ctor(System.String,System.Boolean,System.String[])">
             <summary>
             Creates an instance of CSharpParser.
@@ -137,7 +144,7 @@
         </member>
         <member name="F:csscript.CSharpParser.SupressCodeAnalysis">
             <summary>
-            Global flag to forcefuly supress any C# code analysys. This flag efectively disables 
+            Global flag to forcefuly supress any C# code analysys. This flag efectively disables
             all CS-Script assembly and script probing and most likely some other functionality.
             <para>You may ever want to supress code analysys only for profiling perposes or during performance tuning.</para>
             </summary>
@@ -166,12 +173,12 @@
         <member name="M:csscript.CSharpParser.EscapeDirectiveDelimiters(System.String)">
             <summary>
             Escapes the CS-Script directive (e.g. //css_*) delimiters.
-            <para>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character. 
-            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters. 
+            <para>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character.
+            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters.
             The correct syntax would be as follows '//css_include script((today)).cs;'</para>
             <remarks>The delimiters characters are ';,(){}'.
             <para>However you should check <see cref="F:csscript.CSharpParser.DirectiveDelimiters"/> for the accurate list of all delimiters.
-            </para> 
+            </para>
             </remarks>
             </summary>
             <param name="text">The text to be processed.</param>
@@ -180,12 +187,12 @@
         <member name="M:csscript.CSharpParser.UnescapeDirectiveDelimiters(System.String)">
             <summary>
             Unescapes the CS-Script directive (e.g. //css_*) delimiters.
-            <para>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character. 
-            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters. 
+            <para>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character.
+            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters.
             The correct syntax would be as follows '//css_include script((today)).cs;'</para>
             <remarks>The delimiters characters are ';,(){}'.
             <para>However you should check <see cref="F:csscript.CSharpParser.DirectiveDelimiters"/> for the accurate list of all delimiters.
-            </para> 
+            </para>
             </remarks>
             </summary>
             <param name="text">The text to be processed.</param>
@@ -193,9 +200,9 @@
         </member>
         <member name="F:csscript.CSharpParser.DirectiveDelimiters">
             <summary>
-            The //css_* directive delimiters. 
-            <remarks>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character. 
-            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters. 
+            The //css_* directive delimiters.
+            <remarks>All //css_* directives should escape any internal CS-Script delimiters by doubling the delimiter character.
+            For example //css_include for 'script(today).cs' should escape brackets as they are the directive delimiters.
             The correct syntax would be as follows '//css_include script((today)).cs;'
             </remarks>
             </summary>
@@ -717,7 +724,7 @@
             2. extraDirs (usually %CSSCRIPT_DIR%\Lib and ExtraLibDirectory)
             3. PATH
             Also fixes file name if user did not provide extension for script file (assuming .cs extension)
-            <para>If the default implementation isn't suitable then you can set <c>FileParser.ResolveFilesAlgorithm</c> 
+            <para>If the default implementation isn't suitable then you can set <c>FileParser.ResolveFilesAlgorithm</c>
             to the alternative implementation of the probing algorithm.</para>
             </summary>
         </member>
@@ -730,10 +737,71 @@
              </summary>
             
         </member>
+        <member name="T:CSScriptLibrary.ScriptParsingResult">
+            <summary>
+            Information about the script parsing result.
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.Packages">
+            <summary>
+            The packages referenced from the script with `//css_nuget` directive
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.ReferencedResources">
+            <summary>
+            The referenced resources referenced from the script with `//css_res` directive
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.ReferencedAssemblies">
+            <summary>
+            The referenced assemblies referenced from the script with `//css_ref` directive
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.ReferencedNamespaces">
+            <summary>
+            The namespaces imported with C# `using` directive
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.IgnoreNamespaces">
+            <summary>
+            The namespaces that are marked as "to ignore" with `//css_ignore_namespace` directive
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.CompilerOptions">
+            <summary>
+            The compiler options sepcified with `//css_co` directive
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.SearchDirs">
+            <summary>
+            The directories specified with `//css_dir` directive
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.Precompilers">
+            <summary>
+            The precompilers specified with `//css_pc` directive
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.FilesToCompile">
+            <summary>
+            All files that need to be compiled as part of the script execution.
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.ScriptParsingResult.Timestamp">
+            <summary>
+            The time of parsing.
+            </summary>
+        </member>
         <member name="T:CSScriptLibrary.ScriptParser">
             <summary>
             Class that manages parsing the main and all imported (if any) C# Script files
             </summary>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.GetContext">
+            <summary>
+            Gets the script parcing context. This object is efectively a parsing result.
+            </summary>
+            <returns></returns>
         </member>
         <member name="F:CSScriptLibrary.ScriptParser.apartmentState">
             <summary>
@@ -747,7 +815,7 @@
             <para>CS-Script will also analyze the installed package structure in try to reference compatible assemblies
             from the package.</para>
             </summary>
-            <param name="suppressDownloading">if set to <c>true</c> suppresses downloading the NuGet package. 
+            <param name="suppressDownloading">if set to <c>true</c> suppresses downloading the NuGet package.
             Suppressing can be useful for the quick 'referencing' assessment.</param>
             <returns>Collection of the referenced assembly files.</returns>
         </member>
@@ -796,17 +864,17 @@
             </summary>
         </member>
         <member name="M:CSScriptLibrary.ScriptParser.AgregateReferences(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String})">
-            <summary>
-            Agregates the references from the script and its imported scripts. It is a logical equivalent od CSExecutor.AggregateReferencedAssemblies
-            but optimized for later .NET versions (e.g LINQ) and completely docoupled. Thus it has no dependencies on internal state 
-            (e.g. settings, options.shareHostAssemblies).
-            <para>It is the method to call for generating list of ref asms as part of the project info.</para>
+             <summary>
+             Aggregates the references from the script and its imported scripts. It is a logical equivalent od CSExecutor.AggregateReferencedAssemblies
+             but optimized for later .NET versions (e.g LINQ) and completely decoupled. Thus it has no dependencies on internal state
+             (e.g. settings, options.shareHostAssemblies).
+             <para>It is the method to call for generating list of ref asms as part of the project info.</para>
             
-            </summary>
-            <param name="searchDirs">The search dirs.</param>
-            <param name="defaultRefAsms">The default ref asms.</param>
-            <param name="defaultNamespacess">The default namespacess.</param>
-            <returns></returns>
+             </summary>
+             <param name="searchDirs">The search dirs.</param>
+             <param name="defaultRefAsms">The default ref asms.</param>
+             <param name="defaultNamespacess">The default namespacess.</param>
+             <returns></returns>
         </member>
         <member name="P:CSScriptLibrary.ScriptParser.FilesToCompile">
             <summary>
@@ -815,7 +883,7 @@
         </member>
         <member name="P:CSScriptLibrary.ScriptParser.ImportedFiles">
             <summary>
-            Collection of the imported files (dependant scripts)
+            Collection of the imported files (dependent scripts)
             </summary>
         </member>
         <member name="P:CSScriptLibrary.ScriptParser.ReferencedResources">
@@ -938,21 +1006,21 @@
         <member name="F:csscript.PrecompilationContext.NewReferences">
             <summary>
             Collection of the referenced assemblies to be added to the process script referenced assemblies.
-            <para>You may want to add new items to the referenced assemblies because of the precompilation logic (e.g. some code using assemblies not referenced by the primary script 
+            <para>You may want to add new items to the referenced assemblies because of the precompilation logic (e.g. some code using assemblies not referenced by the primary script
             is injected in the script).</para>
             </summary>
         </member>
         <member name="F:csscript.PrecompilationContext.NewDependencies">
             <summary>
-            Collection of the new dependency items (files). 
-            <para>Dependency files are checked before the script execution in order to understand if the script should be recompiled or it can be loaded from 
-            the cache. If any of the dependency files is changed since the last script execution the script engine will recompile the script. In the simple execution 
+            Collection of the new dependency items (files).
+            <para>Dependency files are checked before the script execution in order to understand if the script should be recompiled or it can be loaded from
+            the cache. If any of the dependency files is changed since the last script execution the script engine will recompile the script. In the simple execution
             scenarios the script file is a dependency file.</para>
             </summary>
         </member>
         <member name="F:csscript.PrecompilationContext.NewIncludes">
             <summary>
-            Collection of the new 'include' items (dependency source files). 
+            Collection of the new 'include' items (dependency source files).
             </summary>
         </member>
         <member name="F:csscript.PrecompilationContext.NewSearchDirs">
@@ -1111,6 +1179,14 @@
             </summary>
             <value>
             <c>true</c> if the attribute should be injected; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:csscript.Settings.EnableDbgPrint">
+            <summary>
+            Gets or sets a value indicating whether to enable Python-like print methods (e.g. dbg.print(DateTime.Now)).
+            </summary>
+            <value>
+              <c>true</c> if print methods are enabled; otherwise, <c>false</c>.
             </value>
         </member>
         <member name="P:csscript.Settings.ResolveAutogenFilesRefs">
@@ -1277,6 +1353,12 @@
             The script file that the <c>CompilingInfo</c> is associated with.
             </summary>
         </member>
+        <member name="F:csscript.CompilingInfo.ParsingContext">
+            <summary>
+            The script parsing context containing the all CS-Script specific compilation/parsing info (e.g. probing directories,
+            NuGet packages, compiled sources).
+            </summary>
+        </member>
         <member name="F:csscript.CompilingInfo.Result">
             <summary>
             The script compilation result.
@@ -1285,7 +1367,7 @@
         <member name="F:csscript.CompilingInfo.Input">
             <summary>
             The compilation context object that contain all information about the script compilation input
-            (referenced assemblies, compiler symbols). 
+            (referenced assemblies, compiler symbols).
             </summary>
         </member>
         <member name="M:csscript.Utils.WaitForFileIdle(System.String,System.Int32)">
@@ -1303,7 +1385,7 @@
         </member>
         <member name="M:csscript.CSSUtils.CompileResource(System.String,System.String)">
             <summary>
-            Compiles ResX file into .resources 
+            Compiles ResX file into .resources
             </summary>
         </member>
         <member name="M:csscript.CSSUtils.ParseAppArgs(System.String[],csscript.IScriptExecutor)">
@@ -2127,7 +2209,7 @@
             </summary>
             <param name="parser">The parser.</param>
             <param name="searchDirs">Extra search/probing directories.</param>
-            <param name="defaultRefAssemblies">The default reference assemblies. It is a semicolon separated assembly names string 
+            <param name="defaultRefAssemblies">The default reference assemblies. It is a semicolon separated assembly names string
             (e.g. "System.Core; System.Linq;").</param>
             <returns></returns>
         </member>
@@ -2141,6 +2223,11 @@
             <summary>
             Collection of all compiling results. Every time the script is compiled the compiling result is added to this collection regardless of
             the success or failure of the actual compilation.
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.CSScript.LastCompilingResult">
+            <summary>
+            The last script compilation result.
             </summary>
         </member>
         <member name="M:CSScriptLibrary.CSScript.Execute(CSScriptLibrary.PrintDelegate,System.String[])">
@@ -2269,13 +2356,13 @@
         <member name="M:CSScriptLibrary.CSScript.CreateCompilerLock(System.String,System.Boolean)">
             <summary>
             Creates the compiler lock object (<see cref="T:System.Threading.Mutex"/>). The Mutex object is now initially owned.
-            <para>This object is to be used for the access synchronization to the compiled script file and it can be useful for the 
+            <para>This object is to be used for the access synchronization to the compiled script file and it can be useful for the
             tasks like cache purging or explicit script recompilation.</para>
-            <para>The optimisticConcurrencyModel has the same meaning as <see cref="P:csscript.Settings.OptimisticConcurrencyModel"/>. 
+            <para>The optimisticConcurrencyModel has the same meaning as <see cref="P:csscript.Settings.OptimisticConcurrencyModel"/>.
             And it is to be used to control the concurrency scope.</para>
             </summary>
             <param name="compiledScriptFile">The script file.</param>
-            <param name="optimisticConcurrencyModel">if set to <c>true</c> the operation is thread-safe within the current process. 
+            <param name="optimisticConcurrencyModel">if set to <c>true</c> the operation is thread-safe within the current process.
             Otherwise the operation is thread-safe system wide..</param>
             <returns></returns>
         </member>
@@ -2294,7 +2381,7 @@
         <member name="M:CSScriptLibrary.CSScript.LoadMethod(System.String,System.String[])">
              <summary>
              Surrounds the method implementation code into a class and compiles it code into assembly with CSExecutor and loads it in current AppDomain.
-             The most convenient way of using dynamic methods is to declare them as static methods. In this case they can be invoked with wild card character 
+             The most convenient way of using dynamic methods is to declare them as static methods. In this case they can be invoked with wild card character
              as a class name (e.g. asmHelper.Invoke("*.SayHello")). Otherwise you will need to instantiate class "DyamicClass.Script" in order to call dynamic method.
             
              You can have multiple methods implementations in the single methodCode. Also you can specify namespaces at the beginning of the code:
@@ -2421,9 +2508,9 @@
         </member>
         <member name="M:CSScriptLibrary.CSScript.StopVBCSCompilers">
             <summary>
-            Stop any running instances of the compiler server if any. 
+            Stop any running instances of the compiler server if any.
             <para>
-            Stopping is needed in order to prevent any problems with copying/moving CS-Script binary files (e.g. Roslyn compilers). 
+            Stopping is needed in order to prevent any problems with copying/moving CS-Script binary files (e.g. Roslyn compilers).
             Servers restart automatically on any attempt to compile any C#/VB.NET code by any client (e.g. Visual Studio, MSBuild, CS-Script).
             </para>
             </summary>
@@ -2560,7 +2647,7 @@
             <para>This method is a logical equivalent of the corresponding <c>LoadCode</c> method except the code is
             not specified as a call argument but read from the file instead.</para>
             <para>It is recommended to use LoadFrom method instead as it is more straight forward and arguably faster.
-            Use LoadCodeFrom only if you indeed want to disassociate your script code from the script file or 
+            Use LoadCodeFrom only if you indeed want to disassociate your script code from the script file or
             if the original location of the source file some how is incompatible with the actual C# compiler.</para>
             </summary>
             <param name="scriptFile">The script file.</param>
@@ -2595,7 +2682,7 @@
             <para>This method is a logical equivalent of the corresponding <c>LoadCode</c> method except the code is
             not specified as a call argument but read from the file instead.</para>
             <para>It is recommended to use LoadFrom method instead as it is more straight forward and arguably faster.
-            Use LoadCodeFrom only if you indeed want to disassociate your script code from the script file or 
+            Use LoadCodeFrom only if you indeed want to disassociate your script code from the script file or
             if the original location of the source file some how is incompatible with the actual C# compiler.</para>
             </summary>
             <param name="scriptFile">The script file.</param>
@@ -2611,7 +2698,7 @@
             <para>This method is a logical equivalent of the corresponding <c>LoadCode</c> method except the code is
             not specified as a call argument but read from the file instead.</para>
             <para>It is recommended to use LoadFrom method instead as it is more straight forward and arguably faster.
-            Use LoadCodeFrom only if you indeed want to disassociate your script code from the script file or 
+            Use LoadCodeFrom only if you indeed want to disassociate your script code from the script file or
             if the original location of the source file some how is incompatible with the actual C# compiler.</para>
             <param name="scriptFile">The script file.</param>
             <param name="tempFileExtension">The file extension of the temporary file to hold script code during compilation. This parameter may be
@@ -2653,11 +2740,11 @@
         </member>
         <member name="M:CSScriptLibrary.CSScript.CleanupDynamicSources">
             <summary>
-            Cleans up all abandoned dynamic C# sources (temp files) generated by LodCode*() API methods. You don't need to use this 
+            Cleans up all abandoned dynamic C# sources (temp files) generated by LodCode*() API methods. You don't need to use this
             method as it is scheduled for execution at the end of the application.
             <para>
-            However automatic cleanup may fail under certain circumstances as it is scheduled by the 
-            AppDomain.CurrentDomain.ProcessExit event, which is not guaranteed to be always executed. 
+            However automatic cleanup may fail under certain circumstances as it is scheduled by the
+            AppDomain.CurrentDomain.ProcessExit event, which is not guaranteed to be always executed.
             In such cases or if you want to clear the directory prior the execution you can call <c>CSScript.CleanupDynamicSources()</c> explicitly.
             </para>
             </summary>
@@ -2865,7 +2952,7 @@
             3. PATH
             Also fixes file name if user did not provide extension for script file (assuming .cs extension)
             </para>
-            <para>If the default implementation isn't suitable then you can set <c>CSScript.ResolveSourceAlgorithm</c> 
+            <para>If the default implementation isn't suitable then you can set <c>CSScript.ResolveSourceAlgorithm</c>
             to the alternative implementation of the probing algorithm.</para>
             </summary>
         </member>
@@ -2873,7 +2960,7 @@
             <summary>
             Resolves namespace/assembly(file) name into array of assembly locations (local and GAC ones).
             </summary>
-            <para>If the default implementation isn't suitable then you can set <c>CSScript.ResolveAssemblyAlgorithm</c> 
+            <para>If the default implementation isn't suitable then you can set <c>CSScript.ResolveAssemblyAlgorithm</c>
             to the alternative implementation of the probing algorithm.</para>
             <returns>collection of assembly file names where namespace is implemented</returns>
         </member>
@@ -4744,6 +4831,71 @@
             <value>
             The value.
             </value>
+        </member>
+        <member name="T:CSScriptLibrary.SimpleAsmProbing">
+             <summary>
+             Class for automated assembly probing. It implments extremely simple ('optimistic')
+             probing algorithm. At runtime it attempts to resolve the assemblies via AppDomain.Assembly resolve
+             event by looking up the assembly files in the user dfined list of probing direcctories.
+             The algorithm relies on the simple relationship between assembluy name and assembly file name:
+              &lt;assembly file&gt; = &lt;asm name&gt; + ".dll"
+             </summary>
+            <example>The following is an example of automated assembly probing.
+            <code>
+             using (SimpleAsmProbing.For(@"E:\Dev\Libs", @"E:\Dev\Packages"))
+             {
+                 dynamic script = CSScript.Load(script_file)
+                                          .CreateObject("Script");
+                 script.Print();
+             }
+             </code>
+             </example>
+             <seealso cref="T:System.IDisposable"/>
+        </member>
+        <member name="M:CSScriptLibrary.SimpleAsmProbing.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.SimpleAsmProbing.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources.
+            </summary>
+            <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        </member>
+        <member name="M:CSScriptLibrary.SimpleAsmProbing.Finalize">
+            <summary>
+            Finalizes an instance of the <see cref="T:CSScriptLibrary.SimpleAsmProbing"/> class.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.SimpleAsmProbing.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CSScriptLibrary.SimpleAsmProbing"/> class.
+            </summary>
+        </member>
+        <member name="M:CSScriptLibrary.SimpleAsmProbing.For(System.String[])">
+            <summary>
+            Creates and initializes a new instance of the <see cref="T:CSScriptLibrary.SimpleAsmProbing"/> class.
+            </summary>
+            <param name="probingDirs">The probing dirs.</param>
+            <returns></returns>
+        </member>
+        <member name="M:CSScriptLibrary.SimpleAsmProbing.#ctor(System.String[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:CSScriptLibrary.SimpleAsmProbing"/> class.
+            </summary>
+            <param name="probingDirs">The probing dirs.</param>
+        </member>
+        <member name="M:CSScriptLibrary.SimpleAsmProbing.Init(System.String[])">
+            <summary>
+            Sets probing dirs and subscribes to the <see cref="E:System.AppDomain.AssemblyResolve"/> event.
+            </summary>
+            <param name="probingDirs">The probing dirs.</param>
+        </member>
+        <member name="M:CSScriptLibrary.SimpleAsmProbing.Uninit">
+            <summary>
+            Unsubscribes to the <see cref="E:System.AppDomain.AssemblyResolve"/> event.
+            </summary>
         </member>
         <member name="T:CSScriptLibrary.AppDomainHelper">
             <summary>
