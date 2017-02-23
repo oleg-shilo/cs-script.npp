@@ -44,7 +44,7 @@ namespace CSScriptNpp
 
         static string nppScriptsScriptsDir;
 
-        public static string NppScripts_ScriptsDir  //NppScripts is another CS-Script related plugin 
+        public static string NppScripts_ScriptsDir  //NppScripts is another CS-Script related plugin
         {
             get
             {
@@ -490,7 +490,7 @@ namespace CSScriptNpp
                 LoadRoslyn();
 
                 keepRoslynLoadedTimer = new Timer();
-                keepRoslynLoadedTimer.Interval = 1000 * 60 * 9; //9 min 
+                keepRoslynLoadedTimer.Interval = 1000 * 60 * 9; //9 min
                 keepRoslynLoadedTimer.Tick += (s, e) =>
                                                 {
                                                     LoadRoslyn();
@@ -502,7 +502,7 @@ namespace CSScriptNpp
 
         static public void LoadRoslyn()
         {
-            //disabled as unreliable; it can even potentially crash csc.exe if MS CodeAnalysis asms are probed incorrectly 
+            //disabled as unreliable; it can even potentially crash csc.exe if MS CodeAnalysis asms are probed incorrectly
             try
             {
 
@@ -559,8 +559,10 @@ class Script
             }
             else
             {
-                host = ConsoleHostPath;
-                args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script, debugFlag);
+                host = cscs;
+                args = string.Format("-wait /nl {2}/l {0} {1}",  GenerateDefaultArgs(scriptFile), script, debugFlag);
+                //host = ConsoleHostPath;
+                //args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script, debugFlag);
             }
 
             if (!RunningAsAdmin)
