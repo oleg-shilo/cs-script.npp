@@ -148,7 +148,10 @@ namespace CSScriptNpp
                         string newKey = file + "|" + (line + 1);
 
                         breakpoints.Remove(key);
-                        breakpoints.Add(newKey, marker);
+                        if (breakpoints.ContainsKey(newKey))
+                            breakpoints.Add(newKey, marker);
+                        else
+                            breakpoints[newKey] = marker;
                     }
                 }
             }

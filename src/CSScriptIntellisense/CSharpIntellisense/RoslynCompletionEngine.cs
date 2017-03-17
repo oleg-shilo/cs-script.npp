@@ -10,6 +10,23 @@ using Intellisense.Common;
 
 namespace CSScriptIntellisense
 {
+    internal class Roslyn
+    {
+        public static string LocateInPluginDir(string fileName, params string[] subDirs)
+        {
+            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var file = Path.Combine(dir, fileName);
+
+            foreach (var item in subDirs)
+                if (File.Exists(file))
+                    return file;
+                else
+                    file = Path.Combine(dir, item, fileName);
+
+            return file;
+        }
+    }
+
     public class RoslynCompletionEngine
     {
         public delegate void D2(string s);
@@ -49,14 +66,14 @@ namespace CSScriptIntellisense
             }
         }
 
+
         public static void Init()
         {
             if (engine != null) return;
 
             WithCompatibilityCheck(() =>
             {
-                var file = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                                        @"Roslyn.Intellisense\RoslynIntellisense.exe");
+                var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn.Intellisense");
 
                 if (!File.Exists(file))
                 {
@@ -66,7 +83,7 @@ namespace CSScriptIntellisense
                 }
 
                 intellisense = Assembly.LoadFrom(file);
-                engine = (IEngine) intellisense.CreateInstance("RoslynIntellisense.Engine");
+                engine = (IEngine)intellisense.CreateInstance("RoslynIntellisense.Engine");
                 engine.SetOption("ReflectionOutDir", Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes"));
             });
 

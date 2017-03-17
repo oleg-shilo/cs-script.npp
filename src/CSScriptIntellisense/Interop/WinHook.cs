@@ -76,7 +76,7 @@ namespace CSScriptIntellisense
             const int WM_MOUSEMOVE = 0x0200;
             const int WM_NCMOUSEMOVE = 0x00A0;
             const int WM_LBUTTONUP = 0x0202;
-            const int MK_CONTROL = 0x0008;
+            //const int MK_CONTROL = 0x0008;
 
             if ((wParam.ToInt32() == WM_MOUSEMOVE || wParam.ToInt32() == WM_NCMOUSEMOVE) && MouseMove != null)
             {

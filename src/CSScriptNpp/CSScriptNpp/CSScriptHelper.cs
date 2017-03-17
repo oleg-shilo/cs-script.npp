@@ -1201,7 +1201,10 @@ class Script
             }
             else if (Config.Instance.UseRoslynProvider)
             {
-                var provider = Path.Combine(Plugin.PluginDir, "Roslyn", "CSSCodeProvider.v4.6.dll");
+                var provider = Path.Combine(Plugin.PluginDir, "CSSCodeProvider.v4.6.dll");
+                if(!File.Exists(provider))
+                    provider = Path.Combine(Plugin.PluginDir, "Roslyn", "CSSCodeProvider.v4.6.dll");
+
                 result = " \"/provider:" + provider + "\"";
             }
 

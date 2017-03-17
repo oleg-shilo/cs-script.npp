@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CS-Script")]
 [assembly: AssemblyProduct("CS-Script Intellisense for Notepad++")]
-[assembly: AssemblyCopyright("Copyright © Oleg Shilo 2013")]
+[assembly: AssemblyCopyright("Copyright © Oleg Shilo 2014-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyDescription("'CS-Script Intellisense' is a real C# intellisense solution based on CS-Script and ICSharpCode.NRefactory/Mono.Cecil. \r\n" +

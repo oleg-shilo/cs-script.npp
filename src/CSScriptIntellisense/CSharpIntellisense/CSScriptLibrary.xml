@@ -380,7 +380,7 @@
         </member>
         <member name="T:csscript.Project">
             <summary>
-            Class that holds all information about the execution context 
+            Class that holds all information about the execution context
             (probing directories and dependencies) of a script.
             </summary>
         </member>
@@ -391,7 +391,7 @@
         </member>
         <member name="F:csscript.Project.Files">
             <summary>
-            List of all C# sources defined by the project. This 
+            List of all C# sources defined by the project. This
             includes the primary script itself and all other scripts files the imported/included
             by the primary script.
             </summary>
@@ -403,16 +403,16 @@
         </member>
         <member name="F:csscript.Project.SearchDirs">
             <summary>
-            List of search folders where CS-Script does probing for 
+            List of search folders where CS-Script does probing for
             imported/included scripts and assemblies.
             </summary>
         </member>
         <member name="M:csscript.Project.GenerateProjectFor(System.String)">
             <summary>
-            Generates the top level view project for a given script. 
+            Generates the top level view project for a given script.
             <para>
             Note this method uses the same algorithm as CS-Script executor but it deliberately doesn't
-            include cached directories and auto-generated files. This method is to be used by IDs and tools. 
+            include cached directories and auto-generated files. This method is to be used by IDs and tools.
             </para>
             </summary>
             <param name="script">The script.</param>
@@ -2800,6 +2800,12 @@
             Note the script cache is always maintained by the script engine. The CacheEnabled property only indicates if the cached script should be used or not when CSScript.Load(...) method is called.
             </summary>
         </member>
+        <member name="M:CSScriptLibrary.CSScript.IgnoreSystemWideConfig">
+            <summary>
+            Ignores the system wide configuration for CS-Script (e.g. default referenced assemblies, alternative compiler).
+            </summary>
+            <returns>Folder where the current system wide configuration file (css_config.xml) is located.</returns>
+        </member>
         <member name="M:CSScriptLibrary.CSScript.GetCachedScriptAssemblyFile(System.String)">
             <summary>
             Returns file path of the cached script assembly matching the script file name.
@@ -2899,6 +2905,27 @@
              however allows you to specify extra directory(es) for assembly probing by setting enabling CS-Script assembly resolving
              through setting the AssemblyResolvingEnabled to true and changing the Settings.SearchDirs appropriately.
              </summary>
+        </member>
+        <member name="P:CSScriptLibrary.CSScript.EnableScriptLocationReflection">
+            <summary>
+            Gets or sets a value indicating whether setting 'location:&lt;assm_hash&gt;' environment variable is enabled.
+            <para>
+            This variable is useful for finding the compiled assembly file from the inside of the script code.
+            Even when the script loaded in-memory (InMemoryAssembly setting) but not from the original file.
+            </para>
+            <code>
+            // called from the script code
+            var asm_hash = Assembly.GetExecutingAssembly().GetHashCode();
+            var script_location = Environment.GetEnvironmentVariable(\"location:\" + asm_hash);
+            </code>
+            <para>
+            Enabling script reflection can lead to exhausting the capacity of the process environment variables dictionary.
+            That is why this feature is disabled by default.
+            </para>
+            </summary>
+            <value>
+            <c>true</c> if script location reflection is enabled otherwise, <c>false</c>.
+            </value>
         </member>
         <member name="P:CSScriptLibrary.CSScript.ShareHostRefAssemblies">
              <summary>

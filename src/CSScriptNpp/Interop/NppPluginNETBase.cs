@@ -87,6 +87,20 @@ namespace CSScriptNpp
             }
         }
 
+        public static string Locate(string fileName, params string[] subDirs)
+        {
+            var dir = PluginDir;
+            var file = Path.Combine(dir, fileName);
+
+            foreach (var item in subDirs)
+                if (File.Exists(file))
+                    return file;
+                else
+                    file = Path.Combine(dir, item, fileName);
+
+            return file;
+        }
+
         public static string PluginDir
         {
             get

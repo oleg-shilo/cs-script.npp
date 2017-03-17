@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CSScriptNpp
@@ -317,6 +318,8 @@ namespace CSScriptNpp
 
         private static bool initialized;
 
+       
+
         static public bool Start(Debugger.CpuType cpu = Debugger.CpuType.Any)
         {
             if (!initialized)
@@ -327,12 +330,12 @@ namespace CSScriptNpp
 
             MessageQueue.Clear();
 
-            string debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbg.exe");
+            string debuggerApp = Plugin.Locate("mdbg.exe", "MDbg");
 
             if(cpu == Debugger.CpuType.x86)
-                debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbghost_32.exe");
+                debuggerApp = Plugin.Locate("mdbghost_32.exe", "MDbg");
             else if(cpu == Debugger.CpuType.x64)
-                debuggerApp = Path.Combine(Plugin.PluginDir, @"MDbg\mdbghost_64.exe");
+                debuggerApp = Plugin.Locate("mdbghost_64.exe", "MDbg");
 
 
             var debugger = Process.Start(new ProcessStartInfo
