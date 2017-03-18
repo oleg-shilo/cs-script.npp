@@ -18,7 +18,7 @@ namespace CSScriptNpp
     {
         static string consoleHostPath;
         static string vsDir;
-        static string scriptsDirectory;
+        //static string scriptsDirectory;
 
         public static string ScriptsDir
         {

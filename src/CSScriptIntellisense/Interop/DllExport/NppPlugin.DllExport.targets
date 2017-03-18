@@ -2,6 +2,24 @@
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask TaskName="NppPlugin.DllExport.MSBuild.DllExportTask"
              AssemblyFile="NppPlugin.DllExport.MSBuild.dll"/>
+
+  <PropertyGroup Condition="!Exists('$(DevEnvDir)\..\..\VC\bin')">
+        <LibToolPath >  
+           C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin
+        </LibToolPath>  
+        <LibToolDllPath >  
+           C:\Program Files (x86)\Microsoft Visual Studio 14.0
+        </LibToolDllPath> 
+  </PropertyGroup>
+  <PropertyGroup Condition="Exists('$(DevEnvDir)\..\..\VC\bin')">
+        <LibToolPath >  
+           $(DevEnvDir)\..\..\VC\bin
+        </LibToolPath>  
+        <LibToolDllPath >  
+           $(DevEnvDir)
+        </LibToolDllPath>  
+  </PropertyGroup>
+
   <Target Name="AfterBuild"
           DependsOnTargets="GetFrameworkPaths"
           >
@@ -17,8 +35,8 @@
                    ProjectDirectory="$(MSBuildProjectDirectory)"
                    InputFileName="$(TargetPath)"
                    FrameworkPath="$(TargetedFrameworkDir);$(TargetFrameworkDirectory)"
-                   LibToolPath="$(DevEnvDir)\..\..\VC\bin"
-                   LibToolDllPath="$(DevEnvDir)"
+                   LibToolPath="@(LibToolPath)"
+                   LibToolDllPath="@(LibToolDllPath)"
                    SdkPath="$(FrameworkSDKDir)"/>
   </Target>
 </Project>

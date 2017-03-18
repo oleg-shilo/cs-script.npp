@@ -14,7 +14,7 @@ using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
-    /*TODO:
+    /*TODO:  
      * - Outstanding features
      *  + Watch values are not updated on "step over" after the value has been changed
      *  + QuickWatch dialog doesn't allow changing the value in the grid
