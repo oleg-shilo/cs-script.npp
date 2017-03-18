@@ -1,9 +1,10 @@
 using System;
-using System.Diagnostics;
+using System.Linq;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace CSScriptNpp
 {

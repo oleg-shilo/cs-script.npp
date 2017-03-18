@@ -1,7 +1,3 @@
-Release v1.6.3
-* Integration with CS-Script v3.24.0.0
-  * Further AutoclassGenerator improvements (IDE integration related)
-  * Added inclusion of dbg.cs into building executable from the script
-  * Added auto-referencing System.Core.dll if dbg.cs is injected
-  * Added Settings.EnableDbgPrint to control inclusion of dbg.cs for Python-like `print(...)` methods
-  * Fixed problem with AutoClassGenerator incorrectly handling caret at the end of line
+Release v1.6.4
+*** Critical Update *** 
+Work around for broken Plugin Manager v1.4.3 deployment algorithm, which collapses plugin internal sub-folders into a single flat folder.    

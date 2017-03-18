@@ -17,7 +17,25 @@ namespace CSScriptNpp.Deployment
             CopyDir(tempDir + @"\Plugins", targetDir);
 
             Directory.Delete(tempDir, true);
+            RestorePluginTree(targetDir);
         }
+
+        static void RestorePluginTree(string pluginDir)
+        {
+            var files = Directory.GetDirectories(pluginDir)
+                                 .SelectMany(x => Directory.GetFiles(x))
+                                 .Select(x => Path.Combine(pluginDir, Path.GetFileName(x)))
+                                 .Where(x => File.Exists(x))
+                                 .ToArray();
+
+            foreach (var item in files)
+                try
+                {
+                    File.Delete(item);
+                }
+                catch { }
+        }
+
 
         static void CopyDir(string source, string destination)
         {
