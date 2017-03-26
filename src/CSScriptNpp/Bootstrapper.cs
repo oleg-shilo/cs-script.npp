@@ -16,6 +16,7 @@ namespace CSScriptNpp
             {
                 //Debug.Assert(false);
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                //RoslynHelper.Init();
                 //must be a separate method to allow assembly probing
                 ConnectPlugins();
             }
@@ -61,6 +62,7 @@ namespace CSScriptNpp
             }
             catch { }
             return null;
+            //return RoslynHelper.CurrentDomain_AssemblyResolve(sender, args);
         }
 
         //for future use
@@ -73,4 +75,37 @@ namespace CSScriptNpp
                 return null;
         }
     }
+
+    //internal class RoslynHelper
+    //{
+    //    static bool initialized;
+    //    static string probingDir;
+    //    static public void Init()
+    //    {
+    //        if (!initialized)
+    //        {
+    //            Debug.Assert(false);
+    //            initialized = true;
+
+    //            probingDir = Assembly.GetExecutingAssembly().Location.GetDirName();
+    //            if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
+    //            {
+    //                probingDir = probingDir.PathJoin("Roslyn.Intellisense");
+    //                if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
+    //                    probingDir = probingDir.PathJoin("Roslyn");
+    //            }
+
+    //            if (File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
+    //                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+    //        }
+    //    }
+
+    //    public static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    //    {
+    //        var file = probingDir.PathJoin(args.Name.Split(',').First() + ".dll");
+    //        if (File.Exists(file))
+    //            return Assembly.LoadFrom(file);
+    //        return null;
+    //    }
+    //}
 }

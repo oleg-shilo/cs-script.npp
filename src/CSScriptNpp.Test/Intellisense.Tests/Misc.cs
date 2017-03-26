@@ -10,6 +10,14 @@ using System.Reflection;
 
 namespace Testing
 {
+    public static class StringExtensions
+    {
+        static public string RemoveOverloadsInfo(this string text)
+        {
+            return text.Split(new[] { "(+" }, StringSplitOptions.None)[0].TrimEnd();
+        }
+    }
+
     public class Misc
     {
         [Fact]
@@ -392,7 +400,7 @@ class Script
             var p = Console.Out;
 
             Assert.Equal(1, info.Count());
-            Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
+            Assert.Equal("Property: TextWriter Console.Out { get; }", info.First().GetLine(0));
         }
 
         [Fact]
@@ -410,7 +418,8 @@ class Script<T,T1,T2>
 {
     static public void Main(string[] args)
     {
-        var p = new Scri|pt<int, int, int>();
+        var p = new Script<int, int, int>();
+        var d = new DateT|ime(1);
     }
 }";
             int pos = GetCaretPosition(ref code);
@@ -420,7 +429,7 @@ class Script<T,T1,T2>
             var p = Console.Out;
 
             Assert.Equal(1, info.Count());
-            Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
+            Assert.Equal("Constructor: DateTime(long ticks) (+ 11 overloads)", info.First().GetLine(0));
         }
 
         [Fact]
@@ -441,7 +450,8 @@ class Script
 }", 124, "test.cs", true);
 
             Assert.Equal(1, info.Count());
-            Assert.Equal("Constructor: DateTime() (+ 11 overload(s))", info.First());
+            var firstLine = info.First().GetLines(2).First();
+            Assert.Equal("Constructor: DateTime(int year, int month, int day) (+ 11 overloads)", firstLine);
         }
 
         [Fact]
@@ -505,7 +515,7 @@ class Script
 }", 126, "test.cs", false);
 
             Assert.Equal(12, info.Count());
-            Assert.Equal("Constructor: DateTime()", info.OrderBy(x => x).First());
+            Assert.Equal("Constructor: DateTime() (+ 11 overloads)", info.OrderBy(x => x).First().GetLine(0));
         }
 
         [Fact]
@@ -513,21 +523,26 @@ class Script
         {
             SimpleCodeCompletion.ResetProject();
 
-            //Console.WriteLine(|
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+
+            var code = @"using System;
 using System.Linq;
 
 class Script
 {
     static public void Main(string[] args)
     {
-        Console.WriteLine(args.Length);
+        Console.WriteLine(|args.Length);
     }
-}", 131, "test.cs", false);
+}";
+            int pos = GetCaretPosition(ref code);
+            //Console.WriteLine(|
+            string[] info = SimpleCodeCompletion.GetMemberInfo(code, 131, "test.cs", false)
+                                                .OrderBy(x=>x)
+                                                .ToArray();
 
             Assert.Equal(19, info.Count());
-            Assert.Equal("Method: void Console.WriteLine()", info[0].GetLines(2).First());
-            Assert.Equal("Method: void Console.WriteLine(bool value)", info[1].GetLines(2).First());
+            Assert.Equal("Method: void Console.WriteLine()", info[0].GetLine(0).RemoveOverloadsInfo());
+            Assert.Equal("Method: void Console.WriteLine(bool value)", info[1].GetLine(0).RemoveOverloadsInfo());
         }
 
         [Fact]

@@ -12,6 +12,11 @@ namespace RoslynIntellisense
 {
     public static class Formatter
     {
+        static Formatter()
+        {
+            AppDomainHelper.Init();
+        }
+
         static MSBuildWorkspace dummyWorkspace;
         static MSBuildWorkspace DummyWorkspace
         {

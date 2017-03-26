@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -9,6 +10,16 @@ namespace CSScriptNpp
         public static T To<T>(this object obj)
         {
             return (T) obj;
+        }
+
+        public static string PathJoin(this string path, params string[] items)
+        {
+            return Path.Combine(new[] { path }.Concat(items).ToArray());
+        }
+
+        public static string GetDirName(this string path)
+        {
+            return Path.GetDirectoryName(path);
         }
 
         public static object GetField(this object obj, string name, bool throwOnError = true)

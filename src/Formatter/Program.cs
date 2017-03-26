@@ -17,7 +17,7 @@ using System.Text.RegularExpressions;
 *
 *
 *
-*     OBSOLETE. HAS BEEN REPLACED WITH "Roslyn.Intellisense".
+*     OBSOLETE. HAS BEEN REPLACED WITH "Roslyn.Intellisense.exe".
 *
 *
 *

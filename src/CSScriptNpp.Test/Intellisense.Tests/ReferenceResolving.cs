@@ -5,7 +5,13 @@ using Xunit;
 namespace Testing
 {
     public class ReferenceResolving
+                 
     {
+        public ReferenceResolving()
+        {
+            RoslynHost.Init();
+        }
+
         private static string code =
             @"using System;
 using System.Windows.Forms;

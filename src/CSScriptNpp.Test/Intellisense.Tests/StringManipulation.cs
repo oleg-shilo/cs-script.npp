@@ -7,9 +7,10 @@ using Xunit;
 
 namespace Tests
 {
+   
+
     public class StringManipulation
     {
-
         [Fact]
         public void LeftAlign()
         {

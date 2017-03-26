@@ -6,6 +6,11 @@ namespace Testing
 {
     public class MethodInfo
     {
+        public MethodInfo()
+        {
+            RoslynHost.Init();
+        }
+
         [Fact]
         public void CountArgumentsInMemberInfo()
         {

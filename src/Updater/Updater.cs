@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,20 +21,30 @@ namespace CSScriptNpp.Deployment
             RestorePluginTree(targetDir);
         }
 
+        static bool ExistAndNotOlderThan(string file, string fileToCompareTo)
+        {
+            return File.Exists(file) && new Version(FileVersionInfo.GetVersionInfo(file).ProductVersion) >= new Version(FileVersionInfo.GetVersionInfo(fileToCompareTo).ProductVersion);
+        }
+
         static void RestorePluginTree(string pluginDir)
         {
-            var files = Directory.GetDirectories(pluginDir)
-                                 .SelectMany(x => Directory.GetFiles(x))
-                                 .Select(x => Path.Combine(pluginDir, Path.GetFileName(x)))
-                                 .Where(x => File.Exists(x))
-                                 .ToArray();
+            try
+            {
+                var files = Directory.GetDirectories(pluginDir)
+                                     .SelectMany(x => Directory.GetFiles(x))
+                                     .Select(x => new { FileInSubDir = x, FileInRoot = Path.Combine(pluginDir, Path.GetFileName(x)) })
+                                     .Where(x => ExistAndNotOlderThan(x.FileInRoot, x.FileInSubDir))
+                                     .Select(x=>x.FileInRoot)
+                                     .ToArray();
 
-            foreach (var item in files)
-                try
-                {
-                    File.Delete(item);
-                }
-                catch { }
+                foreach (var item in files)
+                    try
+                    {
+                        File.Delete(item);
+                    }
+                    catch { }
+            }
+            catch { }
         }
 
 

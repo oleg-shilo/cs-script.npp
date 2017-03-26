@@ -87,6 +87,16 @@ namespace RoslynIntellisense
             return (T) obj;
         }
 
+        public static string PathJoin(this string path, params string[] items)
+        {
+            return Path.Combine(new[] { path }.Concat(items).ToArray() );
+        }
+
+        public static string GetDirName(this string path)
+        {
+            return Path.GetDirectoryName(path);
+        }
+
         public static string JoinBy(this IEnumerable<string> items, string separator = "")
         {
             return string.Join(separator, items.ToArray());

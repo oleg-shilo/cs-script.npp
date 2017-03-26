@@ -2225,9 +2225,32 @@
             the success or failure of the actual compilation.
             </summary>
         </member>
+        <member name="F:CSScriptLibrary.CSScript.HostingConcurrencyControl">
+            <summary>
+            The hosting concurrency control.
+            <list type="bullet">
+            <item ><description> 
+            <para><c>ProcessScope</c></para>
+            Mutex name is a derived from the hosting process id.
+            Two calls to compile any script will be synchronized if the calls are made from the same host process.
+            </description></item>
+            <item ><description> 
+            <para><c>ScriptProcessScope</c></para>
+            Mutex name is a derived from the combination of the script path and hosting process id.
+            Two calls to compile the same script file will be synchronized but only if the calls are made from the same host process.
+            </description></item>
+            <item ><description> 
+            <para><c>ScriptSystemScope</c></para>
+            Mutex name is a derived from the script path.
+            Two calls to compile the same script file will be synchronized system wide.
+            </description></item>
+            </list>
+            </summary>
+        </member>
         <member name="F:CSScriptLibrary.CSScript.LastCompilingResult">
             <summary>
-            The last script compilation result.
+            The last script compilation result. Note, invoking CSScript.Compile/CSScript.Load may not trigger the actual compilation if script caching is 
+            engaged. Thus the <c>LastCompilingResult</c> value can be null.  
             </summary>
         </member>
         <member name="M:CSScriptLibrary.CSScript.Execute(CSScriptLibrary.PrintDelegate,System.String[])">
@@ -2363,7 +2386,18 @@
             </summary>
             <param name="compiledScriptFile">The script file.</param>
             <param name="optimisticConcurrencyModel">if set to <c>true</c> the operation is thread-safe within the current process.
-            Otherwise the operation is thread-safe system wide..</param>
+            Otherwise the operation is thread-safe system wide.</param>
+            <returns></returns>
+        </member>
+        <member name="M:CSScriptLibrary.CSScript.CreateCompilerLock(System.String)">
+            <summary>
+            Creates the compiler lock object (<see cref="T:System.Threading.Mutex"/>). The Mutex object is now initially owned.
+            <para>This object is to be used for the access synchronization to the compiled script file and it can be useful for the
+            tasks like cache purging or explicit script recompilation.</para>
+            <para>The concurrency/lock scope is controlled by <see cref="F:CSScriptLibrary.CSScript.HostingConcurrencyControl"/>.
+            And it is to be used to control the concurrency scope.</para>
+            </summary>
+            <param name="compiledScriptFile">The script file.</param>
             <returns></returns>
         </member>
         <member name="M:CSScriptLibrary.CSScript.CompileWithConfig(System.String,System.String,System.Boolean,csscript.Settings,System.String,System.String[])">
@@ -2377,6 +2411,21 @@
             <param name="compilerOptions">The string value to be passed directly to the language compiler.  </param>
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled assembly file name.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.CSScript.CompileWithConfig(System.String,System.String,System.Boolean,csscript.Settings,System.String,csscript.CompilingInfo@,System.String[])">
+            <summary>
+            Compiles script file into assembly with CSExecutor. Uses script engine settings object and compiler specific options.
+            </summary>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
+            <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
+            <param name="scriptSettings">The script engine Settings object.</param>
+            <param name="compilerOptions">The string value to be passed directly to the language compiler.</param>
+            <param name="compilingInfo">The compiling information. Populated with the compilation context.</param>
+            <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script.</param>
+            <returns>
+            Compiled assembly file name.
+            </returns>
         </member>
         <member name="M:CSScriptLibrary.CSScript.LoadMethod(System.String,System.String[])">
              <summary>
@@ -3000,7 +3049,7 @@
             <summary>
             Compiled script probing handler. Analyses the script file and the compiled script (script assembly)
             and determines if the script assembly is out of data and needs to be recompiled.
-            <para>The default implementation is <see cref="P:CSScriptLibrary.CSScript.CachProbing.Simplified"/>.</para>
+            <para>The default implementation is <see cref="P:CSScriptLibrary.CSScript.CachProbing.Advanced"/>.</para>
             <para>You can always supply your custom algorithm. For example <p>
             <c>CSScript.IsOutOfDateAlgorithm = (s, a) =&gt; true;</c></p>
             fill force CS-Script to recompile the script every time it is loaded.</para>
@@ -4815,6 +4864,26 @@
             CSScript.<see cref="P:CSScriptLibrary.CSScript.Evaluator"/> encapsulates.</para>
             </summary>
             <value>The default evaluator engine.</value>
+        </member>
+        <member name="T:CSScriptLibrary.HostingConcurrencyControl">
+            <summary>
+            Enum for controlling concurrency in script hosting scenarios
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.HostingConcurrencyControl.ProcessScope">
+            <summary>
+            Any call to CSScript.Compile within a given process is synchronized
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.HostingConcurrencyControl.ScriptProcessScope">
+            <summary>
+            Any call to CSScript.Compile a specific script within a given process is synchronized
+            </summary>
+        </member>
+        <member name="F:CSScriptLibrary.HostingConcurrencyControl.ScriptSystemScope">
+            <summary>
+            Any call to CSScript.Compile a specific script is synchronized system wide
+            </summary>
         </member>
         <member name="T:CSScriptLibrary.Ref`1">
              <summary>

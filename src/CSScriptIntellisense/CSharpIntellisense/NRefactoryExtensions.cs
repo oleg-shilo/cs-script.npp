@@ -529,6 +529,12 @@ namespace CSScriptIntellisense
 
         static string[] lineDelimiters = new string[] { Environment.NewLine };
 
+        
+        static public string GetLine(this string text, int index)
+        {
+            return text.GetLines(index + 2)[index];
+        }
+
         static public string[] GetLines(this string text, int count = -1)
         {
             if (count != -1)
@@ -754,7 +760,7 @@ namespace CSScriptIntellisense
                 // CS-Script DisplayText does include delimiters that are not part of C# tokens  
                 // CompletionText:'css_rags'
                 // DisplayText:'//css_rags'
-                return data.CompletionText == nameToResolve; 
+                return data.CompletionText == nameToResolve;
             }
             else
                 return data.DisplayText == nameToResolve;

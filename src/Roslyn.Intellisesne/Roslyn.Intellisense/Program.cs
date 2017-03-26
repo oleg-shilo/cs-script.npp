@@ -19,6 +19,7 @@ namespace RoslynIntellisense
     {
         static int Main(string[] args)
         {
+            //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             //Debug.Assert(false);
 
             //Formatting(args);
@@ -31,6 +32,16 @@ namespace RoslynIntellisense
                 return Detect();
             else
                 return 0;
+
+
+        }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var file = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), args.Name.Split(',').First()+".dll");
+            if (File.Exists(file))
+                return Assembly.LoadFrom(file);
+            return null;
         }
 
         static int Test()
@@ -40,7 +51,8 @@ namespace RoslynIntellisense
             //Autocompleter.FindMissingUsings11();
             //Intellisense2();
             //IntellisenseSimple();
-            SyntaxServer();
+            //SyntaxServer();
+            Formatting(null);
             //Console.ReadLine();
             //SyntaxServer();
             //Console.ReadLine();
@@ -108,6 +120,7 @@ namespace RoslynIntellisense
         {
             string file = @"C:\Users\%USERNAME%\Documents\C# Scripts\New Script34.cs";
             file = Environment.ExpandEnvironmentVariables(file);
+            file = @"E:\Galos\Projects\CS-Script\GitHub\cs-script\Source\TestPad\test_script.cs";
             args = new[] { file };
             var code = File.ReadAllText(args.First());
 

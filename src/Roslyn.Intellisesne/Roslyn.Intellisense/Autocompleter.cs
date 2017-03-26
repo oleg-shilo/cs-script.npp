@@ -19,8 +19,46 @@ using System.Diagnostics;
 
 namespace RoslynIntellisense
 {
+    internal class AppDomainHelper
+    {
+        static bool initialized;
+        static string probingDir;
+        static public void Init()
+        {
+            if (!initialized)
+            {
+                //Debug.Assert(false);
+                initialized = true;
+
+                probingDir = Assembly.GetExecutingAssembly().Location.GetDirName();
+                if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
+                {
+                    probingDir = probingDir.PathJoin("Roslyn.Intellisense");
+                    if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
+                        probingDir = probingDir.GetDirName().PathJoin("Roslyn");
+                }
+
+                if (File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
+                    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            } 
+        }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var file = probingDir.PathJoin(args.Name.Split(',').First() + ".dll");
+            if (File.Exists(file))
+                return Assembly.LoadFrom(file);
+            return null;
+        }
+    }
+
     public static class Autocompleter
     {
+        static Autocompleter()
+        {
+            AppDomainHelper.Init();
+        }
+
         static internal Lazy<MetadataReference[]> builtInLibs = new Lazy<MetadataReference[]>(
          delegate
          {
@@ -549,7 +587,7 @@ namespace RoslynIntellisense
 
             var document = InitWorkspace(workspace, code, null, asms.ToArray(), includes);
             var model = await document.GetSemanticModelAsync();
-            var symbols = Recommender.GetRecommendedSymbolsAtPosition(model, position, workspace).ToArray();
+            var symbols = Recommender.GetRecommendedSymbolsAtPositionAsync(model, position, workspace).Result.ToArray();
 
             var data = symbols.Select(s => s.ToCompletionData()).ToArray();
 
@@ -776,8 +814,8 @@ namespace RoslynIntellisense
             {
                 foreach (var member in type.ChildNodes().OfType<VB.Syntax.MethodBlockSyntax>())
                 {
-                    if (member is VB.Syntax.MethodBlockSyntax)
-                    {
+                    //if (member is VB.Syntax.MethodBlockSyntax)
+                    //{
                         //    var method = (member as VB.Syntax.MethodStatementSyntax);
                         //    map.Add(new CodeMapItem
                         //    {
@@ -788,9 +826,9 @@ namespace RoslynIntellisense
                         //        ParentDisplayName = type.GetFullName(),
                         //        MemberType = "Method"
                         //    });
-                    }
-                    else if (member is PropertyDeclarationSyntax)
-                    {
+                    //}
+                    //else if (member is PropertyDeclarationSyntax)
+                    //{
                         //var prop = (member as PropertyDeclarationSyntax);
                         //map.Add(new CodeMapItem
                         //{
@@ -800,9 +838,10 @@ namespace RoslynIntellisense
                         //    ParentDisplayName = type.GetFullName(),
                         //    MemberType = "Property"
                         //});
-                    }
-                    else if (member is FieldDeclarationSyntax)
-                    {
+                    //}
+                    //else
+                    //if (member is FieldDeclarationSyntax)
+                    //{
                         //var field = (member as FieldDeclarationSyntax);
                         //map.Add(new CodeMapItem
                         //{
@@ -812,7 +851,7 @@ namespace RoslynIntellisense
                         //    ParentDisplayName = type.GetFullName(),
                         //    MemberType = "Field"
                         //});
-                    }
+                    //}
                 }
             }
 

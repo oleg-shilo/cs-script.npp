@@ -1,15 +1,8 @@
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using Xunit;
-using Microsoft.CodeAnalysis;
 using RoslynIntellisense;
-using Microsoft.CodeAnalysis.FindSymbols;
 using CSScriptIntellisense.Test;
-using static CSScriptIntellisense.Test.TestClass1;
 
 namespace Testing
 {

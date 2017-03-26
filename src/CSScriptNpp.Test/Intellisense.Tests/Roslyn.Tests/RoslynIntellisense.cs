@@ -158,6 +158,34 @@ class Script
         }
 
         [Fact]
+        public void ResolveSymbolFromCSharp_7_Code()
+        {
+            SimpleCodeCompletion.ResetProject();
+
+            var code =
+    @"using System;
+using System.Linq;
+
+class Script
+{
+    static public void Main(string[] args)
+    {
+        Te|st = 5;
+        Console.WriteLine(args.Length);
+    }
+    static int Test;
+}";
+            int pos = GetCaretPosition(ref code);
+
+            var region = SimpleCodeCompletion.ResolveMember(code, pos, "test.cs");
+
+            Assert.Equal(16, region.BeginColumn);
+            Assert.Equal(11, region.BeginLine);
+            Assert.Equal(11, region.EndLine);
+            Assert.Equal("test.cs", region.FileName);
+        }
+
+        [Fact]
         public void ResolveSymbolFromAsm()
         {
             SimpleCodeCompletion.ResetProject();

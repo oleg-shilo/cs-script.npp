@@ -4,8 +4,8 @@ using System.Linq;
 using System.Reflection;
 using CSScriptIntellisense;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.FindSymbols;
 using RoslynIntellisense;
+using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace Testing
 {
@@ -65,21 +65,20 @@ namespace Testing
         {
             if (roslynBinDir == null)
             {
-                roslynBinDir = Path.GetFullPath(@"..\..\..\..\..\CSScript.Npp\src\Roslyn.Intellisesne\Roslyn.Intellisense\Microsoft.CodeAnalysis.CSharp.1.1.0");
-
-                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                roslynBinDir = Path.GetFullPath(@"..\..\..\..\..\CSScript.Npp\src\Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug");
+                //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             }
         }
 
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            var path = $"{roslynBinDir}\\{args.Name.Split(',').First()}";
-            if (File.Exists(path + ".dll"))
-                return Assembly.LoadFrom(path + ".dll");
-            if (File.Exists(path + ".exe"))
-                return Assembly.LoadFrom(path + ".exe");
-            return null;
-        }
+        //private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        //{
+        //    var path = $"{roslynBinDir}\\{args.Name.Split(',').First()}";
+        //    if (File.Exists(path + ".dll"))
+        //        return Assembly.LoadFrom(path + ".dll");
+        //    if (File.Exists(path + ".exe"))
+        //        return Assembly.LoadFrom(path + ".exe");
+        //    return null;
+        //}
     }
 
 }

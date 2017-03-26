@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EB8FC3A3-93E8-457B-B281-FAFA5119611A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CSScriptIntellisense</RootNamespace>
+    <AssemblyName>CSScriptIntellisense</AssemblyName>
+    <StartupObject>
+    </StartupObject>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>
+    </NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FileAlignment>512</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>
+    </DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="Interop\DllExport\NppPlugin.DllExport.2017.targets" />
+  <!-- <Import Project="Interop\DllExport\NppPlugin.DllExport.targets" /> -->
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CodeSnippets\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CSharpIntellisense\MonoCompletionEngine.cs" />
+    <Compile Include="CSharpIntellisense\CssCompletionData.cs" />
+    <Compile Include="CSharpIntellisense\NRefactoryExtensions.cs" />
+    <Compile Include="CSharpIntellisense\RoslynCompletionEngine.cs" />
+    <Compile Include="CSharpIntellisense\Shortcuts.cs" />
+    <Compile Include="Formatter\NppCodeFormatter.cs" />
+    <Compile Include="Formatter\SourceCodeFormatterOld.cs" />
+    <Compile Include="Formatter\SourceCodeFormatter.cs" />
+    <Compile Include="Formatter\StringExtesnions.cs" />
+    <Compile Include="Interop\Logger.cs" />
+    <Compile Include="Interop\WinHook.cs" />
+    <Compile Include="Interop\Dispatcher.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Interop\Dispatcher.Designer.cs">
+      <DependentUpon>Dispatcher.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Interop\LocalWindowsHook.cs" />
+    <Compile Include="NppEditor.cs" />
+    <Compile Include="PopupManager.cs" />
+    <Compile Include="MemberInfoPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MemberInfoPanel.Designer.cs">
+      <DependentUpon>MemberInfoPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomContextMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomContextMenu.Designer.cs">
+      <DependentUpon>CustomContextMenu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharpIntellisense\Config.cs" />
+    <Compile Include="Interop\IniFile.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CSharpIntellisense\Reflector.Cecil.cs" />
+    <Compile Include="CodeSnippets\Snippets.cs" />
+    <Compile Include="RenameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RenameForm.Designer.cs">
+      <DependentUpon>RenameForm.cs</DependentUpon>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="CodeSnippets\snippets.data" />
+    <None Include="Interop\DllExport\CheckILDasmPath.cs" />
+    <Compile Include="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AutocompleteForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AutocompleteForm.Designer.cs">
+      <DependentUpon>AutocompleteForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigForm.Designer.cs">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharpIntellisense\CSScriptHelper.cs" />
+    <Compile Include="CSharpIntellisense\SimpleCodeCompletion.cs" />
+    <Compile Include="CSharpIntellisense\SimpleCompletionDataFactory.cs" />
+    <Compile Include="Images\Images.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Interop\DllExport\DllExportAttribute.cs" />
+    <Compile Include="Interop\NppPluginNETBase.cs" />
+    <Compile Include="Interop\NppPluginNETHelper.cs" />
+    <Compile Include="Interop\UnmanagedExports.cs" />
+    <Compile Include="Interop\Npp.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CSScriptLibrary, Version=3.8.13.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\LineMan\LineMan\CSharpIntellisence\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory.CSharp, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\LineMan\LineMan\CSharpIntellisence\ICSharpCode.NRefactory.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\gittest\csscriptnpp\src\CSScriptIntellisense\CSharpIntellisense\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AutocompleteForm.resx">
+      <DependentUpon>AutocompleteForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CodeSnippets\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConfigForm.resx">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Interop\Dispatcher.resx">
+      <DependentUpon>Dispatcher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MemberInfoPanel.resx">
+      <DependentUpon>MemberInfoPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomContextMenu.resx">
+      <DependentUpon>CustomContextMenu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\Images.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RenameForm.resx">
+      <DependentUpon>RenameForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\snippet.png" />
+    <None Include="Images\unresolved.png" />
+    <None Include="Interop\DllExport\Mono.Cecil.dll" />
+    <None Include="Interop\DllExport\NppPlugin.DllExport.dll" />
+    <None Include="Interop\DllExport\NppPlugin.DllExport.MSBuild.dll" />
+    <None Include="Interop\DllExport\README.txt" />
+    <None Include="Interop\DllExport\CheckILDasmPath.exe" />
+    <None Include="CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSharpIntellisense\ICSharpCode.NRefactory.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CSharpIntellisense\Mono.Cecil.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="..\CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll">
+      <Link>CSharpIntellisense\CSScriptLibrary.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CSharpIntellisense\Intellisense.Common.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\constructor.png" />
+    <Content Include="Images\event.png" />
+    <None Include="Images\extension_method.png" />
+    <Content Include="Images\field.png" />
+    <Content Include="Images\method.png" />
+    <Content Include="Images\namespace.png" />
+    <None Include="Images\namespace_add.png" />
+    <Content Include="Images\property.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Interop\DllExport\NppPlugin.DllExport.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
+      <Project>{c67d7ed7-f350-4fd4-81b5-5e635fb08765}</Project>
+      <Name>Intellisense.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>copy "$(ProjectDir)..\NppShortcutRemapper\bin\NppShortcutRemapper.exe" "$(ProjectDir)Resources\NppShortcutRemapper.exe"
+"$(ProjectDir)Interop\DllExport\CheckILDasmPath.exe"</PreBuildEvent>
+  </PropertyGroup>
+</Project>
