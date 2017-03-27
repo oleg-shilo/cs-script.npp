@@ -46,25 +46,26 @@
             // 
             this.progressBar1.Location = new System.Drawing.Point(12, 12);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(219, 10);
+            this.progressBar1.Size = new System.Drawing.Size(310, 11);
             this.progressBar1.TabIndex = 1;
             // 
             // WaitPrompt
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(244, 49);
+            this.ClientSize = new System.Drawing.Size(334, 49);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(260, 88);
-            this.MinimumSize = new System.Drawing.Size(260, 88);
+            this.MaximumSize = new System.Drawing.Size(350, 88);
+            this.MinimumSize = new System.Drawing.Size(350, 88);
             this.Name = "WaitPrompt";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CS-Script for Notepad++ ";
             this.TopMost = true;
+            this.Load += new System.EventHandler(this.WaitPrompt_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

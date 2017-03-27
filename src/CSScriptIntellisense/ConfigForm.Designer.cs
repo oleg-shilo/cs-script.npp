@@ -191,7 +191,7 @@
             this.roslynIntellisense.Name = "roslynIntellisense";
             this.roslynIntellisense.Size = new System.Drawing.Size(225, 17);
             this.roslynIntellisense.TabIndex = 2;
-            this.roslynIntellisense.Text = "C# 6 support (Roslyn) - Requires .NET 4.6";
+            this.roslynIntellisense.Text = "C# 7 support (Roslyn) - Requires .NET 4.6";
             this.roslynIntellisense.UseVisualStyleBackColor = true;
             // 
             // roslynFormatter

@@ -49,7 +49,7 @@ namespace CSScriptNpp
         public string VSProjectTemplatePath = "";
         public bool CheckUpdatesOnStartup = true;
         public bool CheckPrereleaseUpdates = false;
-        public bool UseRoslynProvider = false;
+        public bool UseRoslynProvider = true;
         public bool VbSupportEnabled = true;
         public bool RestorePanelsAtStartup = true;
         public bool StartRoslynServerAtNppStartup = true;

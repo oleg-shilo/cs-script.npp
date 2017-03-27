@@ -1,13 +1,14 @@
 echo off
 set programfiles=%PROGRAMFILES(X86)%
+
+cscs pkill VBCSCompiler
+
 md "..\bin\Plugins\CSScriptNpp"
 md "..\bin\Plugins\CSScriptNpp\Mdbg"
 md "..\bin\Plugins\CSScriptNpp\Roslyn"
-md "..\bin\Plugins\CSScriptNpp\Roslyn.Intellisense"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 md "%programfiles%\Notepad++\plugins\CSScriptNpp\Roslyn"
-md "%programfiles%\Notepad++\plugins\CSScriptNpp\Roslyn.Intellisense"
 
 rem CSScriptIntellisense.dll cannot be copied from build events as it would copy the assembly before DllExport is performed
 rem so it needs to be done manually.
@@ -22,7 +23,6 @@ copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScri
 
 copy "CSScriptNpp\bin\Release\CSScriptNpp.dll" "%plugins%\CSScriptNpp.dll"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\*.exe" "%plugins%\CSScriptNpp"
-copy "CSScriptNpp\bin\release\CSScriptNpp\*.pdb" "%plugins%\CSScriptNpp"
 copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%plugins%\CSScriptNpp\Updater.exe"
 copy "CSScriptNpp\CSScriptNpp\CompatibilityTest.exe" "%plugins%\CSScriptNpp\CompatibilityTest.exe"
 copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%plugins%\CSScriptNpp\npp_jit.exe"
@@ -31,34 +31,56 @@ copy "CSScriptNpp\CSScriptNpp\7z.dll" "%plugins%\CSScriptNpp\7z.dll"
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%plugins%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.dll" "%plugins%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.exe" "%plugins%\CSScriptNpp\Mdbg"
+
+copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%plugins%\CSScriptNpp\CSSCodeProvider.v4.0.dll"
+copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.6.dll" "%plugins%\CSScriptNpp\CSSCodeProvider.v4.6.dll"
+
 copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "%plugins%\CSScriptNpp\Roslyn"
-copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\*.*" "%plugins%\CSScriptNpp\Roslyn.Intellisense"
-copy "CSScriptNpp\CSScriptNpp\roslyn\roslyn.readme.txt" "%plugins%\CSScriptNpp\Roslyn.Intellisense"
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\*.*" "%plugins%\CSScriptNpp\Roslyn"
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\RoslynIntellisense.exe" "%plugins%\CSScriptNpp\RoslynIntellisense.exe"
 
 echo ---------------------------------------------------------------
 set bin=..\bin\Plugins
 
 copy "CSScriptIntellisense\bin\Release\CSScriptIntellisense.dll"  "%bin%\CSScriptNpp"
 copy "CSScriptIntellisense\bin\Release\CSharpIntellisense\*.dll" "%bin%\CSScriptNpp"
-copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%bin%\CSScriptNpp"
 
 copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
 copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
-copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%plugins%\CSScriptNpp\CSSCodeProvider.v4.0.dll"
 
 copy "CSScriptNpp\bin\release\CSScriptNpp.dll" "%bin%\CSScriptNpp.dll"
 copy "CSScriptNpp\bin\release\CSScriptNpp\*.exe" "%bin%\CSScriptNpp"
 copy "CSScriptNpp\bin\release\CSScriptNpp\*.pdb" "%bin%\CSScriptNpp"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.dll" "%bin%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\Mdbg\*.exe" "%bin%\CSScriptNpp\Mdbg"
-rem copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "%bin%\CSScriptNpp\Roslyn\"
 
-REM copy "CSScriptNpp\bin\Release\NLog.dll" "%bin%\CSScriptNpp\NLog.dll"
-REM copy "CSScriptNpp\bin\Release\NLog.dll.nlog" "%bin%\CSScriptNpp\NLog.dll.nlog"
+copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%bin%\CSScriptNpp"
+copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.6.dll" "%bin%\CSScriptNpp"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "%bin%\CSScriptNpp\Roslyn"
-copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\*.*" "%bin%\CSScriptNpp\Roslyn.Intellisense"
-copy "CSScriptNpp\CSScriptNpp\roslyn\roslyn.readme.txt" "%bin%\CSScriptNpp\Roslyn.Intellisense"
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\*.*" "%bin%\CSScriptNpp\Roslyn"
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\RoslynIntellisense.exe" "%bin%\CSScriptNpp\RoslynIntellisense.exe"
+
+rem -------------------------------------
+
+del "%plugins%\CSScriptNpp\Roslyn\*.vshost.*"
+del "%plugins%\CSScriptNpp\Roslyn\*.pdb"
+del "%plugins%\CSScriptNpp\Roslyn\*.xml"
+del "%plugins%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
+del "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
+del "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.exe.config"
+del "%plugins%\CSScriptNpp\Roslyn\Intellisense.Common.dll"
+del "%plugins%\CSScriptNpp\MDbg\*.pdb"
+
+
+del "%bin%\CSScriptNpp\Roslyn\*.vshost.*"
+del "%bin%\CSScriptNpp\Roslyn\*.pdb"
+del "%bin%\CSScriptNpp\Roslyn\*.xml"
+del "%bin%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
+del "%bin%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
+del "%bin%\CSScriptNpp\Roslyn\RoslynIntellisense.exe.config"
+del "%bin%\CSScriptNpp\Roslyn\Intellisense.Common.dll"
+del "%bin%\CSScriptNpp\MDbg\*.pdb"
 
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%bin%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%bin%\CSScriptNpp\Updater.exe"

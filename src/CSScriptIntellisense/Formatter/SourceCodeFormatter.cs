@@ -132,7 +132,7 @@ namespace CSScriptIntellisense
                     //the one is Roslyn based on.
                     string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-                    var asmFile = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn.Intellisense");
+                    var asmFile = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", @".\", "Roslyn");
                     var asm = Assembly.LoadFrom(asmFile);
                     MethodInfo method;
                     if (Config.Instance.HybridFormatting)

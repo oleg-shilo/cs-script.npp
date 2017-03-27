@@ -129,8 +129,8 @@ namespace CSScriptNpp.Dialogs
                                     if (DialogResult.Yes == MessageBox.Show(@"Some installation steps still need and to be completed. Notepad++ needs to be restarted in older to complete thse steeps. Would you like to restart now?",
                                                                               "CS-Script", MessageBoxButtons.YesNo))
                                     {
-                                        Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
                                         Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
+                                        Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
                                     }
                                 }
 

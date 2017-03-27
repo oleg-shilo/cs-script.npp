@@ -55,7 +55,7 @@ namespace CSScriptIntellisense
                     if (!compatibilityErrorShowing)
                     {
                         compatibilityErrorShowing = true; //WithCompatibilityCheck can be invoked multiple times from non-UI threads
-                        MessageBox.Show("Cannot use Roslyn Intelisesnse.\nError: " + e.Message + "\n\nThis can be caused by the absence of .NET 4.6.\n\nRoslyn Intellisense will be disabled and default engine will be used instead. You can always reenable Roslyn Intellisense from the settings dialog.", "CS-Script");
+                        MessageBox.Show("Cannot use Roslyn Intelisesnse.\nError: " + e.Message + "\n\nThis can be caused by the absence of .NET 4.6 or any of Roslyn dependencies.\n\nRoslyn Intellisense will be disabled and default engine will be used instead. You can always reenable Roslyn Intellisense from the settings dialog.", "CS-Script");
                         compatibilityErrorShowing = false;
                     }
                     Config.Instance.RoslynIntellisense = false;
@@ -73,7 +73,7 @@ namespace CSScriptIntellisense
 
             WithCompatibilityCheck(() =>
             {
-                var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn.Intellisense");
+                var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", @".\", "Roslyn");
 
                 if (!File.Exists(file))
                 {

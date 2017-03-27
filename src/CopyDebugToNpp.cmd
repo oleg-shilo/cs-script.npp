@@ -40,8 +40,10 @@ copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScri
 copy "CSScriptNpp\CSScriptNpp\roslyn\*" "%plugins%\CSScriptNpp\Roslyn\"
 copy "CSScriptNpp\CSScriptNpp\roslyn\CSSCodeProvider.v4.6.dll" "%plugins%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
 
+echo ============================
 copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.exe" "%plugins%\CSScriptNpp\RoslynIntellisense.exe"
 copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.pdb" "%plugins%\CSScriptNpp\RoslynIntellisense.pdb"
+echo ============================
 
 rem md "%plugins%\CSScriptNpp\Roslyn_Intellisense"
 rem move "%plugins%\CSScriptNpp\Roslyn_Intellisense" "%plugins%\CSScriptNpp\Roslyn.Intellisense"

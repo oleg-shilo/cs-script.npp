@@ -58,5 +58,10 @@ namespace Updater
                 Debug.WriteLine("{0}%", percentage);
             });
         }
+
+        private void WaitPrompt_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

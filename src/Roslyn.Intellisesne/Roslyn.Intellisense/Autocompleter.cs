@@ -782,6 +782,7 @@ namespace RoslynIntellisense
         static CodeMapItem[] GetMapOfVB(string code, bool decorated)
         {
             throw new SyntaxErrorParsingException("VB syntax is not supported for Code Map.");
+#pragma warning disable 162
             SyntaxTree tree = VB.VisualBasicSyntaxTree.ParseText(code);
 
             var root = tree.GetRoot();

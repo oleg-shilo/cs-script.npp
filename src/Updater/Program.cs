@@ -14,7 +14,6 @@ namespace CSScriptNpp.Deployment
 {
     class Program
     {
-        const string elevationIndicatorArg = "/elevated";
         const string asynchUpdateArg = "/asynch_update";
         static Mutex appSingleInstanceMutex;
 
@@ -26,12 +25,8 @@ namespace CSScriptNpp.Deployment
                 return;
             }
 
-            //Debug.Assert(false);
-            Thread.Sleep(1000 * 5); //need to wait just in case if this instance is started by 
-            // prev updater.exe  
             bool createdNew;
             appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
-
 
             if (!createdNew)
             {
@@ -41,89 +36,45 @@ namespace CSScriptNpp.Deployment
 
             try
             {
-
-                StopVBCSCompilers();
-
-                if (args[0] == "/restart") //restart
+                if (IsAdmin())
                 {
-                    // /restart [/asadmin] <prevInstanceProcId> <appPath> [/background_wait]
+                    StopVBCSCompilers();
 
-                    int id;
-                    string appPath;
-                    bool asAdmin = false;
+                    //Debug.Assert(false);
 
-                    if (args[1] == "/asadmin")
+                    bool isAsynchUpdate = args.Contains(asynchUpdateArg);
+
+                    // <zipFile> <pluginDir>
+                    string zipFile = args[0];
+                    string pluginDir = args[1];
+
+                    if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                     {
-                        asAdmin = true;
-                        id = int.Parse(args[2]);
-                        appPath = args[3];
-                    }
-                    else
-                    {
-                        id = int.Parse(args[1]);
-                        appPath = args[2];
-                    }
+                        if (isAsynchUpdate)
+                        {
+                            WaitPrompt.Show();
 
-                    var proc = Process.GetProcesses().Where(x => x.Id == id).FirstOrDefault();
-                    if (proc != null && !proc.HasExited)
-                        proc.WaitForExit();
+                            string version = args[0];
+                            zipFile = WebHelper.DownloadDistro(version, WaitPrompt.OnProgress);
+                        }
 
-                    if (asAdmin)
-                    {
-                        var p = new Process();
-                        p.StartInfo.FileName = appPath;
-                        p.StartInfo.Verb = "runas";
-                        p.Start();
-                    }
-                    else
-                    {
-                        Process.Start(appPath);
-                    }
-                }
-                else  //update
-                {
-                    if (IsAdmin())
-                    {
-                        //Debug.Assert(false);
+                        string nppExe = Path.Combine(pluginDir, @"..\\notepad++.exe");
+                        Updater.Deploy(zipFile, pluginDir);
 
-                        if (args.Contains(elevationIndicatorArg))
-                            args = args.Where(a => a != elevationIndicatorArg).ToArray();
-
-                        bool isAsynchUpdate = args.Contains(asynchUpdateArg);
-
-                        // <zipFile> <pluginDir>
-                        string zipFile = args[0];
-                        string pluginDir = args[1];
+                        WaitPrompt.Hide();
 
                         if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                         {
-                            if (isAsynchUpdate)
-                            {
-                                WaitPrompt.Show();
-
-                                string version = args[0];
-                                zipFile = WebHelper.DownloadDistro(version, WaitPrompt.OnProgress);
-                            }
-
-                            string nppExe = Path.Combine(pluginDir, @"..\\notepad++.exe");
-                            Updater.Deploy(zipFile, pluginDir);
-
-                            WaitPrompt.Hide();
-
-                            if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
-                            {
-                                if (File.Exists(nppExe))
-                                    Process.Start(nppExe);
-                                else
-                                    MessageBox.Show("The update has been successfully installed.", "CS-Script Update");
-                            }
+                            if (File.Exists(nppExe))
+                                Process.Start(nppExe);
+                            else
+                                MessageBox.Show("The update has been successfully installed.", "CS-Script Update");
                         }
                     }
-                    else
-                    {
-                        if (!args.Contains(elevationIndicatorArg)) //has not been attempted to elevate yet
-                            RestartElevated(args);
-                    }
+                }
+                else
+                {
+                    throw new Exception("You need admon rights to start CS-Script updater.");
                 }
             }
             catch (Exception e)
@@ -178,25 +129,6 @@ namespace CSScriptNpp.Deployment
 
                 return false;
             }
-        }
-
-        static bool RestartElevated(string[] arguments)
-        {
-            string args = elevationIndicatorArg;
-            for (int i = 0; i < arguments.Length; i++)
-                args += " \"" + arguments[i] + "\"";
-
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.UseShellExecute = true;
-            startInfo.WorkingDirectory = Environment.CurrentDirectory;
-            startInfo.FileName = Assembly.GetExecutingAssembly().Location;
-            startInfo.Arguments = args;
-
-            if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
-                startInfo.Verb = "runas";
-
-            Process.Start(startInfo);
-            return true;
         }
 
         static bool EnsureVBCSCompilerNotLocked(bool backgroundWait)
