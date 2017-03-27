@@ -18,6 +18,8 @@ namespace CSScriptNpp
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
                 //RoslynHelper.Init();
                 //must be a separate method to allow assembly probing
+                var pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName().PathJoin("CSScriptNpp");
+                Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
                 ConnectPlugins();
             }
             catch(Exception e)

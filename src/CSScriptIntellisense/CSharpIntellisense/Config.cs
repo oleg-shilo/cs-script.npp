@@ -62,7 +62,7 @@ namespace CSScriptIntellisense
         
         public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
         public string DefaultRefAsms = "System.Linq, System.Xml, System.Xml.Linq, System.Windows.Forms, System.Drawing, System.Core, Microsoft.CSharp";
-        public string DefaultSearchDirs = "";
+        public string DefaultSearchDirs = @"%CSScriptNpp_dir%\Roslyn";
         public int MemberInfoMaxCharWidth = 100;
         public int MemberInfoMaxLines = 15;
         public bool SmartIndenting = true;

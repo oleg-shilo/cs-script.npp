@@ -1,3 +1,4 @@
 Release v1.7.0
 * Added support for C# 7
-* On a fresh installation Roslyn is enabled by default.
+* On a fresh installation C# 7 Roslyn is now enabled by default.
+* On a fresh installation Intercept 'SdtOut' is now enabled by default.

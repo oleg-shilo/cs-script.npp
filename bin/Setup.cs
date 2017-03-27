@@ -21,39 +21,16 @@ class Script
                 new Dir(@"%ProgramFiles%\Notepad++\Plugins",
                     new File(@"Plugins\CSScriptNpp.dll"),
                     new Dir("CSScriptNpp",
-                        new File(@"Plugins\CSScriptNpp\cscs.exe"),
-                        new File(@"Plugins\CSScriptNpp\csws.exe"),
-                        new File(@"Plugins\CSScriptNpp\cscs.v3.5.exe"),
-                        new File(@"Plugins\CSScriptNpp\css_dbg.exe"),
-                        new File(@"Plugins\CSScriptNpp\css_dbg.pdb"),
-                        new File(@"Plugins\CSScriptNpp\CSScriptIntellisense.dll"),
-                        new File(@"Plugins\CSScriptNpp\CSScriptLibrary.dll"),
-                        new File(@"Plugins\CSScriptNpp\Mono.Cecil.dll"),
-                        new File(@"Plugins\CSScriptNpp\ICSharpCode.NRefactory.CSharp.dll"),
-                        new File(@"Plugins\CSScriptNpp\ICSharpCode.NRefactory.dll"),
+                        new DirFiles(@"Plugins\CSScriptNpp\*.*"),
                         new Dir("Mdbg",
-                            new File(@"Plugins\CSScriptNpp\Mdbg\corapi.dll"),
-                            new File(@"Plugins\CSScriptNpp\Mdbg\enc.dll"),
-                            new File(@"Plugins\CSScriptNpp\Mdbg\mdbg.exe"),
-                            new File(@"Plugins\CSScriptNpp\Mdbg\mdbgeng.dll"),
-                            new File(@"Plugins\CSScriptNpp\Mdbg\mdbgext.dll"),
-                            new File(@"Plugins\CSScriptNpp\Mdbg\NativeDebugWrappers.dll"),
-                            new File(@"Plugins\CSScriptNpp\Mdbg\npp.dll"),
-                            new File(@"Plugins\CSScriptNpp\Mdbg\raw.dll")),
+                            new DirFiles(@"Plugins\CSScriptNpp\Mdbg\*.*")),
                         new Dir("Roslyn",
-                            new File(@"Plugins\CSScriptNpp\Roslyn\csc.exe"),
-                            new File(@"Plugins\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"),
-                            new File(@"Plugins\CSScriptNpp\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll"),
-                            new File(@"Plugins\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.dll"),
-                            new File(@"Plugins\CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.dll"),
-                            new File(@"Plugins\CSScriptNpp\Roslyn\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll"),
-                            new File(@"Plugins\CSScriptNpp\Roslyn\System.Collections.Immutable.dll"),
-                            new File(@"Plugins\CSScriptNpp\Roslyn\System.Reflection.Metadata.dll")))));
+                            new DirFiles(@"Plugins\CSScriptNpp\Roslyn\*.*")))));
 
         project.ControlPanelInfo.UrlInfoAbout = "https://csscriptnpp.codeplex.com/";
         project.ControlPanelInfo.Contact = "Product owner";
         project.ControlPanelInfo.Manufacturer = "Oleg Shilo";
-        
+
         project.Actions = new WixSharp.Action[]
         {
             new PathFileAction("%ProgramFiles%\\Notepad++\\notepad++.exe", "", "INSTALLDIR", Return.asyncNoWait, When.After, Step.InstallInitialize, Condition.NOT_Installed)
@@ -70,7 +47,7 @@ class Script
 
         Compiler.ClientAssembly = System.Reflection.Assembly.GetExecutingAssembly().Location;
 
-        //ompiler.PreserveTempFiles = true;
+        //project.PreserveTempFiles = true;
         Compiler.BuildMsi(project, "CSScriptNpp." + version + ".msi");
     }
 }
@@ -83,9 +60,10 @@ public class CustonActions
         try
         {
             string installDir = GetNppDir();
+
             if (installDir == null)
             {
-                MessageBox.Show("Cannot find Notepad++ installation.\n"+
+                MessageBox.Show("Cannot find Notepad++ installation.\n" +
                 "If it is a portable Notepad++ installation then you need to install the plugin manually from the About Box 'Check for Updates...'",
                 "CS-Script.Npp Update");
                 return ActionResult.Failure;
@@ -112,6 +90,7 @@ public class CustonActions
     public static string TestPath(string nppFile)
     {
         string file = Environment.ExpandEnvironmentVariables(nppFile);
+
         if (IO.File.Exists(file))
             return IO.Path.GetDirectoryName(file);
         else
@@ -123,14 +102,17 @@ public class CustonActions
         var parts = path.Split(':');
         string keyName = parts[0];
         string valueName = parts[1];
+
         using (var regKey = Registry.LocalMachine.OpenSubKey(keyName))
         {
             if (regKey != null)
             {
                 object val = regKey.GetValue(valueName);
+
                 if (val is string)
                 {
                     string nppFile = (string)val;
+
                     try
                     {
                         if (IO.File.Exists(nppFile) && nppFile.EndsWith("notepad++.exe", StringComparison.OrdinalIgnoreCase))

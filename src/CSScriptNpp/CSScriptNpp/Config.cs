@@ -37,7 +37,7 @@ namespace CSScriptNpp
         public bool ClasslessScriptByDefault = false;
         public bool DistributeScriptAsScriptByDefault = true;
         public bool DistributeScriptAsWindowApp = false;
-        public bool InterceptConsole = false;
+        public bool InterceptConsole = true;
         public bool UseEmbeddedEngine = true;
         public string UseCustomEngine = "";
         public bool QuickViewAutoRefreshAvailable = false;

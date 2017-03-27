@@ -28,6 +28,7 @@ namespace CSScriptNpp.Deployment
                 while (Directory.Exists(pluginBackupDir) && count < 3)
                 {
                     Directory.Delete(pluginBackupDir, true);
+
                     // Some deleted files are still considered by OS as existing if 
                     // Directory.Move is called immediately after Directory.Delete
                     Thread.Sleep(1000);
@@ -37,6 +38,13 @@ namespace CSScriptNpp.Deployment
                 Directory.Move(pluginDir, pluginBackupDir);
 
                 Exract(zipFile, tempDir);
+
+                var current_config = Path.Combine(pluginBackupDir, "css_config.xml");
+
+                //Debug.Assert(false);
+                if (File.Exists(current_config))
+                    CopyFile(current_config, Path.Combine(pluginDir, "css_config.xml"));
+
                 CopyDir(tempDir + @"\Plugins", targetDir);
                 Directory.Delete(tempDir, true);
             }

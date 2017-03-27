@@ -1207,7 +1207,7 @@ class Script
 
                 result = " \"/provider:" + provider + "\"";
             }
-
+            
             return result;
         }
 
@@ -1230,6 +1230,20 @@ class Script
 
             if (!probingDirArg.IsEmpty())
                 probingDirArg = " \"/dir:" + probingDirArg + "\"";
+
+
+            if (!CSScriptIntellisense.Config.Instance.DefaultRefAsms.IsEmpty())
+                try
+                {
+                    string[] asms = CSScriptIntellisense.Config.Instance
+                                                               .DefaultRefAsms.Split(';', ',')
+                                                               .Where(x => !string.IsNullOrWhiteSpace(x))
+                                                               .Select(x => Environment.ExpandEnvironmentVariables(x.Trim()))
+                                                               .ToArray();
+
+                    probingDirArg += " \"/r:" + string.Join(",", asms) + "\"";
+                }
+                catch { }  
 
             return probingDirArg;
         }
