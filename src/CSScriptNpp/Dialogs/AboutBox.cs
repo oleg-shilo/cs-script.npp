@@ -1,6 +1,7 @@
 ﻿using CSScriptNpp.Dialogs;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -232,6 +233,18 @@ namespace CSScriptNpp
                 Config.Instance.CheckPrereleaseUpdates = this.includePrereleases.Checked;
                 Config.Instance.Save();
             }
+        }
+
+        private void linkLabel5_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var plugin_dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var updater_exe = Path.Combine(plugin_dir, "CSScriptNpp", "Updater.exe");
+
+            try
+            {
+                Process.Start(updater_exe, "restore");
+            }
+            catch { }
         }
     }
 }

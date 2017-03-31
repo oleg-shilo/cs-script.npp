@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace CSScriptNpp
 {
-    class Bootstrapper
+    static class Bootstrapper
     {
         public static void Init()
         {
@@ -28,6 +28,32 @@ namespace CSScriptNpp
                 File.WriteAllText(customLog, e.ToString());
                 throw;
             }
+        }
+
+        static bool ExistAndNotOlderThan(string file, string fileToCompareTo)
+        {
+            return File.Exists(file) && new Version(FileVersionInfo.GetVersionInfo(file).ProductVersion) >= new Version(FileVersionInfo.GetVersionInfo(fileToCompareTo).ProductVersion);
+        }
+
+        static void RestorePluginTree(string pluginDir)
+        {
+            try
+            {
+                var files = Directory.GetDirectories(pluginDir)
+                                     .SelectMany(x => Directory.GetFiles(x))
+                                     .Select(x => new { FileInSubDir = x, FileInRoot = Path.Combine(pluginDir, Path.GetFileName(x)) })
+                                     .Where(x => ExistAndNotOlderThan(x.FileInRoot, x.FileInSubDir))
+                                     .Select(x => x.FileInRoot)
+                                     .ToArray();
+
+                foreach (var item in files)
+                    try
+                    {
+                        File.Delete(item);
+                    }
+                    catch { }
+            }
+            catch { }
         }
 
         static void ConnectPlugins()

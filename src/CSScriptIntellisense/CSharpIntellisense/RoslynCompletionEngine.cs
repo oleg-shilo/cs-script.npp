@@ -51,15 +51,34 @@ namespace CSScriptIntellisense
             {
                 try
                 {
+                    //Debug.Assert(false);
+
+                    //this assembly is already in the plugin dir
+                    var roslynDll = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Microsoft.CodeAnalysis.dll");
+                    bool invalidRoslynDeployment = File.Exists(roslynDll); //it supposed to be in "Roslyn" sub-folder but not in the root dir
+
                     engine = null;
                     if (!compatibilityErrorShowing)
                     {
                         compatibilityErrorShowing = true; //WithCompatibilityCheck can be invoked multiple times from non-UI threads
-                        MessageBox.Show("Cannot use Roslyn Intelisesnse.\nError: " + e.Message + "\n\nThis can be caused by the absence of .NET 4.6 or any of Roslyn dependencies.\n\nRoslyn Intellisense will be disabled and default engine will be used instead. You can always reenable Roslyn Intellisense from the settings dialog.", "CS-Script");
+
+                        var message = "Cannot use Roslyn Intelisesnse.\nError: " + e.Message +
+                                     "\n\nThis can be caused by the absence of .NET 4.6 or by the Plugin Manager incorrectly deploying plugin files." +
+                                     "\n\nRoslyn Intellisense will be disabled and default engine will be used instead. You can always reenable Roslyn Intellisense from the settings dialog.";
+
+                        if (invalidRoslynDeployment)
+                            message = "Cannot use Roslyn Intelisesnse. " +
+                                      "It will be disabled and default engine will be used instead. You can always reenable Roslyn Intellisense from the settings dialog.\n\n" +
+                                      "The problem seems to be caused by the Plugin Manager incorrectly deploying the plugin files. " +
+                                      "You can try to fix the files from the AboutBox by triggering 'Restore file structure' operation.";
+
+                        MessageBox.Show(message, "CS-Script");
                         compatibilityErrorShowing = false;
                     }
+
                     Config.Instance.RoslynIntellisense = false;
                     Config.Instance.Save();
+
                     e.LogAsDebug();
                 }
                 catch { }

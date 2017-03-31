@@ -46,7 +46,21 @@ namespace CSScriptNpp.Deployment
 
                     // <zipFile> <pluginDir>
                     string zipFile = args[0];
-                    string pluginDir = args[1];
+                    string pluginDir = args.Length > 1 ? args[1] : FindPluginDir();
+
+                    if (args[0].Contains("restore"))
+                    {
+                        if (pluginDir != null)
+                        {
+                            bool success = EnsureNppNotRunning(false) && EnsureVBCSCompilerNotLocked(false);
+                            if (success)
+                            {
+                                Updater.RestorePluginTree(pluginDir);
+                                MessageBox.Show("Restoring plugin file tree has been complete.", "CS-Script.Npp");
+                            }
+                        }
+                        return;
+                    }
 
                     if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                     {
@@ -81,6 +95,15 @@ namespace CSScriptNpp.Deployment
             {
                 MessageBox.Show("Update has not succeeded.\nError: " + e.Message, "CS-Script Update");
             }
+        }
+
+        static string FindPluginDir()
+        {
+            var pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (pluginDir.EndsWith("CSScriptNpp"))
+                return pluginDir;
+            else
+                return null;
         }
 
         static bool IsAdmin()

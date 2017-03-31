@@ -22,6 +22,8 @@ namespace RoslynIntellisense
             //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             //Debug.Assert(false);
 
+            new Engine().Preload();
+
             //Formatting(args);
             //IntellisenseSimple();
             //return 1;
@@ -32,8 +34,6 @@ namespace RoslynIntellisense
                 return Detect();
             else
                 return 0;
-
-
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)

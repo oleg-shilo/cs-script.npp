@@ -1,4 +1,3 @@
-Release v1.7.0
-* Added support for C# 7
-* On a fresh installation C# 7 Roslyn is now enabled by default.
-* On a fresh installation Intercept 'SdtOut' is now enabled by default.
+Release v1.7.1
+* Added "Restore file structure" action to the AboutBox.
+This is currently the only way to fix the reappearing deployment problem caused by the Plugin Manage installation algorithm flaw.

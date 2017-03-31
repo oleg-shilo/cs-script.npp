@@ -43,6 +43,8 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.linkLabel4 = new System.Windows.Forms.LinkLabel();
             this.includePrereleases = new System.Windows.Forms.CheckBox();
+            this.linkLabel5 = new System.Windows.Forms.LinkLabel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,12 +64,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxDescription.Location = new System.Drawing.Point(12, 149);
+            this.textBoxDescription.Location = new System.Drawing.Point(12, 157);
             this.textBoxDescription.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.textBoxDescription.Multiline = true;
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.ReadOnly = true;
-            this.textBoxDescription.Size = new System.Drawing.Size(476, 94);
+            this.textBoxDescription.Size = new System.Drawing.Size(504, 102);
             this.textBoxDescription.TabIndex = 23;
             this.textBoxDescription.TabStop = false;
             this.textBoxDescription.Text = "Description";
@@ -76,7 +78,7 @@
             // 
             this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.okButton.Location = new System.Drawing.Point(214, 249);
+            this.okButton.Location = new System.Drawing.Point(228, 265);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 21);
             this.okButton.TabIndex = 24;
@@ -144,7 +146,7 @@
             // 
             // updateCheckBtn
             // 
-            this.updateCheckBtn.Location = new System.Drawing.Point(366, 95);
+            this.updateCheckBtn.Location = new System.Drawing.Point(394, 104);
             this.updateCheckBtn.Name = "updateCheckBtn";
             this.updateCheckBtn.Size = new System.Drawing.Size(122, 23);
             this.updateCheckBtn.TabIndex = 27;
@@ -155,7 +157,7 @@
             // linkLabel3
             // 
             this.linkLabel3.AutoSize = true;
-            this.linkLabel3.Location = new System.Drawing.Point(265, 105);
+            this.linkLabel3.Location = new System.Drawing.Point(285, 105);
             this.linkLabel3.Name = "linkLabel3";
             this.linkLabel3.Size = new System.Drawing.Size(44, 13);
             this.linkLabel3.TabIndex = 26;
@@ -172,7 +174,7 @@
             // linkLabel4
             // 
             this.linkLabel4.AutoSize = true;
-            this.linkLabel4.Location = new System.Drawing.Point(265, 126);
+            this.linkLabel4.Location = new System.Drawing.Point(285, 126);
             this.linkLabel4.Name = "linkLabel4";
             this.linkLabel4.Size = new System.Drawing.Size(30, 13);
             this.linkLabel4.TabIndex = 26;
@@ -183,7 +185,7 @@
             // includePrereleases
             // 
             this.includePrereleases.AutoSize = true;
-            this.includePrereleases.Location = new System.Drawing.Point(366, 121);
+            this.includePrereleases.Location = new System.Drawing.Point(394, 130);
             this.includePrereleases.Name = "includePrereleases";
             this.includePrereleases.Size = new System.Drawing.Size(119, 17);
             this.includePrereleases.TabIndex = 28;
@@ -191,15 +193,29 @@
             this.includePrereleases.UseVisualStyleBackColor = true;
             this.includePrereleases.CheckedChanged += new System.EventHandler(this.includePrereleases_CheckedChanged);
             // 
+            // linkLabel5
+            // 
+            this.linkLabel5.AutoSize = true;
+            this.linkLabel5.Location = new System.Drawing.Point(396, 81);
+            this.linkLabel5.Name = "linkLabel5";
+            this.linkLabel5.Size = new System.Drawing.Size(104, 13);
+            this.linkLabel5.TabIndex = 26;
+            this.linkLabel5.TabStop = true;
+            this.linkLabel5.Text = "Restore file structure";
+            this.toolTip1.SetToolTip(this.linkLabel5, "Try to restore invalid plugin file structure.\r\n\r\nThis action may be required to f" +
+        "ix deployment problems \r\ncaused by the PluginManager installation flaw. ");
+            this.linkLabel5.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel5_LinkClicked);
+            // 
             // AboutBox
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(500, 282);
+            this.ClientSize = new System.Drawing.Size(528, 298);
             this.Controls.Add(this.includePrereleases);
             this.Controls.Add(this.updateCheckBtn);
             this.Controls.Add(this.linkLabel4);
+            this.Controls.Add(this.linkLabel5);
             this.Controls.Add(this.linkLabel3);
             this.Controls.Add(this.linkLabel2);
             this.Controls.Add(this.linkLabel1);
@@ -241,5 +257,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.LinkLabel linkLabel4;
         private System.Windows.Forms.CheckBox includePrereleases;
+        private System.Windows.Forms.LinkLabel linkLabel5;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

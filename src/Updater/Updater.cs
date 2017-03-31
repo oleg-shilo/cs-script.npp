@@ -48,10 +48,10 @@ namespace CSScriptNpp.Deployment
                 CopyDir(tempDir + @"\Plugins", targetDir);
                 Directory.Delete(tempDir, true);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.Assert(false, e.Message);
-                
+
                 MessageBox.Show("Cannot update Notepad++ plugin. Most likely some files are still locked by the active Notepad++ instance.", "CS-Script");
             }
         }
@@ -68,21 +68,32 @@ namespace CSScriptNpp.Deployment
             RestorePluginTree(targetDir);
         }
 
-        static bool ExistAndNotOlderThan(string file, string fileToCompareTo)
+        static bool ExistAndOlderThan(string file, string fileToCompareTo)
         {
-            return File.Exists(file) && new Version(FileVersionInfo.GetVersionInfo(file).ProductVersion) >= new Version(FileVersionInfo.GetVersionInfo(fileToCompareTo).ProductVersion);
+            return File.Exists(file);
+            //return File.Exists(file) && File.GetCreationTimeUtc(file) <= File.GetCreationTimeUtc(fileToCompareTo);
+            //return File.Exists(file) && new Version(FileVersionInfo.GetVersionInfo(file).ProductVersion) >= new Version(FileVersionInfo.GetVersionInfo(fileToCompareTo).ProductVersion);
         }
 
-        static void RestorePluginTree(string pluginDir)
+        internal static void RestorePluginTree(string pluginDir)
         {
             try
             {
-                var files = Directory.GetDirectories(pluginDir)
-                                     .SelectMany(x => Directory.GetFiles(x))
+                var filesFromSubDirs = Directory.GetDirectories(pluginDir)
+                                                .SelectMany(x => Directory.GetFiles(x))
+                                                .ToArray();
+
+                var files = filesFromSubDirs
                                      .Select(x => new { FileInSubDir = x, FileInRoot = Path.Combine(pluginDir, Path.GetFileName(x)) })
-                                     .Where(x => ExistAndNotOlderThan(x.FileInRoot, x.FileInSubDir))
-                                     .Select(x=>x.FileInRoot)
+                                     .Where(x => ExistAndOlderThan(x.FileInRoot, x.FileInSubDir))
+                                     .Select(x => x.FileInRoot)
                                      .ToArray();
+
+                files = files.Concat(Directory.GetFiles(pluginDir, "*.exe.config"))
+                             .Concat(Directory.GetFiles(pluginDir, "*.pdb"))
+                             .Concat(Directory.GetFiles(pluginDir, "roslyn.redme.txt"))
+                             .Concat(Directory.GetFiles(pluginDir, "*.vshost*"))
+                             .ToArray();
 
                 foreach (var item in files)
                     try
