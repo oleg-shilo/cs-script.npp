@@ -1,3 +1,7 @@
 Release v1.7.1
 * Added "Restore file structure" action to the AboutBox.
-This is currently the only way to fix the reappearing deployment problem caused by the Plugin Manage installation algorithm flaw.
+
+This is currently the only way to fix the reappearing deployment problem caused by the Plugin Manage installation algorithm flaw. 
+
+The problem has been reported to the Notepad++ team and most likely will be fixed soon:
+https://github.com/bruderstein/nppPluginManager/issues/52

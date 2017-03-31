@@ -203,7 +203,7 @@
             this.linkLabel5.TabStop = true;
             this.linkLabel5.Text = "Restore file structure";
             this.toolTip1.SetToolTip(this.linkLabel5, "Try to restore invalid plugin file structure.\r\n\r\nThis action may be required to f" +
-        "ix deployment problems \r\ncaused by the PluginManager installation flaw. ");
+        "ix deployment problems \r\ncaused by the PluginManager installation flaw. \t");
             this.linkLabel5.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel5_LinkClicked);
             // 
             // AboutBox
