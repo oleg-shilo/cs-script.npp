@@ -22,7 +22,7 @@ namespace CSScriptNpp
                 Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
                 ConnectPlugins();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 var customLog = Path.Combine(Plugin.LogDir, "last_startup_error.txt");
                 File.WriteAllText(customLog, e.ToString());
@@ -35,8 +35,9 @@ namespace CSScriptNpp
             return File.Exists(file) && new Version(FileVersionInfo.GetVersionInfo(file).ProductVersion) >= new Version(FileVersionInfo.GetVersionInfo(fileToCompareTo).ProductVersion);
         }
 
-        static void RestorePluginTree(string pluginDir)
+        static void notinuse_RestorePluginTree(string pluginDir)
         {
+            MessageBox.Show(" RestorePluginTree(string pluginDir)");
             try
             {
                 var files = Directory.GetDirectories(pluginDir)
@@ -64,7 +65,7 @@ namespace CSScriptNpp
                 CSScriptIntellisense.CSScriptHelper.GetEngineExe = () => CSScriptHelper.cscs_exe;
                 UltraSharp.Cecil.Reflector.GetCodeCompileOutput = CSScriptHelper.GetCodeCompileOutput;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 e.LogAsError();
             }

@@ -33,6 +33,7 @@ namespace CSScriptIntellisense
 
         static IEngine engine;
         static Assembly intellisense;
+
         public static IEngine GetInstance()
         {
             Init();
@@ -85,7 +86,6 @@ namespace CSScriptIntellisense
             }
         }
 
-
         public static void Init()
         {
             if (engine != null) return;
@@ -106,7 +106,8 @@ namespace CSScriptIntellisense
                 engine.SetOption("ReflectionOutDir", Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes"));
             });
 
-            Task.Factory.StartNew(() => WithCompatibilityCheck(engine.Preload));
+            if (engine != null)
+                Task.Factory.StartNew(() => WithCompatibilityCheck(engine.Preload));
         }
 
         static public GetAutocompletionForDlgt GetAutocompletionFor;

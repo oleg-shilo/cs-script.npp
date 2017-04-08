@@ -29,7 +29,7 @@ namespace CSScriptNpp.Deployment
                 {
                     Directory.Delete(pluginBackupDir, true);
 
-                    // Some deleted files are still considered by OS as existing if 
+                    // Some deleted files are still considered by OS as existing if
                     // Directory.Move is called immediately after Directory.Delete
                     Thread.Sleep(1000);
                     count++;
@@ -65,7 +65,7 @@ namespace CSScriptNpp.Deployment
             CopyDir(tempDir + @"\Plugins", targetDir);
 
             Directory.Delete(tempDir, true);
-            RestorePluginTree(targetDir);
+            //RestorePluginTree(targetDir);
         }
 
         static bool ExistAndOlderThan(string file, string fileToCompareTo)
@@ -77,6 +77,7 @@ namespace CSScriptNpp.Deployment
 
         internal static void RestorePluginTree(string pluginDir)
         {
+            MessageBox.Show(" RestorePluginTree(string pluginDir) - 333");
             try
             {
                 var filesFromSubDirs = Directory.GetDirectories(pluginDir)
@@ -104,7 +105,6 @@ namespace CSScriptNpp.Deployment
             }
             catch { }
         }
-
 
         static void CopyDir(string source, string destination)
         {

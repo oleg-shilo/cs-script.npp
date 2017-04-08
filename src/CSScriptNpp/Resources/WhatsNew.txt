@@ -1,7 +1,7 @@
-Release v1.7.1
-* Added "Restore file structure" action to the AboutBox.
+Release v1.7.2
 
-This is currently the only way to fix the reappearing deployment problem caused by the Plugin Manage installation algorithm flaw. 
+* The AboutBox "Restore file structure" has been removed as the fix for the Plugin Manager has been confirmed by the Notepad++ support.
+Special thanks to @CollinChaffin who investigated the problem.
 
-The problem has been reported to the Notepad++ team and most likely will be fixed soon:
-https://github.com/bruderstein/nppPluginManager/issues/52
+* Fixed problem with the invalid probing directory (Roslyn assembly probing for C# 7) in Roslyn.Intellisense.exe.
+

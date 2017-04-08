@@ -149,7 +149,6 @@ namespace CSScriptNpp
             }
         }
 
-
         void CheckForUpdates()
         {
             string version = CSScriptHelper.GetLatestAvailableVersion();
@@ -205,6 +204,7 @@ namespace CSScriptNpp
         }
 
         int blinkingCount = 0;
+
         void timer1_Tick(object sender, EventArgs e)
         {
             if (updateCheckBtn.Text.StartsWith("Downloading"))
@@ -242,7 +242,7 @@ namespace CSScriptNpp
 
             try
             {
-                Process.Start(updater_exe, "restore");
+                //Process.Start(updater_exe, "restore"); //not reliable
             }
             catch { }
         }

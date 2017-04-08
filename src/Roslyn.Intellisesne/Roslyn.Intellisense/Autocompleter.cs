@@ -23,6 +23,7 @@ namespace RoslynIntellisense
     {
         static bool initialized;
         static string probingDir;
+
         static public void Init()
         {
             if (!initialized)
@@ -33,14 +34,14 @@ namespace RoslynIntellisense
                 probingDir = Assembly.GetExecutingAssembly().Location.GetDirName();
                 if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
                 {
-                    probingDir = probingDir.PathJoin("Roslyn.Intellisense");
-                    if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
-                        probingDir = probingDir.GetDirName().PathJoin("Roslyn");
+                    probingDir = probingDir.PathJoin("Roslyn");
                 }
 
-                if (File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
-                    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-            } 
+                if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
+                    Debug.Assert(false);
+
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            }
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -121,6 +122,7 @@ namespace RoslynIntellisense
                     typeof(System.Xml.XmlDocument).Assembly.Location,    // System.Xml.dll
                     typeof(System.Drawing.Bitmap).Assembly.Location      // System.Drawing.dll
         };
+
         public static char[] Delimiters = "\\\t\n\r .,:;'\"=[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
 
         static void GetWordFromCaret(string code, int position, out int logicalPosition, out string partialWord, out string opContext)
@@ -485,7 +487,6 @@ namespace RoslynIntellisense
                 // method event handler
                 string handlerName = "On" + eventName;
 
-
                 var nodes = root.DescendantNodes();
 
                 var methodAtCursor = nodes.Where(x => x.Kind() == SyntaxKind.MethodDeclaration &&
@@ -502,7 +503,6 @@ namespace RoslynIntellisense
 
                 if (methodAtCursor != null)
                 {
-
                     indent = new string(' ', methodAtCursor.Data.Span.Start - methodAtCursor.Data.FullSpan.Start);
 
                     var similarMethods = nodes.OfType<MethodDeclarationSyntax>()
@@ -550,7 +550,6 @@ namespace RoslynIntellisense
 
             string[] namespaces = root.GetUsingNamespace(code);
 
-
             data.DisplayText += " - value";
             var rawData = data.To<EntityCompletionData>().RawData;
 
@@ -571,7 +570,6 @@ namespace RoslynIntellisense
             else
                 data.CompletionText = typeName;
             return true;
-
         }
 
         public async static Task<IEnumerable<ICompletionData>> Resolve(string code, int position, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
@@ -602,10 +600,8 @@ namespace RoslynIntellisense
                         //item.HasOverloads = true;
                     }
 
-
                 completions.Add(item);
             }
-
 
             return completions;
         }
@@ -620,7 +616,7 @@ namespace RoslynIntellisense
             var mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
             project = project.AddMetadataReference(mscorlib);
             workspace.TryApplyChanges(project.Solution);
-            string text = @"class Test 
+            string text = @"class Test
             {
                 void Foo()
                 {
@@ -689,7 +685,6 @@ namespace RoslynIntellisense
             var types = nodes.OfType<TypeDeclarationSyntax>()
                              .OrderBy(x => x.FullSpan.End)
                              .ToArray();
-
 
             foreach (EnumDeclarationSyntax type in nodes.OfType<EnumDeclarationSyntax>())
             {
@@ -795,7 +790,6 @@ namespace RoslynIntellisense
                              .OrderBy(x => x.FullSpan.End)
                              .ToArray();
 
-
             //not sure what is the VB equivalent
             //foreach (VB.Syntax.EnumBlockSyntax type in nodes.OfType<VB.Syntax.EnumBlockSyntax>())
             //{
@@ -817,41 +811,41 @@ namespace RoslynIntellisense
                 {
                     //if (member is VB.Syntax.MethodBlockSyntax)
                     //{
-                        //    var method = (member as VB.Syntax.MethodStatementSyntax);
-                        //    map.Add(new CodeMapItem
-                        //    {
-                        //        Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
-                        //        Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
-                        //        //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
-                        //        DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
-                        //        ParentDisplayName = type.GetFullName(),
-                        //        MemberType = "Method"
-                        //    });
+                    //    var method = (member as VB.Syntax.MethodStatementSyntax);
+                    //    map.Add(new CodeMapItem
+                    //    {
+                    //        Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                    //        Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
+                    //        //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
+                    //        DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
+                    //        ParentDisplayName = type.GetFullName(),
+                    //        MemberType = "Method"
+                    //    });
                     //}
                     //else if (member is PropertyDeclarationSyntax)
                     //{
-                        //var prop = (member as PropertyDeclarationSyntax);
-                        //map.Add(new CodeMapItem
-                        //{
-                        //    Line = prop.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
-                        //    Column = prop.GetLocation().GetLineSpan().StartLinePosition.Character,
-                        //    DisplayName = prop.Identifier.ValueText,
-                        //    ParentDisplayName = type.GetFullName(),
-                        //    MemberType = "Property"
-                        //});
+                    //var prop = (member as PropertyDeclarationSyntax);
+                    //map.Add(new CodeMapItem
+                    //{
+                    //    Line = prop.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                    //    Column = prop.GetLocation().GetLineSpan().StartLinePosition.Character,
+                    //    DisplayName = prop.Identifier.ValueText,
+                    //    ParentDisplayName = type.GetFullName(),
+                    //    MemberType = "Property"
+                    //});
                     //}
                     //else
                     //if (member is FieldDeclarationSyntax)
                     //{
-                        //var field = (member as FieldDeclarationSyntax);
-                        //map.Add(new CodeMapItem
-                        //{
-                        //    Line = field.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
-                        //    Column = field.GetLocation().GetLineSpan().StartLinePosition.Character,
-                        //    DisplayName = field.Declaration.Variables.First().Identifier.Text,
-                        //    ParentDisplayName = type.GetFullName(),
-                        //    MemberType = "Field"
-                        //});
+                    //var field = (member as FieldDeclarationSyntax);
+                    //map.Add(new CodeMapItem
+                    //{
+                    //    Line = field.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+                    //    Column = field.GetLocation().GetLineSpan().StartLinePosition.Character,
+                    //    DisplayName = field.Declaration.Variables.First().Identifier.Text,
+                    //    ParentDisplayName = type.GetFullName(),
+                    //    MemberType = "Field"
+                    //});
                     //}
                 }
             }
@@ -871,5 +865,6 @@ namespace RoslynIntellisense
             return map.ToArray();
         }
     }
+
     //for member info SemanticModel.LookupSymbols can be tried
 }

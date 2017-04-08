@@ -214,7 +214,6 @@ namespace CSScriptNpp
                 {
                     if (!Config.Instance.UseEmbeddedEngine)
                     {
-
                         var dir = Config.Instance.UseCustomEngine;
                         if (dir.IsEmpty())
                             dir = "%CSSCRIPT_DIR%";
@@ -249,6 +248,7 @@ namespace CSScriptNpp
                     return Path.Combine(Plugin.PluginDir, name);
             }
         }
+
         internal static string css_exe
         {
             get
@@ -483,6 +483,7 @@ namespace CSScriptNpp
         }
 
         static System.Windows.Forms.Timer keepRoslynLoadedTimer;
+
         static public void InitRoslyn()
         {
             if (keepRoslynLoadedTimer == null)
@@ -505,7 +506,6 @@ namespace CSScriptNpp
             //disabled as unreliable; it can even potentially crash csc.exe if MS CodeAnalysis asms are probed incorrectly
             try
             {
-
                 string file = Path.Combine(Path.GetTempPath(), "load_roslyn.cs");
 
                 File.WriteAllText(file,
@@ -536,7 +536,6 @@ class Script
                 p.Start();
             }
             catch { }
-
         }
 
         static public void ExecuteAsynch(string scriptFile)
@@ -560,7 +559,7 @@ class Script
             else
             {
                 host = cscs;
-                args = string.Format("-wait /nl {2}/l {0} {1}",  GenerateDefaultArgs(scriptFile), script, debugFlag);
+                args = string.Format("-wait /nl {2}/l {0} {1}", GenerateDefaultArgs(scriptFile), script, debugFlag);
                 //host = ConsoleHostPath;
                 //args = string.Format("{0} /nl {3}/l {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script, debugFlag);
             }
@@ -1055,7 +1054,6 @@ class Script
                               Encoding.UTF8.GetString(Resources.Resources.VS2012SolutionTemplate)
                                            .Replace("{$PROJECTNAME}", projectName));
 
-
             Process.Start(solutionFile);
         }
 
@@ -1122,7 +1120,7 @@ class Script
                 WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
 
             var request = WebRequest.Create(url);
-            var response = (HttpWebResponse) request.GetResponse();
+            var response = (HttpWebResponse)request.GetResponse();
 
             if (File.Exists(destinationPath))
                 File.Delete(destinationPath);
@@ -1153,7 +1151,7 @@ class Script
                 WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
 
             var request = WebRequest.Create(url);
-            var response = (HttpWebResponse) request.GetResponse();
+            var response = (HttpWebResponse)request.GetResponse();
 
             using (var resStream = response.GetResponseStream())
             {
@@ -1202,12 +1200,12 @@ class Script
             else if (Config.Instance.UseRoslynProvider)
             {
                 var provider = Path.Combine(Plugin.PluginDir, "CSSCodeProvider.v4.6.dll");
-                if(!File.Exists(provider))
+                if (!File.Exists(provider))
                     provider = Path.Combine(Plugin.PluginDir, "Roslyn", "CSSCodeProvider.v4.6.dll");
 
                 result = " \"/provider:" + provider + "\"";
             }
-            
+
             return result;
         }
 
@@ -1231,7 +1229,6 @@ class Script
             if (!probingDirArg.IsEmpty())
                 probingDirArg = " \"/dir:" + probingDirArg + "\"";
 
-
             if (!CSScriptIntellisense.Config.Instance.DefaultRefAsms.IsEmpty())
                 try
                 {
@@ -1243,7 +1240,7 @@ class Script
 
                     probingDirArg += " \"/r:" + string.Join(",", asms) + "\"";
                 }
-                catch { }  
+                catch { }
 
             return probingDirArg;
         }

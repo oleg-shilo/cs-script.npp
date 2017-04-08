@@ -8,13 +8,6 @@ using System.Windows.Forms;
 
 namespace RoslynIntellisense
 {
-    // Roslyn packages:
-    // 1.1.0 - currently used
-    // 1.2.1 - very slow (e.g. with GetPossibleNamespaces)
-    // 2.0.0 - beta1 is OK but Beta
-    // Microsoft.CodeAnalysis.CSharp
-    // Microsoft.CodeAnalysis.CSharp.Workspaces
-
     class Program
     {
         static int Main(string[] args)
@@ -22,7 +15,7 @@ namespace RoslynIntellisense
             //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             //Debug.Assert(false);
 
-            new Engine().Preload();
+            //new Engine().Preload();
 
             //Formatting(args);
             //IntellisenseSimple();
@@ -36,17 +29,17 @@ namespace RoslynIntellisense
                 return 0;
         }
 
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            var file = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), args.Name.Split(',').First()+".dll");
-            if (File.Exists(file))
-                return Assembly.LoadFrom(file);
-            return null;
-        }
+        //private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        //{
+        //    var file = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), args.Name.Split(',').First() + ".dll");
+        //    if (File.Exists(file))
+        //        return Assembly.LoadFrom(file);
+        //    return null;
+        //}
 
         static int Test()
         {
-            //var engine 
+            //var engine
             //Autocompleter.FindMissingUsings();
             //Autocompleter.FindMissingUsings11();
             //Intellisense2();
@@ -81,7 +74,7 @@ namespace RoslynIntellisense
 
         static int ResolveNamespaces()
         {
-            string code = @"class Test 
+            string code = @"class Test
             {
                 void Foo()
                 {
@@ -100,7 +93,6 @@ namespace RoslynIntellisense
             result = engine.GetPossibleNamespaces(code, "Form", "script.cs");
             return 0;
         }
-
 
         static int Detect()
         {
@@ -229,5 +221,4 @@ class Script
             Console.ReadLine();
         }
     }
-
 }
