@@ -248,7 +248,7 @@ namespace CSScriptIntellisense
         }
     }
 
-    static class FormExtensions
+    static class UpdaterExtensions
     {
         public static void Show(this Form form, IntPtr owner)
         {

@@ -35,7 +35,14 @@ namespace CSScriptNpp.Deployment
                     count++;
                 }
 
-                Directory.Move(pluginDir, pluginBackupDir);
+                try
+                {
+                    //Directory.CreateDirectory(pluginBackupDir);
+                    //CopyFile(pluginDir, pluginBackupDir);
+
+                    Directory.Move(pluginDir, pluginBackupDir);
+                }
+                catch { }
 
                 Exract(zipFile, tempDir);
 
@@ -46,13 +53,16 @@ namespace CSScriptNpp.Deployment
                     CopyFile(current_config, Path.Combine(pluginDir, "css_config.xml"));
 
                 CopyDir(tempDir + @"\Plugins", targetDir);
-                Directory.Delete(tempDir, true);
+
+                try { Directory.Delete(tempDir, true); }
+                catch { }
             }
             catch (Exception e)
             {
                 Debug.Assert(false, e.Message);
 
-                MessageBox.Show("Cannot update Notepad++ plugin. Most likely some files are still locked by the active Notepad++ instance.", "CS-Script");
+                MessageBox.Show("Cannot update Notepad++ plugin. Most likely some files are still locked by the active Notepad++ instance.\n\n" +
+                    "If you are running Updater.exe from the Notepad++ location then copy it somewhere else as it can be locking the plugin dir.", "CS-Script");
             }
         }
 

@@ -19,48 +19,55 @@ namespace CSScriptNpp.Deployment
 
         static void Main(string[] args)
         {
-            if (!args.Any())
-            {
-                MessageBox.Show($"{Path.GetFileName(Assembly.GetExecutingAssembly().Location)} is expected to be started only by Notepad++. But not by user.", "CS-Script");
-                return;
-            }
-
-            bool createdNew;
-            appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
-
-            if (!createdNew)
-            {
-                MessageBox.Show($"Another Notepad++ plugin update in progress. Either wait or stop {Path.GetFileName(Assembly.GetExecutingAssembly().Location)}", "CS-Script");
-                return;
-            }
-
             try
             {
+                if (!args.Any())
+                {
+                    string distroFile = UserInputForm.GetDistro();
+                    if (!string.IsNullOrEmpty(distroFile))
+                    {
+                        //Debug.Assert(false);
+                        StopVBCSCompilers();
+                        if (EnsureNppNotRunning(false) && EnsureVBCSCompilerNotLocked(false))
+                        {
+                            DeployItselfAndRestart(distroFile, FindPluginDir());
+                        }
+                    }
+                    return;
+                }
+
+                bool createdNew;
+                appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
+
+                if (!createdNew)
+                {
+                    MessageBox.Show($"Another Notepad++ plugin update in progress. Either wait or stop {Path.GetFileName(Assembly.GetExecutingAssembly().Location)}", "CS-Script");
+                    return;
+                }
+
+                // <zipFile> [<pluginDir>] [/asynchUpdateArg]
+                string zipFile = args[0];
+                string pluginDir = args.Length > 1 ? args[1] : FindPluginDir();
+
+                string updaterDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                if (updaterDir.StartsWith(pluginDir, StringComparison.OrdinalIgnoreCase))
+                {
+                    DeployItselfAndRestart(zipFile, pluginDir);
+                    return;
+                }
+
                 if (IsAdmin())
                 {
                     StopVBCSCompilers();
 
-                    //Debug.Assert(false);
+                    bool isAsynchUpdate = args.Contains(asynchUpdateArg) || args.First().IsUrl() || args.First().IsVersion();
+                    args = args.Where(x => x != asynchUpdateArg).ToArray();
 
-                    bool isAsynchUpdate = args.Contains(asynchUpdateArg);
+                    if (pluginDir == null)
+                        throw new Exception($"Cannot find Notepad++ installation.");
 
-                    // <zipFile> <pluginDir>
-                    string zipFile = args[0];
-                    string pluginDir = args.Length > 1 ? args[1] : FindPluginDir();
-
-                    if (args[0].Contains("restore"))
-                    {
-                        if (pluginDir != null)
-                        {
-                            bool success = EnsureNppNotRunning(false) && EnsureVBCSCompilerNotLocked(false);
-                            if (success)
-                            {
-                                Updater.RestorePluginTree(pluginDir);
-                                MessageBox.Show("Restoring plugin file tree has been complete.", "CS-Script.Npp");
-                            }
-                        }
-                        return;
-                    }
+                    Debug.Assert(false);
 
                     if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                     {
@@ -68,11 +75,12 @@ namespace CSScriptNpp.Deployment
                         {
                             WaitPrompt.Show();
 
-                            string version = args[0];
-                            zipFile = WebHelper.DownloadDistro(version, WaitPrompt.OnProgress);
+                            string arg = args[0];
+                            zipFile = WebHelper.DownloadDistro(args[0], WaitPrompt.OnProgress);
                         }
 
                         string nppExe = Path.Combine(pluginDir, @"..\\notepad++.exe");
+
                         Updater.Deploy(zipFile, pluginDir);
 
                         WaitPrompt.Hide();
@@ -82,28 +90,39 @@ namespace CSScriptNpp.Deployment
                             if (File.Exists(nppExe))
                                 Process.Start(nppExe);
                             else
-                                MessageBox.Show("The update has been successfully installed.", "CS-Script Update");
+                                MessageBox.Show("The update process has been completed.", "CS-Script Update");
                         }
                     }
                 }
                 else
                 {
-                    throw new Exception("You need admon rights to start CS-Script updater.");
+                    throw new Exception("You need admin rights to start CS-Script updater.");
                 }
             }
             catch (Exception e)
             {
+                WaitPrompt.Hide();
                 MessageBox.Show("Update has not succeeded.\nError: " + e.Message, "CS-Script Update");
             }
         }
 
         static string FindPluginDir()
         {
+            var pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+
             var pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (pluginDir.EndsWith("CSScriptNpp"))
-                return pluginDir;
+            if (pluginDir.EndsWith("CSScriptNpp") && pluginDir.StartsWith(pf, StringComparison.OrdinalIgnoreCase))
+                return Path.GetDirectoryName(pluginDir);
             else
-                return null;
+            {
+                pluginDir = Path.Combine(pf, @"Notepad++\plugins");
+                string nppExe = Path.Combine(pluginDir, @"..\notepad++.exe");
+
+                if (Directory.Exists(pluginDir) && File.Exists(nppExe))
+                    return pluginDir;
+                else
+                    return null;
+            }
         }
 
         static bool IsAdmin()
@@ -114,9 +133,9 @@ namespace CSScriptNpp.Deployment
         }
 
         /// <summary>
-        /// Stop any running instances of the compiler server if any. 
+        /// Stop any running instances of the compiler server if any.
         /// <para>
-        /// Stopping is needed in order to prevent any problems with copying/moving CS-Script binary files (e.g. Roslyn compilers). 
+        /// Stopping is needed in order to prevent any problems with copying/moving CS-Script binary files (e.g. Roslyn compilers).
         /// Servers restart automatically on any attempt to compile any C#/VB.NET code by any client (e.g. Visual Studio, MSBuild, CS-Script).
         /// </para>
         /// </summary>
@@ -154,6 +173,22 @@ namespace CSScriptNpp.Deployment
             }
         }
 
+        static void DeployItselfAndRestart(string zipFile, string pluginDir)
+        {
+            string downloadDir = KnownFolders.UserDownloads;
+            string destDir = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.Updater");
+            string destUpdater = Path.Combine(destDir, "updater.exe");
+
+            if (!Directory.Exists(destDir))
+                Directory.CreateDirectory(destDir);
+
+            File.Copy(Path.Combine(Assembly.GetExecutingAssembly().Location), destUpdater, true);
+            File.WriteAllBytes(Path.Combine(destDir, "7z.exe"), Resource1._7z_exe);
+            File.WriteAllBytes(Path.Combine(destDir, "7z.dll"), Resource1._7z_dll);
+
+            Process.Start(destUpdater, $"\"{zipFile}\" \"{pluginDir}\"");
+        }
+
         static bool EnsureVBCSCompilerNotLocked(bool backgroundWait)
         {
             int count = 0;
@@ -171,7 +206,6 @@ namespace CSScriptNpp.Deployment
                     var prompt = "Updater detected running VBCSCompiler.exe, which may lock plugin files.\n" +
                         "Please close any running instance of VBCSCompiler.exe from Task Manager and press OK to proceed.";
 
-
                     if (count > 1)
                     {
                         prompt = "Please close any running instance of VBCSCompiler.exe from Task Manager and try again.";
@@ -187,10 +221,20 @@ namespace CSScriptNpp.Deployment
 
         static bool EnsureNppNotRunning(bool backgroundWait)
         {
+            return EnsureAppNotRunning("Notepad++", backgroundWait);
+        }
+
+        static bool EnsureUpdaterNotRunning(bool backgroundWait)
+        {
+            return EnsureAppNotRunning("Updater", backgroundWait);
+        }
+
+        static bool EnsureAppNotRunning(string app, bool backgroundWait)
+        {
             Thread.Sleep(2000);
 
             int count = 0;
-            while (Process.GetProcessesByName("notepad++").Any())
+            while (Process.GetProcessesByName(app).Any())
             {
                 if (backgroundWait)
                 {
@@ -201,12 +245,11 @@ namespace CSScriptNpp.Deployment
                     count++;
 
                     var buttons = MessageBoxButtons.OKCancel;
-                    var prompt = "Please close any running instance of Notepad++ and press OK to proceed.";
-
+                    var prompt = "Please close any running instance of " + app + ".exe and press OK to proceed.";
 
                     if (count > 1)
                     {
-                        prompt = "Please close any running instance of Notepad++ and try again.";
+                        prompt = "Please close any running instance of " + app + ".exe and try again.";
                         buttons = MessageBoxButtons.RetryCancel;
                     }
 
@@ -216,6 +259,19 @@ namespace CSScriptNpp.Deployment
             }
             return true;
         }
+    }
 
+    static class Extensions
+    {
+        public static bool IsVersion(this string text)
+        {
+            Version v;
+            return Version.TryParse(text, out v);
+        }
+
+        public static bool IsUrl(this string text)
+        {
+            return text.Contains("http://");
+        }
     }
 }

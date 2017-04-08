@@ -20,14 +20,13 @@ namespace Updater
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
                     }
-                    catch  { }  
+                    catch { }
                     prompt = new WaitPrompt();
                     prompt.VisibleChanged += (sender, e) =>
                                                  prompt.Activate();
                     prompt.ShowDialog();
                 });
         }
-
 
         public static void OnProgress(long step, long total)
         {
@@ -41,8 +40,12 @@ namespace Updater
 
         public new static void Hide()
         {
-            if (prompt != null)
-                prompt.Invoke((Action)prompt.Close);
+            try
+            {
+                if (prompt != null)
+                    prompt.Invoke((Action)prompt.Close);
+            }
+            catch { }
         }
 
         public WaitPrompt()
@@ -61,7 +64,6 @@ namespace Updater
 
         private void WaitPrompt_Load(object sender, EventArgs e)
         {
-
         }
     }
 }

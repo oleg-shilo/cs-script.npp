@@ -50,7 +50,7 @@ namespace CSScriptNpp.Dialogs
             okBtn.Enabled =
             optionsGroup.Enabled = false;
 
-            //progressBar.Visible = 
+            //progressBar.Visible =
             progressLbl.Visible = true;
             progressBar.Style = ProgressBarStyle.Continuous;
 
@@ -116,7 +116,7 @@ namespace CSScriptNpp.Dialogs
                                 string targetDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                                 string updater = DeployUpdater(targetDir, downloadDir);
 
-                                try { Invoke((Action) Close); }
+                                try { Invoke((Action)Close); }
                                 catch { }
 
                                 if (updateAfterExit.Checked)
@@ -133,7 +133,6 @@ namespace CSScriptNpp.Dialogs
                                         Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
                                     }
                                 }
-
                             }
 
                             Config.Instance.Save();
@@ -210,6 +209,14 @@ namespace CSScriptNpp.Dialogs
             Config.Instance.SkipUpdateVersion = version;
             Config.Instance.Save();
             Close();
+        }
+
+        private void progressLbl_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void progressBar_Click(object sender, EventArgs e)
+        {
         }
     }
 }

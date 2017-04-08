@@ -46,8 +46,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.releaseInfo = new System.Windows.Forms.TextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.optionsGroup.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -154,6 +154,7 @@
             this.progressBar.Size = new System.Drawing.Size(312, 10);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 5;
+            this.progressBar.Click += new System.EventHandler(this.progressBar_Click);
             // 
             // progressLbl
             // 
@@ -166,6 +167,7 @@
             this.progressLbl.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.progressLbl.UseMnemonic = false;
             this.progressLbl.Visible = false;
+            this.progressLbl.Click += new System.EventHandler(this.progressLbl_Click);
             // 
             // releaseNotes
             // 
@@ -236,17 +238,6 @@
             this.tabPage1.Text = "Release Info";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.optionsGroup);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(417, 161);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Update Options";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // releaseInfo
             // 
             this.releaseInfo.BackColor = System.Drawing.Color.White;
@@ -258,6 +249,17 @@
             this.releaseInfo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.releaseInfo.Size = new System.Drawing.Size(411, 155);
             this.releaseInfo.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.optionsGroup);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(417, 161);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Update Options";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // UpdateOptionsPanel
             // 

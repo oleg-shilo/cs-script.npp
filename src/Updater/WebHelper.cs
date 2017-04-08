@@ -33,7 +33,43 @@ namespace CSScriptNpp.Deployment
 
         public static string DownloadDistro(string version, Action<long, long> onProgress)
         {
+            if (version.IsUrl())
+            {
+                var url = version;
+                return DownloadDistroFrom(url, onProgress);
+            }
+            else
+            {
+                return DownloadDistroOf(version, onProgress);
+            }
+        }
+
+        public static string DownloadDistroOf(string version, Action<long, long> onProgress)
+        {
             return GetLatestAvailableDistro(version, ".zip", onProgress);
+        }
+
+        static public string DownloadDistroFrom(string url, Action<long, long> onProgress)
+        {
+            try
+            {
+                var file = Path.GetFileName(url);
+                string destFile = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.ManualUpdate", file);
+
+                if (File.Exists(destFile))
+                    File.Delete(destFile);
+
+                DownloadBinary(url, destFile, onProgress);
+
+                if (File.ReadAllText(destFile).Contains("Error 404"))
+                    throw new Exception($"Resource {url} cannot be downloaded.");
+
+                return destFile;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         private static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
@@ -49,6 +85,9 @@ namespace CSScriptNpp.Deployment
 
             if (File.Exists(destinationPath))
                 File.Delete(destinationPath);
+
+            if (!Directory.Exists(Path.GetDirectoryName(destinationPath)))
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
             using (var destStream = new FileStream(destinationPath, FileMode.CreateNew))
             using (var resStream = response.GetResponseStream())
