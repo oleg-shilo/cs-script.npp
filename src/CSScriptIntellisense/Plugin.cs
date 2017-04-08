@@ -219,7 +219,7 @@ namespace CSScriptIntellisense
             if (Config.Instance.InterceptCtrlSpace && Npp.IsCurrentScriptFile())
             {
                 foreach (var shortcut in internalShortcuts.Keys)
-                    if ((byte) key == shortcut._key)
+                    if ((byte)key == shortcut._key)
                     {
                         Modifiers modifiers = KeyInterceptor.GetModifiers();
 
@@ -255,7 +255,6 @@ namespace CSScriptIntellisense
         {
             if (Config.Instance.PostFormattingUndoCaretReset && SourceCodeFormatter.CaretBeforeLastFormatting != -1)
             {
-
             }
         }
 
@@ -265,7 +264,7 @@ namespace CSScriptIntellisense
 
             internalShortcuts.Add(shortcut, new Tuple<string, Action>(displayName, handler));
 
-            var key = (Keys) shortcut._key;
+            var key = (Keys)shortcut._key;
             if (!uniqueKeys.ContainsKey(key))
                 uniqueKeys.Add(key, 0);
         }
@@ -377,7 +376,7 @@ namespace CSScriptIntellisense
                     string[] references = FindAllReferencesAtCaret();
                     if (references.Count() == 0)
                     {
-                        //It's hard to believe but Roslyn may return some references if just executed second time. 
+                        //It's hard to believe but Roslyn may return some references if just executed second time.
                         //Somehow timing matters. Most likely it's be fixed in the Roslyn production release.
                         Thread.Sleep(100);
                         Npp.SaveCurrentFile();
@@ -397,7 +396,6 @@ namespace CSScriptIntellisense
                     }
                     else
                         DisplayInOutputPanel("0 references found");
-
                 }
             });
         }
@@ -482,8 +480,6 @@ namespace CSScriptIntellisense
 
                             replacements = replacements.ToArray();
 
-
-
                             //do the replacement
                             var fileReplecements = replacements.Where(x => x != null)
                                                                .OrderByDescending(x => x.Start)
@@ -529,7 +525,6 @@ namespace CSScriptIntellisense
                                     Npp.ClearSelection();
                                 }
                             }
-
                         }
 
                         Npp.ClearSelection();
@@ -542,7 +537,7 @@ namespace CSScriptIntellisense
 
         static public void OnBeforeDocumentSaved()
         {
-            if(Config.Instance.FormatOnSave)
+            if (Config.Instance.FormatOnSave)
                 FormatDocument();
         }
 
@@ -738,7 +733,6 @@ namespace CSScriptIntellisense
                                 }
 
                                 namespacesToInsert.ForEach(x => NppEditor.InsertNamespace(x));
-
                             } while (usingInserted && count < 10); //10 just a safe guard
                         }
                         catch { }
@@ -827,7 +821,7 @@ namespace CSScriptIntellisense
                 }
                 else if (Config.Instance.InterceptCtrlSpace)
                 {
-                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg) WinMsg.WM_COMMAND, (int) NppMenuCmd.IDM_EDIT_FUNCCALLTIP, 0);
+                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_FUNCCALLTIP, 0);
                 }
             });
         }
@@ -842,7 +836,7 @@ namespace CSScriptIntellisense
                 }
                 else if (Config.Instance.InterceptCtrlSpace)
                 {
-                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg) WinMsg.WM_COMMAND, (int) NppMenuCmd.IDM_EDIT_AUTOCOMPLETE, 0);
+                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_AUTOCOMPLETE, 0);
                 }
             });
         }
@@ -930,7 +924,7 @@ namespace CSScriptIntellisense
                     word = "";
                 }
 
-                if (word != "")  // e.g. Console.Wr| but not Console.| 
+                if (word != "")  // e.g. Console.Wr| but not Console.|
                 {
                     Npp.SetSelection(p.X, p.Y);
                 }
@@ -969,8 +963,8 @@ namespace CSScriptIntellisense
                         var dict = data.Tag as Dictionary<string, object>;
                         if (dict.ContainsKey("insertionPos") && dict.ContainsKey("insertionContent"))
                         {
-                            var insertionPos = (int) dict["insertionPos"];
-                            var insertionContent = (string) dict["insertionContent"];
+                            var insertionPos = (int)dict["insertionPos"];
+                            var insertionContent = (string)dict["insertionContent"];
 
                             //the insertion point could be already shifted because of the previous insertion
                             if (currentPos < insertionPos)
@@ -1031,7 +1025,6 @@ namespace CSScriptIntellisense
                 string word = Npp.GetWordAtPosition(currentPos);
                 if (word.StartsWith("css_")) //CS-Script directive
                     delimiters = SimpleCodeCompletion.CSS_Delimiters;
-
 
                 int pos = text.LastIndexOfAny(delimiters);
                 if (pos != -1)
@@ -1338,7 +1331,7 @@ namespace CSScriptIntellisense
                 if (result.Any())
                 {
                     allUsings.AddRange(result);
-                    if (Config.Instance.RoslynIntellisense) //Roslyn is slow with resolving namespaces so do it less aggressive way than NRefactory
+                    if (Config.Instance.UsingRoslyn) //Roslyn is slow with resolving namespaces so do it less aggressive way than NRefactory
                         break;
                 }
             }
@@ -1366,7 +1359,7 @@ namespace CSScriptIntellisense
 
             try
             {
-                //just to handle NPP strange concept of caret position being not a point of the text 
+                //just to handle NPP strange concept of caret position being not a point of the text
                 //but an index of the byte array
                 currentPos = Npp.CaretToTextPosition(currentPos);
             }

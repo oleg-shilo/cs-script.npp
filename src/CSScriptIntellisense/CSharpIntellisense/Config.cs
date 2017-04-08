@@ -51,6 +51,19 @@ namespace CSScriptIntellisense
         public bool UseCmdContextMenu = true;
         public string ContextMenuCommands = "Go To Definition;Find All References;Auto-add missing 'usings';Rename... (Ctrl+R,R);Format Document";
         public bool RoslynIntellisense = true;
+
+        public bool UsingRoslyn
+        {
+            get
+            {
+                if (RoslynIntellisensePerSession == null)
+                    return RoslynIntellisense;
+                else
+                    return RoslynIntellisense && RoslynIntellisensePerSession == true;
+            }
+        }
+
+        public bool? RoslynIntellisensePerSession = null;
         public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
         public bool DisableMethodInfoAutoPopup = false;
@@ -59,7 +72,7 @@ namespace CSScriptIntellisense
         public bool FallbackFormatting = false;
         public bool VbSupportEnabled = true;
         public bool FormatAsYouType = true;
-        
+
         public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
         public string DefaultRefAsms = "System.Linq, System.Xml, System.Xml.Linq, System.Windows.Forms, System.Drawing, System.Core, Microsoft.CSharp";
         public string DefaultSearchDirs = @"%CSScriptNpp_dir%\Roslyn";
