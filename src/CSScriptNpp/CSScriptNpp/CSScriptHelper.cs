@@ -1140,6 +1140,9 @@ class Script
                         onProgress(totalCount, response.ContentLength);
                 }
             }
+
+            if (File.ReadAllText(destinationPath).Contains("Error 404"))
+                throw new Exception($"Resource {url} cannot be downloaded.");
         }
 
         static string DownloadText(string url, string proxyUser = null, string proxyPw = null)

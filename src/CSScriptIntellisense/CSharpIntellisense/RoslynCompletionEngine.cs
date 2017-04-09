@@ -63,22 +63,21 @@ namespace CSScriptIntellisense
                     {
                         compatibilityErrorShowing = true; //WithCompatibilityCheck can be invoked multiple times from non-UI threads
 
-                        var message = "Cannot Load Roslyn. Roslyn Intellisense will be disabled for this session and the default engine will be used instead." +
-                                     "\n\nThis can be caused by the absence of .NET 4.6, by the Plugin Manager incorrectly deploying plugin files or by Roslyn assemblies conflicts." +
-                                     "\nSimple restarting of Notepad++ may help. If problem persist contact CS-Script.Npp support.\n" +
+                        var message = "Cannot Load Roslyn.\n" +
+                                      "Roslyn Intellisense will be disabled for this session and the default engine will be used instead." +
+
+                                     "\n\nThe problem can be caused by:\n" +
+                                     "  - the absence of .NET 4.6\n" +
+                                     "  - Plugin Manager incorrectly deploying plugin files\n" +
+                                     "  - Roslyn assemblies internal runtime conflicts.\n" +
+                                     "    In this case restarting of Notepad++ usually helps.\n" +
                                      "\n\nError: " + e.Message;
 
                         if (invalidRoslynDeployment)
-                            message = "Cannot Load Roslyn. Roslyn Intellisense will be disabled for this session and the default engine will be used instead." +
+                            message = "Cannot Load Roslyn.\n" +
+                                      "Roslyn Intellisense will be disabled for this session and the default engine will be used instead." +
                                       "\n\nThe problem is caused by the Plugin Manager incorrectly deploying plugin files (problem is reported and acknowledged)." +
-                                      "\nSimple restarting of Notepad++ may help. If problem persist contact CS-Script.Npp support.\n" +
                                       "\nIf you want to use C#7 and don't want to wait for Plugin Manager fix you may need to remove the plugin and install it manually from https://github.com/oleg-shilo/cs-script.npp.";
-
-                        //if (invalidRoslynDeployment)
-                        //    message = "Cannot use Roslyn Intelisesnse. " +
-                        //              "It will be disabled this session and the default engine will be used instead. \n\n" +
-                        //              "The problem seems to be caused by the Plugin Manager incorrectly deploying the plugin files (problem is reported and acknowledged).\n\n" +
-                        //              "If you want to use C#7 You may need to remove the plugin and install manually from https://github.com/oleg-shilo/cs-script.npp.";
 
                         MessageBox.Show(message, "CS-Script");
                         compatibilityErrorShowing = false;

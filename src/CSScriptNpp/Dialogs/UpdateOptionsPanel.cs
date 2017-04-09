@@ -159,8 +159,8 @@ namespace CSScriptNpp.Dialogs
             Action<string> deploy = file => File.Copy(Path.Combine(srcDir, file), Path.Combine(deploymentDir, file), true);
 
             deploy("updater.exe");
-            deploy("7z.exe");
-            deploy("7z.dll");
+            //deploy("7z.exe");
+            //deploy("7z.dll");
 
             return Path.Combine(deploymentDir, "updater.exe");
         }
