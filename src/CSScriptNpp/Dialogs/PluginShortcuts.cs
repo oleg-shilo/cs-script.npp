@@ -74,7 +74,7 @@ namespace CSScriptNpp
                 Visible = false;
                 //Application.DoEvents();
                 if (MessageBox.Show("The shortcut mapping changes will take affect only after Notepad++ is restarted.\n\n" +
-                                    "Do you want to restartNotepad++ now?\n\n" +
+                                    "Do you want to restart Notepad++ now?\n\n" +
                                     "Note: You may need to remap some of the native Notepad++ shortcuts (Settings->Shortcut Mapper...) " +
                                     "if they conflict with the current CS-Script shortcut configuration.",
                                     "CS-Script", MessageBoxButtons.YesNo) == DialogResult.Yes)

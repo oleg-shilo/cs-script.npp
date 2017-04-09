@@ -193,7 +193,7 @@ namespace CSScriptNpp
 
         static Dictionary<int, Form> dockedManagedPanels = new Dictionary<int, Form>();
 
-        static public void RestartNpp()
+        static public void RestartNpp(int? afterProcessExit = null)
         {
             Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
 
@@ -204,13 +204,13 @@ namespace CSScriptNpp
             {
                 Application.DoEvents();
 
-                int processIdToWaitForExit = Process.GetCurrentProcess().Id;
+                int processIdToWaitForExit = afterProcessExit ?? Process.GetCurrentProcess().Id;
                 string appToStart = Process.GetCurrentProcess().MainModule.FileName;
 
-                string restarter = Path.Combine(Plugin.PluginDir, "Updater.exe");
+                string restarter = Path.Combine(Plugin.PluginDir, "launcher.exe");
 
                 //the re-starter will also wait for this process to exit
-                Process.Start(restarter, string.Format("/restart {0} \"{1}\"", processIdToWaitForExit, appToStart));
+                Process.Start(restarter, string.Format("/start {0} \"{1}\"", processIdToWaitForExit, appToStart));
             }
         }
     }

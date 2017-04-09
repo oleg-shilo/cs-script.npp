@@ -26,6 +26,7 @@ copy "CSScriptNpp\bin\Debug\CSScriptNpp\Mdbg\*.exe" "%plugins%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\CSScriptNpp\MDbg\*.pdb" "%plugins%\CSScriptNpp\Mdbg"
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%plugins%\CSScriptNpp\Mdbg"
 
+copy "CSScriptNpp\CSScriptNpp\launcher.exe" "%plugins%\CSScriptNpp\launcher.exe"
 copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%plugins%\CSScriptNpp\Updater.exe"
 copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%plugins%\CSScriptNpp\npp_jit.exe"
 
@@ -39,8 +40,8 @@ copy "CSScriptNpp\CSScriptNpp\roslyn\*" "%plugins%\CSScriptNpp\Roslyn\"
 copy "CSScriptNpp\CSScriptNpp\roslyn\CSSCodeProvider.v4.6.dll" "%plugins%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
 
 echo ============================
-copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.exe" "%plugins%\CSScriptNpp\RoslynIntellisense.exe"
-copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.pdb" "%plugins%\CSScriptNpp\RoslynIntellisense.pdb"
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.exe" "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\RoslynIntellisense.pdb" "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.pdb"
 echo ============================
 
 rem md "%plugins%\CSScriptNpp\Roslyn_Intellisense"
@@ -50,7 +51,7 @@ set plugin_roslyn_intellisesne=%plugins%\CSScriptNpp\Roslyn
 
 copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\*.exe" "%plugin_roslyn_intellisesne%"
 copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Debug\*.dll" "%plugin_roslyn_intellisesne%"
-del "%plugin_roslyn_intellisesne%\RoslynIntellisense.exe"
+rem del "%plugin_roslyn_intellisesne%\RoslynIntellisense.exe"
 del "%plugin_roslyn_intellisesne%\Intellisense.Common.dll"
 
 

@@ -23,6 +23,7 @@ namespace CSScriptNpp.Deployment
             {
                 var pluginDir = Path.Combine(targetDir, "CSScriptNpp");
                 var pluginBackupDir = Path.Combine(targetDir, "CSScriptNpp.bak");
+                var current_config = Path.Combine(pluginDir, "css_config.xml");
 
                 var count = 0;
                 while (Directory.Exists(pluginBackupDir) && count < 3)
@@ -35,24 +36,18 @@ namespace CSScriptNpp.Deployment
                     count++;
                 }
 
-                try
-                {
-                    //Directory.CreateDirectory(pluginBackupDir);
-                    //CopyFile(pluginDir, pluginBackupDir);
-
-                    Directory.Move(pluginDir, pluginBackupDir);
-                }
+                try { Directory.Move(pluginDir, pluginBackupDir); }
                 catch { }
 
-                Exract(zipFile, tempDir);
-
-                var current_config = Path.Combine(pluginBackupDir, "css_config.xml");
-
-                //Debug.Assert(false);
+                byte[] current_config_data = null;
                 if (File.Exists(current_config))
-                    CopyFile(current_config, Path.Combine(pluginDir, "css_config.xml"));
+                    current_config_data = File.ReadAllBytes(current_config);
 
+                Exract(zipFile, tempDir);
                 CopyDir(tempDir + @"\Plugins", targetDir);
+
+                if (current_config_data != null)
+                    File.WriteAllBytes(current_config, current_config_data);
 
                 try { Directory.Delete(tempDir, true); }
                 catch { }
@@ -62,7 +57,7 @@ namespace CSScriptNpp.Deployment
                 Debug.Assert(false, e.Message);
 
                 MessageBox.Show("Cannot update Notepad++ plugin. Most likely some files are still locked by the active Notepad++ instance.\n\n" +
-                    "If you are running Updater.exe from the Notepad++ location then copy it somewhere else as it can be locking the plugin dir.", "CS-Script");
+                    "If you are running Updater.exe manually from the Notepad++ location then copy it somewhere else as it can be locking the plugin dir.", "CS-Script");
             }
         }
 
@@ -166,27 +161,6 @@ namespace CSScriptNpp.Deployment
                 CreateNoWindow = true,
                 UseShellExecute = false
             }).WaitForExit();
-        }
-
-        static void Restart(string[] args)
-        {
-            //restartApp <prevInstanceProcId> <appPath>
-            try
-            {
-                //Debug.Assert(false);
-                Thread.Sleep(100);
-                string appPath = args[1];
-                int id = int.Parse(args[0]);
-
-                var proc = Process.GetProcesses().Where(x => x.Id == id).FirstOrDefault();
-                if (proc != null && !proc.HasExited)
-                    proc.WaitForExit();
-
-                Process.Start(appPath);
-            }
-            catch
-            {
-            }
         }
     }
 }

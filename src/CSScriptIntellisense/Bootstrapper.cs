@@ -26,6 +26,8 @@ namespace CSScriptIntellisense
         //'standalone' is the deployment model that includes CSSCriptIntellisense.dll plugin only
         public static bool Init(bool standalone)
         {
+            Debug.Assert(false);
+
             ReflectorExtensions.IgnoreDocumentationExceptions = Config.Instance.IgnoreDocExceptions;
 
             if (standalone) //CSScriptIntellisense Plugin
@@ -61,8 +63,8 @@ namespace CSScriptIntellisense
 
         static public bool IsInConflictWithCSScriptNpp()
         {
-            //CSScriptIntellisense Plugin - C:\Program Files (x86)\Notepad++\plugins\CSScriptIntellisense.dll 
-            //CSScriptNpp Plugin - C:\Program Files (x86)\Notepad++\plugins\CSScriptNpp\CSScriptIntellisense.dll 
+            //CSScriptIntellisense Plugin - C:\Program Files (x86)\Notepad++\plugins\CSScriptIntellisense.dll
+            //CSScriptNpp Plugin - C:\Program Files (x86)\Notepad++\plugins\CSScriptNpp\CSScriptIntellisense.dll
 
             //conflict criteria: this asm is part of CSScriptIntellisense plugin and CSScriptNpp plugin is installed
             string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

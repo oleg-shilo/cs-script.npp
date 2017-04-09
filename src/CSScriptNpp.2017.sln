@@ -64,6 +64,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intellisense.Common", "Inte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompatibilityTest", "CompatibilityTest\CompatibilityTest.csproj", "{6D4EE83C-2F38-4BB0-A60F-3B86B07E03AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher", "launcher\launcher.csproj", "{D23BF660-56D5-4F01-A067-C014BD04BE51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -134,6 +136,10 @@ Global
 		{6D4EE83C-2F38-4BB0-A60F-3B86B07E03AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D4EE83C-2F38-4BB0-A60F-3B86B07E03AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D4EE83C-2F38-4BB0-A60F-3B86B07E03AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -151,5 +157,6 @@ Global
 		{68062B6A-67E4-459D-9A42-97E798356C6E} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{C67D7ED7-F350-4FD4-81B5-5E635FB08765} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{6D4EE83C-2F38-4BB0-A60F-3B86B07E03AF} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
+		{D23BF660-56D5-4F01-A067-C014BD04BE51} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 	EndGlobalSection
 EndGlobal

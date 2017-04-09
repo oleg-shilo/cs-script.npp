@@ -23,7 +23,7 @@ namespace CSScriptIntellisense
                 CaretBeforeLastFormatting = currentPos;
                 string code = Npp.GetTextBetween(0, Npp.DocEnd);
 
-                if (code.Any() && currentPos!= -1 && currentPos < code.Length)
+                if (code.Any() && currentPos != -1 && currentPos < code.Length)
                 {
                     code = NormalizeNewLines(code, ref currentPos);
 
@@ -58,7 +58,6 @@ namespace CSScriptIntellisense
 
             return codeLeft + codeRight;
         }
-
 
         public static void FormatDocumentPrevLines()
         {
@@ -132,14 +131,14 @@ namespace CSScriptIntellisense
                     //the one is Roslyn based on.
                     string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-                    var asmFile = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", @".\", "Roslyn");
+                    var asmFile = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\");
                     var asm = Assembly.LoadFrom(asmFile);
                     MethodInfo method;
                     if (Config.Instance.HybridFormatting)
                         method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("FormatHybrid");
                     else
                         method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("Format");
-                    RoslynFormat = (FormatMethod) Delegate.CreateDelegate(typeof(FormatMethod), method);
+                    RoslynFormat = (FormatMethod)Delegate.CreateDelegate(typeof(FormatMethod), method);
                 }
 
                 if (RoslynFormat != null)

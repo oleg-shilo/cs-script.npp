@@ -15,15 +15,15 @@ namespace CSScriptIntellisense
         public static string LocateInPluginDir(string fileName, params string[] subDirs)
         {
             var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var file = Path.Combine(dir, fileName);
 
             foreach (var item in subDirs)
+            {
+                var file = Path.Combine(dir, item, fileName);
                 if (File.Exists(file))
                     return file;
-                else
-                    file = Path.Combine(dir, item, fileName);
+            }
 
-            return file;
+            return Path.Combine(dir, fileName);
         }
     }
 
@@ -54,9 +54,9 @@ namespace CSScriptIntellisense
                 {
                     //Debug.Assert(false);
 
-                    //this assembly is already in the plugin dir
-                    var roslynDll = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Microsoft.CodeAnalysis.dll");
-                    bool invalidRoslynDeployment = File.Exists(roslynDll); //it supposed to be in "Roslyn" sub-folder but not in the root dir
+                    ////this assembly is already in the plugin dir
+                    //var roslynDll = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Microsoft.CodeAnalysis.dll");
+                    //bool invalidRoslynDeployment = File.Exists(roslynDll); //it supposed to be in "Roslyn" sub-folder but not in the root dir
 
                     engine = null;
                     if (!compatibilityErrorShowing)
@@ -73,11 +73,11 @@ namespace CSScriptIntellisense
                                      "    In this case restarting of Notepad++ usually helps.\n" +
                                      "\n\nError: " + e.Message;
 
-                        if (invalidRoslynDeployment)
-                            message = "Cannot Load Roslyn.\n" +
-                                      "Roslyn Intellisense will be disabled for this session and the default engine will be used instead." +
-                                      "\n\nThe problem is caused by the Plugin Manager incorrectly deploying plugin files (problem is reported and acknowledged)." +
-                                      "\nIf you want to use C#7 and don't want to wait for Plugin Manager fix you may need to remove the plugin and install it manually from https://github.com/oleg-shilo/cs-script.npp.";
+                        //if (invalidRoslynDeployment)
+                        //    message = "Cannot Load Roslyn.\n" +
+                        //              "Roslyn Intellisense will be disabled for this session and the default engine will be used instead." +
+                        //              "\n\nThe problem is caused by the Plugin Manager incorrectly deploying plugin files (problem is reported and acknowledged)." +
+                        //              "\nIf you want to use C#7 and don't want to wait for Plugin Manager fix you may need to remove the plugin and install it manually from https://github.com/oleg-shilo/cs-script.npp.";
 
                         MessageBox.Show(message, "CS-Script");
                         compatibilityErrorShowing = false;
@@ -97,7 +97,7 @@ namespace CSScriptIntellisense
 
             WithCompatibilityCheck(() =>
             {
-                var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", @".\", "Roslyn");
+                var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\");
 
                 if (!File.Exists(file))
                 {

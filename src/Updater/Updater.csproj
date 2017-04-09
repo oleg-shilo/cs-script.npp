@@ -123,8 +123,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)CSScriptNpp\CSScriptNpp\$(TargetFileName)"
-copy "$(ProjectDir)\7z.exe" "$(SolutionDir)CSScriptNpp\CSScriptNpp\7z.exe"
-copy "$(ProjectDir)\7z.dll" "$(SolutionDir)CSScriptNpp\CSScriptNpp\7z.dll"</PostBuildEvent>
+rem copy "$(ProjectDir)\7z.exe" "$(SolutionDir)CSScriptNpp\CSScriptNpp\7z.exe"
+rem copy "$(ProjectDir)\7z.dll" "$(SolutionDir)CSScriptNpp\CSScriptNpp\7z.dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

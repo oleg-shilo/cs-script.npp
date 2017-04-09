@@ -67,7 +67,7 @@ namespace CSScriptNpp.Deployment
                     if (pluginDir == null)
                         throw new Exception($"Cannot find Notepad++ installation.");
 
-                    Debug.Assert(false);
+                    //Debug.Assert(false);
 
                     if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                     {
@@ -79,18 +79,13 @@ namespace CSScriptNpp.Deployment
                             zipFile = WebHelper.DownloadDistro(args[0], WaitPrompt.OnProgress);
                         }
 
-                        string nppExe = Path.Combine(pluginDir, @"..\\notepad++.exe");
-
                         Updater.Deploy(zipFile, pluginDir);
 
                         WaitPrompt.Hide();
 
                         if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                         {
-                            if (File.Exists(nppExe))
-                                Process.Start(nppExe);
-                            else
-                                MessageBox.Show("The update process has been completed.", "CS-Script Update");
+                            MessageBox.Show("The update process has been completed.", "CS-Script Update");
                         }
                     }
                 }

@@ -23,6 +23,7 @@ copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScri
 
 copy "CSScriptNpp\bin\Release\CSScriptNpp.dll" "%plugins%\CSScriptNpp.dll"
 copy "CSScriptNpp\bin\Release\CSScriptNpp\*.exe" "%plugins%\CSScriptNpp"
+copy "CSScriptNpp\CSScriptNpp\launcher.exe" "%plugins%\CSScriptNpp\launcher.exe"
 copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%plugins%\CSScriptNpp\Updater.exe"
 copy "CSScriptNpp\CSScriptNpp\CompatibilityTest.exe" "%plugins%\CSScriptNpp\CompatibilityTest.exe"
 copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%plugins%\CSScriptNpp\npp_jit.exe"
@@ -35,7 +36,7 @@ copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.6.dll" "%plugins%\CSScriptNpp\C
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "%plugins%\CSScriptNpp\Roslyn"
 copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\*.*" "%plugins%\CSScriptNpp\Roslyn"
-copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\RoslynIntellisense.exe" "%plugins%\CSScriptNpp\RoslynIntellisense.exe"
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\RoslynIntellisense.exe" "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
 
 echo ---------------------------------------------------------------
 set bin=..\bin\Plugins
@@ -57,7 +58,7 @@ copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.6.dll" "%bin%\CSScriptNpp"
 
 copy "CSScriptNpp\CSScriptNpp\roslyn\*.*" "%bin%\CSScriptNpp\Roslyn"
 copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\*.*" "%bin%\CSScriptNpp\Roslyn"
-copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\RoslynIntellisense.exe" "%bin%\CSScriptNpp\RoslynIntellisense.exe"
+copy "Roslyn.Intellisesne\Roslyn.Intellisense\bin\Release\RoslynIntellisense.exe" "%bin%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
 
 rem -------------------------------------
 
@@ -65,8 +66,8 @@ del "%plugins%\CSScriptNpp\Roslyn\*.vshost.*"
 del "%plugins%\CSScriptNpp\Roslyn\*.pdb"
 del "%plugins%\CSScriptNpp\Roslyn\*.xml"
 del "%plugins%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
-del "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
-del "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.exe.config"
+rem del "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
+rem del "%plugins%\CSScriptNpp\Roslyn\RoslynIntellisense.exe.config"
 del "%plugins%\CSScriptNpp\Roslyn\Intellisense.Common.dll"
 del "%plugins%\CSScriptNpp\MDbg\*.pdb"
 
@@ -75,12 +76,13 @@ del "%bin%\CSScriptNpp\Roslyn\*.vshost.*"
 del "%bin%\CSScriptNpp\Roslyn\*.pdb"
 del "%bin%\CSScriptNpp\Roslyn\*.xml"
 del "%bin%\CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll"
-del "%bin%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
-del "%bin%\CSScriptNpp\Roslyn\RoslynIntellisense.exe.config"
+rem del "%bin%\CSScriptNpp\Roslyn\RoslynIntellisense.exe"
+rem del "%bin%\CSScriptNpp\Roslyn\RoslynIntellisense.exe.config"
 del "%bin%\CSScriptNpp\Roslyn\Intellisense.Common.dll"
 del "%bin%\CSScriptNpp\MDbg\*.pdb"
 
 copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%bin%\CSScriptNpp\Mdbg"
+copy "CSScriptNpp\CSScriptNpp\launcher.exe" "%bin%\CSScriptNpp\launcher.exe"
 copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%bin%\CSScriptNpp\Updater.exe"
 copy "CSScriptNpp\CSScriptNpp\CompatibilityTest.exe" "%bin%\CSScriptNpp\CompatibilityTest.exe"
 copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%bin%\CSScriptNpp\npp_jit.exe"
