@@ -17,46 +17,41 @@ namespace CSScriptNpp.Deployment
 
         static public void DeployByReplacing(string zipFile, string targetDir)
         {
+            //Debug.Assert(false);
+
             string tempDir = Path.Combine(targetDir, "CSScriptNpp.Update");
 
             try
             {
                 var pluginDir = Path.Combine(targetDir, "CSScriptNpp");
                 var pluginBackupDir = Path.Combine(targetDir, "CSScriptNpp.bak");
+                var tempDirRoot = Path.Combine(tempDir, "Plugins");
                 var current_config = Path.Combine(pluginDir, "css_config.xml");
 
-                var count = 0;
-                while (Directory.Exists(pluginBackupDir) && count < 3)
-                {
-                    Directory.Delete(pluginBackupDir, true);
+                byte[] current_config_data = File.Exists(current_config) ?
+                                             File.ReadAllBytes(current_config) :
+                                             null;
 
-                    // Some deleted files are still considered by OS as existing if
-                    // Directory.Move is called immediately after Directory.Delete
-                    Thread.Sleep(1000);
-                    count++;
-                }
-
-                try { Directory.Move(pluginDir, pluginBackupDir); }
-                catch { }
-
-                byte[] current_config_data = null;
-                if (File.Exists(current_config))
-                    current_config_data = File.ReadAllBytes(current_config);
+                // To my disbelieve Directory.Move is very unreliable as it complains constantly about files being locked. While
+                // custom *Dir(,) methods with retry work quite well
+                DeleteDir(pluginBackupDir, retryDelay: 1000);
+                CopyDir(pluginDir, pluginBackupDir);
+                DeleteDir(pluginDir);
 
                 Exract(zipFile, tempDir);
-                CopyDir(tempDir + @"\Plugins", targetDir);
+
+                CopyDir(tempDirRoot, targetDir);
 
                 if (current_config_data != null)
                     File.WriteAllBytes(current_config, current_config_data);
 
-                try { Directory.Delete(tempDir, true); }
-                catch { }
+                DeleteDir(tempDir);
             }
             catch (Exception e)
             {
                 Debug.Assert(false, e.Message);
 
-                MessageBox.Show("Cannot update Notepad++ plugin. Most likely some files are still locked by the active Notepad++ instance.\n\n" +
+                MessageBox.Show(new Form { TopMost = true }, "Cannot update Notepad++ plugin. Most likely some files are still locked by the active Notepad++ instance.\n\n" +
                     "If you are running Updater.exe manually from the Notepad++ location then copy it somewhere else as it can be locking the plugin dir.", "CS-Script");
             }
         }
@@ -71,44 +66,6 @@ namespace CSScriptNpp.Deployment
 
             Directory.Delete(tempDir, true);
             //RestorePluginTree(targetDir);
-        }
-
-        static bool ExistAndOlderThan(string file, string fileToCompareTo)
-        {
-            return File.Exists(file);
-            //return File.Exists(file) && File.GetCreationTimeUtc(file) <= File.GetCreationTimeUtc(fileToCompareTo);
-            //return File.Exists(file) && new Version(FileVersionInfo.GetVersionInfo(file).ProductVersion) >= new Version(FileVersionInfo.GetVersionInfo(fileToCompareTo).ProductVersion);
-        }
-
-        internal static void RestorePluginTree(string pluginDir)
-        {
-            MessageBox.Show(" RestorePluginTree(string pluginDir) - 333");
-            try
-            {
-                var filesFromSubDirs = Directory.GetDirectories(pluginDir)
-                                                .SelectMany(x => Directory.GetFiles(x))
-                                                .ToArray();
-
-                var files = filesFromSubDirs
-                                     .Select(x => new { FileInSubDir = x, FileInRoot = Path.Combine(pluginDir, Path.GetFileName(x)) })
-                                     .Where(x => ExistAndOlderThan(x.FileInRoot, x.FileInSubDir))
-                                     .Select(x => x.FileInRoot)
-                                     .ToArray();
-
-                files = files.Concat(Directory.GetFiles(pluginDir, "*.exe.config"))
-                             .Concat(Directory.GetFiles(pluginDir, "*.pdb"))
-                             .Concat(Directory.GetFiles(pluginDir, "roslyn.redme.txt"))
-                             .Concat(Directory.GetFiles(pluginDir, "*.vshost*"))
-                             .ToArray();
-
-                foreach (var item in files)
-                    try
-                    {
-                        File.Delete(item);
-                    }
-                    catch { }
-            }
-            catch { }
         }
 
         static void CopyDir(string source, string destination)
@@ -133,12 +90,49 @@ namespace CSScriptNpp.Deployment
             }
         }
 
-        static void CopyFile(string srcFile, string destFile)
+        static void CopyFile(string srcFile, string destFile, int retryDelay = 100)
         {
             string dir = Path.GetDirectoryName(destFile);
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
-            File.Copy(srcFile, destFile, true);
+
+            for (int i = 0; i < 3; i++)
+                try
+                {
+                    File.Copy(srcFile, destFile, true);
+                }
+                catch
+                {
+                    Thread.Sleep(retryDelay);
+                }
+        }
+
+        static void DeleteDir(string dir, int retryDelay = 100)
+        {
+            if (Directory.Exists(dir))
+            {
+                foreach (string file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
+                    DeleteFile(file);
+
+                for (int i = 0; i < 3; i++)
+                    try { Directory.Delete(dir, true); }
+                    catch { Thread.Sleep(retryDelay); }
+            }
+        }
+
+        static void DeleteFile(string file, int retryDelay = 100)
+        {
+            for (int i = 0; i < 3; i++)
+                try
+                {
+                    File.Delete(file);
+                }
+                catch
+                {
+                    try { File.SetAttributes(file, FileAttributes.Normal); }
+                    catch { }
+                    Thread.Sleep(retryDelay);
+                }
         }
 
         static void Exract(string zipFile, string targetDir)

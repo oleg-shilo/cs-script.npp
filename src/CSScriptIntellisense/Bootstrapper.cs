@@ -26,7 +26,7 @@ namespace CSScriptIntellisense
         //'standalone' is the deployment model that includes CSSCriptIntellisense.dll plugin only
         public static bool Init(bool standalone)
         {
-            Debug.Assert(false);
+            //Debug.Assert(false);
 
             ReflectorExtensions.IgnoreDocumentationExceptions = Config.Instance.IgnoreDocExceptions;
 

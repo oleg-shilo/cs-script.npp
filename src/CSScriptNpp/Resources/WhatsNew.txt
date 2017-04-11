@@ -1,4 +1,4 @@
-Release v1.7.3-4
+Release v1.7.3-5
 
 * The AboutBox "Restore file structure" has been removed as the immanent fix for the Plugin Manager defect has been confirmed by the Notepad++ support.
   (Special thanks to @CollinChaffin who investigated the problem)
@@ -6,6 +6,7 @@ Release v1.7.3-4
 * RoslynIntellisense.exe has been moved into Roslyn folder to minimize Roslyn custom assembly probing for C# 7.
 
 * Updater changes:
-  - Improved error messages
+  - Updates are now "by replacement" instead of "by merge". Just to avoid the dll conflicts.
+  - Improved error messages and focus management for message boxes.
   - Ensured that N++ restarted as non elevated process during plugin updates.
   - Updater has made into a stand alone `version manager` with external interface.

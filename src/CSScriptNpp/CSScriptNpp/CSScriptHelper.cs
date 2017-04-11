@@ -754,6 +754,7 @@ class Script
 
         static public string GetLatestAvailableVersion()
         {
+            bool update_always = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_UPDATE_ALWAYS") != null;
             string url = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL") ?? "http://csscript.net/npp/latest_version.txt";
 #if DEBUG
             url = "http://csscript.net/npp/latest_version_dbg.txt";

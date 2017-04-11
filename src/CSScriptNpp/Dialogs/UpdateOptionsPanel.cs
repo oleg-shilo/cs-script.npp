@@ -126,7 +126,7 @@ namespace CSScriptNpp.Dialogs
                                 }
                                 else
                                 {
-                                    if (DialogResult.Yes == MessageBox.Show(@"Some installation steps still need to be completed. Notepad++ needs to be restarted in older to complete these steeps. Would you like to restart now?",
+                                    if (DialogResult.Yes == MessageBox.Show(new Form { TopMost = true }, @"Some installation steps still need to be completed. Notepad++ needs to be restarted in older to complete these steeps. Would you like to restart now?",
                                                                               "CS-Script", MessageBoxButtons.YesNo))
                                     {
                                         Process updater_proc = Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
