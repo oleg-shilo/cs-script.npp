@@ -5,6 +5,8 @@ Release v1.7.3-5
 
 * RoslynIntellisense.exe has been moved into Roslyn folder to minimize Roslyn custom assembly probing for C# 7.
 
+* Roslyn services are now terminated on Notepad++ exit. To avoid interference with Plugin Manager updates.
+
 * Updater changes:
   - Updates are now "by replacement" instead of "by merge". Just to avoid the dll conflicts.
   - Improved error messages and focus management for message boxes.

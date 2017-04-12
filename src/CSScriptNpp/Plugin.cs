@@ -14,7 +14,7 @@ using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
-    /*TODO:  
+    /*TODO:
      * - Outstanding features
      *  + Watch values are not updated on "step over" after the value has been changed
      *  + QuickWatch dialog doesn't allow changing the value in the grid
@@ -125,14 +125,14 @@ namespace CSScriptNpp
                         {
                             MessageBox.Show("CS-Script has detected that Notepad++ has its auto-completion configured to be auto-triggered 'on input' (as you type).\n\n" +
                                             "This will not prevent C# Intellisense (CS-Script) from working but it may affect your user experience " +
-                                            "because these two solutions may get activated at the same time.\n\n"+
-                                            "It is recommended that you disable Notepad++ 'auto-completion on input' via\n"+
-                                            "Settings->Preferences->Auto-Completion\n\n"+
+                                            "because these two solutions may get activated at the same time.\n\n" +
+                                            "It is recommended that you disable Notepad++ 'auto-completion on input' via\n" +
+                                            "Settings->Preferences->Auto-Completion\n\n" +
                                             "Note: Disabling 'auto-completion on input' will not disable auto-completion for other languages but only its automatic triggering. " +
                                             "The auto-completion can be triggered at any time manually by pressing Ctrl+Space key combination.", "CS-Script");
 
                             try { Process.Start("https://csscriptnpp.codeplex.com/wikipage?title=Dealing%20with%20Notepad%2b%2b%20native%20auto-complete"); }
-                            catch  { }
+                            catch { }
                             Config.Instance.NativeAutoCompletionChecked = true;
                             Config.Instance.Save();
                         }
@@ -166,7 +166,7 @@ namespace CSScriptNpp
 
             internalShortcuts.Add(shortcut, new Tuple<string, Action>(displayName, handler));
 
-            var key = (Keys) shortcut._key;
+            var key = (Keys)shortcut._key;
             if (!uniqueKeys.ContainsKey(key))
                 uniqueKeys.Add(key, 0);
         }
@@ -255,7 +255,7 @@ namespace CSScriptNpp
         static void Instance_KeyDown(Keys key, int repeatCount, ref bool handled)
         {
             foreach (var shortcut in internalShortcuts.Keys)
-                if ((byte) key == shortcut._key && !IsDocumentHotKeyExcluded())
+                if ((byte)key == shortcut._key && !IsDocumentHotKeyExcluded())
                 {
                     Modifiers modifiers = KeyInterceptor.GetModifiers();
 
@@ -331,7 +331,6 @@ namespace CSScriptNpp
         static public CodeMapPanel CodeMapPanel
         {
             get { return ProjectPanel?.mapPanel; }
-
         }
 
         static DebugPanel debugPanel;
@@ -343,7 +342,7 @@ namespace CSScriptNpp
                 return debugPanel != null && debugPanel.Visible;
             }
         }
-        
+
         static public bool OutputPanelVisible
         {
             get
@@ -425,7 +424,7 @@ namespace CSScriptNpp
 
         static public void InitProjectPanel()
         {
-            if(ProjectPanel == null)
+            if (ProjectPanel == null)
                 ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
             else
                 SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, true);
@@ -586,6 +585,18 @@ namespace CSScriptNpp
                 Plugin.OutputPanel.localDebugPrefix = null;
             else
                 Plugin.OutputPanel.localDebugPrefix = runningScript.Id.ToString() + ": ";
+        }
+
+        internal static void StopVBCSCompilers()
+        {
+            try
+            {
+                if (Config.Instance.UseRoslynProvider)
+                    foreach (var p in Process.GetProcessesByName("VBCSCompiler"))
+                        try { p.Kill(); }
+                        catch { } //cannot analyse main module as it may not be accessible for x86 vs. x64 reasons
+            }
+            catch { }
         }
 
         static internal void OnNppReady()

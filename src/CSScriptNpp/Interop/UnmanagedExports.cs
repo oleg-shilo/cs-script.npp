@@ -102,36 +102,40 @@ namespace CSScriptNpp
             {
                 CSScriptIntellisense.Interop.NppUI.OnNppTick();
 
-                SCNotification nc = (SCNotification) Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
+                SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
 
                 //Debug.WriteLine(">>>>>   ncnc.nmhdr.code={0}, {1}", nc.nmhdr.code, (int)nc.nmhdr.code);
 
-                if (nc.nmhdr.code == (uint) NppMsg.NPPN_READY)
+                if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
                     CSScriptNpp.Plugin.OnNppReady();
                     Npp.SetCalltipTime(500);
                 }
-                else if (nc.nmhdr.code == (uint) NppMsg.NPPN_TBMODIFICATION)
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
+                {
+                    CSScriptNpp.Plugin.StopVBCSCompilers();
+                }
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
                 {
                     CSScriptNpp.Plugin.OnToolbarUpdate();
                 }
-                else if (nc.nmhdr.code == (uint) NppMsg.NPPM_SAVECURRENTFILEAS ||
-                         (Config.Instance.HandleSaveAs && nc.nmhdr.code == (uint) SciMsg.SCN_SAVEPOINTREACHED)) //for some strange reason NPP doesn't fire NPPM_SAVECURRENTFILEAS but does 2002 instead.
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPM_SAVECURRENTFILEAS ||
+                         (Config.Instance.HandleSaveAs && nc.nmhdr.code == (uint)SciMsg.SCN_SAVEPOINTREACHED)) //for some strange reason NPP doesn't fire NPPM_SAVECURRENTFILEAS but does 2002 instead.
                 {
                     string file = Npp.GetCurrentFile();
                     if (file != lastActivatedBuffer)
                         CSScriptNpp.Plugin.OnFileSavedAs(lastActivatedBuffer, file);
                 }
-                else if (nc.nmhdr.code == (uint) SciMsg.SCN_CHARADDED)
+                else if (nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
                 {
-                    CSScriptIntellisense.Plugin.OnCharTyped((char) nc.ch);
+                    CSScriptIntellisense.Plugin.OnCharTyped((char)nc.ch);
                 }
                 //else if (nc.nmhdr.code == (uint)SciMsg.SCN_KEY)
                 //{
                 //    System.Diagnostics.Debug.WriteLine("SciMsg.SCN_KEY");
                 //}
-                else if (nc.nmhdr.code == (uint) SciMsg.SCN_MARGINCLICK)
+                else if (nc.nmhdr.code == (uint)SciMsg.SCN_MARGINCLICK)
                 {
                     if (nc.margin == _SC_MARGE_SYBOLE && nc.modifiers == SCI_CTRL)
                     {
@@ -139,7 +143,7 @@ namespace CSScriptNpp
                         Debugger.ToggleBreakpoint(lineClick);
                     }
                 }
-                else if (nc.nmhdr.code == (uint) SciMsg.SCN_DWELLSTART) //tooltip
+                else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLSTART) //tooltip
                 {
                     //Npp.ShowCalltip(nc.position, "\u0001  1 of 3 \u0002  test tooltip " + Environment.TickCount);
                     //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
@@ -147,11 +151,11 @@ namespace CSScriptNpp
 
                     Npp.OnCalltipRequest(nc.position);
                 }
-                else if (nc.nmhdr.code == (uint) SciMsg.SCN_DWELLEND)
+                else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLEND)
                 {
                     Npp.CancelCalltip();
                 }
-                else if (nc.nmhdr.code == (uint) NppMsg.NPPN_BUFFERACTIVATED)
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
                     string file = Npp.GetCurrentFile();
                     lastActivatedBuffer = file;
@@ -174,38 +178,37 @@ namespace CSScriptNpp
                         Debugger.OnCurrentFileChanged();
                     }
                 }
-                else if (nc.nmhdr.code == (uint) NppMsg.NPPN_FILEOPENED)
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILEOPENED)
                 {
-                    string file = Npp.GetTabFile((int) nc.nmhdr.idFrom);
+                    string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
                     Debugger.LoadBreakPointsFor(file);
                 }
-                else if (nc.nmhdr.code == (uint) NppMsg.NPPN_FILESAVED || nc.nmhdr.code == (uint) NppMsg.NPPN_FILEBEFORECLOSE)
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED || nc.nmhdr.code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
                 {
-                    string file = Npp.GetTabFile((int) nc.nmhdr.idFrom);
+                    string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
                     Debugger.RefreshBreakPointsFromContent();
                     Debugger.SaveBreakPointsFor(file);
 
-                    if (nc.nmhdr.code == (uint) NppMsg.NPPN_FILESAVED)
+                    if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
                     {
                         Plugin.OnDocumentSaved();
                     }
                 }
-                else if (nc.nmhdr.code == (uint) NppMsg.NPPN_FILEBEFORESAVE)
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
                 {
                     CSScriptIntellisense.Plugin.OnBeforeDocumentSaved();
                 }
-                else if (nc.nmhdr.code == (uint) NppMsg.NPPN_SHUTDOWN)
+                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {
                     Marshal.FreeHGlobal(_ptrPluginName);
 
                     Plugin.CleanUp();
                 }
 
-                if (nc.nmhdr.code == (uint) SciMsg.SCI_ENDUNDOACTION)
+                if (nc.nmhdr.code == (uint)SciMsg.SCI_ENDUNDOACTION)
                 {
                     //CSScriptIntellisense.Plugin.OnSavedOrUndo();
                 }
-
 
                 Plugin.OnNotification(nc);
             }
