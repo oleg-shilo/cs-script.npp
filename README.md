@@ -1,10 +1,14 @@
+# CS-Script Plugin (CSScript.Npp)   
+![](wiki/css_npp_logo_clear.png)
+
+*This Notepad++ plugin requires .NET v4.0 or higher.* 
+
 Total downloads via Notepad++ Plugin Manager: Total Downloads Count: ![](http://www.csscript.net/statistics/css.npp.count.jpeg)            
 [Downloads Statistics](http://www.csscript.net/statistics/css.npp.stats.html)
 
 Starting from v1.3 plugin delivers full support for VB.NET syntax. [More reading...](http://csscriptnpp.codeplex.com/wikipage?title=VB%20support)  
 
-![](http://www.codeproject.com/favicon.ico)[CodeProject article about CS-Script plugin](http://www.codeproject.com/Articles/694248/Sharpening-Notepadplusplus)
-
+____
 This plugin allows convenient editing and execution of the C# code (scripts).  It also allows the usual C# intellisense and project management tasks to be performed in a way very similar to the MS Visual Studio.
 
 In addition to this, it provides generic debugging functionality (with the integrated Managed Debugger) as well as the ability to prepare C# scripts for the deployment packages (script+engine or self-contained executable).
