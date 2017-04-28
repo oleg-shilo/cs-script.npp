@@ -3,7 +3,7 @@ Total downloads via Notepad++ Plugin Manager: Total Downloads Count: ![](http://
 
 Starting from v1.3 plugin delivers full support for VB.NET syntax. [More reading...](http://csscriptnpp.codeplex.com/wikipage?title=VB%20support)  
 
-![](http://www.codeproject.com/favicon.ico)[CodeProject article about CS-Script plugin](CodeProject article about CS-Script plugin)
+![](http://www.codeproject.com/favicon.ico)[CodeProject article about CS-Script plugin](http://www.codeproject.com/Articles/694248/Sharpening-Notepadplusplus)
 
 This plugin allows convenient editing and execution of the C# code (scripts).  It also allows the usual C# intellisense and project management tasks to be performed in a way very similar to the MS Visual Studio.
 
