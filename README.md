@@ -1,5 +1,5 @@
 # CS-Script Plugin (CSScript.Npp)   
-![](wiki/css_npp_logo_clear.png)
+<img align="right" src="https://github.com/oleg-shilo/cs-script.npp/blob/master/wiki/css_npp_logo_clear.png" alt="" style="float:right">
 
 *This Notepad++ plugin requires .NET v4.0 or higher.* 
 
@@ -15,6 +15,9 @@ In addition to this, it provides generic debugging functionality (with the integ
 
 Typically user opens the C# file with Notepad++ and after presses 'Load' button on the CS-Script toolbar the all features can be accessed through two Notepad++ dockable panels Project and Output panel. 
 
+![](wiki/css_npp_logo_clear.png)
+
+![](wiki/debugger.png)
 
 Features
 
