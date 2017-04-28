@@ -1,5 +1,5 @@
 # CS-Script Plugin (CSScript.Npp)   
-<img align="right" src="https://github.com/oleg-shilo/cs-script.npp/blob/master/wiki/css_npp_logo_clear.png" alt="" style="float:right">
+<img align="right" src="wiki/css_npp_logo_clear.png" alt="" style="float:right">
 
 *This Notepad++ plugin requires .NET v4.0 or higher.* 
 
@@ -15,40 +15,52 @@ In addition to this, it provides generic debugging functionality (with the integ
 
 Typically user opens the C# file with Notepad++ and after presses 'Load' button on the CS-Script toolbar the all features can be accessed through two Notepad++ dockable panels Project and Output panel. 
 
-![](wiki/css_npp_logo_clear.png)
+![](wiki/css_npp.gif)
 
 ![](wiki/debugger.png)
 
-Features
+## Features
 
-Note: the default compiler engine of the plugin is Roslyn. The engine fully supports both C# and VB.NET syntax but there is some usability information for these syntaxes that you may need to be aware of. See C# 6 support for and VB.NET support details
+Note: the default compiler engine of the plugin is Roslyn. The engine fully supports both C# and VB.NET syntax but there is some usability information for these syntaxes that you may need to be aware of. See [C# 6 support](https://csscriptnpp.codeplex.com/wikipage?title=CSharp%206.0%20syntax%20support) for and [VB.NET support](http://csscriptnpp.codeplex.com/wikipage?title=VB%20support) details
 
-Intellisense
-CLR type members auto-complete (Ctrl+Space or type '.')
-Add missing 'using' (Ctrl+.)
-Show CLR type quick info. (Hover mouse over the type member)
-Show Method Overloads popup. (F6 or type '(')
-Go to definition (F12)
-- in the source code
-- in the reconstructed referenced assembly API interface (including XML documentation)
-Smart Indentation
-Formatting C# source code
-CodeMap - panel with the class members of the current .cs document  
+* Intellisense
+  * CLR type members auto-complete (Ctrl+Space or type '.')
+  * Add missing 'using' (Ctrl+.)
+  * Show CLR type quick info. (Hover mouse over the type member)
+  * Show Method Overloads popup. (F6 or type '(')
+  * Go to definition (F12)
+    - in the source code
+    - in the reconstructed referenced assembly API interface (including XML documentation)
+  * Smart Indentation
+  * Formatting C# source code
+  * CodeMap - panel with the class members of the current .cs document  
  
-Based on 'plain vanilla' ECMA-compliant C# code
-Inclusion of the dependency scripts via CS-Script directives
-Implicit assembly referencing via automatic resolving namesspaces into assemblies
-Explicit assembly referencing via CS-Script directives
-Debug output interception
-Console output interception
-Conventional build/execution error reporting
-Debugging
-- Step Over
-- Step In
-- Step Out
-- Set Next Statement
-- Toggle breakpoint
-- 'Call Stack' 
-- 'Locals' 
+* Based on 'plain vanilla' ECMA-compliant C# code
+* Inclusion of the dependency scripts via CS-Script directives
+* Implicit assembly referencing via automatic resolving namesspaces into assemblies
+* Explicit assembly referencing via CS-Script directives
+* Debug output interception
+* Console output interception
+* Conventional build/execution error reporting
+* Debugging
+  - Step Over
+  - Step In
+  - Step Out
+  - Set Next Statement
+  - Toggle breakpoint
+  - 'Call Stack' 
+  - 'Locals' 
 Preparing the script deployment package so it can be executed outside of Notepad++.  
 The plugin is a part of CS-Script tools for Notepad++ suite. All details on the system requirements, installation and usage can be found on CS-Script.Npp home page.
+
+## Usage
+
+After the installation start Notepad++ and click "Project Panel" button on the toolbar (or "Project Panel" menu item in the Plugins->CS-Script menu). 
+
+![](wiki/toolbar.png)
+
+Then Click 'New Script' button. The script is ready. Just press F5 and see the script being executed.
+
+![](wiki/new_script.png)
+
+![](wiki/CSScript.png)
