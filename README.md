@@ -6,7 +6,7 @@
 Total downloads via Notepad++ Plugin Manager: Total Downloads Count: ![](http://www.csscript.net/statistics/css.npp.count.jpeg)            
 [Downloads Statistics](http://www.csscript.net/statistics/css.npp.stats.html)
 
-Starting from v1.3 plugin delivers full support for VB.NET syntax. [More reading...](http://csscriptnpp.codeplex.com/wikipage?title=VB%20support)  
+Starting from v1.3 plugin delivers full support for VB.NET syntax. [More reading...](wiki/vb_support.md)  
 
 ____
 This plugin allows convenient editing and execution of the C# code (scripts).  It also allows the usual C# intellisense and project management tasks to be performed in a way very similar to the MS Visual Studio.
@@ -21,7 +21,7 @@ Typically user opens the C# file with Notepad++ and after presses 'Load' button 
 
 ## Features
 
-Note: the default compiler engine of the plugin is Roslyn. The engine fully supports both C# and VB.NET syntax but there is some usability information for these syntaxes that you may need to be aware of. See [C# 6 support](https://csscriptnpp.codeplex.com/wikipage?title=CSharp%206.0%20syntax%20support) for and [VB.NET support](http://csscriptnpp.codeplex.com/wikipage?title=VB%20support) details
+Note: the default compiler engine of the plugin is Roslyn. The engine fully supports both C# and VB.NET syntax but there is some usability information for these syntaxes that you may need to be aware of. See [C# 7 support](wiki/CSharp_7.md) for and [VB.NET support](wiki/vb_support.md) details
 
 * Intellisense
   * CLR type members auto-complete (Ctrl+Space or type '.')
