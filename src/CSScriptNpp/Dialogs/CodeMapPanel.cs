@@ -20,6 +20,7 @@ namespace CSScriptNpp
             public string Content = "";
             public string ContentType = "";
             public string ContentIndent = "";
+
             public override string ToString()
             {
                 return Content;
@@ -50,7 +51,7 @@ namespace CSScriptNpp
 
         void UpdateItemHeight()
         {
-            var textHeight = (int) membersList.CreateGraphics().MeasureString("H", membersList.Font).Height;
+            var textHeight = (int)membersList.CreateGraphics().MeasureString("H", membersList.Font).Height;
             membersList.ItemHeight = textHeight + 2;
         }
 
@@ -113,33 +114,45 @@ namespace CSScriptNpp
 
         void memberList_DrawItem(object sender, DrawItemEventArgs e)
         {
-            if (e.Index != -1)
+            try
             {
-                e.DrawBackground();
-                var info = membersList.Items[e.Index] as MemberInfo;
+                if (e.Index != -1)
+                {
+                    e.DrawBackground();
+                    var info = membersList.Items[e.Index] as MemberInfo;
 
-                var brush = Brushes.Black;
+                    var brush = Brushes.Black;
 
-                if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
-                    brush = Brushes.White;
-                else
-                    e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+                    if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                        brush = Brushes.White;
+                    else
+                        e.Graphics.FillRectangle(Brushes.White, e.Bounds);
 
-                var bounds = e.Bounds;
-                var normalFont = e.Font;
-                var italicFont = new Font(e.Font, FontStyle.Italic);
-                
-                bounds.Offset(info.ContentIndent.Length*3, 0);
+                    var bounds = e.Bounds;
+                    var normalFont = e.Font;
+                    var italicFont = new Font(e.Font, FontStyle.Italic);
 
-                var font = italicFont;
-                e.Graphics.DrawString(info.ContentType, font, Brushes.Blue, bounds, StringFormat.GenericDefault);
-                var size = e.Graphics.MeasureString(info.ContentType, font);
-                bounds.Offset((int) size.Width, 0);
+                    bounds.Offset(info.ContentIndent.Length * 3, 0);
 
-                font = normalFont;
-                e.Graphics.DrawString(info.Content, font, brush, bounds, format);
+                    var font = italicFont;
+                    e.Graphics.DrawString(info.ContentType, font, Brushes.Blue, bounds, StringFormat.GenericDefault);
+                    var size = e.Graphics.MeasureString(info.ContentType, font);
+                    bounds.Offset((int)size.Width, 0);
 
-                //e.DrawFocusRectangle();
+                    font = normalFont;
+                    e.Graphics.DrawString(info.Content, font, brush, bounds, format);
+
+                    //e.DrawFocusRectangle();
+                }
+            }
+            catch
+            {
+#if DEBUG
+                throw;
+#endif
+                // Ignore all rendering errors and continue.
+                // Then can be caused even unusual focus management. Nothing we can do about it and showing message box
+                // is neither useful nor informative.
             }
         }
 
@@ -199,7 +212,7 @@ namespace CSScriptNpp
                             membersList.Items.Add(new MemberInfo { Content = item.ParentDisplayName, Line = -1 });
                         }
 
-                        membersList.Items.Add(new MemberInfo { Content = item.DisplayName, ContentIndent = "    ",  Line = item.Line-1 });
+                        membersList.Items.Add(new MemberInfo { Content = item.DisplayName, ContentIndent = "    ", Line = item.Line - 1 });
                     }
 
                     ErrorMessage = null;
@@ -267,8 +280,6 @@ namespace CSScriptNpp
             {
             }
         }
-
-
 
         public string ErrorMessage
         {
