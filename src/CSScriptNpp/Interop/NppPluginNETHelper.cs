@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
+    // Current Npp .NET bridge:
+    // https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net 
+
     #region " Notepad++ "
 
     [StructLayout(LayoutKind.Sequential)]
@@ -70,7 +73,6 @@ namespace CSScriptNpp
             retval.Append(((Keys)_key).ToString());
             return retval.ToString();
         }
-
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -2334,7 +2336,7 @@ namespace CSScriptNpp
                     if (_nativeArray != IntPtr.Zero) Marshal.FreeHGlobal(_nativeArray);
                     _disposed = true;
                 }
-                catch (Exception e )
+                catch (Exception e)
                 {
                     e.LogAsError();
                 }
