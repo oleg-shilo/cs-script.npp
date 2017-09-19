@@ -54,7 +54,7 @@
             </summary>
             <param name="name">'namespace'/assembly(file) name</param>
             <param name="searchDirs">Assembly search directories</param>
-            <para>If the default implementation isn't suitable then you can set <c>CSScript.FindAssemblyAlgorithm</c> 
+            <para>If the default implementation isn't suitable then you can set <c>CSScript.FindAssemblyAlgorithm</c>
             to the alternative implementation of the probing algorithm.</para>
             <returns>collection of assembly file names where namespace is implemented</returns>
         </member>
@@ -356,6 +356,20 @@
             Class to hold the script importing information, which actually controls how script is imported.
             </summary>
         </member>
+        <member name="F:csscript.CSharpParser.ImportInfo.ResolveRelativeFromParentScriptLocation">
+            <summary>
+            <para> When importing dependency scripts with '//css_include' or '//css_import' you can use relative path.
+            Resolving relative path is typically done with respect to the <c>current directory</c>.
+            </para>
+            <para>
+            The only exception is any path that starts with a single dot ('.') prefix, which triggers the conversion of the path into the absolute path
+            with respect to the location of the file containing the import directive.
+            </para>
+            <para>Set <see cref="F:csscript.CSharpParser.ImportInfo.ResolveRelativeFromParentScriptLocation"/> to <c>true</c> if you want to convert all relative paths
+            into the absolute path, not only the ones with a single dot ('.') prefix.</para>
+            <para>By default it is set to <c>false</c> unless overwritten via the global settings.</para>
+            </summary>
+        </member>
         <member name="M:csscript.CSharpParser.ImportInfo.#ctor(System.String,System.String)">
             <summary>
             Creates an instance of ImportInfo.
@@ -368,6 +382,16 @@
             The file to be imported.
             </summary>
         </member>
+        <member name="F:csscript.CSharpParser.ImportInfo.rawStatement">
+            <summary>
+            The original name of the file to be imported.
+            </summary>
+        </member>
+        <member name="F:csscript.CSharpParser.ImportInfo.parentScript">
+            <summary>
+            The name of the script containing the import statement.
+            </summary>
+        </member>
         <member name="F:csscript.CSharpParser.ImportInfo.renaming">
             <summary>
             Renaming instructions (old_name vs. new_name)
@@ -376,6 +400,12 @@
         <member name="F:csscript.CSharpParser.ImportInfo.preserveMain">
             <summary>
             If set to 'true' "static...Main" in the imported script is not renamed.
+            </summary>
+        </member>
+        <member name="T:csscript.ConsoleStringExtensions">
+            <summary>
+            Based on "maettu-this" proposal https://github.com/oleg-shilo/cs-script/issues/78
+            His `SplitLexicallyWithoutTakingNewLineIntoAccount` is taken/used practically without any change.
             </summary>
         </member>
         <member name="T:csscript.Project">
@@ -417,6 +447,13 @@
             </summary>
             <param name="script">The script.</param>
             <returns></returns>
+        </member>
+        <member name="M:csscript.ProjectBuilder.GetCSSConfig">
+             <summary>
+             Gets the CSS configuration. Used by ST3 Syntaxer
+             </summary>
+             <returns></returns>cls
+            
         </member>
         <member name="T:csscript.ResolveSourceFileAlgorithm">
             <summary>
@@ -554,7 +591,7 @@
             Prints CS-Script specific C# syntax help info.
             </summary>
         </member>
-        <member name="M:csscript.CSExecutor.ShowSample">
+        <member name="M:csscript.CSExecutor.ShowSample(System.String)">
             <summary>
             Show sample C# script file.
             </summary>
@@ -587,7 +624,7 @@
         </member>
         <member name="P:csscript.CSExecutor.Rethrow">
             <summary>
-            Force caught exceptions to be rethrown.
+            Force caught exceptions to be re-thrown.
             </summary>
         </member>
         <member name="P:csscript.CSExecutor.ScriptCacheDir">
@@ -629,7 +666,7 @@
             </summary>
             <param name="Errors">The compiler errors.</param>
             <param name="hideCompilerWarnings">if set to <c>true</c> hide compiler warnings.</param>
-            <param name="resolveAutogenFilesRefs">if set to <c>true</c> all references to the path of the derived auto-generated files 
+            <param name="resolveAutogenFilesRefs">if set to <c>true</c> all references to the path of the derived auto-generated files
             (e.g. errors in the decorated classless scripts) will be replaced with the path of the original files (e.g. classless script itself).</param>
             <returns></returns>
         </member>
@@ -641,25 +678,25 @@
         </member>
         <member name="T:csscript.ConcurrencyControl">
             <summary>
-            Indicates synchronization model used to for controlling concurrency when the same script file is executed by multiple processes. 
+            Indicates synchronization model used to for controlling concurrency when the same script file is executed by multiple processes.
             </summary>
         </member>
         <member name="F:csscript.ConcurrencyControl.Standard">
             <summary>
-            Simple model. The script engine doesn't start the timestamp validation and the script compilation until another engine 
-            validating finishes its job. 
+            Simple model. The script engine doesn't start the timestamp validation and the script compilation until another engine
+            validating finishes its job.
             <para>
-            Note: the compilation may be skipped if caching is enabled and the validation reviles that the previous compilation (cache) 
-            is still up to date. </para> 
-            <para>    
-            Due to the limited choices with the system wide named synchronization objects on Linux <c>Standard</c> is the only available 
-            synchronization model on Linux. And it is just happens to be a good default choice for Windows as well.</para>        
+            Note: the compilation may be skipped if caching is enabled and the validation reviles that the previous compilation (cache)
+            is still up to date. </para>
+            <para>
+            Due to the limited choices with the system wide named synchronization objects on Linux <c>Standard</c> is the only available
+            synchronization model on Linux. And it is just happens to be a good default choice for Windows as well.</para>
             </summary>
         </member>
         <member name="F:csscript.ConcurrencyControl.HighResolution">
             <summary>
             A legacy synchronization model available on Windows only. While it can be beneficial in the intense concurrent "border line" scenarios,
-            its practical value very limited. 
+            its practical value very limited.
             </summary>
         </member>
         <member name="F:csscript.ConcurrencyControl.None">
@@ -799,8 +836,20 @@
         </member>
         <member name="M:CSScriptLibrary.ScriptParser.GetContext">
             <summary>
-            Gets the script parcing context. This object is efectively a parsing result.
+            Gets the script parsing context. This object is effectively a parsing result.
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CSScriptLibrary.ScriptParser.ProcessImportedScript(System.String)">
+            <summary>
+            Processes the imported script. Processing involves lookup for 'static Main' and renaming it so it does not
+            interfere with the 'static Main' of the primary script. After renaming is done the new content is saved in the
+            CS-Script cache and the new file location is returned. The saved file can be used late as an "included script".
+            This technique can be from 'precompiler' scripts.
+            <para>If the script file does not require renaming (static Main is not present) the method returns the
+            original script file location.</para>
+            </summary>
+            <param name="scriptFile">The script file.</param>
             <returns></returns>
         </member>
         <member name="F:CSScriptLibrary.ScriptParser.apartmentState">
@@ -996,6 +1045,15 @@
             Helper calss for IAssemblyEnum
             </summary>
         </member>
+        <member name="M:csscript.NuGet.GetSinglePackageLibDirs(System.String,System.String,System.String)">
+            <summary>
+            Gets the single package library dirs.
+            </summary>
+            <param name="package">The package.</param>
+            <param name="version">The version.</param>
+            <param name="rootDir">The root dir.</param>
+            <returns></returns>
+        </member>
         <member name="T:csscript.PrecompilationContext">
             <summary>
             This class is a container for information related to the script precompilation.
@@ -1155,6 +1213,28 @@
             Location of alternative code provider assembly. If set it forces script engine to use an alternative code compiler.
             </summary>
         </member>
+        <member name="P:csscript.Settings.RoslynDir">
+            <summary>
+            Gets or sets the path to the Roslyn directory. This setting is used to redirect Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll to the
+            custom location of the Roslyn compilers (e.g. /usr/lib/mono/4.5).
+            </summary>
+            <value>
+            The Roslyn directory.
+            </value>
+        </member>
+        <member name="P:csscript.Settings.ResolveRelativeFromParentScriptLocation">
+            <summary>
+            <para> When importing dependency scripts with '//css_include' or '//css_import' you can use relative path.
+            Resolving relative path is typically done with respect to the <c>current directory</c>.
+            </para>
+            <para>
+            The only exception is any path that starts with a single dot ('.') prefix, which triggers the conversion of the path into the absolute path
+            with respect to the location of the file containing the import directive.
+            </para>
+            <para>Set <see cref="P:csscript.Settings.ResolveRelativeFromParentScriptLocation"/> to <c>true</c> if you want to convert all relative paths
+            into the absolute path, not only the ones with a single dot ('.') prefix.</para>
+            </summary>
+        </member>
         <member name="P:csscript.Settings.UsePostProcessor">
             <summary>
             Location of PostProcessor assembly. If set it forces script engine to pass compiled script through PostProcessor before the execution.
@@ -1174,7 +1254,7 @@
         </member>
         <member name="P:csscript.Settings.InjectScriptAssemblyAttribute">
             <summary>
-            Gets or sets a value indicating whether script assembly attribute should be injected. The AssemblyDecription attribute 
+            Gets or sets a value indicating whether script assembly attribute should be injected. The AssemblyDecription attribute
             contains the original location of the script file the assembly being compiled from./
             </summary>
             <value>
@@ -1193,9 +1273,9 @@
             <summary>
             Gets or sets a value indicating whether references to the auto-generated files should be resolved.
             <para>
-            If this flag is set the all references in the compile errors text to the path of the derived auto-generated files 
+            If this flag is set the all references in the compile errors text to the path of the derived auto-generated files
             (e.g. errors in the decorated classless scripts) will be replaced with the path of the original file(s) (e.g. classless script itself).
-            </para> 
+            </para>
             </summary>
             <value>
             <c>true</c> if preferences needs to be resolved; otherwise, <c>false</c>.
@@ -1210,6 +1290,31 @@
             <summary>
             Encoding of he Console Output. Applicable for console applications script engine only.
             </summary>
+        </member>
+        <member name="P:csscript.Settings.LegacyTimestampCaching">
+            <summary>
+            Gets or sets a value indicating whether to enforce timestamping the compiled script assembly.
+            <para>
+            Some reports indicated that changing assembly timestamp can affect CLR caching (shadow copying)
+            due to some unknown/undocumented CLR feature(s).
+            </para>
+            <para>
+            Thus script caching algorithm has been changed to avoid using the compiled assembly
+            LastModifiedTime file-attribute for storing the script timestamp. Currently caching alogithm
+            uses injected matadata instead.
+            </para>
+            <para>
+            If for whatever reason the old behaver is preferred you can always enable it by either setting
+            <see cref="P:csscript.Settings.LegacyTimestampCaching"/> to <c>true</c> or by setting CSS_LEGACY_TIMESTAMP_CAHING
+            environment variable to <c>"true"</c>.
+            </para>
+            <para>
+            Triggered by issue #61: https://github.com/oleg-shilo/cs-script/issues/61
+            </para>
+            </summary>
+            <value>
+              <c>true</c> if to suppress timestamping; otherwise, <c>false</c>.
+            </value>
         </member>
         <member name="P:csscript.Settings.TargetFramework">
             <summary>
@@ -1255,9 +1360,9 @@
             <summary>
             Gets or sets a value indicating whether custom string hashing algorithm should be used.
             <para>
-            String hashing is used by the script engine for allocating temporary and cached paths. 
-            However default string hashing is platform dependent (x32 vs. x64) what makes impossible 
-            truly deterministic string hashing. This in turns complicates the integration of the 
+            String hashing is used by the script engine for allocating temporary and cached paths.
+            However default string hashing is platform dependent (x32 vs. x64) what makes impossible
+            truly deterministic string hashing. This in turns complicates the integration of the
             CS-Script infrastructure with the third-party applications (e.g. Notepad++ CS-Script plugin).
             </para>
             <para>
@@ -1289,10 +1394,10 @@
         </member>
         <member name="P:csscript.Settings.AutoClass_DecorateAsCS6">
             <summary>
-            Gets or sets a value indicating whether auto-class decoration should allow C# 6 specific syntax. 
-            If it does the statement "using static dbg;" will be injected at the start of the auto-class definition thus the 
-            entry script may invoke static methods for object inspection with <c>dbg</c> class without specifying the 
-            class name (e.g. "print(DateTime.Now);"). 
+            Gets or sets a value indicating whether auto-class decoration should allow C# 6 specific syntax.
+            If it does the statement "using static dbg;" will be injected at the start of the auto-class definition thus the
+            entry script may invoke static methods for object inspection with <c>dbg</c> class without specifying the
+            class name (e.g. "print(DateTime.Now);").
             </summary>
             <value>
             <c>true</c> if decorate auto-class as C# 6; otherwise, <c>false</c>.
@@ -1311,8 +1416,8 @@
             This setting can be useful when you need to prevent script assembly (compiled script) from locking by CLR during the execution.
             false - script assembly will be loaded as a file. It is an equivalent of Assembly.LoadFrom(string assemblyFile).
             true - script assembly will be loaded as a file. It is an equivalent of Assembly.Load(byte[] rawAssembly)
-            <para>Note: some undesired side effects can be triggered by having assemblies with <c>Assembly.Location</c> being empty. 
-            For example <c>Interface Alignment</c> any not work with such assemblies as it relies on CLR compiling services that 
+            <para>Note: some undesired side effects can be triggered by having assemblies with <c>Assembly.Location</c> being empty.
+            For example <c>Interface Alignment</c> any not work with such assemblies as it relies on CLR compiling services that
             typically require assembly <c>Location</c> member being populated with the valid path.</para>
             </summary>
         </member>
@@ -1321,6 +1426,17 @@
             Gets or sets the concurrency control model.
             </summary>
             <value>The concurrency control.</value>
+        </member>
+        <member name="P:csscript.Settings.DefaultConfigFile">
+            <summary>
+            Gets the default configuration file path. It is a "css_config.xml" file located in the same directory where the assembly
+            being executed is (e.g. cscs.exe).
+            <para>Note, when running under Mono the "css_config.mono.xml" file will have higher precedence than "css_config.xml".
+            This way you can have Mono specific settings without affecting the settings for non-Mono runtimes.</para>
+            </summary>
+            <value>
+            The default configuration file location. Returns null if the file is not found.
+            </value>
         </member>
         <member name="T:csscript.Settings.HideOptions">
             <summary>
@@ -1437,49 +1553,49 @@
             </returns>
         </member>
         <member name="M:CSScriptLibraryExtensionMethods.SingletonExecute(System.Reflection.Assembly,System.Action,System.Action)">
-            <summary>
-            Executes an action as a "singleton". 
-            <para>This extension method takes a delegate and executes it in the context of the claimed named mutex. It doesn't execute the action and
-            returns immediately if any previously invoked action from the same context is still in progress: mutex is not released.</para>
-            <para>Mutex name uniqueness is based on the assembly identity (location).</para>
-            <code>
-            //application
-            class Program
-            {
-                static void Main()
-                {
-                    Assembly.GetExecutingAssembly()
-                            .SingletonExecute(main, 
-                                              ()=>MessageBox.Show("Another instance is already running."));
-                }
+             <summary>
+             Executes an action as a "singleton".
+             <para>This extension method takes a delegate and executes it in the context of the claimed named mutex. It doesn't execute the action and
+             returns immediately if any previously invoked action from the same context is still in progress: mutex is not released.</para>
+             <para>Mutex name uniqueness is based on the assembly identity (location).</para>
+             <code>
+             //application
+             class Program
+             {
+                 static void Main()
+                 {
+                     Assembly.GetExecutingAssembly()
+                             .SingletonExecute(main,
+                                               ()=>MessageBox.Show("Another instance is already running."));
+                 }
             
-                static void main()
-                {
-                    //business logic
-                }
-            }
+                 static void main()
+                 {
+                     //business logic
+                 }
+             }
             
-            //script
-            var script = @"using System.Reflection;
-                           public static void DoWork()
-                           {
-                               Assembly.GetExecutingAssembly()
-                                       .SingletonExecute(() => 
-                                       {  
-                                           //business logic;
-                                       }, 
-                                       () => Console.WriteLine(""another instance of 'script' is being executed""));
-                           }";
+             //script
+             var script = @"using System.Reflection;
+                            public static void DoWork()
+                            {
+                                Assembly.GetExecutingAssembly()
+                                        .SingletonExecute(() =>
+                                        {
+                                            //business logic;
+                                        },
+                                        () => Console.WriteLine(""another instance of 'script' is being executed""));
+                            }";
             
-            var DoWork = CSScript.LoadMethod(script).GetStaticMethod();
-            Task.Run(DoWork);
-            Task.Run(DoWork);
-            Task.Run(DoWork);
-            </code>
-            </summary>
-            <param name="assembly">The assembly.</param>
-            <param name="action">The action.</param>
-            <param name="onBusyAction">The on busy action.</param>
+             var DoWork = CSScript.LoadMethod(script).GetStaticMethod();
+             Task.Run(DoWork);
+             Task.Run(DoWork);
+             Task.Run(DoWork);
+             </code>
+             </summary>
+             <param name="assembly">The assembly.</param>
+             <param name="action">The action.</param>
+             <param name="onBusyAction">The on busy action.</param>
         </member>
         <member name="M:CSScriptLibraryExtensionMethods.GetHelper(System.Reflection.Assembly)">
             <summary>
@@ -2229,17 +2345,17 @@
             <summary>
             The hosting concurrency control.
             <list type="bullet">
-            <item ><description> 
+            <item ><description>
             <para><c>ProcessScope</c></para>
             Mutex name is a derived from the hosting process id.
             Two calls to compile any script will be synchronized if the calls are made from the same host process.
             </description></item>
-            <item ><description> 
+            <item ><description>
             <para><c>ScriptProcessScope</c></para>
             Mutex name is a derived from the combination of the script path and hosting process id.
             Two calls to compile the same script file will be synchronized but only if the calls are made from the same host process.
             </description></item>
-            <item ><description> 
+            <item ><description>
             <para><c>ScriptSystemScope</c></para>
             Mutex name is a derived from the script path.
             Two calls to compile the same script file will be synchronized system wide.
@@ -2249,8 +2365,8 @@
         </member>
         <member name="F:CSScriptLibrary.CSScript.LastCompilingResult">
             <summary>
-            The last script compilation result. Note, invoking CSScript.Compile/CSScript.Load may not trigger the actual compilation if script caching is 
-            engaged. Thus the <c>LastCompilingResult</c> value can be null.  
+            The last script compilation result. Note, invoking CSScript.Compile/CSScript.Load may not trigger the actual compilation if script caching is
+            engaged. Thus the <c>LastCompilingResult</c> value can be null.
             </summary>
         </member>
         <member name="M:CSScriptLibrary.CSScript.Execute(CSScriptLibrary.PrintDelegate,System.String[])">
@@ -2582,79 +2698,6 @@
             <param name="methodCode">The C# code.</param>
             <returns>Instance of <see cref="T:CSScriptLibrary.MethodDelegate"/>.</returns>
         </member>
-        <member name="M:CSScriptLibrary.CSScript.BuildEval(System.String)">
-             <summary>
-             Evaluates string as a method code and returns the <see cref="T:CSScriptLibrary.MethodDelegate"/>.
-             <para><c>BuildEval</c> is a specific case of <see cref="M:CSScriptLibrary.CSScript.LoadMethod"/>, which
-             offers a simpler and more convenient syntactical model. It has number of limitations comparing to
-             the <see cref="M:CSScriptLibrary.CSScript.LoadMethod"/>.
-             <list type="bullet">
-                     <item><description><c>methodCode</c> should contain nothing else but only a single method definition</description></item>
-                     <item><description>The method signature should not contain any return type.</description></item>
-                     <item><description>All namespaces used by the method code should be either specified explicitly in code or listed in the value of <see cref="P:CSScriptLibrary.CSScript.EvalNamespaces"/>.</description></item>
-                     <item><description>The method code can only interact with the types of the currently loaded in the <c>AppDomain.CurrentDomain</c> assemblies.</description></item>
-             </list>
-             This is the when the flexibility is partially sacrificed for the sake of convenience.
-             <para>The following is a typical example of <c>BuildEval</c> usage:</para>
-             <code>
-             CSScript.EvalNamespaces = "System;System.Diagnostics";
-            
-             var Trace = CSScript.BuildEval(@"trace (object message)
-                                              {
-                                                  Trace.WriteLine(""EVAL:"" + message);
-                                              }");
-            
-             var Average = CSScript.BuildEval("avrg (int a, int b)  { return (a+b)/2.0; }");
-            
-             Trace(Average(7, 8));
-             </code>
-             <remarks>Note that CS-Script <c>BuildEval</c> should not be treated as <c>eval</c> in dynamic languages even despite some resemblance. After all C# is a static language.
-             <para>CS-Script <c>BuildEval</c> yields the method delegate, which can access all public types of the AppDomain but it cannot interact with the types instances unless
-             they are directly passed to the delegate or can be accessed through the Type static members.</para>
-             </remarks>
-             </para>
-             </summary>
-             <param name="methodCode">The method code.</param>
-             <returns>Delegate with the "evaluated" routine. It can be invoked as any .NET delegate.</returns>
-        </member>
-        <member name="M:CSScriptLibrary.CSScript.Eval(System.Object[])">
-             <summary>
-             Evaluates string as a method code and executes it with the specified method parameters.
-             <para>
-             <c>Eval</c> is very similar to <see cref="M:CSScriptLibrary.CSScript.BuildEval(System.String)"/> and it shares the some of its limitations.
-             <list type="bullet">
-                 <item><description><c>methodCode</c> should contain nothing else but only a single method definition</description></item>
-                 <item><description>The method signature should not contain any return type.</description></item>
-                 <item><description>All namespaces used by the method code should be either specified explicitly in code or listed in the value of <see cref="P:CSScriptLibrary.CSScript.EvalNamespaces"/>.</description></item>
-             </list>
-             However <c>Eval</c> offers an important advantage comparing to the <c>BuildEval</c> - after the execution it unloads all dynamically emitted routines
-             preventing any potential memory leaks. Though because of this the "evaluated" routines are not reusable thus you need to do the full eval every time
-             you wan to invoke the routine. And of course this can affect performance dramatically and that is why usage of <c>Eval</c> should be considered very carefully.
-            
-             <para>Note that the calling convention is that all parameters of the method to be "evaluated" must be
-             followed by the string of code defining this method. </para>
-             <para>The following is a typical example of <c>Eval</c> usage:</para>
-             <code>
-            
-             var result = CSScript.Eval(1, 3,
-                                      @"sum (int a, int b) {
-                                            return a+b;
-                                        }");
-            
-             </code>
-            
-             <remarks>Note that CS-Script <c>Eval</c> should not be treated as <c>eval</c> in dynamic languages even despite some resemblance.
-             After all C# is a static language.
-             <para>CS-Script <c>Eval</c> can access all public types of the AppDomain but it cannot interact with the types instances unless
-             they are directly passed to the delegate or can be accessed through the Type static members.</para>
-             </remarks>
-            
-            
-             </para>
-             </summary>
-             <param name="args">Collection of the method parameters followed by the method code.</param>
-             <returns>The return value of the method being "evaluated"</returns>
-        </member>
         <member name="M:CSScriptLibrary.CSScript.LoadMethod(System.String,System.String,System.Boolean,System.String[])">
              <summary>
              Surrounds the method implementation code into a class and compiles it code into
@@ -2662,7 +2705,6 @@
              using dynamic methods is to declare them as static methods. In this case they can be
              invoked with wild card character as a class name (e.g. asmHelper.Invoke("*.SayHello")).
              Otherwise you will need to instantiate class "DyamicClass.Script" in order to call dynamic method.
-            
             
              You can have multiple methods implementations in the single methodCode. Also you can specify namespaces at the beginning of the code:
              <code>
@@ -2808,6 +2850,16 @@
             <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
             <returns>Compiled/Loaded assembly.</returns>
         </member>
+        <member name="M:CSScriptLibrary.CSScript.LoadFile(System.String,System.String,System.Boolean,System.String[])">
+            <summary>
+            Compiles script file into assembly with CSExecutor and loads it in current AppDomain
+            </summary>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="assemblyFile">The path of the compiled assembly to be created. If set to null a temporary file name will be used.</param>
+            <param name="debugBuild">'true' if debug information should be included in assembly; otherwise, 'false'.</param>
+            <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
+            <returns>Compiled/Loaded assembly.</returns>
+        </member>
         <member name="M:CSScriptLibrary.CSScript.LoadWithConfig(System.String,System.String,System.Boolean,csscript.Settings,System.String,System.String[])">
             <summary>
             Compiles script file into assembly with CSExecutor and loads it in current AppDomain
@@ -2828,7 +2880,24 @@
             <param name="scriptFile">The path to the script file to be compiled.</param>
             <returns>Compiled/Loaded assembly.</returns>
         </member>
+        <member name="M:CSScriptLibrary.CSScript.LoadFile(System.String)">
+            <summary>
+            Compiles script file into assembly (temporary file) with CSExecutor and loads it in current AppDomain.
+            This method is an equivalent of the CSScript.Load(scriptFile, null, false);
+            </summary>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <returns>Compiled/Loaded assembly.</returns>
+        </member>
         <member name="M:CSScriptLibrary.CSScript.Load(System.String,System.String[])">
+            <summary>
+            Compiles script file into assembly (temporary file) with CSExecutor and loads it in current AppDomain.
+            This method is an equivalent of the CSScript.Load(scriptFile, null, false);
+            </summary>
+            <param name="scriptFile">The path to the script file to be compiled.</param>
+            <param name="refAssemblies">The string array containing file names to the additional assemblies referenced by the script. </param>
+            <returns>Compiled/Loaded assembly.</returns>
+        </member>
+        <member name="M:CSScriptLibrary.CSScript.LoadFile(System.String,System.String[])">
             <summary>
             Compiles script file into assembly (temporary file) with CSExecutor and loads it in current AppDomain.
             This method is an equivalent of the CSScript.Load(scriptFile, null, false);
@@ -2884,7 +2953,7 @@
             <summary>
             Global instance of <see cref="T:CSScriptLibrary.CodeDomEvaluator"/>. This object is to be used for
             dynamic loading of the  C# code by using Roslyn "compiler as service".
-            <para>If you need to use multiple instances of th evaluator then you will need to call 
+            <para>If you need to use multiple instances of th evaluator then you will need to call
             <see cref="T:CSScriptLibrary.IEvaluator"/>.Clone().
             </para>
             </summary>
@@ -2994,29 +3063,6 @@
             <value>
             <c>true</c> if compiling history should be kept; otherwise, <c>false</c>.
             </value>
-        </member>
-        <member name="P:CSScriptLibrary.CSScript.EvalNamespaces">
-             <summary>
-             Sets the <c>;</c>-delimited string containing namespaces to be used by the C# expressions being compiled with
-             <see cref="M:CSScriptLibrary.CSScript.Eval"/>.
-             <para>The default value is <c>"System;System.IO;System.Diagnostics;System.Collections.Generic;System.Threading"</c></para>
-             </summary>
-             <para>The following is a typical example of <c>BuildEval</c> usage:</para>
-             <code>
-             CSScript.EvalNamespaces = "System;System.Diagnostics";
-            
-             var Trace = CSScript.BuildEval(@"trace (object message)
-                                              {
-                                                  Trace.WriteLine(""EVAL:"" + message);
-                                              }");
-            
-             var Average = CSScript.BuildEval("avrg (int a, int b)  { return (a+b)/2.0; }");
-            
-             Trace(Average(7, 8));
-             </code>
-             <value>
-             The <c>Eval</c> namespaces.
-             </value>
         </member>
         <member name="P:CSScriptLibrary.CSScript.ResolveSourceAlgorithm">
             <summary>
@@ -3540,23 +3586,23 @@
         </member>
         <member name="M:CSScriptLibrary.CodeDomEvaluator.Clone(System.Boolean)">
             <summary>
-            Clones itself as <see cref="T:CSScriptLibrary.IEvaluator"/>. 
+            Clones itself as <see cref="T:CSScriptLibrary.IEvaluator"/>.
             <para>
-            This method returns a freshly initialized copy of the <see cref="T:CSScriptLibrary.IEvaluator"/>. 
+            This method returns a freshly initialized copy of the <see cref="T:CSScriptLibrary.IEvaluator"/>.
             The cloning 'depth' can be controlled by the <paramref name="copyRefAssemblies"/>.
             </para>
-            <para>   
-            This method is a convenient technique when multiple <see cref="T:CSScriptLibrary.IEvaluator"/> instances  
+            <para>
+            This method is a convenient technique when multiple <see cref="T:CSScriptLibrary.IEvaluator"/> instances
             are required (e.g. for concurrent script evaluation).
             </para>
             </summary>
-            <param name="copyRefAssemblies">if set to <c>true</c> all referenced assemblies from the parent <see cref="T:CSScriptLibrary.IEvaluator"/> 
+            <param name="copyRefAssemblies">if set to <c>true</c> all referenced assemblies from the parent <see cref="T:CSScriptLibrary.IEvaluator"/>
             will be referenced in the cloned copy.</param>
             <returns>The freshly initialized instance of the <see cref="T:CSScriptLibrary.IEvaluator"/>.</returns>
         </member>
         <member name="M:CSScriptLibrary.CodeDomEvaluator.CompileCode(System.String)">
              <summary>
-             Evaluates (compiles) C# code (script). The C# code is a typical C# code containing a single or multiple class definition(s). 
+             Evaluates (compiles) C# code (script). The C# code is a typical C# code containing a single or multiple class definition(s).
              </summary>
              <example>
             <code>
@@ -3569,8 +3615,8 @@
                                                            return a+b;
                                                        }
                                                    }");
-                                                      
-             dynamic script =  asm.CreateObject("*"); 
+            
+             dynamic script =  asm.CreateObject("*");
              var result = script.Sum(7, 3);
              </code>
              </example>
@@ -3581,7 +3627,7 @@
              <summary>
              Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>) and evaluates it.
              <para>
-             This method is a logical equivalent of <see cref="M:CSScriptLibrary.IEvaluator.CompileCode(System.String)"/> but is allows you to define 
+             This method is a logical equivalent of <see cref="M:CSScriptLibrary.IEvaluator.CompileCode(System.String)"/> but is allows you to define
              your script class by specifying class method instead of whole class declaration.</para>
              </summary>
              <example>
@@ -3591,8 +3637,8 @@
                                                        {
                                                            return a+b;
                                                        }")
-                                      .CreateObject("*"); 
-                                      
+                                      .CreateObject("*");
+            
              var result = script.Sum(7, 3);
              </code>
              </example>
@@ -3640,7 +3686,7 @@
         </member>
         <member name="M:CSScriptLibrary.CodeDomEvaluator.GetReferencedAssemblies">
             <summary>
-            Loads and returns set of referenced assemblies. 
+            Loads and returns set of referenced assemblies.
             <para>
             Notre: the set of assemblies is cleared on Reset.
             </para>
@@ -3681,7 +3727,7 @@
              <summary>
              Evaluates and loads C# code to the current AppDomain. Returns instance of the first class defined in the code.
              After initializing the class instance it is aligned to the interface specified by the parameter <c>T</c>.
-             <para><c>Note:</c> Because the interface alignment is a duck typing implementation the script class doesn't have to 
+             <para><c>Note:</c> Because the interface alignment is a duck typing implementation the script class doesn't have to
              inherit from <c>T</c>.</para>
              </summary>
              <example>The following is the simple example of the interface alignment:
@@ -3709,25 +3755,25 @@
              <returns>Aligned to the <c>T</c> interface instance of the class defined in the script.</returns>
         </member>
         <member name="M:CSScriptLibrary.CodeDomEvaluator.LoadDelegate``1(System.String)">
-            <summary>
-            Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), evaluates it and loads 
-            the class to the current AppDomain.
-            <para>Returns instance of <c>T</c> delegate for the first method in the auto-generated class.</para>
-            </summary>
-             <example>
-            <code>
-            var Product = CSScript.CodeDomEvaluator
-                                  .LoadDelegate&lt;Func&lt;int, int, int&gt;&gt;(
-                                              @"int Product(int a, int b)
-                                                {
-                                                    return a * b;
-                                                }");
-                                           
-            int result = Product(3, 2);
-            </code>
-            </example>
-            <param name="code">The C# code.</param>
-            <returns>Instance of <c>T</c> delegate.</returns>
+             <summary>
+             Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), evaluates it and loads
+             the class to the current AppDomain.
+             <para>Returns instance of <c>T</c> delegate for the first method in the auto-generated class.</para>
+             </summary>
+              <example>
+             <code>
+             var Product = CSScript.CodeDomEvaluator
+                                   .LoadDelegate&lt;Func&lt;int, int, int&gt;&gt;(
+                                               @"int Product(int a, int b)
+                                                 {
+                                                     return a * b;
+                                                 }");
+            
+             int result = Product(3, 2);
+             </code>
+             </example>
+             <param name="code">The C# code.</param>
+             <returns>Instance of <c>T</c> delegate.</returns>
         </member>
         <member name="M:CSScriptLibrary.CodeDomEvaluator.LoadFile(System.String)">
              <summary>
@@ -3738,7 +3784,7 @@
             <code>
              dynamic script = CSScript.CodeDomEvaluator
                                       .LoadFile("calc.cs");
-                                      
+            
              int result = script.Sum(1, 2);
              </code>
              </example>/// <param name="scriptFile">The C# script file.</param>
@@ -3761,7 +3807,7 @@
              ....
              ICalc calc = CSScript.CodeDomEvaluator
                                   .LoadFile&lt;ICalc&gt;("calc.cs");
-                                  
+            
              int result = calc.Sum(1, 2);
              </code>
              </example>
@@ -3771,7 +3817,7 @@
         </member>
         <member name="M:CSScriptLibrary.CodeDomEvaluator.LoadMethod(System.String)">
              <summary>
-             Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), evaluates it and loads 
+             Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), evaluates it and loads
              the class to the current AppDomain.
              </summary>
              <example>The following is the simple example of the LoadMethod usage:
@@ -3790,7 +3836,7 @@
         </member>
         <member name="M:CSScriptLibrary.CodeDomEvaluator.LoadMethod``1(System.String)">
             <summary>
-            Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), evaluates it and loads 
+            Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), evaluates it and loads
             the class to the current AppDomain.
             <para>
             After initializing the class instance it is aligned to the interface specified by the parameter <c>T</c>.
@@ -3823,7 +3869,7 @@
         <member name="M:CSScriptLibrary.CodeDomEvaluator.ReferenceAssembliesFromCode(System.String,System.String[])">
             <summary>
             References the assemblies from the script code.
-            <para>The method analyses and tries to resolve CS-Script directives (e.g. '//css_ref') and 'used' namespaces based on the 
+            <para>The method analyses and tries to resolve CS-Script directives (e.g. '//css_ref') and 'used' namespaces based on the
             optional search directories.</para>
             </summary>
             <param name="code">The script code.</param>
@@ -3910,9 +3956,9 @@
             Resets Evaluator.
             <para>
             Resetting means clearing all referenced assemblies, recreating evaluation infrastructure (e.g. compiler setting)
-            and reconnection to or recreation of the underlying compiling services. 
+            and reconnection to or recreation of the underlying compiling services.
             </para>
-            <para>Optionally the default current AppDomain assemblies can be referenced automatically with 
+            <para>Optionally the default current AppDomain assemblies can be referenced automatically with
             <paramref name="referenceDomainAssemblies"/>.</para>
             </summary>
             <param name="referenceDomainAssemblies">if set to <c>true</c> the default assemblies of the current AppDomain
@@ -3929,7 +3975,7 @@
         </member>
         <member name="P:CSScriptLibrary.CodeDomEvaluator.DisableReferencingFromCode">
             <summary>
-            Gets or sets the flag indicating if the script code should be analyzed and the assemblies 
+            Gets or sets the flag indicating if the script code should be analyzed and the assemblies
             that the script depend on (via '//css_...' and 'using ...' directives) should be referenced.
             </summary>
             <value></value>
@@ -3956,34 +4002,34 @@
         </member>
         <member name="M:CSScriptLibrary.MonoEvaluator.Clone(System.Boolean)">
              <summary>
-             Clones itself as <see cref="T:CSScriptLibrary.IEvaluator"/>. 
+             Clones itself as <see cref="T:CSScriptLibrary.IEvaluator"/>.
              <para>
-             This method returns a freshly initialized copy of the <see cref="T:CSScriptLibrary.IEvaluator"/>. 
+             This method returns a freshly initialized copy of the <see cref="T:CSScriptLibrary.IEvaluator"/>.
              The cloning 'depth' can be controlled by the <paramref name="copyRefAssemblies"/>.
              </para>
              <para>
-             This method is a convenient technique when multiple <see cref="T:CSScriptLibrary.IEvaluator"/> instances  
+             This method is a convenient technique when multiple <see cref="T:CSScriptLibrary.IEvaluator"/> instances
              are required (e.g. for concurrent script evaluation).
              </para>
              </summary>
-             <param name="copyRefAssemblies">if set to <c>true</c> all referenced assemblies from the parent <see cref="T:CSScriptLibrary.IEvaluator"/> 
+             <param name="copyRefAssemblies">if set to <c>true</c> all referenced assemblies from the parent <see cref="T:CSScriptLibrary.IEvaluator"/>
              will be referenced in the cloned copy.</param>
              <returns>The freshly initialized instance of the <see cref="T:CSScriptLibrary.IEvaluator"/>.</returns>
              <example>
             <code>
              var eval1 = CSScript.MonoEvaluator.Clone();
              var eval2 = CSScript.MonoEvaluator.Clone();
-             
+            
              var sub = eval1.LoadDelegate&lt;Func&lt;int, int, int&gt;&gt;(
                                         @"int Sub(int a, int b) {
                                               return a - b;
                                           }");
-                                          
+            
              var sum = eval2.LoadDelegate&lt;Func&lt;int, int, int&gt;&gt;(
                                         @"int Sub(int a, int b) {
                                               return a + b;
                                           }");
-                                          
+            
              var result = sum(7, sub(4,2));
              </code>
              </example>
@@ -4003,10 +4049,10 @@
             <summary>
             Resets Evaluator.
             <para>
-            Resetting means clearing all referenced assemblies, recreating <see cref="T:Mono.CSharp.CompilerSettings"/>, 
-            <see cref="P:CSScriptLibrary.MonoEvaluator.CompilingResult"/> and underlying compiling services. 
+            Resetting means clearing all referenced assemblies, recreating <see cref="T:Mono.CSharp.CompilerSettings"/>,
+            <see cref="P:CSScriptLibrary.MonoEvaluator.CompilingResult"/> and underlying compiling services.
             </para>
-            <para>Optionally the default current AppDomain assemblies can be referenced automatically with 
+            <para>Optionally the default current AppDomain assemblies can be referenced automatically with
             <paramref name="referenceDomainAssemblies"/>.</para>
             </summary>
             <param name="referenceDomainAssemblies">if set to <c>true</c> the default assemblies of the current AppDomain
@@ -4017,7 +4063,7 @@
         <member name="F:CSScriptLibrary.MonoEvaluator.CreateCompilerSettings">
             <summary>
             The delegate for creating Mono compiler settings instance (<see cref="P:CSScriptLibrary.MonoEvaluator.CompilerSettings"/>). The delegate
-            is a convenient way to specify global defaults for compiler settings. 
+            is a convenient way to specify global defaults for compiler settings.
             <example>
             <code>MonoEvaluator.CreateCompilerSettings = () =&gt; new CompilerSettings {Unsafe = true };</code>
             </example>
@@ -4115,7 +4161,7 @@
         </member>
         <member name="M:CSScriptLibrary.MonoEvaluator.GetReferencedAssemblies">
             <summary>
-            Returns set of referenced assemblies. 
+            Returns set of referenced assemblies.
             <para>
             Notre: the set of assemblies is get cleared on Reset.
             </para>
@@ -4153,7 +4199,7 @@
             <code>
              dynamic script = CSScript.MonoEvaluator
                                       .LoadFile("calc.cs");
-                                      
+            
              int result = script.Sum(1, 2);
              </code>
              </example>/// <param name="scriptFile">The C# script file.</param>
@@ -4163,7 +4209,7 @@
              <summary>
              Evaluates and loads C# code to the current AppDomain. Returns instance of the first class defined in the code.
              After initializing the class instance it is aligned to the interface specified by the parameter <c>T</c>.
-             <para><c>Note:</c> Because the interface alignment is a duck typing implementation the script class doesn't have to 
+             <para><c>Note:</c> Because the interface alignment is a duck typing implementation the script class doesn't have to
              inherit from <c>T</c>.</para>
              </summary>
              <example>The following is the simple example of the interface alignment:
@@ -4215,7 +4261,7 @@
              ....
              ICalc calc = CSScript.MonoEvaluator
                                   .LoadFile&lt;ICalc&gt;("calc.cs");
-                                  
+            
              int result = calc.Sum(1, 2);
              </code>
              </example>
@@ -4312,31 +4358,31 @@
              <returns> The instance of a typed <see cref="T:CSScriptLibrary.MethodDelegate`1"/></returns>
         </member>
         <member name="M:CSScriptLibrary.MonoEvaluator.LoadDelegate``1(System.String)">
-            <summary>
-            Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), evaluates it and loads 
-            the class to the current AppDomain.
-            <para>Returns instance of <c>T</c> delegate for the first method in the auto-generated class.</para>
-            </summary>
-             <example>
-            <code>
-            var Product = CSScript.MonoEvaluator
-                                  .LoadDelegate&lt;Func&lt;int, int, int&gt;&gt;(
-                                                 @"int Product(int a, int b)
-                                                   {
-                                                       return a * b;
-                                                   }");
-                                             
-            int result = Product(3, 2);
-            </code>
-            </example>
-            <param name="code">The C# code.</param>
-            <returns>Instance of <c>T</c> delegate.</returns>
+             <summary>
+             Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), evaluates it and loads
+             the class to the current AppDomain.
+             <para>Returns instance of <c>T</c> delegate for the first method in the auto-generated class.</para>
+             </summary>
+              <example>
+             <code>
+             var Product = CSScript.MonoEvaluator
+                                   .LoadDelegate&lt;Func&lt;int, int, int&gt;&gt;(
+                                                  @"int Product(int a, int b)
+                                                    {
+                                                        return a * b;
+                                                    }");
+            
+             int result = Product(3, 2);
+             </code>
+             </example>
+             <param name="code">The C# code.</param>
+             <returns>Instance of <c>T</c> delegate.</returns>
         </member>
         <member name="M:CSScriptLibrary.MonoEvaluator.CompileMethod(System.String)">
              <summary>
              Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>) and evaluates it.
              <para>
-             This method is a logical equivalent of <see cref="M:CSScriptLibrary.IEvaluator.CompileCode(System.String)"/> but is allows you to define 
+             This method is a logical equivalent of <see cref="M:CSScriptLibrary.IEvaluator.CompileCode(System.String)"/> but is allows you to define
              your script class by specifying class method instead of whole class declaration.</para>
              </summary>
              <example>
@@ -4346,8 +4392,8 @@
                                                        {
                                                            return a+b;
                                                        }")
-                                      .CreateObject("*"); 
-                                      
+                                      .CreateObject("*");
+            
              var result = script.Sum(7, 3);
              </code>
              </example>
@@ -4363,7 +4409,7 @@
         </member>
         <member name="M:CSScriptLibrary.MonoEvaluator.CompileCode(System.String)">
              <summary>
-             Evaluates (compiles) C# code (script). The C# code is a typical C# code containing a single or multiple class definition(s). 
+             Evaluates (compiles) C# code (script). The C# code is a typical C# code containing a single or multiple class definition(s).
              </summary>
              <example>
             <code>
@@ -4376,8 +4422,8 @@
                                                            return a+b;
                                                        }
                                                    }");
-                                                      
-             dynamic script =  asm.CreateObject("*"); 
+            
+             dynamic script =  asm.CreateObject("*");
              var result = script.Sum(7, 3);
              </code>
              </example>
@@ -4435,7 +4481,7 @@
         </member>
         <member name="P:CSScriptLibrary.MonoEvaluator.DisableReferencingFromCode">
             <summary>
-            Gets or sets the flag indicating if the script code should be analyzed and the assemblies 
+            Gets or sets the flag indicating if the script code should be analyzed and the assemblies
             that the script depend on (via '//css_...' and 'using ...' directives) should be referenced.
             </summary>
             <value></value>
@@ -4538,7 +4584,7 @@
             <summary>
             <para> Do not use as this interface as it's intended for use by CS-Script engine only. </para>
             Interface that is used by CS-Script engine to build transparent proxies for EvaluatorRemoting extensions.
-            This interface has to be public as it is passed across assemblies. 
+            This interface has to be public as it is passed across assemblies.
             </summary>
         </member>
         <member name="T:CSScriptLibrary.AttachedProperies">
@@ -4576,14 +4622,14 @@
         </member>
         <member name="T:CSScriptLibrary.EvaluatorRemoting">
             <summary>
-            Extension methods for invocation of <see cref="T:CSScriptLibrary.IEvaluator"/> methods in a remote AppDomain. 
+            Extension methods for invocation of <see cref="T:CSScriptLibrary.IEvaluator"/> methods in a remote AppDomain.
             </summary>
         </member>
         <member name="M:CSScriptLibrary.EvaluatorRemoting.GetRemoteDomain(CSScriptLibrary.IEvaluator)">
             <summary>
-            Gets the remote AppDomain associated with the evaluator. 
-            The AppDomain is set to the Evaluator with the last call of 
-            any EvaluatorRemoting extension methods. 
+            Gets the remote AppDomain associated with the evaluator.
+            The AppDomain is set to the Evaluator with the last call of
+            any EvaluatorRemoting extension methods.
             </summary>
             <param name="evaluator">The evaluator.</param>
             <returns></returns>
@@ -4601,7 +4647,7 @@
         <member name="M:CSScriptLibrary.EvaluatorRemoting.GetOwnerDomain(System.Object)">
             <summary>
             Gets the AppDomain owning the actual object the transparent proxy is associated with.
-            The AppDomain is set to the proxy object on any EvaluatorRemoting extension methods call. 
+            The AppDomain is set to the proxy object on any EvaluatorRemoting extension methods call.
             </summary>
             <param name="obj">The transparent proxy object.</param>
             <returns></returns>
@@ -4615,9 +4661,9 @@
         <member name="M:CSScriptLibrary.EvaluatorRemoting.LoadMethodRemotely``1(CSScriptLibrary.IEvaluator,System.String)">
              <summary>
              Loads the method remotely.
-             LoadMethodRemotely is essentially the same as <see cref="M:CSScriptLibrary.EvaluatorRemoting.LoadCodeRemotely``1(CSScriptLibrary.IEvaluator,System.String,System.String[])"/>. 
-             It just deals not with the whole class definition but a method(s) only. And the rest of the class definition is 
-             added automatically by CS-Script. 
+             LoadMethodRemotely is essentially the same as <see cref="M:CSScriptLibrary.EvaluatorRemoting.LoadCodeRemotely``1(CSScriptLibrary.IEvaluator,System.String,System.String[])"/>.
+             It just deals not with the whole class definition but a method(s) only. And the rest of the class definition is
+             added automatically by CS-Script.
              </summary>
              <example>
             <code>
@@ -4631,9 +4677,9 @@
                                                        {
                                                            return a-b;
                                                        }");
-             
+            
              int result = script.Sum(15, 3));
-             
+            
              // after the next line call the remote domain with loaded script will be unloaded
              script.UnloadOwnerDomain();
              </code>
@@ -4656,25 +4702,25 @@
         </member>
         <member name="M:CSScriptLibrary.EvaluatorRemoting.LoadCodeRemotely``1(CSScriptLibrary.IEvaluator,System.String,System.String[])">
              <summary>
-             Loads/evaluates C# code into a remote AppDomain and returns a transparent proxy of the 
+             Loads/evaluates C# code into a remote AppDomain and returns a transparent proxy of the
              instance of the first class defined in the code.
-             <para>The returned proxy can be used to unload the AppDomain owning the actual object 
+             <para>The returned proxy can be used to unload the AppDomain owning the actual object
              the proxy points to.</para>
              </summary>
              <remarks>
-             Note, the concrete type of the return value depends on the script class definition. 
-             It the class implement interface then an ordinary type castes proxy object is returned. 
+             Note, the concrete type of the return value depends on the script class definition.
+             It the class implement interface then an ordinary type castes proxy object is returned.
              However if the class doesn't implement the interface the a dynamically emitted duck-typed
-             proxy returned instead. Such proxy cannot be built for the types implemented in file-less 
-             (in-memory) assemblies. Thus neither Mono nor Roslyn engines cannot be used with this 
-             technique. Meaning that 
+             proxy returned instead. Such proxy cannot be built for the types implemented in file-less
+             (in-memory) assemblies. Thus neither Mono nor Roslyn engines cannot be used with this
+             technique. Meaning that
              <see cref="P:CSScriptLibrary.CSScript.CodeDomEvaluator"/> needs to be used.
-             <para>While the script class to be evaluated doesn't have to implement from 'T' interface but 
+             <para>While the script class to be evaluated doesn't have to implement from 'T' interface but
              it must inherit <see cref="T:System.MarshalByRefObject"/> though.</para>
              </remarks>
              <example>
             <code>
-             // duck-typed proxy; must use CodeDomEvaluator                       
+             // duck-typed proxy; must use CodeDomEvaluator
              var script = CSScript.CodeDomEvaluator
                                   .LoadCodeRemotely&lt;ICalc&gt;(
                                   @"using System;
@@ -4685,8 +4731,8 @@
                                             return a + b;
                                         }
                                     }");
-                                    
-             // ordinary type casted proxy                       
+            
+             // ordinary type casted proxy
              var script2 = CSScript.Evaluator
                                    .LoadCodeRemotely&lt;ICalc&gt;(
                                    @"using System;
@@ -4697,33 +4743,33 @@
                                              return a + b;
                                          }
                                      }");
-                                     
+            
              int result = script.Sum(15, 3);
-              
+            
              // after the next line call the remote domain with loaded script will be unloaded
              script.UnloadOwnerDomain();
              </code>
              </example>
              <typeparam name="T">The interface type the remote object should be casted or aligned (duck-typed) to.</typeparam>
              <param name="evaluator">The evaluator.</param>
-             <param name="scriptCode">The script code that defines the script class to be loaded.  
-             <para>The script class doesn't have to implement from 'T' interface but 
+             <param name="scriptCode">The script code that defines the script class to be loaded.
+             <para>The script class doesn't have to implement from 'T' interface but
              it must inherit <see cref="T:System.MarshalByRefObject"/> though.</para>
              </param>
-             <param name="probingDirs">The probing directories for the assemblies the script 
+             <param name="probingDirs">The probing directories for the assemblies the script
              assembly depends on.</param>
              <returns></returns>
         </member>
         <member name="M:CSScriptLibrary.EvaluatorRemoting.CreateDelegateRemotely(CSScriptLibrary.IEvaluator,System.String,System.String[])">
              <summary>
-             Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>), 
+             Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>),
              evaluates it and loads the class to the remote AppDomain.
-             <para>Returns non-typed <see cref="T:CSScriptLibrary.MethodDelegate"/> of the remote object for 
+             <para>Returns non-typed <see cref="T:CSScriptLibrary.MethodDelegate"/> of the remote object for
              class-less style of invoking.</para>
              </summary>
              <example>
              <code>
-             
+            
              var log = CSScript.Evaluator
                                .CreateDelegateRemotely(
                                                @"void Log(string message)
@@ -4738,13 +4784,13 @@
              </example>
              <param name="evaluator">The evaluator.</param>
              <param name="code">The C# code.</param>
-             <param name="probingDirs">The probing directories for the assemblies the script 
+             <param name="probingDirs">The probing directories for the assemblies the script
              assembly depends on.</param>
              <returns> The instance of a 'duck typed' <see cref="T:CSScriptLibrary.MethodDelegate"/></returns>
         </member>
         <member name="M:CSScriptLibrary.EvaluatorRemoting.CreateDelegateRemotely``1(CSScriptLibrary.IEvaluator,System.String,System.String[])">
              <summary>
-             Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>) implementing interface T, 
+             Wraps C# code fragment into auto-generated class (type name <c>DynamicClass</c>) implementing interface T,
              evaluates it and loads the class to the remote AppDomain.
              <para>Returns typed <see cref="T:CSScriptLibrary.MethodDelegate`1"/> for class-less style of invoking.</para>
              </summary>
@@ -4765,7 +4811,7 @@
              </example>
              <param name="evaluator">The evaluator.</param>
              <param name="code">The C# code.</param>
-             <param name="probingDirs">The probing directories for the assemblies the script 
+             <param name="probingDirs">The probing directories for the assemblies the script
              assembly depends on.</param>
              <returns> The instance of a 'duck typed' <see cref="T:CSScriptLibrary.MethodDelegate"/></returns>
         </member>

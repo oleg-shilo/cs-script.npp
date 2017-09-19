@@ -14,7 +14,7 @@ namespace RoslynIntellisense
             {
                 return Autocompleter.Language;
             }
-        
+
             set
             {
                 Autocompleter.Language = value;
@@ -49,6 +49,7 @@ namespace RoslynIntellisense
         }
 
         Dictionary<string, object> options = new Dictionary<string, object>();
+
         public void SetOption(string name, object value)
         {
             if (name == "ReflectionOutDir")
@@ -109,8 +110,7 @@ namespace RoslynIntellisense
                 //sw.Start();
                 var result = Autocompleter.GetNamespacesFor(editorText, nameToResolve,
                                                         assemblies.ToArray(),
-                                                        sources.Where(x => x.Item2 != fileName))
-                                                        .Result;
+                                                        sources.Where(x => x.Item2 != fileName));
 
                 //sw.Stop();
                 //Console.WriteLine("GetPossibleNamespaces " + sw.ElapsedMilliseconds);

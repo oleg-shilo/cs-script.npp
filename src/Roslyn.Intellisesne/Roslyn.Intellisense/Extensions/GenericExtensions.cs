@@ -26,6 +26,14 @@ namespace RoslynIntellisense
                       .Replace("|", "_");
         }
 
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, Action<T> action)
+        {
+            if (items != null)
+                foreach (var item in items)
+                    action(item);
+            return items;
+        }
+
         public static string ToLiteral(this string input)
         {
             using (var writer = new StringWriter())
@@ -84,12 +92,12 @@ namespace RoslynIntellisense
 
         public static T To<T>(this object obj)
         {
-            return (T) obj;
+            return (T)obj;
         }
 
         public static string PathJoin(this string path, params string[] items)
         {
-            return Path.Combine(new[] { path }.Concat(items).ToArray() );
+            return Path.Combine(new[] { path }.Concat(items).ToArray());
         }
 
         public static string GetDirName(this string path)

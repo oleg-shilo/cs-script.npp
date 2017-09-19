@@ -31,14 +31,20 @@ namespace RoslynIntellisense
                 //Debug.Assert(false);
                 initialized = true;
 
-                probingDir = Assembly.GetExecutingAssembly().Location.GetDirName();
+                probingDir = Assembly.GetExecutingAssembly().Location;
+                if (string.IsNullOrEmpty(probingDir))
+                    probingDir = Assembly.GetCallingAssembly().Location;
+                if (string.IsNullOrEmpty(probingDir))
+                    probingDir = Assembly.GetEntryAssembly().Location;
+                probingDir = probingDir.GetDirName();
+
                 if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
                 {
                     probingDir = probingDir.PathJoin("Roslyn");
                 }
 
-                if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
-                    Debug.Assert(false);
+                // if (!File.Exists(probingDir.PathJoin("Microsoft.CodeAnalysis.dll")))
+                //     Debug.Assert(false);
 
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             }
@@ -184,7 +190,7 @@ namespace RoslynIntellisense
             try
             {
                 var workspace = new AdhocWorkspace();
-                var doc = InitWorkspace(workspace, code, file, references, includes);
+                var doc = InitWorkspace(workspace, code, file, AgregateRefs(references), includes);
 
                 ISymbol symbol = SymbolFinder.FindSymbolAtPositionAsync(doc, position).Result;
 
@@ -239,7 +245,7 @@ namespace RoslynIntellisense
             try
             {
                 var workspace = new AdhocWorkspace();
-                var doc = InitWorkspace(workspace, code, file, references, includes);
+                var doc = InitWorkspace(workspace, code, file, AgregateRefs(references), includes);
 
                 ISymbol symbol = SymbolFinder.FindSymbolAtPositionAsync(doc, position).Result;
 
@@ -326,8 +332,19 @@ namespace RoslynIntellisense
             return file;
         }
 
+        static string[] AgregateRefs(string[] references)
+        {
+            var asms = defaultRefs;
+
+            if (references != null)
+                asms = asms.Concat(references.Where(File.Exists)).ToArray();
+            return asms;
+        }
+
         public static IEnumerable<string> GetMemberInfo(string code, int position, out int methodStartPos, string[] references = null, IEnumerable<Tuple<string, string>> includes = null, bool includeOverloads = false)
         {
+            // Debug.Assert(false);
+
             int actualPosition = position;
 
             if (includeOverloads)  //Resolving method tooltips
@@ -344,7 +361,8 @@ namespace RoslynIntellisense
                 var result = new List<string>();
 
                 var workspace = new AdhocWorkspace();
-                var doc = InitWorkspace(workspace, code, null, references, includes);
+
+                var doc = InitWorkspace(workspace, code, null, AgregateRefs(references), includes);
 
                 var symbol = SymbolFinder.FindSymbolAtPositionAsync(doc, actualPosition).Result;
 
@@ -360,7 +378,11 @@ namespace RoslynIntellisense
                     return result;
                 }
             }
-            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            // catch { } //failed, no need to report, as auto-completion is expected to fail sometimes
             return new string[0];
         }
 
@@ -381,7 +403,7 @@ namespace RoslynIntellisense
 
             GetWordFromCaret(code, position, out logicalPosition, out partialWord, out opContext);
 
-            var completions = Resolve(code, logicalPosition, references, includes).Result;
+            var completions = Resolve(code, logicalPosition, references, includes);
 
             try
             {
@@ -572,19 +594,15 @@ namespace RoslynIntellisense
             return true;
         }
 
-        public async static Task<IEnumerable<ICompletionData>> Resolve(string code, int position, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        public static IEnumerable<ICompletionData> Resolve(string code, int position, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             var completions = new List<ICompletionData>();
 
             var pos = position - 1;
             var workspace = new AdhocWorkspace();
-            var asms = defaultRefs;
 
-            if (references != null)
-                asms = asms.Concat(references).ToArray();
-
-            var document = InitWorkspace(workspace, code, null, asms.ToArray(), includes);
-            var model = await document.GetSemanticModelAsync();
+            var document = InitWorkspace(workspace, code, null, AgregateRefs(references), includes);
+            var model = document.GetSemanticModelAsync().Result;
             var symbols = Recommender.GetRecommendedSymbolsAtPositionAsync(model, position, workspace).Result.ToArray();
 
             var data = symbols.Select(s => s.ToCompletionData()).ToArray();
@@ -638,15 +656,15 @@ namespace RoslynIntellisense
             }
         }
 
-        public async static Task<IEnumerable<Intellisense.Common.TypeInfo>> GetNamespacesFor(string editorText, string nameToResolve, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        public static IEnumerable<Intellisense.Common.TypeInfo> GetNamespacesFor(string editorText, string nameToResolve, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             var suggestions = new List<Intellisense.Common.TypeInfo>();
 
             var workspace = new AdhocWorkspace();
 
-            var doc = InitWorkspace(workspace, editorText, null, references, includes);
+            var doc = InitWorkspace(workspace, editorText, null, AgregateRefs(references), includes);
 
-            IEnumerable<ISymbol> result = await SymbolFinder.FindDeclarationsAsync(doc.Project, nameToResolve, ignoreCase: false);
+            IEnumerable<ISymbol> result = SymbolFinder.FindDeclarationsAsync(doc.Project, nameToResolve, ignoreCase: false).Result;
             foreach (ISymbol declaration in result)
             {
                 if (declaration.Kind != SymbolKind.NamedType)
@@ -777,92 +795,94 @@ namespace RoslynIntellisense
         static CodeMapItem[] GetMapOfVB(string code, bool decorated)
         {
             throw new SyntaxErrorParsingException("VB syntax is not supported for Code Map.");
-#pragma warning disable 162
-            SyntaxTree tree = VB.VisualBasicSyntaxTree.ParseText(code);
 
-            var root = tree.GetRoot();
+            // if enabled and fixed still need to be isolated in the separate class as otherwise it triggers probing VB Roslyn asms, which are not present on Linux (e.g. Omnisharp)
 
-            var map = new List<CodeMapItem>();
+            // SyntaxTree tree = VB.VisualBasicSyntaxTree.ParseText(code);
 
-            var nodes = root.DescendantNodes();
+            // var root = tree.GetRoot();
 
-            var types = nodes.OfType<VB.Syntax.TypeBlockSyntax>()
-                             .OrderBy(x => x.FullSpan.End)
-                             .ToArray();
+            // var map = new List<CodeMapItem>();
 
-            //not sure what is the VB equivalent
-            //foreach (VB.Syntax.EnumBlockSyntax type in nodes.OfType<VB.Syntax.EnumBlockSyntax>())
-            //{
-            //    var parentType = type.Parent as VB.Syntax.DeclarationStatementSyntax;
+            // var nodes = root.DescendantNodes();
 
-            //    map.Add(new CodeMapItem
-            //    {
-            //        Line = type.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
-            //        Column = type.GetLocation().GetLineSpan().StartLinePosition.Character,
-            //        DisplayName = type.Identifier.Text,
-            //        ParentDisplayName = parentType.GetFullName(),
-            //        MemberType = "Enum"
-            //    });
-            //}
+            // var types = nodes.OfType<VB.Syntax.TypeBlockSyntax>()
+            //                  .OrderBy(x => x.FullSpan.End)
+            //                  .ToArray();
 
-            foreach (VB.Syntax.TypeBlockSyntax type in types)
-            {
-                foreach (var member in type.ChildNodes().OfType<VB.Syntax.MethodBlockSyntax>())
-                {
-                    //if (member is VB.Syntax.MethodBlockSyntax)
-                    //{
-                    //    var method = (member as VB.Syntax.MethodStatementSyntax);
-                    //    map.Add(new CodeMapItem
-                    //    {
-                    //        Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
-                    //        Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
-                    //        //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
-                    //        DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
-                    //        ParentDisplayName = type.GetFullName(),
-                    //        MemberType = "Method"
-                    //    });
-                    //}
-                    //else if (member is PropertyDeclarationSyntax)
-                    //{
-                    //var prop = (member as PropertyDeclarationSyntax);
-                    //map.Add(new CodeMapItem
-                    //{
-                    //    Line = prop.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
-                    //    Column = prop.GetLocation().GetLineSpan().StartLinePosition.Character,
-                    //    DisplayName = prop.Identifier.ValueText,
-                    //    ParentDisplayName = type.GetFullName(),
-                    //    MemberType = "Property"
-                    //});
-                    //}
-                    //else
-                    //if (member is FieldDeclarationSyntax)
-                    //{
-                    //var field = (member as FieldDeclarationSyntax);
-                    //map.Add(new CodeMapItem
-                    //{
-                    //    Line = field.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
-                    //    Column = field.GetLocation().GetLineSpan().StartLinePosition.Character,
-                    //    DisplayName = field.Declaration.Variables.First().Identifier.Text,
-                    //    ParentDisplayName = type.GetFullName(),
-                    //    MemberType = "Field"
-                    //});
-                    //}
-                }
-            }
+            // //not sure what is the VB equivalent
+            // //foreach (VB.Syntax.EnumBlockSyntax type in nodes.OfType<VB.Syntax.EnumBlockSyntax>())
+            // //{
+            // //    var parentType = type.Parent as VB.Syntax.DeclarationStatementSyntax;
 
-            //if (decorated && map.Any())
-            //{
-            //    string rootClassName = map.First().ParentDisplayName;
-            //    foreach (var item in map.Skip(1))
-            //    {
-            //        if (item.ParentDisplayName == rootClassName)
-            //            item.ParentDisplayName = "<Global>";
-            //        else if (item.ParentDisplayName.StartsWith(rootClassName + "."))
-            //            item.ParentDisplayName = item.ParentDisplayName.Substring(rootClassName.Length + 1);
-            //    }
-            //}
+            // //    map.Add(new CodeMapItem
+            // //    {
+            // //        Line = type.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+            // //        Column = type.GetLocation().GetLineSpan().StartLinePosition.Character,
+            // //        DisplayName = type.Identifier.Text,
+            // //        ParentDisplayName = parentType.GetFullName(),
+            // //        MemberType = "Enum"
+            // //    });
+            // //}
 
-            return map.ToArray();
+            // foreach (VB.Syntax.TypeBlockSyntax type in types)
+            // {
+            //     foreach (var member in type.ChildNodes().OfType<VB.Syntax.MethodBlockSyntax>())
+            //     {
+            //         //if (member is VB.Syntax.MethodBlockSyntax)
+            //         //{
+            //         //    var method = (member as VB.Syntax.MethodStatementSyntax);
+            //         //    map.Add(new CodeMapItem
+            //         //    {
+            //         //        Line = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+            //         //        Column = method.GetLocation().GetLineSpan().StartLinePosition.Character,
+            //         //        //DisplayName = method.Identifier.Text + method.ParameterList, //nicely prints all params with their types and names
+            //         //        DisplayName = method.Identifier.Text + "(" + new string(',', Math.Max(method.ParameterList.Parameters.Count - 1, 0)) + ")",
+            //         //        ParentDisplayName = type.GetFullName(),
+            //         //        MemberType = "Method"
+            //         //    });
+            //         //}
+            //         //else if (member is PropertyDeclarationSyntax)
+            //         //{
+            //         //var prop = (member as PropertyDeclarationSyntax);
+            //         //map.Add(new CodeMapItem
+            //         //{
+            //         //    Line = prop.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+            //         //    Column = prop.GetLocation().GetLineSpan().StartLinePosition.Character,
+            //         //    DisplayName = prop.Identifier.ValueText,
+            //         //    ParentDisplayName = type.GetFullName(),
+            //         //    MemberType = "Property"
+            //         //});
+            //         //}
+            //         //else
+            //         //if (member is FieldDeclarationSyntax)
+            //         //{
+            //         //var field = (member as FieldDeclarationSyntax);
+            //         //map.Add(new CodeMapItem
+            //         //{
+            //         //    Line = field.GetLocation().GetLineSpan().StartLinePosition.Line + 1,
+            //         //    Column = field.GetLocation().GetLineSpan().StartLinePosition.Character,
+            //         //    DisplayName = field.Declaration.Variables.First().Identifier.Text,
+            //         //    ParentDisplayName = type.GetFullName(),
+            //         //    MemberType = "Field"
+            //         //});
+            //         //}
+            //     }
+            // }
+
+            // //if (decorated && map.Any())
+            // //{
+            // //    string rootClassName = map.First().ParentDisplayName;
+            // //    foreach (var item in map.Skip(1))
+            // //    {
+            // //        if (item.ParentDisplayName == rootClassName)
+            // //            item.ParentDisplayName = "<Global>";
+            // //        else if (item.ParentDisplayName.StartsWith(rootClassName + "."))
+            // //            item.ParentDisplayName = item.ParentDisplayName.Substring(rootClassName.Length + 1);
+            // //    }
+            // //}
+
+            // return map.ToArray();
         }
     }
 
