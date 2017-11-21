@@ -258,7 +258,7 @@
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>copy "$(ProjectDir)..\NppShortcutRemapper\bin\NppShortcutRemapper.exe" "$(ProjectDir)Resources\NppShortcutRemapper.exe"
-"$(ProjectDir)Interop\DllExport\CheckILDasmPath.exe"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>

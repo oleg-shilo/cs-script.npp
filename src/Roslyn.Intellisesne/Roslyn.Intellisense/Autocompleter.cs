@@ -368,7 +368,7 @@ namespace RoslynIntellisense
 
                 if (symbol != null)
                 {
-                    result.Add(symbol.ToTooltip());
+                    result.Add(symbol.ToTooltip(!includeOverloads));
 
                     if (includeOverloads)
                     {
@@ -672,10 +672,8 @@ namespace RoslynIntellisense
 
                 var name = declaration.Name;
                 var nmspace = declaration.GetNamespace();
-                if (!string.IsNullOrEmpty(nmspace))
-                    name = nmspace + "." + name;
 
-                var info = new Intellisense.Common.TypeInfo { Namespace = nmspace, FullName = name };
+                var info = new Intellisense.Common.TypeInfo { Namespace = nmspace, FullName = declaration.ToString() };
                 suggestions.Add(info);
             }
 

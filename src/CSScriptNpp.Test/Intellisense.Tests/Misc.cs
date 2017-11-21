@@ -67,6 +67,7 @@ namespace NSTest
 }
 
 ";
+
         int GetCaretPosition(ref string code)
         {
             int retval = code.IndexOf("|") + 1;
@@ -141,8 +142,8 @@ using System.Windows.Forms;
 class Script
 {
     static public void Main()
-    { 
-        Script.Load +=|  
+    {
+        Script.Load +=|
     }
     static event EventHandler Load;
     static void OnLoad1(){}
@@ -173,7 +174,7 @@ class Script
     {
         AppDomain.CurrentDomain.AssemblyResolve += |
         //var form = new Form();
-        //form.Load+= |  
+        //form.Load+= |
     }
 }";
             int pos = GetCaretPosition(ref code);
@@ -181,9 +182,9 @@ class Script
             var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
 
             Assert.Equal(3, data.Count());
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - lambda");
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - delegate");
-            Assert.Contains(data, x => x.DisplayText == "OnLoad - method");
+            Assert.Contains(data, x => x.DisplayText == "OnAssemblyResolve - lambda");
+            Assert.Contains(data, x => x.DisplayText == "OnAssemblyResolve - delegate");
+            Assert.Contains(data, x => x.DisplayText == "OnAssemblyResolve - method");
             //Assert.Equal("OnLoad;", data.Last().CompletionText);
         }
 
@@ -200,7 +201,7 @@ class Script
     static public void Main()
     {
         var text = ""test"";
-        text +=|  
+        text +=|
     }
 }";
             int pos = GetCaretPosition(ref code);
@@ -223,7 +224,7 @@ class Script
 {
     static public void Main()
     {
-        Script.dialog =| 
+        Script.dialog =|
     }
     static Form dialog;
 ";
@@ -246,7 +247,7 @@ class Script
     static public void Main()
     {
         var form = new Form();
-        form.DialogResult=| 
+        form.DialogResult=|
     }
 ";
             int pos = GetCaretPosition(ref code);
@@ -257,7 +258,6 @@ class Script
             Assert.Contains(data, x => x.DisplayText == "DialogResult - value");
             Assert.Equal("DialogResult.", data.Last().CompletionText);
         }
-
 
         [Fact]
         public void CompletePartialWord()
@@ -374,7 +374,7 @@ class Script
 }", 124, "test.cs", true);
 
             Assert.Equal(1, info.Count());
-            Assert.Equal("Method: void Console.WriteLine() (+ 18 overload(s))", info.First().GetLines(2).First());
+            Assert.Equal("Method: void Console.WriteLine(int value) (+ 18 overloads)", info.First().GetLine(0));
         }
 
         [Fact]
@@ -487,14 +487,14 @@ using System.Linq;
 class Script
 {
     Script script;
-    
+
     static public void Main(string[] args)
     {
     }
 }", 61, "test.cs", true);
 
             Assert.Equal(1, info.Count());
-            Assert.Equal("Type: Script", info.First());
+            Assert.Equal("Class: Script", info.First());
         }
 
         [Fact]
@@ -515,14 +515,13 @@ class Script
 }", 126, "test.cs", false);
 
             Assert.Equal(12, info.Count());
-            Assert.Equal("Constructor: DateTime() (+ 11 overloads)", info.OrderBy(x => x).First().GetLine(0));
+            Assert.Equal("Constructor: DateTime()", info.OrderBy(x => x).First().GetLine(0));
         }
 
         [Fact]
         public void GenerateMemeberFullInfo()
         {
             SimpleCodeCompletion.ResetProject();
-
 
             var code = @"using System;
 using System.Linq;
@@ -537,7 +536,7 @@ class Script
             int pos = GetCaretPosition(ref code);
             //Console.WriteLine(|
             string[] info = SimpleCodeCompletion.GetMemberInfo(code, 131, "test.cs", false)
-                                                .OrderBy(x=>x)
+                                                .OrderBy(x => x)
                                                 .ToArray();
 
             Assert.Equal(19, info.Count());
@@ -638,7 +637,6 @@ class Script
             builder.Clear();
             builder.Append(
     @"{
-
 ");
             string test = builder.TrimEmptyEndLines(0).ToString();
             Assert.Equal("{" + Environment.NewLine, test);

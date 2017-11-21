@@ -17,10 +17,9 @@ namespace Testing
 
             var doc = provider.GetDocumentationFor("P:System.Console.Out");
 
-            Assert.True(doc.StartsWith("Gets the standard output stream."));
-            Assert.True(doc.EndsWith("Returns: A System.IO.TextWriter that represents the standard output stream."));
+            Assert.True(doc.StartsWith("<member name=\"P:System.Console.Out\">"));
+            Assert.True(doc.Contains("that represents the standard output stream."));
         }
-
 
         [Fact]
         public void ComposeEventPropTooltip()
@@ -35,7 +34,7 @@ using System.Linq;
 static class Script
 {
     static IEnumerable<List<int>> test = new List<List<int>>();
-    IEnumerable<List<int>> Test {get { return test;} } 
+    IEnumerable<List<int>> Test {get { return test;} }
     event Action action;
     static public void Main(string[] args)
     {
@@ -225,7 +224,7 @@ class Script
 using System.Linq;
 
 class Script
-{               
+{
     static public void Main(string[] args)
     {
         var s = new Script();
@@ -238,7 +237,6 @@ class Script
     static void Test(){};
 }";
             int pos = GetCaretPosition(ref code);
-
 
             //test.cs(9,11): s.Test();
             var locations = SimpleCodeCompletion.FindReferences(code, pos, "test.cs");

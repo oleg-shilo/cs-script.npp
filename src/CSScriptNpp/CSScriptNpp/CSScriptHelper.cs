@@ -156,11 +156,11 @@ namespace CSScriptNpp
             try
             {
                 //AutoClass_DecorateAsCS6: False
-                var output = Run(cscs_exe, "-nl -config:get:AutoClass_DecorateAsCS6");
+                var output = Run(cscs_exe, "-config:get:AutoClass_DecorateAsCS6");
                 bool injectingCS6_enabled = bool.Parse(output.Split(':').Last());
                 if (supportCS6Syntax != injectingCS6_enabled)
                 {
-                    Call(cscs_exe, "-nl -config:set:AutoClass_DecorateAsCS6:" + supportCS6Syntax, asAdmin: true);
+                    Call(cscs_exe, "-config:set:AutoClass_DecorateAsCS6:" + supportCS6Syntax, asAdmin: true);
                 }
             }
             catch { } //failure is not critical as future script compile errors will be informative anyway
@@ -296,7 +296,7 @@ namespace CSScriptNpp
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
-                p.StartInfo.Arguments = "/nl /ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
+                p.StartInfo.Arguments = "-ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.CreateNoWindow = true;
@@ -398,7 +398,7 @@ namespace CSScriptNpp
             {
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
-                p.StartInfo.Arguments = "/nl /l /d " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
+                p.StartInfo.Arguments = "-l -d " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
                 bool useFileRedirection = false;
@@ -526,7 +526,7 @@ class Script
 }");
                 File.SetLastWriteTimeUtc(file, DateTime.Now.ToUniversalTime());
 
-                string args = string.Format("/d /l {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
+                string args = string.Format("-d -l {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
                 //Process.Start(csws_exe, args);
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
@@ -542,7 +542,7 @@ class Script
         {
             string cscs = "\"" + cscs_exe + "\"";
             string script = "\"" + scriptFile + "\"";
-            string debugFlag = "/d ";
+            string debugFlag = "-d ";
             if (!Config.Instance.RunExternalInDebugMode)
                 debugFlag = " ";
 
@@ -572,7 +572,7 @@ class Script
 
         static public void ExecuteDebug(string scriptFileCmd)
         {
-            ProcessStart("cmd.exe", "/K \"\"" + cscs_exe + "\" /nl /l /d " + GenerateDefaultArgs(scriptFileCmd) + " \"" + scriptFileCmd + "\" //x\"");
+            ProcessStart("cmd.exe", "/K \"\"" + cscs_exe + "\" -l -d " + GenerateDefaultArgs(scriptFileCmd) + " \"" + scriptFileCmd + "\" //x\"");
         }
 
         static public Func<string, string> NotifyClient;
@@ -859,7 +859,8 @@ class Script
         static bool IsAutoclassScriptDirective(string text)
         {
             string[] words = text.Split(lineWordDelimiters, StringSplitOptions.RemoveEmptyEntries);
-            return words.Any() && words.First() == "//css_args" && (words.Contains("/ac") || words.Contains("/ac,") || words.Contains("/ac;"));
+            return words.Any() && words.First() == "//css_args" && (words.Contains("/ac") || words.Contains("/ac,") || words.Contains("/ac;") ||
+                                                                    words.Contains("-ac") || words.Contains("-ac,") || words.Contains("-ac;"));
         }
 
         static bool IsAsAdminScriptDirective(string text)
@@ -959,7 +960,7 @@ class Script
                 string script = "\"" + scriptFile + "\"";
 
                 string cscs = engineFile;
-                string args = string.Format("/e{2} {0} {1}", GenerateDefaultArgs(scriptFile), script, (windowApp ? "w" : ""));
+                string args = string.Format("-e{2} {0} {1}", GenerateDefaultArgs(scriptFile), script, (windowApp ? "w" : ""));
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs;
@@ -981,7 +982,7 @@ class Script
                 {
                     //just show why building has failed
                     cscs = "\"" + cscs + "\"";
-                    args = string.Format("{0} /e  {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script);
+                    args = string.Format("{0} -e  {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script);
                     Process.Start(ConsoleHostPath, args);
                     return null;
                 }
@@ -1088,7 +1089,7 @@ class Script
             p.StartInfo.FileName = cscs_exe;
             //NOTE: it is important to always pass /d otherwise NPP will not be able to debug.
             //particularly important to do for //css_host scripts
-            p.StartInfo.Arguments = "/nl /l /d /ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
+            p.StartInfo.Arguments = "-l -d -ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.RedirectStandardOutput = true;
@@ -1198,16 +1199,13 @@ class Script
             if (language == "VB" && CSScriptIntellisense.Config.Instance.VbSupportEnabled)
             {
                 //only CSSCodeProvider.v4.0.dll can support VB
-                var provider = Path.Combine(Plugin.PluginDir, Config.Instance.VbCodeProvider);
-                result = " \"/provider:" + provider + "\"";
+                var provider = Plugin.PluginDir.PathJoin(Config.Instance.VbCodeProvider);
+                result = " \"-provider:" + provider + "\"";
             }
             else if (Config.Instance.UseRoslynProvider)
             {
-                var provider = Path.Combine(Plugin.PluginDir, "CSSCodeProvider.v4.6.dll");
-                if (!File.Exists(provider))
-                    provider = Path.Combine(Plugin.PluginDir, "Roslyn", "CSSCodeProvider.v4.6.dll");
-
-                result = " \"/provider:" + provider + "\"";
+                var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll");
+                result = " \"-provider:" + provider + "\"";
             }
 
             return result;
@@ -1218,7 +1216,7 @@ class Script
             string result = "";
             string globalConfig = CSScriptIntellisense.CSScriptHelper.GetGlobalCSSConfig();
             if (globalConfig != null)
-                result = " \"/noconfig:" + globalConfig + "\"";
+                result = " \"-config:" + globalConfig + "\"";
 
             return result;
         }
@@ -1231,7 +1229,7 @@ class Script
                 probingDirArg = (NppScripts_ScriptsDir + "," + CSScriptIntellisense.Config.Instance.DefaultSearchDirs).Trim('\'').Trim(',');
 
             if (!probingDirArg.IsEmpty())
-                probingDirArg = " \"/dir:" + probingDirArg + "\"";
+                probingDirArg = " \"-dir:" + probingDirArg + "\"";
 
             if (!CSScriptIntellisense.Config.Instance.DefaultRefAsms.IsEmpty())
                 try

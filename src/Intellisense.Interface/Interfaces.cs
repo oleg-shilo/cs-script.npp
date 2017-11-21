@@ -10,18 +10,27 @@ namespace Intellisense.Common
     public interface IEngine
     {
         void Preload();
+
         IEnumerable<Common.ICompletionData> GetCompletionData(string editorText, int offset, string fileName, bool isControlSpace = true);
+
         string[] FindReferences(string editorText, int offset, string fileName);
+
         string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos);
+
         IEnumerable<TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName);
+
         DomRegion ResolveCSharpMember(string editorText, int offset, string fileName);
+
         CodeMapItem[] GetMapOf(string code, bool decorated, string codeFile);
+
         void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies);
+
         void SetOption(string name, object value);
+
         /// <summary>
         /// "C#" and "VB"
         /// </summary>
-        string Language { get; set; } 
+        string Language { get; set; }
     }
 
     public class SyntaxErrorParsingException : ApplicationException
@@ -126,7 +135,8 @@ namespace Intellisense.Common
         type,
         _namespace,
         unresolved,
-        directive
+        directive,
+        file
     }
 
     public interface IEntity
@@ -185,13 +195,15 @@ namespace Intellisense.Common
         public DisplayFlags DisplayFlags { get; set; }
         public string DisplayText { get; set; }
         public CompletionType CompletionType { get; set; }
+
         public bool HasOverloads
         {
             get
             {
                 return OverloadedData.Count() > 1;
             }
-        } 
+        }
+
         public IEnumerable<ICompletionData> OverloadedData { get; }
         public bool InvokeParametersSet { get; set; }
         public IEnumerable<string> InvokeParameters { get; set; }

@@ -42,6 +42,11 @@ namespace CSScriptIntellisense
 
         static bool compatibilityErrorShowing = false;
 
+        static bool interactive
+        {
+            get { return Environment.GetEnvironmentVariable("NPP_HOSTING") != null; }
+        }
+
         static void WithCompatibilityCheck(Action action)
         {
             try
@@ -52,7 +57,8 @@ namespace CSScriptIntellisense
             {
                 try
                 {
-                    //Debug.Assert(false);
+                    // Debug.Assert(false);
+                    var host = Assembly.GetEntryAssembly();
 
                     ////this assembly is already in the plugin dir
                     //var roslynDll = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Microsoft.CodeAnalysis.dll");
@@ -79,7 +85,8 @@ namespace CSScriptIntellisense
                         //              "\n\nThe problem is caused by the Plugin Manager incorrectly deploying plugin files (problem is reported and acknowledged)." +
                         //              "\nIf you want to use C#7 and don't want to wait for Plugin Manager fix you may need to remove the plugin and install it manually from https://github.com/oleg-shilo/cs-script.npp.";
 
-                        MessageBox.Show(message, "CS-Script");
+                        if (interactive)
+                            MessageBox.Show(message, "CS-Script");
                         compatibilityErrorShowing = false;
                     }
 
@@ -97,7 +104,7 @@ namespace CSScriptIntellisense
 
             WithCompatibilityCheck(() =>
             {
-                var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\");
+                var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\", Environment.CurrentDirectory);
 
                 if (!File.Exists(file))
                 {

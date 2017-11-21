@@ -76,7 +76,7 @@ My property.", plainText);
         public void DocumentationForReflectedClassOnlyDocumentation()
         {
             var xmlText = @"<summary>
-Simple class for testing Reflector   
+Simple class for testing Reflector
 </summary>";
             string plainText = xmlText.XmlToPlainText(true);
 
@@ -90,12 +90,12 @@ Simple class for testing Reflector
                             </summary>
                             <returns>A <see cref=""T:System.IO.DirectoryInfo""/> as specified by <paramref name=""path""/>.
                             </returns>
-                            <param name=""path"">The directory path to create. </param>
-                            <param name=""path2"">Fake parameter for testing. </param>
+                            <param name=""path"">The directory path to create.</param>
+                            <param name=""path2"">Fake parameter for testing.</param>
                             <exception cref=""T:System.IO.IOException"">The directory specified by <paramref name=""path""/>
                             is read-only.</exception>
                             <exception cref=""T:System.UnauthorizedAccessException"">The caller does not have
-                            the required permission. </exception>
+                            the required permission.</exception>
                             <exception cref=""T:System.ArgumentException"">
                             <paramref name=""path""/> is a zero-length string, contains only white space, or
                             contains one or more invalid characters as defined by <see cref=""F:System.IO.Path.InvalidPathChars""/>.-or-
@@ -123,10 +123,10 @@ Simple class for testing Reflector
 --------------------------
 Returns: A System.IO.DirectoryInfo as specified by path.
 --------------------------
-path: The directory path to create. 
+path: The directory path to create.
 path2: Fake parameter for testing.
 --------------------------
-Exceptions: 
+Exceptions: " /*otherwise CodeMade swallows space at the end of line*/+ @"
   System.IO.IOException
   System.UnauthorizedAccessException
   System.ArgumentException
@@ -139,7 +139,7 @@ Exceptions:
         [Fact]
         public void DocumentationForTooltip()
         {
-            string apiDoc = @"<summary>Deletes the specified file. <para>The parameter <paramref name=""path""/> must not be NULL.</para></summary>
+            string apiDoc = @"<summary>Deletes the specified file.<para>The parameter <paramref name=""path""/> must not be NULL.</para></summary>
 <param name=""path"">The name of the file to be deleted. Wildcard characters are
 not supported.</param>
 <param name=""recursively"">Delete files in subdirectories.</param>
@@ -170,20 +170,22 @@ specified a read-only file. </exception>
 </PermissionSet>"
                               .XmlToPlainText();
 
-            Assert.Equal(@"Deletes the specified file. 
+            var expected = @"Deletes the specified file.
 The parameter path must not be NULL.
 
 path: The name of the file to be deleted. Wildcard characters are not supported.
 recursively: Delete files in subdirectories.
 
-Exceptions: 
+Exceptions: " /*otherwise CodeMade swallows space at the end of line*/+ @"
   System.ArgumentException
   System.ArgumentNullException
   System.IO.DirectoryNotFoundException
   System.IO.IOException
   System.NotSupportedException
   System.IO.PathTooLongException
-  System.UnauthorizedAccessException", apiDoc);
+  System.UnauthorizedAccessException";
+
+            Assert.Equal(expected, apiDoc);
         }
     }
 }

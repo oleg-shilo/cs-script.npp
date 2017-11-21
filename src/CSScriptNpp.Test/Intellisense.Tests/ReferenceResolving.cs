@@ -5,7 +5,7 @@ using Xunit;
 namespace Testing
 {
     public class ReferenceResolving
-                 
+
     {
         public ReferenceResolving()
         {
@@ -32,12 +32,12 @@ class Script
     }
 }";
 
-        [Fact]
+        [Fact(Skip = "waiting for Syntaxer migration")]
         public void GetSimpleReferences()
         {
             SimpleCodeCompletion.ResetProject();
 
-            //MessageBox.Sh|ow 
+            //MessageBox.Sh|ow
             var refs = SimpleCodeCompletion.FindReferences(code, 152, "test.cs");
             Assert.Equal(2, refs.Count());
             Assert.Equal(refs[0], @"test.cs(9,20): MessageBox.Show(""Just a test!"");");
@@ -62,7 +62,7 @@ class Script
             Assert.Equal(refs[1], @"test.cs(14,9): MessageBox.Show(""Done..."", ""Testing"");");
             Assert.Equal(refs[2], @"test.cs(15,9): MessageBox.Show(""Done..."");");
 
-            //for (int |i 
+            //for (int |i
             refs = SimpleCodeCompletion.FindReferences(code, 190, "test.cs");
             Assert.True(refs.Count() == 4);
             Assert.Equal(refs[0], @"test.cs(10,18): for (int i = 0; i < args.Length; i++)");

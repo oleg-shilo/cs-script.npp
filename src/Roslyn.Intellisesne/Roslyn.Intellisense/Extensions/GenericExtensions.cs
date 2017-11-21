@@ -90,6 +90,11 @@ namespace RoslynIntellisense
             return items != null && items.Any();
         }
 
+        public static IEnumerable<T> Append<T>(this IEnumerable<T> items, T item)
+        {
+            return items.Concat(new[] { item });
+        }
+
         public static T To<T>(this object obj)
         {
             return (T)obj;

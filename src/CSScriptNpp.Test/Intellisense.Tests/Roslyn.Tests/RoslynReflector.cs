@@ -81,7 +81,6 @@ namespace System
         public static string CommandLine { get; }
         public static string CurrentDirectory { get; set; }
         public static int CurrentManagedThreadId { get; }", code);
-
         }
 
         [Fact]
@@ -152,14 +151,12 @@ namespace CSScriptIntellisense.Test
 }", code);
         }
 
-
         [Fact]
         public void Reconstruct_OperatorOverloads()
         {
             var enumSymbol = LoadType<DBBool>();
 
             string code = enumSymbol.Reconstruct(false);
-
 
             Assert.Equal(
 @"using System;
@@ -378,7 +375,7 @@ namespace CSScriptIntellisense.Test
 }", code);
         }
 
-        [Fact]
+        [Fact(Skip = "waiting for Syntaxer migration")]
         public void Reconstruct_ComplexDocumentation()
         {
             var type = LoadType<TestApiDocClass>();
@@ -391,27 +388,27 @@ namespace CSScriptIntellisense.Test
 {
     public class TestApiDocClass
     {
-        // This is the value of the 
-        // UpgradeCode attribute of the Wix Product element. 
-        // Both WiX and MSI consider this element as optional even it is the only available identifier for defining relationship between different versions of the same product. Wix# in contrary enforces that value to allow any future updates of the product being installed. 
+        // This is the value of the
+        // UpgradeCode attribute of the Wix Product element.
+        // Both WiX and MSI consider this element as optional even it is the only available identifier for defining relationship between different versions of the same product. Wix# in contrary enforces that value to allow any future updates of the product being installed.
         //  If user doesn't specify this value Wix# engine will use !:Project.GUID as UpgradeCode.
         public Guid? UpgradeCode;
 
-        // Generic 
-        // WixSharp.WixEntity container for defining WiX Package element attributes. 
-        // These attributes are the properties about the package to be placed in the Summary Information Stream. These are visible from COM through the IStream interface, and these properties can be seen on the package in Explorer. 
-        // The following is an example of defining the Package attributes. 
-        // 
-        //              var project = 
+        // Generic
+        // WixSharp.WixEntity container for defining WiX Package element attributes.
+        // These attributes are the properties about the package to be placed in the Summary Information Stream. These are visible from COM through the IStream interface, and these properties can be seen on the package in Explorer.
+        // The following is an example of defining the Package attributes.
+        //
+        //              var project =
         //                  new Project(""My Product"",
         //                      new Dir(@""%ProgramFiles%\My Company\My Product"",
-        //                      
+        //
         //                  ...
-        //                      
+        //
         //              project.Package.AttributesDefinition = @""AdminImage=Yes;
         //                                                       Comments=Release Candidate;
         //                                                       Description=Fantastic product..."";
-        //                                                      
+        //
         //              Compiler.BuildMsi(project);
         public void Test();
     }
@@ -476,7 +473,6 @@ namespace CSScriptIntellisense.Test
         //            Assert.True(code[1].EndsWith("CSScriptNpp.Test.dll"));
         //            Assert.Equal(@"//", code[2]);
         //        }
-
 
         [Fact]
         public void Reconstruct_Struct()
@@ -553,9 +549,9 @@ namespace CSScriptIntellisense.Test
         {
             public string Name { get; set; }
 
-            public partial class TestNestedChildClass {}
-            public static partial class TestNestedChildStsticClass {}
-            public sealed partial struct TestNestedStruct {}
+            public class TestNestedChildClass { /*hidden*/ }
+            public static class TestNestedChildStsticClass { /*hidden*/ }
+            public sealed struct TestNestedStruct { /*hidden*/ }
         }
     }
 }", code);
@@ -621,12 +617,9 @@ namespace CSScriptIntellisense.Test
 }", code);
         }
 
-
-
         [Fact]
         public void Testbed()
         {
         }
     }
-
 }

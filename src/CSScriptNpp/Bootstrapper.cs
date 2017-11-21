@@ -20,6 +20,7 @@ namespace CSScriptNpp
                 //must be a separate method to allow assembly probing
                 var pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName().PathJoin("CSScriptNpp");
                 Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
+                Environment.SetEnvironmentVariable("NPP_HOSTING", "true");
                 ConnectPlugins();
             }
             catch (Exception e)
