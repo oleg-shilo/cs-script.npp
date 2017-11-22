@@ -28,7 +28,7 @@ namespace Testing
         //     Thrown when the strings are not equivalent.
         public static void Equal(string expected, string actual)
         {
-            Assert.Equal(expected, actual);
+            Assert.Equal(expected.NormalizeLineEnds(), actual.NormalizeLineEnds());
         }
     }
 
@@ -39,7 +39,7 @@ namespace Testing
             return text.Split(new[] { "(+" }, StringSplitOptions.None)[0].TrimEnd();
         }
 
-        static internal string NormalizeLineEnds1(this string text)
+        static internal string NormalizeLineEnds(this string text)
         {
             return text.Replace("\r\n", "\n");
         }

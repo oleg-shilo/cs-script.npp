@@ -159,18 +159,18 @@ class ScriptB
 
             string mapDisplay = string.Join(Environment.NewLine, map);
             TextAssert.Equal(mapDisplay,
-@"ScriptA.prop: Line 10
-ScriptA.main0(): Line 11
-ScriptA.main1(): Line 12
-ScriptA.main2(,): Line 13
-ScriptA.Printer.Print(): Line 17
-ScriptA.Printer.Name: Line 18
-ScriptA.Printer.Settings.Print(): Line 22
-ScriptA.Printer.Settings.Name: Line 23
-ScriptB.propB: Line 33
-ScriptB.main0(): Line 34
-ScriptB.main1B(): Line 35
-ScriptB.main2B(,): Line 36");
+@"ScriptA.prop: Line 9
+ScriptA.main0(): Line 10
+ScriptA.main1(): Line 11
+ScriptA.main2(,): Line 12
+ScriptA.Printer.Print(): Line 16
+ScriptA.Printer.Name: Line 17
+ScriptA.Printer.Settings.Print(): Line 21
+ScriptA.Printer.Settings.Name: Line 22
+ScriptB.propB: Line 31
+ScriptB.main0(): Line 32
+ScriptB.main1B(): Line 33
+ScriptB.main2B(,): Line 34");
         }
     }
 }
