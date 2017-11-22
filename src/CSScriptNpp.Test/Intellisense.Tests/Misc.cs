@@ -10,11 +10,38 @@ using System.Reflection;
 
 namespace Testing
 {
+    public static class TextAssert
+    {
+        //
+        // Summary:
+        //     Verifies that two text strings are equivalent.
+        //
+        // Parameters:
+        //   expected:
+        //     The expected string value.
+        //
+        //   actual:
+        //     The actual string value.
+        //
+        // Exceptions:
+        //   T:Xunit.Sdk.EqualException:
+        //     Thrown when the strings are not equivalent.
+        public static void Equal(string expected, string actual)
+        {
+            TextAssert.Equal(expected, actual);
+        }
+    }
+
     public static class StringExtensions
     {
         static public string RemoveOverloadsInfo(this string text)
         {
             return text.Split(new[] { "(+" }, StringSplitOptions.None)[0].TrimEnd();
+        }
+
+        static internal string NormalizeLineEnds1(this string text)
+        {
+            return text.Replace("\r\n", "\n");
         }
     }
 

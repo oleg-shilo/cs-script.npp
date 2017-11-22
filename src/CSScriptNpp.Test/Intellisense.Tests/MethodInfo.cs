@@ -67,7 +67,7 @@ My property.
 </value>";
             string plainText = xmlText.XmlToPlainText(true);
 
-            Assert.Equal(@"Gets or sets my property.
+            TextAssert.Equal(@"Gets or sets my property.
 --------------------------
 My property.", plainText);
         }
@@ -119,7 +119,7 @@ Simple class for testing Reflector
 
             string plainText = xmlText.XmlToPlainText(true);
 
-            Assert.Equal(@"Creates all directories and subdirectories as specified by path.
+            TextAssert.Equal(@"Creates all directories and subdirectories as specified by path.
 --------------------------
 Returns: A System.IO.DirectoryInfo as specified by path.
 --------------------------
@@ -185,7 +185,7 @@ Exceptions: " /*otherwise CodeMade swallows space at the end of line*/+ @"
   System.IO.PathTooLongException
   System.UnauthorizedAccessException";
 
-            Assert.Equal(expected, apiDoc);
+            TextAssert.Equal(expected, apiDoc);
         }
     }
 }

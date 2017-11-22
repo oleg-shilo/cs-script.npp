@@ -240,7 +240,7 @@ namespace CSScriptIntellisense.Test
 
             string code = symbol.Reconstruct(false);
 
-            Assert.Equal(@"using System;
+            TextAssert.Equal(@"using System;
 
 namespace CSScriptIntellisense.Test
 {
@@ -317,7 +317,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -340,7 +340,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -361,7 +361,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -382,7 +382,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct();
 
-            Assert.Equal(@"using System;
+            TextAssert.Equal(@"using System;
 
 namespace CSScriptIntellisense.Test
 {
@@ -422,7 +422,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 using System.Collections.Generic;
 
@@ -481,7 +481,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -500,7 +500,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -516,7 +516,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -538,7 +538,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -564,7 +564,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -582,7 +582,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -602,7 +602,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
