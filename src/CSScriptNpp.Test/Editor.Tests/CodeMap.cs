@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Testing;
 using UltraSharp.Cecil;
 using Xunit;
 
@@ -58,13 +59,13 @@ namespace Tests
             Assert.Equal(10, map[3].Line);
             Assert.Equal("main2(,)", map[3].DisplayName);
         }
-      
+
         [Fact]
         public void DetectGetUsings()
         {
             string code = @"using System;
                             using System.IO;
-                            
+
                             class Script
                             {
                                 int Count;
@@ -84,7 +85,7 @@ namespace Tests
         [Fact]
         public void AutoClassClass()
         {
-            string code = 
+            string code =
 @"//css_inc test.cs
 //css_args /ac
 using System;
@@ -116,11 +117,10 @@ void TestMethod() {}";
         [Fact]
         public void NestedClasses()
         {
-string code = @"using System;
-
+            string code = @"using System;
 
 //test
-[Description(""Test"")]                            
+[Description(""Test"")]
 class ScriptA
 {
     int Count;
@@ -129,19 +129,18 @@ class ScriptA
     void main0() {}
     void main1(int test) {}
     void main2(int test, int test2) {}
-    
+
     class Printer
     {
         void Print(int test) {}
         string Name {get;set;}
-        
+
         class Settings
         {
             void Print(int test) {}
             string Name {get;set;}
         }
     }
-
 }
 
 class ScriptB
@@ -152,15 +151,14 @@ class ScriptB
     void main0() {}
     void main1B(int test) {}
     void main2B(int test, int test2) {}
-
 }";
 
-            var map = Reflector.GetMapOf(code).OrderBy(x=>x.ParentDisplayName)
-                               .Select(x=>string.Format("{0}.{1}: Line {2}", x.ParentDisplayName, x.DisplayName, x.Line))
+            var map = Reflector.GetMapOf(code).OrderBy(x => x.ParentDisplayName)
+                               .Select(x => string.Format("{0}.{1}: Line {2}", x.ParentDisplayName, x.DisplayName, x.Line))
                                .ToArray();
 
             string mapDisplay = string.Join(Environment.NewLine, map);
-            Assert.Equal(mapDisplay,
+            TextAssert.Equal(mapDisplay,
 @"ScriptA.prop: Line 10
 ScriptA.main0(): Line 11
 ScriptA.main1(): Line 12
@@ -174,6 +172,5 @@ ScriptB.main0(): Line 34
 ScriptB.main1B(): Line 35
 ScriptB.main2B(,): Line 36");
         }
-
     }
 }

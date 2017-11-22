@@ -28,7 +28,7 @@ namespace Testing
         //     Thrown when the strings are not equivalent.
         public static void Equal(string expected, string actual)
         {
-            TextAssert.Equal(expected, actual);
+            Assert.Equal(expected, actual);
         }
     }
 

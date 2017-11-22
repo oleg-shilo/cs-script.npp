@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Testing;
 using Xunit;
 
 namespace Tests
@@ -55,7 +56,7 @@ namespace Tests
 
             var result = CSScriptIntellisense.Snippets.PrepareForIncertion(template, 4);
 
-            Assert.Equal(expected, result.ReplacementString);
+            TextAssert.Equal(expected, result.ReplacementString);
         }
     }
 }
