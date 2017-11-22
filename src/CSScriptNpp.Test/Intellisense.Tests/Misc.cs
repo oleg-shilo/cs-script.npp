@@ -620,46 +620,46 @@ class Script
             var builder = new StringBuilder();
             builder.AppendLine("");
             builder.AppendLine("");
-            Assert.Equal("", builder.TrimEmptyEndLines().ToString());
+            TextAssert.Equal("", builder.TrimEmptyEndLines().ToString());
 
             builder.Clear();
             builder.Append("test");
-            Assert.Equal("test", builder.TrimEmptyEndLines().ToString());
+            TextAssert.Equal("test", builder.TrimEmptyEndLines().ToString());
 
             builder.Clear();
             builder.AppendLine("");
-            Assert.Equal("", builder.TrimEmptyEndLines(2).ToString());
+            TextAssert.Equal("", builder.TrimEmptyEndLines(2).ToString());
 
             builder.Clear();
             builder.AppendLine("test");
-            Assert.Equal("test" + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
-
-            builder.Clear();
-            builder.AppendLine("test");
-            builder.AppendLine("");
-            Assert.Equal("test" + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+            TextAssert.Equal("test" + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
 
             builder.Clear();
             builder.AppendLine("test");
             builder.AppendLine("");
-            builder.AppendLine("");
-            Assert.Equal("test" + Environment.NewLine + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+            TextAssert.Equal("test" + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
 
             builder.Clear();
             builder.AppendLine("test");
             builder.AppendLine("");
             builder.AppendLine("");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            builder.AppendLine("");
-            Assert.Equal("test" + Environment.NewLine + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+            TextAssert.Equal("test" + Environment.NewLine + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
 
             builder.Clear();
             builder.AppendLine("test");
             builder.AppendLine("");
             builder.AppendLine("");
-            Assert.Equal("test" + Environment.NewLine, builder.TrimEmptyEndLines(0).ToString());
+            builder.AppendLine("");
+            builder.AppendLine("");
+            builder.AppendLine("");
+            builder.AppendLine("");
+            TextAssert.Equal("test" + Environment.NewLine + Environment.NewLine + Environment.NewLine, builder.TrimEmptyEndLines(2).ToString());
+
+            builder.Clear();
+            builder.AppendLine("test");
+            builder.AppendLine("");
+            builder.AppendLine("");
+            TextAssert.Equal("test" + Environment.NewLine, builder.TrimEmptyEndLines(0).ToString());
 
             builder.Clear();
             builder.Append(
