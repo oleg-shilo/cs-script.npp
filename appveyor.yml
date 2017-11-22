@@ -27,6 +27,8 @@ install:
     - nuget restore "%APPVEYOR_BUILD_FOLDER%"\src\Roslyn.Intellisesne\Roslyn.Intellisense\packages.config -PackagesDirectory "%APPVEYOR_BUILD_FOLDER%"\src\packages
 
 
+init:
+    - git config --global core.autocrlf true
 
 
 build:
