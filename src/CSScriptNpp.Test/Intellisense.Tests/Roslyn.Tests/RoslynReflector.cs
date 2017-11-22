@@ -42,7 +42,7 @@ namespace CSScriptIntellisense.Test
 
             string code = enumSymbol.Reconstruct(false);
 
-            Assert.Equal(@"namespace System
+            TextAssert.Equal(@"namespace System
 {
     public sealed struct Nullable<T>
         where T: struct
@@ -120,7 +120,7 @@ namespace System
 
             string code = enumSymbol.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 using System.Collections.Generic;
 
@@ -158,7 +158,7 @@ namespace CSScriptIntellisense.Test
 
             string code = enumSymbol.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -202,7 +202,7 @@ namespace CSScriptIntellisense.Test
 
             string code = type.Reconstruct(false);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 namespace CSScriptIntellisense.Test
@@ -222,7 +222,7 @@ namespace CSScriptIntellisense.Test
 
             string code = symbol.Reconstruct(false);
 
-            Assert.Equal(@"using System;
+            TextAssert.Equal(@"using System;
 
 namespace CSScriptIntellisense.Test
 {
@@ -271,7 +271,7 @@ namespace CSScriptIntellisense.Test
 
             string code = symbol.Reconstruct(false);
 
-            Assert.Equal(@"using System;
+            TextAssert.Equal(@"using System;
 
 namespace CSScriptIntellisense.Test
 {
@@ -289,7 +289,7 @@ namespace CSScriptIntellisense.Test
 
             string code = symbol.Reconstruct(false);
 
-            Assert.Equal(@"using System;
+            TextAssert.Equal(@"using System;
 
 namespace CSScriptIntellisense.Test
 {

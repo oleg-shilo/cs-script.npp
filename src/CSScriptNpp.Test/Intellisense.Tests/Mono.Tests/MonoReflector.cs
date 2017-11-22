@@ -103,7 +103,7 @@ namespace Testing
             string code = new Reflector().Process(enumType)
                                          .Code;
 
-            Assert.Equal(code,
+            TextAssert.Equal(code,
 @"namespace CSScriptIntellisense.Test
 {
     /// Test values
@@ -128,7 +128,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public class GTestClass1<TSource, TDestination> where TSource: TestBaseClass, System.Collections.Generic.IEnumerable<int>, System.Collections.Generic.IList<int> : object
@@ -164,7 +164,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public class OperatorsOveloadClass : object
@@ -181,7 +181,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public class TestArrayClass : object
@@ -199,7 +199,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public class TestArrayClass : object
@@ -217,7 +217,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public static class ExtensionsClass : object
@@ -234,7 +234,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public static class TestStaticClass : object
@@ -262,7 +262,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public abstract class TestAbstractClass : object
@@ -280,7 +280,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public class TestParamArrayClass : object
@@ -298,7 +298,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public interface TestInterface
@@ -318,7 +318,7 @@ namespace Testing
             string code = reflector.Process(type)
                                    .Code;
 
-            Assert.Equal(@"namespace CSScriptIntellisense.Test
+            TextAssert.Equal(@"namespace CSScriptIntellisense.Test
 {
     public class TestApiDocClass : object
     {
@@ -354,7 +354,7 @@ namespace Testing
 
             string code = reflector.Process(type)
                                    .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     /// Simple class for testing Reflector
@@ -453,7 +453,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public sealed struct TestStruct1 : System.ValueType
@@ -470,7 +470,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public int? TestDelgt<T>(CustomIndex count, int? contextArg, T parent) where T: struct;
@@ -484,7 +484,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public partial class TestClass1
@@ -501,7 +501,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public partial class TestNestedGrandParentClass

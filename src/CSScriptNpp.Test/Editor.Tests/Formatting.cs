@@ -53,7 +53,7 @@ void button1_Click(object sender,EventArg e)
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 [STAThread]
@@ -115,7 +115,7 @@ line.Split('\t'));
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 void main()
@@ -651,7 +651,7 @@ Console.WriteLine(""这是中文"");";
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(code, newCode); //no changes
+            TextAssert.Equal(code, newCode); //no changes
         }
 
         [Fact]
