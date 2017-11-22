@@ -524,7 +524,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public class TestBaseClassDefC : object
@@ -540,7 +540,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public partial class TestNestedGrandParentGenericClass
@@ -563,7 +563,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public class TestBaseGenericClass3<T, T2> where T: class, new() where T2: TestBaseClass, System.Collections.Generic.IEnumerable<int>, System.Collections.Generic.IList<int> : object
@@ -579,7 +579,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public partial class TestNestedGrandParentGenericClass
@@ -614,7 +614,7 @@ namespace Testing
 
             string code = new Reflector().Process(type)
                                          .Code;
-            Assert.Equal(
+            TextAssert.Equal(
 @"namespace CSScriptIntellisense.Test
 {
     public class TestFieldsClass : object

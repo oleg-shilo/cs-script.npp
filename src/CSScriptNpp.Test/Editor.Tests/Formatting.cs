@@ -219,7 +219,7 @@ void main()
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 void main()
@@ -250,7 +250,7 @@ void main()
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 void main()
@@ -279,7 +279,7 @@ void main()
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 void main()
@@ -315,7 +315,7 @@ public class Test
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 using System.Windows.Forms;
 
@@ -425,7 +425,7 @@ do
             int pos = 69; //void main(str|ing[] args)
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"//css_args /ac
 //css_inc test.cs
 using System;
@@ -543,7 +543,7 @@ while(false);", newCode);
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(
+            TextAssert.Equal(
 @"using System;
 
 class Script
@@ -579,7 +579,7 @@ class Script
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(code, newCode); //no changes
+            TextAssert.Equal(code, newCode); //no changes
         }
 
         [Fact]
@@ -599,7 +599,7 @@ class Script
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(code, newCode); //no changes
+            TextAssert.Equal(code, newCode); //no changes
         }
 
         [Fact]
@@ -637,7 +637,7 @@ Console.WriteLine(""这是中文"");";
             int pos = 0;
             string newCode = SourceCodeFormatter.FormatCodeManually(code, ref pos);
 
-            Assert.Equal(code, newCode); //no changes
+            TextAssert.Equal(code, newCode); //no changes
         }
 
         [Fact]
@@ -768,7 +768,6 @@ class Script
         //[Fact]
         public void ShouldFormattWithNRefactory()
         {
-
             //            var code = @"using System;
             //
             //class Test
