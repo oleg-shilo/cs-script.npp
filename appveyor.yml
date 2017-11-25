@@ -16,8 +16,8 @@ configuration:
     #- Debug
 
 install:
-    - if "%platform%"=="x64" set archi=amd64
-    - if "%platform%"=="x64" set platform_input=x64
+    # - if "%platform%"=="x64" set archi=amd64
+    # - if "%platform%"=="x64" set platform_input=x64
 
     - if "%platform%"=="Any CPU" set archi=x86
     - if "%platform%"=="Any CPU" set platform_input=Any CPU
@@ -37,45 +37,45 @@ build:
 
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"\src
-    - if "%PlatformToolset%"=="v140" msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    # - if "%PlatformToolset%"=="v140" msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
     - if "%PlatformToolset%"=="v141" msbuild CSScriptNpp.2017.sln /m /p:configuration="%configuration%" /p:platform="%platform_input%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
-    - cd "%APPVEYOR_BUILD_FOLDER%"\src\CSScriptNpp
-    - ps: >-
+    # - cd "%APPVEYOR_BUILD_FOLDER%"\src\CSScriptNpp
+    # - ps: >-
 
-        if ($env:PLATFORM -eq "x64" -and $env:CONFIGURATION -eq "Release") {
-            #Push-AppveyorArtifact "bin\$env:PLATFORM\$env:CONFIGURATION\" -FileName CSScriptNpp.dll
-        }
+    #     if ($env:PLATFORM -eq "x64" -and $env:CONFIGURATION -eq "Release") {
+    #         #Push-AppveyorArtifact "bin\$env:PLATFORM\$env:CONFIGURATION\" -FileName CSScriptNpp.dll
+    #     }
 
-        if ($env:PLATFORM -eq "Any CPU" -and $env:CONFIGURATION -eq "Release") {
-            Push-AppveyorArtifact "bin\$env:PLATFORM\$env:CONFIGURATION\CSScriptNpp.dll" -FileName CSScriptNpp.dll
-        }
+    #     if ($env:PLATFORM -eq "Any CPU" -and $env:CONFIGURATION -eq "Release") {
+    #         Push-AppveyorArtifact "bin\$env:PLATFORM\$env:CONFIGURATION\CSScriptNpp.dll" -FileName CSScriptNpp.dll
+    #     }
 
-        if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v141") {
-            if($env:PLATFORM -eq "x64"){
-            $ZipFileName = "CSScriptNpp_$($env:APPVEYOR_REPO_TAG_NAME)_x64.zip"
-            7z a $ZipFileName bin\$env:PLATFORM\$env:CONFIGURATION\CSScriptNpp.dll
-            }
-            if($env:PLATFORM -eq "Any CPU"){
-            $ZipFileName = "CSScriptNpp_$($env:APPVEYOR_REPO_TAG_NAME)_x86.zip"
-            7z a $ZipFileName bin\$env:PLATFORM\$env:CONFIGURATION\CSScriptNpp.dll
-            }
-        }
+    #     if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v141") {
+    #         if($env:PLATFORM -eq "x64"){
+    #         $ZipFileName = "CSScriptNpp_$($env:APPVEYOR_REPO_TAG_NAME)_x64.zip"
+    #         7z a $ZipFileName bin\$env:PLATFORM\$env:CONFIGURATION\CSScriptNpp.dll
+    #         }
+    #         if($env:PLATFORM -eq "Any CPU"){
+    #         $ZipFileName = "CSScriptNpp_$($env:APPVEYOR_REPO_TAG_NAME)_x86.zip"
+    #         7z a $ZipFileName bin\$env:PLATFORM\$env:CONFIGURATION\CSScriptNpp.dll
+    #         }
+    #     }
 
 artifacts:
-  - path: CSScriptNpp_*.zip
-    name: releases
+  # - path: CSScriptNpp_*.zip
+  #   name: releases
 
 deploy:
-    provider: GitHub
-    auth_token:
-        secure: !!TODO, see https://www.appveyor.com/docs/deployment/github/#provider-settings!!
-    artifact: releases
-    draft: false
-    prerelease: false
-    force_update: true
-    on:
-        appveyor_repo_tag: true
-        PlatformToolset: v141
-        configuration: Release
+    # provider: GitHub
+    # auth_token:
+    #     secure: !!TODO, see https://www.appveyor.com/docs/deployment/github/#provider-settings!!
+    # artifact: releases
+    # draft: false
+    # prerelease: false
+    # force_update: true
+    # on:
+    #     appveyor_repo_tag: true
+    #     PlatformToolset: v141
+    #     configuration: Release
