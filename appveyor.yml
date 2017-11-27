@@ -4,7 +4,7 @@ image: Visual Studio 2017
 
 environment:
   matrix:
-    #- PlatformToolset: v140
+    - PlatformToolset: v140
     - PlatformToolset: v141
 
 platform:
@@ -37,7 +37,7 @@ build:
 
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"\src
-    # - if "%PlatformToolset%"=="v140" msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - if "%PlatformToolset%"=="v140" msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
     - if "%PlatformToolset%"=="v141" msbuild CSScriptNpp.2017.sln /m /p:configuration="%configuration%" /p:platform="%platform_input%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
