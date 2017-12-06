@@ -2,8 +2,11 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UltraSharp.Cecil;
 
@@ -26,8 +29,6 @@ namespace CSScriptIntellisense
         //'standalone' is the deployment model that includes CSSCriptIntellisense.dll plugin only
         public static bool Init(bool standalone)
         {
-            //Debug.Assert(false);
-
             ReflectorExtensions.IgnoreDocumentationExceptions = Config.Instance.IgnoreDocExceptions;
 
             if (standalone) //CSScriptIntellisense Plugin

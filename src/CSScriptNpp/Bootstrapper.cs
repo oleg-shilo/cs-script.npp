@@ -5,20 +5,71 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Net.Sockets;
+using System.Net;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace CSScriptNpp
 {
-    static class Bootstrapper
+    public static class Bootstrapper
     {
+        public static string pluginDir;
+
+        public static string dependenciesDir;
+        public static string syntaxerDir;
+
+        public static void InitSyntaxer(string sourceDir)
+        {
+            // needs to be a separate routine to avoid premature assembly loading
+            DeploySyntaxer(sourceDir);
+            CSScriptIntellisense.Syntaxer.StartServer();
+        }
+
+        public static void DeploySyntaxer(string sourceDir)
+        {
+            dependenciesDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+                                         .PathJoin("CS-Script",
+                                                   "CSScriptNpp",
+                                                    Assembly.GetExecutingAssembly().GetName().Version.ToString());
+
+            syntaxerDir =
+            CSScriptIntellisense.Syntaxer.syntaxerDir = dependenciesDir.PathJoin("Syntaxer");
+            CSScriptIntellisense.Syntaxer.cscsFile = pluginDir.PathJoin("cscs.exe");
+
+            var cscs = sourceDir.PathJoin("cscs.exe");
+
+#if !DEBUG
+            if (!Directory.Exists(syntaxerDir))
+#endif
+            {
+                Directory.CreateDirectory(syntaxerDir);
+
+                CSScriptIntellisense.Syntaxer.Exit();
+                try
+                {
+                    File.Copy(sourceDir.PathJoin("syntaxer.exe"),
+                                                  syntaxerDir.PathJoin("syntaxer.exe"),
+                                                  true);
+                }
+                catch { }
+            }
+        }
+
         public static void Init()
         {
             try
             {
-                //Debug.Assert(false);
+                Debug.Assert(false);
+
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+
                 //RoslynHelper.Init();
                 //must be a separate method to allow assembly probing
-                var pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName().PathJoin("CSScriptNpp");
+                pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName().PathJoin("CSScriptNpp");
+
+                InitSyntaxer(pluginDir);
+
                 Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
                 Environment.SetEnvironmentVariable("NPP_HOSTING", "true");
                 ConnectPlugins();

@@ -100,6 +100,10 @@
       <Project>{EB8FC3A3-93E8-457B-B281-FAFA5119611A}</Project>
       <Name>CSScriptIntellisense.2017</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CSScriptNpp\CSScriptNpp.2017.csproj">
+      <Project>{23b08b10-8297-4a90-9b6d-43dac7416004}</Project>
+      <Name>CSScriptNpp.2017</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
       <Project>{c67d7ed7-f350-4fd4-81b5-5e635fb08765}</Project>
       <Name>Intellisense.Common</Name>

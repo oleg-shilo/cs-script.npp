@@ -74,6 +74,43 @@ namespace Intellisense.Common
         {
             return ParentDisplayName + "." + DisplayName;
         }
+
+        public static string Serialize(CodeMapItem data)
+        {
+            return $"{data.Column}\n" +
+                   $"{data.Line}\n" +
+                   $"{data.DisplayName.EscapeLB()}\n" +
+                   $"{data.ParentDisplayName.EscapeLB()}\n" +
+                   $"{data.ParentDisplayType.EscapeLB()}\n" +
+                   $"{data.MemberType}";
+        }
+
+        public static CodeMapItem Deserialize(string data)
+        {
+            var lines = data.Split('\n');
+            return new CodeMapItem
+            {
+                Column = int.Parse(lines[0]),
+                Line = int.Parse(lines[1]),
+                DisplayName = lines[2].UnescapeLB(),
+                ParentDisplayName = lines[3].UnescapeLB(),
+                ParentDisplayType = lines[4].UnescapeLB(),
+                MemberType = lines[5],
+            };
+        }
+    }
+
+    static class Utils
+    {
+        public static string EscapeLB(this string data)
+        {
+            return data.Replace("\n", "${n}").Replace("\r", "${r}");
+        }
+
+        public static string UnescapeLB(this string data)
+        {
+            return data.Replace("${n}", "\n").Replace("${r}", "\r");
+        }
     }
 
     public class TypeInfo
@@ -178,6 +215,30 @@ namespace Intellisense.Common
         public string FileName { get; set; }
         public string Hint { get; set; }
         public bool IsEmpty { get; set; }
+
+        public static string Serialize(DomRegion data)
+        {
+            return $"{data.BeginColumn}\n" +
+                   $"{data.BeginLine}\n" +
+                   $"{data.EndLine}\n" +
+                   $"{data.FileName}\n" +
+                   $"{data.Hint.EscapeLB()}\n" +
+                   $"{data.IsEmpty}";
+        }
+
+        public static DomRegion Deserialize(string data)
+        {
+            var lines = data.Split('\n');
+            return new DomRegion
+            {
+                BeginColumn = int.Parse(lines[0]),
+                BeginLine = int.Parse(lines[1]),
+                EndLine = int.Parse(lines[2]),
+                FileName = lines[3],
+                Hint = lines[4].UnescapeLB(),
+                IsEmpty = bool.Parse(lines[5])
+            };
+        }
     }
 
     public class CompletionData : ICompletionData

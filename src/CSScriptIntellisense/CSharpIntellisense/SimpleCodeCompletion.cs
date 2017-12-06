@@ -29,7 +29,7 @@ namespace CSScriptIntellisense
         public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"=[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
         static char[] lineDelimiters = new char[] { '\n', '\r' };
 
-        static IEnumerable<ICompletionData> GetCSharpScriptCompletionData(string editorText, int offset)
+        static IEnumerable<ICompletionData> GetCSharpScriptCompletionData_old(string editorText, int offset)
         {
             var directiveLine = GetCSharpScriptDirectiveLine(editorText, offset);
 
@@ -58,11 +58,15 @@ namespace CSScriptIntellisense
                 if (string.IsNullOrEmpty(editorText))
                     return new ICompletionData[0];
 
-                var data = (GetCSharpScriptCompletionData(editorText, offset) ??
-                            (Config.Instance.UsingRoslyn ?
-                            RoslynEngine.GetCompletionData(editorText, offset, fileName, isControlSpace) :
-                            MonoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace))
-                            ).ToList();
+                var data = Config.Instance.UsingRoslyn ?
+                            Syntaxer.SendCompletionRequest(editorText, fileName, offset).ToList() :
+                            MonoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace).ToList();
+
+                // var data = (GetCSharpScriptCompletionData(editorText, offset) ??
+                //             (Config.Instance.UsingRoslyn ?
+                //             RoslynEngine.GetCompletionData(editorText, offset, fileName, isControlSpace) :
+                //             MonoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace))
+                //             ).ToList();
 
                 //suggest default CS-Script usings as well
                 var extraItems = new List<ICompletionData>();
@@ -117,7 +121,9 @@ namespace CSScriptIntellisense
         public static void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies)
         {
             if (Config.Instance.UsingRoslyn)
-                RoslynEngine.ResetProject(sourceFiles, assemblies);
+            {
+                // RoslynEngine.ResetProject(sourceFiles, assemblies);
+            }
             else
                 MonoEngine.ResetProject(sourceFiles, assemblies); //at this stage always reset mono project as it is always used for other then autocomplete operations
         }
@@ -129,7 +135,8 @@ namespace CSScriptIntellisense
             CodeMapItem[] map;
 
             if (Config.Instance.UsingRoslyn)
-                map = RoslynEngine.GetMapOf(code, injected, codeFile);
+                map = Syntaxer.SendMapOfRequest(code, codeFile);
+            // map = RoslynEngine.GetMapOf(code, injected, codeFile);
             else
                 map = MonoEngine.GetMapOf(code, injected, codeFile);
 
@@ -159,6 +166,7 @@ namespace CSScriptIntellisense
         internal static IEnumerable<Intellisense.Common.TypeInfo> GetPossibleNamespaces(string editorText, string nameToResolve, string fileName) // not the best way to put in the whole string every time
         {
             if (Config.Instance.UsingRoslyn)
+                // Syntaxer.SendCompletionRequest(fileName, offset).ToCompletionData() :
                 return RoslynEngine.GetPossibleNamespaces(editorText, nameToResolve, fileName);
             else
                 return MonoEngine.GetPossibleNamespaces(editorText, nameToResolve, fileName);
@@ -183,7 +191,8 @@ namespace CSScriptIntellisense
         static public string[] FindReferences(string editorText, int offset, string fileName)
         {
             if (Config.Instance.UsingRoslyn)
-                return RoslynEngine.FindReferences(editorText, offset, fileName);
+                return Syntaxer.SendFindReferencesRequest(editorText, fileName, offset);
+            // return RoslynEngine.FindReferences(editorText, offset, fileName);
             else
                 return MonoEngine.FindReferences(editorText, offset, fileName);
         }
@@ -191,7 +200,8 @@ namespace CSScriptIntellisense
         //----------------------------------
         static public DomRegion ResolveMember(string editorText, int offset, string fileName)
         {
-            return ResolveCSharpScriptMember(editorText, offset) ?? ResolveCSharpMember(editorText, offset, fileName);
+            // return ResolveCSharpScriptMember(editorText, offset) ?? ResolveCSharpMember(editorText, offset, fileName);
+            return ResolveCSharpMember(editorText, offset, fileName);
         }
 
         static DomRegion? ResolveCSharpScriptMember(string editorText, int offset)
@@ -210,7 +220,8 @@ namespace CSScriptIntellisense
         static DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
         {
             if (Config.Instance.UsingRoslyn)
-                return RoslynEngine.ResolveCSharpMember(editorText, offset, fileName);
+                return Syntaxer.SendResolveRequest(editorText, fileName, offset);
+            // return RoslynEngine.ResolveCSharpMember(editorText, offset, fileName);
             else
                 return MonoEngine.ResolveCSharpMember(editorText, offset, fileName);
         }

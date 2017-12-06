@@ -11,6 +11,7 @@ using System.Text;
 using CSScriptIntellisense;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Net.Sockets;
 
 namespace CSScriptNpp
 {
@@ -68,12 +69,12 @@ namespace CSScriptNpp
                         index = colors.Count + 65;
                         colors.Add(col);
                         if (index > 90) index += 6;
-                        c = Encoding.ASCII.GetChars(new byte[] { (byte) (index & 0xff) })[0];
+                        c = Encoding.ASCII.GetChars(new byte[] { (byte)(index & 0xff) })[0];
                         chars.Add(c);
                         sb.Insert(colorsIndex, ",\"" + c + " c " + col + "\"");
                         colorsIndex += 14;
                     }
-                    else c = (char) chars[index];
+                    else c = (char)chars[index];
                     sb.Append(c);
                 }
                 sb.Append("\"");
@@ -167,6 +168,7 @@ namespace CSScriptNpp
                 return true;
             return false;
         }
+
         internal static bool IsSetExpression(this string text)
         {
             int bracketPos = text.IndexOf("(");
@@ -175,6 +177,7 @@ namespace CSScriptNpp
                 return true;
             return false;
         }
+
         internal static bool IsResolveExpression(this string text)
         {
             int bracketPos = text.IndexOf("(");
@@ -183,6 +186,7 @@ namespace CSScriptNpp
                 return true;
             return false;
         }
+
         internal static string NormalizeExpression(this string text)
         {
             if (text.IsSetExpression())
@@ -328,7 +332,7 @@ namespace CSScriptNpp
         {
             if (KeyInterceptor.IsPressed(Keys.ControlKey))
             {
-                var control = (Control) sender;
+                var control = (Control)sender;
                 if (customHandler != null)
                     customHandler(control, e.Delta > 0);
                 else

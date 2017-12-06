@@ -32,6 +32,8 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
+            // CSScriptNpp.Bootstrapper.DeploySyntaxer(@"E:\Galos\Projects\cs-script.npp\src\CSScriptNpp\CSScriptNpp"); return;
+
             var arr = new[] { 1, 2, 3, 5, 5, 5, 6, 6 };
             var first = arr.IndexOfFirst(x => x == 5);
             var last = arr.IndexOfLast(x => x == 5);
@@ -40,7 +42,6 @@ namespace Testpad
             last = arr.IndexOfLast(x => x == 8);
 
             var logData = string.Format("{0:s}|{1:00000000}|{2}|{3}", DateTime.Now, Process.GetCurrentProcess().Id, "type", "message");
-
 
             Encoding enc = Encoding.UTF8;
             var text = "g–Version";
@@ -73,7 +74,6 @@ namespace Testpad
             //    {2,7}
             //};
 
-
             //new CSharpFormatter (FormattingOptionsFactory.CreateAllman ()).Format (code));
 
             //Application.EnableVisualStyles();
@@ -95,7 +95,6 @@ namespace Testpad
             //panel.ShowDialog();
 
             Application.Run(new Form1());
-
 
             //            Error: Specified file could not be compiled.
 
@@ -149,7 +148,7 @@ class Test
             //    }
             //}
 
-            //var newCode = document.Text; 
+            //var newCode = document.Text;
         }
     }
 }

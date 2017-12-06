@@ -113,6 +113,8 @@
     <Compile Include="RenameForm.Designer.cs">
       <DependentUpon>RenameForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Syntaxer.cs" />
     <None Include="app.config" />
     <None Include="CodeSnippets\snippets.data" />
     <None Include="Interop\DllExport\CheckILDasmPath.cs" />

@@ -28,6 +28,7 @@ copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%plugins%\CSScriptNpp\Mdbg"
 
 copy "CSScriptNpp\CSScriptNpp\launcher.exe" "%plugins%\CSScriptNpp\launcher.exe"
 copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%plugins%\CSScriptNpp\Updater.exe"
+copy "CSScriptNpp\CSScriptNpp\syntaxer.exe" "%plugins%\CSScriptNpp\syntaxer.exe"
 copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%plugins%\CSScriptNpp\npp_jit.exe"
 
 copy "CSScriptNpp\CSScriptNpp\cscs.exe" "%plugins%\CSScriptNpp\cscs.exe"
