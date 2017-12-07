@@ -123,6 +123,22 @@ namespace Intellisense.Common
             //"System.IO" or "System.IO.File"
             get { return FullName.IndexOf('.', Namespace.Length + 1) != -1; }
         }
+
+        public static string Serialize(TypeInfo data)
+        {
+            return $"{data.FullName}\n" +
+                   $"{data.Namespace}";
+        }
+
+        public static TypeInfo Deserialize(string data)
+        {
+            var lines = data.Split('\n');
+            return new TypeInfo
+            {
+                FullName = lines[0],
+                Namespace = lines[1]
+            };
+        }
     }
 
     public enum DisplayFlags

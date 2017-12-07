@@ -529,7 +529,6 @@ namespace CSScriptIntellisense
 
         static string[] lineDelimiters = new string[] { Environment.NewLine };
 
-        
         static public string GetLine(this string text, int index)
         {
             return text.GetLines(index + 2)[index];
@@ -541,6 +540,11 @@ namespace CSScriptIntellisense
                 return (text ?? "").Split(lineDelimiters, count, StringSplitOptions.None);
             else
                 return (text ?? "").Split(lineDelimiters, StringSplitOptions.None);
+        }
+
+        static public string[] GetSerializedLines(this string text, int count = -1)
+        {
+            return (text ?? "").Split(new[] { "\r\n" }, StringSplitOptions.None);
         }
 
         static public string JoinLines(this IEnumerable<string> lines, string separator)
@@ -757,7 +761,7 @@ namespace CSScriptIntellisense
         {
             if (data is CssCompletionData)
             {
-                // CS-Script DisplayText does include delimiters that are not part of C# tokens  
+                // CS-Script DisplayText does include delimiters that are not part of C# tokens
                 // CompletionText:'css_rags'
                 // DisplayText:'//css_rags'
                 return data.CompletionText == nameToResolve;

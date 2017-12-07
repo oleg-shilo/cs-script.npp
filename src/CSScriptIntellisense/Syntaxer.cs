@@ -72,6 +72,12 @@ namespace CSScriptIntellisense
                 tempFile => SendSyntaxCommand(tempFile, location, "resolve")).ToDomRegion();
         }
 
+        public static Intellisense.Common.TypeInfo[] GetPossibleNamespaces(string editorText, string file, string word)
+        {
+            return editorText.WithTempCopy(file,
+                tempFile => SendSyntaxCommand(tempFile, $"suggest_usings:{word}")).ToTypeInfos();
+        }
+
         ////////////////////////////////////////////////
 
         static string SendSyntaxCommand(string file, string operation, params string[] extraArgs)
@@ -149,7 +155,7 @@ namespace CSScriptIntellisense
 
         public static CompletionType ToCompletionType(this string data)
         {
-            if (!data.StartsWith("<error>"))
+            if (data != null && !data.StartsWith("<error>"))
             {
                 string value = data.Replace("event", "_event").Replace("namespace", "_namespace");
 
@@ -163,10 +169,10 @@ namespace CSScriptIntellisense
 
         public static CodeMapItem[] ToCodeMapItems(this string data)
         {
-            if (data != null && data.StartsWith("<error>"))
+            if (data != null && !data.StartsWith("<error>"))
                 try
                 {
-                    return data.GetLines()
+                    return data.GetSerializedLines()
                                .Select(CodeMapItem.Deserialize)
                                .ToArray();
                 }
@@ -174,10 +180,23 @@ namespace CSScriptIntellisense
             return new CodeMapItem[0];
         }
 
+        public static Intellisense.Common.TypeInfo[] ToTypeInfos(this string data)
+        {
+            if (data != null && !data.StartsWith("<error>"))
+                try
+                {
+                    return data.GetSerializedLines()
+                               .Select(Intellisense.Common.TypeInfo.Deserialize)
+                               .ToArray();
+                }
+                catch { }
+            return new Intellisense.Common.TypeInfo[0];
+        }
+
         public static IEnumerable<ICompletionData> ToCompletionData(this string data)
         {
             if (data != null && !data.StartsWith("<error>"))
-                return data.GetLines()
+                return data.GetSerializedLines()
                            .Select(x =>
                            {
                                var parts = x.Split(new[] { '|', '\t' });
@@ -199,6 +218,14 @@ namespace CSScriptIntellisense
                 try { return DomRegion.Deserialize(data); }
                 catch { }
             return DomRegion.Empty;
+        }
+
+        public static string ToResultString(this string data)
+        {
+            if (data != null && !data.StartsWith("<error>"))
+                try { return data; }
+                catch { }
+            return null;
         }
 
         public static string[] ToReferences(this string data)
