@@ -48,25 +48,25 @@ namespace CSScriptIntellisense
 
         ////////////////////////////////////////////////
 
-        public static IEnumerable<ICompletionData> SendCompletionRequest(string editorText, string file, int location)
+        public static IEnumerable<ICompletionData> GetCompletions(string editorText, string file, int location)
         {
             return editorText.WithTempCopy(file,
                 tempFile => SendSyntaxCommand(tempFile, location, "completion")).ToCompletionData();
         }
 
-        public static string[] SendFindReferencesRequest(string editorText, string file, int location)
+        public static string[] FindReferences(string editorText, string file, int location)
         {
             return editorText.WithTempCopy(file,
                 tempFile => SendSyntaxCommand(tempFile, location, "references")).ToReferences();
         }
 
-        public static CodeMapItem[] SendMapOfRequest(string editorText, string file)
+        public static CodeMapItem[] GetMapOf(string editorText, string file)
         {
             return editorText.WithTempCopy(file,
                 tempFile => SendSyntaxCommand(tempFile, "codemap")).ToCodeMapItems();
         }
 
-        public static DomRegion SendResolveRequest(string editorText, string file, int location)
+        public static DomRegion Resolve(string editorText, string file, int location)
         {
             return editorText.WithTempCopy(file,
                 tempFile => SendSyntaxCommand(tempFile, location, "resolve")).ToDomRegion();
@@ -99,6 +99,31 @@ namespace CSScriptIntellisense
             }
             else
                 return new string[0];
+        }
+
+        public static string Format(string editorText, string file, ref int caretPosition)
+        {
+            int location = caretPosition;
+
+            try
+            {
+                string response = editorText.WithTempCopy(null,
+                                                          tempFile => SendSyntaxCommand(tempFile, location, "format"));
+
+                if (response != null && !response.StartsWith("<error>"))
+                {
+                    // response: $"{caretPos}\n{formattedCode}"
+                    int pos = response.IndexOf("\n");
+                    if (pos != -1)
+                    {
+                        caretPosition = int.Parse(response.Substring(0, pos));
+                        var result = response.Substring(pos + 1);
+                        return result;
+                    }
+                }
+            }
+            catch { }
+            return null;
         }
 
         ////////////////////////////////////////////////
@@ -156,17 +181,35 @@ namespace CSScriptIntellisense
     {
         public static string WithTempCopy(this string editorText, string permanentFile, Func<string, string> action)
         {
-            var originalName = Path.GetFileName(permanentFile);
-            var tempName = Path.ChangeExtension(originalName, ".$temp$" + Path.GetExtension(permanentFile));
+            Func<string, string> fixTempFileInsertions = null;
 
-            var tempFileName = Path.ChangeExtension(permanentFile, ".$temp$" + Path.GetExtension(permanentFile));
+            string tempFileName;
+            if (permanentFile == null)
+            {
+                tempFileName = Path.GetTempFileName();
+            }
+            else
+            {
+                var originalName = Path.GetFileName(permanentFile);
+                var tempName = Path.ChangeExtension(originalName, ".$temp$" + Path.GetExtension(permanentFile));
+                tempFileName = Path.ChangeExtension(permanentFile, ".$temp$" + Path.GetExtension(permanentFile));
+
+                fixTempFileInsertions = txt =>
+                {
+                    if (!string.IsNullOrEmpty(txt))
+                        return txt.Replace(tempName, originalName);
+                    else
+                        return txt;
+                };
+            }
+
             try
             {
                 File.WriteAllText(tempFileName, editorText);
                 string response = action(tempFileName);
 
-                if (!string.IsNullOrEmpty(response))
-                    response = response.Replace(tempName, originalName);
+                if (fixTempFileInsertions != null)
+                    response = fixTempFileInsertions(response);
 
                 return response == "<null>" ? null : response;
             }

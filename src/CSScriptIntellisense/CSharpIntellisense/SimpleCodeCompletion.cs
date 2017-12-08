@@ -59,7 +59,7 @@ namespace CSScriptIntellisense
                     return new ICompletionData[0];
 
                 var data = Config.Instance.UsingRoslyn ?
-                            Syntaxer.SendCompletionRequest(editorText, fileName, offset).ToList() :
+                            Syntaxer.GetCompletions(editorText, fileName, offset).ToList() :
                             MonoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace).ToList();
 
                 // var data = (GetCSharpScriptCompletionData(editorText, offset) ??
@@ -133,7 +133,7 @@ namespace CSScriptIntellisense
             CodeMapItem[] map;
 
             if (Config.Instance.UsingRoslyn)
-                map = Syntaxer.SendMapOfRequest(code, codeFile);
+                map = Syntaxer.GetMapOf(code, codeFile);
             // map = RoslynEngine.GetMapOf(code, injected, codeFile);
             else
                 map = MonoEngine.GetMapOf(code, injected, codeFile);
@@ -196,7 +196,7 @@ namespace CSScriptIntellisense
         static public string[] FindReferences(string editorText, int offset, string fileName)
         {
             if (Config.Instance.UsingRoslyn)
-                return Syntaxer.SendFindReferencesRequest(editorText, fileName, offset);
+                return Syntaxer.FindReferences(editorText, fileName, offset);
             // return RoslynEngine.FindReferences(editorText, offset, fileName);
             else
                 return MonoEngine.FindReferences(editorText, offset, fileName);
@@ -225,7 +225,7 @@ namespace CSScriptIntellisense
         static DomRegion ResolveCSharpMember(string editorText, int offset, string fileName)
         {
             if (Config.Instance.UsingRoslyn)
-                return Syntaxer.SendResolveRequest(editorText, fileName, offset);
+                return Syntaxer.Resolve(editorText, fileName, offset);
             // return RoslynEngine.ResolveCSharpMember(editorText, offset, fileName);
             else
                 return MonoEngine.ResolveCSharpMember(editorText, offset, fileName);

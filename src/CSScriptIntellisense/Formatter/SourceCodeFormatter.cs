@@ -42,8 +42,8 @@ namespace CSScriptIntellisense
             }
             catch
             {
-#if  DEBUG
-               throw;
+#if DEBUG
+                throw;
 #endif
                 //formatting errors are not critical so can be ignored in release mode
             }
@@ -125,29 +125,36 @@ namespace CSScriptIntellisense
         {
             try
             {
-                if (RoslynFormat == null)
+                string newCode;
+                var syntaxer = true;
+                if (syntaxer)
                 {
-                    //need to load dynamically as static loading can only be achieved via compilation and plugin target CLR is older than
-                    //the one is Roslyn based on.
-                    string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-                    var asmFile = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\");
-                    var asm = Assembly.LoadFrom(asmFile);
-                    MethodInfo method;
-                    if (Config.Instance.HybridFormatting)
-                        method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("FormatHybrid");
-                    else
-                        method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("Format");
-                    RoslynFormat = (FormatMethod)Delegate.CreateDelegate(typeof(FormatMethod), method);
+                    return Syntaxer.Format(code, "csharp", ref pos);
                 }
-
-                if (RoslynFormat != null)
+                else
                 {
-                    var newCode = RoslynFormat(code, file);
+                    if (RoslynFormat == null)
+                    {
+                        //need to load dynamically as static loading can only be achieved via compilation and plugin target CLR is older than
+                        //the one is Roslyn based on.
+                        string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-                    pos = SyntaxMapper.MapAbsPosition(code, pos, newCode);
+                        var asmFile = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\");
+                        var asm = Assembly.LoadFrom(asmFile);
+                        MethodInfo method;
+                        if (Config.Instance.HybridFormatting)
+                            method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("FormatHybrid");
+                        else
+                            method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("Format");
+                        RoslynFormat = (FormatMethod)Delegate.CreateDelegate(typeof(FormatMethod), method);
+                    }
 
-                    return newCode;
+                    if (RoslynFormat != null)
+                    {
+                        newCode = RoslynFormat(code, file);
+                        pos = SyntaxMapper.MapAbsPosition(code, pos, newCode);
+                        return newCode;
+                    }
                 }
             }
             catch (Exception e)
