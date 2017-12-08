@@ -21,7 +21,7 @@ namespace Testing
             Assert.Equal(3, NRefactoryExtensions.GetArgumentCount("Method: void Class.Method(string text, Dictionary<int, string> map, int count)"));
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void ProcessMethodOverloadsHint()
         {
             SimpleCodeCompletion.ResetProject();

@@ -21,7 +21,7 @@ namespace Testing
             Assert.True(doc.Contains("that represents the standard output stream."));
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void ComposeEventPropTooltip()
         {
             SimpleCodeCompletion.ResetProject();
@@ -52,7 +52,7 @@ static class Script
             Assert.StartsWith("Event: Action Script.action", tooltip.First());
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void ComposeMethodFieldTooltip()
         {
             SimpleCodeCompletion.ResetProject();
@@ -87,7 +87,7 @@ class Script
             Assert.StartsWith("Method: void Console.WriteLine(int value) (+ 18 overloads)", tooltip.First());
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void ProcessMethodOverloadsHint()
         {
             SimpleCodeCompletion.ResetProject();
@@ -128,7 +128,7 @@ class Script
             Assert.Equal(6, popup.items.Count);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void ResolveSymbolFromCode()
         {
             SimpleCodeCompletion.ResetProject();
@@ -156,7 +156,7 @@ class Script
             Assert.Equal("test.cs", region.FileName);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void ResolveSymbolFromCSharp_7_Code()
         {
             SimpleCodeCompletion.ResetProject();

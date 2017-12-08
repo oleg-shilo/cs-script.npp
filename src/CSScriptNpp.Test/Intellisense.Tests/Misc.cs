@@ -113,7 +113,7 @@ namespace NSTest
             RoslynHost.Init();
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void CompleteAtEmptySpace()
         {
             SimpleCodeCompletion.ResetProject();
@@ -137,7 +137,7 @@ namespace NSTest
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void TypeNamespaceRemoved()
         {
             SimpleCodeCompletion.ResetProject();
@@ -157,7 +157,7 @@ namespace NSTest
             var data = SimpleCodeCompletion.GetCompletionData(@"//css_args /provider:E:\Galos\Pro...", 6, "test.cs");
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GetAddLocalEventHandlerCompletion()
         {
             SimpleCodeCompletion.ResetProject();
@@ -186,7 +186,7 @@ class Script
             Assert.Equal("OnLoad2;", data.Last().CompletionText);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GetAddExternalEventHandlerCompletion()
         {
             SimpleCodeCompletion.ResetProject();
@@ -260,7 +260,7 @@ class Script
             var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GetAssignmentCompletion()
         {
             SimpleCodeCompletion.ResetProject();
@@ -286,7 +286,7 @@ class Script
             Assert.Equal("DialogResult.", data.Last().CompletionText);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void CompletePartialWord()
         {
             SimpleCodeCompletion.ResetProject();
@@ -297,7 +297,7 @@ class Script
             Assert.True(data.Where(x => x.DisplayText == "MessageBox").Any());
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void CompleteMethodArguments()
         {
             SimpleCodeCompletion.ResetProject();
@@ -322,7 +322,7 @@ class Script
             //It is a CSharpCompletionEngine flaw.
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void SuggestMissingUsings()
         {
             SimpleCodeCompletion.ResetProject();
@@ -334,7 +334,7 @@ class Script
             Assert.Equal("System.IO.File", info.FullName);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void SuggestMissingUsingsForPartialWordAtCaret()
         {
             SimpleCodeCompletion.ResetProject();
@@ -346,7 +346,7 @@ class Script
             Assert.Equal("System.IO.File", info.FullName);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void SuggestMissingUsingsForTopLevelType()
         {
             SimpleCodeCompletion.ResetProject();
@@ -363,7 +363,7 @@ class Script
             Assert.True(info[1].IsNested);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void SuggestMissingUsingsForNestedType()
         {
             SimpleCodeCompletion.ResetProject();
@@ -383,7 +383,7 @@ class Script
             Assert.Equal("WriteLine", word);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GenerateMemberMethodQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -404,7 +404,7 @@ class Script
             Assert.Equal("Method: void Console.WriteLine(int value) (+ 18 overloads)", info.First().GetLine(0));
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GenerateMemberQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -430,7 +430,7 @@ class Script
             Assert.Equal("Property: TextWriter Console.Out { get; }", info.First().GetLine(0));
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GenerateTypeQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -459,7 +459,7 @@ class Script<T,T1,T2>
             Assert.Equal("Constructor: DateTime(long ticks) (+ 11 overloads)", info.First().GetLine(0));
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GenerateConstructorQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -481,7 +481,7 @@ class Script
             Assert.Equal("Constructor: DateTime(int year, int month, int day) (+ 11 overloads)", firstLine);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GenerateConstructorQuickInfo1()
         {
             SimpleCodeCompletion.ResetProject();
@@ -502,7 +502,7 @@ class Script
             Assert.Equal("Constructor: Script()", info.First());
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GenerateTypeDeclarationQuickInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -524,7 +524,7 @@ class Script
             Assert.Equal("Class: Script", info.First());
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GenerateConstructorFullInfo()
         {
             SimpleCodeCompletion.ResetProject();
@@ -545,7 +545,7 @@ class Script
             Assert.Equal("Constructor: DateTime()", info.OrderBy(x => x).First().GetLine(0));
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void GenerateMemeberFullInfo()
         {
             SimpleCodeCompletion.ResetProject();

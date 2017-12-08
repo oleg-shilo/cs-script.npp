@@ -627,7 +627,7 @@ namespace Testing
 }", code);
         }
 
-        [Fact]
+        [Fact(Skip = "Need Syntaxer running")]
         public void ResolveMember()
         {
             SimpleCodeCompletion.ResetProject();
