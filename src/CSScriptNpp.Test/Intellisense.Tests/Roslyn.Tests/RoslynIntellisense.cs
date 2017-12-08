@@ -44,11 +44,11 @@ static class Script
 }";
             int pos = GetCaretPosition(ref code);
 
-            var tooltip = SimpleCodeCompletion.GetMemberInfo(code, pos, "test.cs", true);
+            var tooltip = SimpleCodeCompletion.test_GetMemberInfo(code, pos, "test.cs", true);
             Assert.StartsWith("Property: IEnumerable<List<int>> Script.Test { get; }", tooltip.First());
 
             //act|ion
-            tooltip = SimpleCodeCompletion.GetMemberInfo(code, pos + 17, "test.cs", true);
+            tooltip = SimpleCodeCompletion.test_GetMemberInfo(code, pos + 17, "test.cs", true);
             Assert.StartsWith("Event: Action Script.action", tooltip.First());
         }
 
@@ -75,15 +75,15 @@ class Script
 
             int pos = GetCaretPosition(ref code);
 
-            var tooltip = SimpleCodeCompletion.GetMemberInfo(code, pos, "test.cs", true);
+            var tooltip = SimpleCodeCompletion.test_GetMemberInfo(code, pos, "test.cs", true);
             Assert.StartsWith("Method (extension): IEnumerable<List<int>> IEnumerable<List<int>>.Concat<List<int>>(IEnumerable<List<int>> second)", tooltip.First());
 
             //.Ca|st<char>();
-            tooltip = SimpleCodeCompletion.GetMemberInfo(code, pos - 4, "test.cs", true);
+            tooltip = SimpleCodeCompletion.test_GetMemberInfo(code, pos - 4, "test.cs", true);
             Assert.StartsWith("Field: IEnumerable<List<int>> Script.test", tooltip.First());
 
             //Console.Write|Line
-            tooltip = SimpleCodeCompletion.GetMemberInfo(code, pos + 70, "test.cs", true);
+            tooltip = SimpleCodeCompletion.test_GetMemberInfo(code, pos + 70, "test.cs", true);
             Assert.StartsWith("Method: void Console.WriteLine(int value) (+ 18 overloads)", tooltip.First());
         }
 
@@ -109,7 +109,7 @@ class Script
 
             //Simulate invoking ShowMathodInfo
             //Console.WriteLine(|
-            string[] signatures = SimpleCodeCompletion.GetMemberInfo(code, pos, "test.cs", false);
+            string[] signatures = SimpleCodeCompletion.test_GetMemberInfo(code, pos, "test.cs", false);
 
             Assert.Equal(19, signatures.Count()); // may need to be updated for the new .NET versions
 

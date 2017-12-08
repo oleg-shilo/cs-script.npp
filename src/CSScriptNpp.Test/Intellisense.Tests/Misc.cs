@@ -389,7 +389,7 @@ class Script
             SimpleCodeCompletion.ResetProject();
 
             //Console.Wri|teLine
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+            string[] info = SimpleCodeCompletion.test_GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -422,7 +422,7 @@ class Script
 }";
             int pos = GetCaretPosition(ref code);
 
-            string[] info = SimpleCodeCompletion.GetMemberInfo(code, pos, "test.cs", true);
+            string[] info = SimpleCodeCompletion.test_GetMemberInfo(code, pos, "test.cs", true);
 
             var p = Console.Out;
 
@@ -451,7 +451,7 @@ class Script<T,T1,T2>
 }";
             int pos = GetCaretPosition(ref code);
 
-            string[] info = SimpleCodeCompletion.GetMemberInfo(code, pos, "test.cs", true);
+            string[] info = SimpleCodeCompletion.test_GetMemberInfo(code, pos, "test.cs", true);
 
             var p = Console.Out;
 
@@ -465,7 +465,7 @@ class Script<T,T1,T2>
             SimpleCodeCompletion.ResetProject();
 
             //124 - new DateTim|e(
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+            string[] info = SimpleCodeCompletion.test_GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -487,7 +487,7 @@ class Script
             SimpleCodeCompletion.ResetProject();
 
             //121 - new Scrip|t()
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+            string[] info = SimpleCodeCompletion.test_GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -508,7 +508,7 @@ class Script
             SimpleCodeCompletion.ResetProject();
 
             //61 - Scr|ipt
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+            string[] info = SimpleCodeCompletion.test_GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -530,7 +530,7 @@ class Script
             SimpleCodeCompletion.ResetProject();
 
             //126 - new DateTime(|
-            string[] info = SimpleCodeCompletion.GetMemberInfo(@"using System;
+            string[] info = SimpleCodeCompletion.test_GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script
@@ -562,7 +562,7 @@ class Script
 }";
             int pos = GetCaretPosition(ref code);
             //Console.WriteLine(|
-            string[] info = SimpleCodeCompletion.GetMemberInfo(code, 131, "test.cs", false)
+            string[] info = SimpleCodeCompletion.test_GetMemberInfo(code, 131, "test.cs", false)
                                                 .OrderBy(x => x)
                                                 .ToArray();
 

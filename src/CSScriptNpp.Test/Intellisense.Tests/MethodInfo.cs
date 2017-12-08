@@ -28,7 +28,7 @@ namespace Testing
 
             //Simulate invoking ShowMathodInfo
             //Console.WriteLine(|
-            string[] signatures = SimpleCodeCompletion.GetMemberInfo(@"using System;
+            string[] signatures = SimpleCodeCompletion.test_GetMemberInfo(@"using System;
 using System.Linq;
 
 class Script

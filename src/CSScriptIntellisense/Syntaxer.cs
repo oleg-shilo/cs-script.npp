@@ -78,6 +78,29 @@ namespace CSScriptIntellisense
                 tempFile => SendSyntaxCommand(tempFile, $"suggest_usings:{word}")).ToTypeInfos();
         }
 
+        public static string[] GetMemberInfo(string editorText, string file, int location, bool collapseOverloads, out int methodStartPosTemp)
+        {
+            var overloads = (collapseOverloads ? "-collapseOverloads" : "");
+
+            methodStartPosTemp = 0;
+            var result = editorText.WithTempCopy(file,
+                                                 tempFile => SendCommand($"-client:{procId}\n" +
+                                                                         $"-op:memberinfo\n" +
+                                                                         $"-script:{tempFile}\n" +
+                                                                         $"-pos:{location}\n" +
+                                                                         $"-rich\n" +
+                                                                         $"{overloads}"))
+                                                 .ToMemberInfoData();
+
+            if (result.Any())
+            {
+                methodStartPosTemp = result.First().MemberStartPosition;
+                return result.Select(x => x.Info).ToArray();
+            }
+            else
+                return new string[0];
+        }
+
         ////////////////////////////////////////////////
 
         static string SendSyntaxCommand(string file, string operation, params string[] extraArgs)
@@ -180,6 +203,19 @@ namespace CSScriptIntellisense
             return new CodeMapItem[0];
         }
 
+        public static Intellisense.Common.MemberInfoData[] ToMemberInfoData(this string data)
+        {
+            if (data != null && !data.StartsWith("<error>"))
+                try
+                {
+                    return data.GetSerializedLines()
+                               .Select(Intellisense.Common.MemberInfoData.Deserialize)
+                               .ToArray();
+                }
+                catch { }
+            return new Intellisense.Common.MemberInfoData[0];
+        }
+
         public static Intellisense.Common.TypeInfo[] ToTypeInfos(this string data)
         {
             if (data != null && !data.StartsWith("<error>"))
@@ -212,6 +248,14 @@ namespace CSScriptIntellisense
             return new List<ICompletionData>();
         }
 
+        public static string[] ToResultStrings(this string data)
+        {
+            if (data != null && !data.StartsWith("<error>"))
+                return data.GetSerializedLines();
+
+            return new string[0];
+        }
+
         public static DomRegion ToDomRegion(this string data)
         {
             if (data != null && !data.StartsWith("<error>"))
@@ -231,7 +275,7 @@ namespace CSScriptIntellisense
         public static string[] ToReferences(this string data)
         {
             if (data != null && !data.StartsWith("<error>"))
-                try { return data.Split('\n'); }
+                try { return data.Split('\n'); } // references are simple types and syntaxer never returns them as "rich_serialization" serialized
                 catch { }
             return new string[0];
         }

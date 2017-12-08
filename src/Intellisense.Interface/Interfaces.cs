@@ -104,12 +104,18 @@ namespace Intellisense.Common
     {
         public static string EscapeLB(this string data)
         {
-            return data.Replace("\n", "${n}").Replace("\r", "${r}");
+            if (data != null)
+                return data.Replace("\n", "${n}").Replace("\r", "${r}");
+            else
+                return data;
         }
 
         public static string UnescapeLB(this string data)
         {
-            return data.Replace("${n}", "\n").Replace("${r}", "\r");
+            if (data != null)
+                return data.Replace("${n}", "\n").Replace("${r}", "\r");
+            else
+                return data;
         }
     }
 
@@ -207,6 +213,27 @@ namespace Intellisense.Common
         public IEntity Entity { get; set; }
     }
 
+    public static class SerializationExtensions
+    {
+        public static string JoinSerializedLines(this IEnumerable<string> lines)
+        {
+            var result = new StringBuilder();
+
+            foreach (string line in lines)
+            {
+                if (result.Length > 0)
+                    result.Append("\r\n");
+                result.Append(line);
+            }
+            return result.ToString();
+        }
+
+        static public string[] GetSerializedLines(this string text, int count = -1)
+        {
+            return (text ?? "").Split(new[] { "\r\n" }, StringSplitOptions.None);
+        }
+    }
+
     public static class ReflectionExtensions
     {
         public static T CopyPropertiesFrom<T>(this T dest, T src)
@@ -253,6 +280,28 @@ namespace Intellisense.Common
                 FileName = lines[3],
                 Hint = lines[4].UnescapeLB(),
                 IsEmpty = bool.Parse(lines[5])
+            };
+        }
+    }
+
+    public struct MemberInfoData
+    {
+        public string Info { get; set; }
+        public int MemberStartPosition { get; set; }
+
+        public static string Serialize(MemberInfoData data)
+        {
+            return $"{data.MemberStartPosition}\n" +
+                   $"{data.Info.EscapeLB()}";
+        }
+
+        public static MemberInfoData Deserialize(string data)
+        {
+            var lines = data.Split('\n');
+            return new MemberInfoData
+            {
+                MemberStartPosition = int.Parse(lines[0]),
+                Info = lines[1].UnescapeLB()
             };
         }
     }

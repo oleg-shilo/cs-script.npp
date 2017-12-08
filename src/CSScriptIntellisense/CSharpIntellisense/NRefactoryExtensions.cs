@@ -542,11 +542,6 @@ namespace CSScriptIntellisense
                 return (text ?? "").Split(lineDelimiters, StringSplitOptions.None);
         }
 
-        static public string[] GetSerializedLines(this string text, int count = -1)
-        {
-            return (text ?? "").Split(new[] { "\r\n" }, StringSplitOptions.None);
-        }
-
         static public string JoinLines(this IEnumerable<string> lines, string separator)
         {
             string[] items;

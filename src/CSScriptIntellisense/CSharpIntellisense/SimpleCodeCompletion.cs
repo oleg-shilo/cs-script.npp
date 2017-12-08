@@ -121,9 +121,7 @@ namespace CSScriptIntellisense
         public static void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies)
         {
             if (Config.Instance.UsingRoslyn)
-            {
-                // RoslynEngine.ResetProject(sourceFiles, assemblies);
-            }
+                RoslynEngine.ResetProject(sourceFiles, assemblies);
             else
                 MonoEngine.ResetProject(sourceFiles, assemblies); //at this stage always reset mono project as it is always used for other then autocomplete operations
         }
@@ -173,8 +171,9 @@ namespace CSScriptIntellisense
         }
 
         //----------------------------------
-        public static string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads)
+        public static string[] test_GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads)
         {
+            // Only used in tests
             int methodStartPos;
             return GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
         }
@@ -182,7 +181,13 @@ namespace CSScriptIntellisense
         public static string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos)
         {
             if (Config.Instance.UsingRoslyn)
-                return RoslynEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+            {
+                var syntaxer = true;
+                if (syntaxer)
+                    return Syntaxer.GetMemberInfo(editorText, fileName, offset, collapseOverloads, out methodStartPos);
+                else
+                    return RoslynEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+            }
             else
                 return MonoEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
         }
