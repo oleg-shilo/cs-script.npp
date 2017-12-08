@@ -247,7 +247,7 @@
     <Content Include="Images\property.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Interop\DllExport\NppPlugin.DllExport.targets" />
+    <!--<None Include="Interop\DllExport\NppPlugin.DllExport.targets" />-->
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
