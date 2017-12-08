@@ -32,12 +32,15 @@ namespace CSScriptIntellisense
 
                     string newCode = FormatCode(code, ref currentPos, Npp.GetCurrentFile());
 
-                    Npp.SetTextBetween(newCode, 0, Npp.DocEnd);
+                    if (newCode != null)
+                    {
+                        Npp.SetTextBetween(newCode, 0, Npp.DocEnd);
 
-                    Npp.SetCaretPosition(currentPos);
-                    Npp.ClearSelection();
+                        Npp.SetCaretPosition(currentPos);
+                        Npp.ClearSelection();
 
-                    Npp.SetFirstVisibleLine(Npp.GetLineNumber(currentPos) - topScrollOffset);
+                        Npp.SetFirstVisibleLine(Npp.GetLineNumber(currentPos) - topScrollOffset);
+                    }
                 }
             }
             catch
