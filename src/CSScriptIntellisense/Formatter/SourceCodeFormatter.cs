@@ -128,37 +128,7 @@ namespace CSScriptIntellisense
         {
             try
             {
-                string newCode;
-                var syntaxer = true;
-                if (syntaxer)
-                {
-                    return Syntaxer.Format(code, "csharp", ref pos);
-                }
-                else
-                {
-                    if (RoslynFormat == null)
-                    {
-                        //need to load dynamically as static loading can only be achieved via compilation and plugin target CLR is older than
-                        //the one is Roslyn based on.
-                        string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-                        var asmFile = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\");
-                        var asm = Assembly.LoadFrom(asmFile);
-                        MethodInfo method;
-                        if (Config.Instance.HybridFormatting)
-                            method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("FormatHybrid");
-                        else
-                            method = asm.GetType("RoslynIntellisense.Formatter").GetMethod("Format");
-                        RoslynFormat = (FormatMethod)Delegate.CreateDelegate(typeof(FormatMethod), method);
-                    }
-
-                    if (RoslynFormat != null)
-                    {
-                        newCode = RoslynFormat(code, file);
-                        pos = SyntaxMapper.MapAbsPosition(code, pos, newCode);
-                        return newCode;
-                    }
-                }
+                return Syntaxer.Format(code, "csharp", ref pos);
             }
             catch (Exception e)
             {

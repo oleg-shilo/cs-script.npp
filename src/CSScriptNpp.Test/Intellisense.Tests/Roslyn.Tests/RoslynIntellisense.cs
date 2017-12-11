@@ -17,8 +17,8 @@ namespace Testing
 
             var doc = provider.GetDocumentationFor("P:System.Console.Out");
 
-            Assert.True(doc.StartsWith("<member name=\"P:System.Console.Out\">"));
-            Assert.True(doc.Contains("that represents the standard output stream."));
+            Assert.Contains("<member name=\"P:System.Console.Out\">", doc);
+            Assert.Contains("that represents the standard output stream.", doc);
         }
 
         [Fact(Skip = "Need Syntaxer running")]

@@ -52,7 +52,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- <Import Project="Interop\DllExport\NppPlugin.DllExport.2017.targets" /> -->
   <!-- <Import Project="Interop\DllExport\NppPlugin.DllExport.targets" /> -->
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
@@ -247,6 +247,7 @@
     <Content Include="Images\property.png" />
   </ItemGroup>
   <ItemGroup>
+    <!-- No need to do export as this plugin is discontinued and CSScript.Npp embedds this assembly as is without exporting. Keeping exporting step would be OK but AppVeyor fails with concurrent exporting of two assemblies-->
     <!--<None Include="Interop\DllExport\NppPlugin.DllExport.targets" />-->
   </ItemGroup>
   <ItemGroup>

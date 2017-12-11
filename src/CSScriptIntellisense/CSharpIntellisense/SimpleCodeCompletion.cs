@@ -11,19 +11,19 @@ namespace CSScriptIntellisense
         public static void Init()
         {
             MonoCompletionEngine.Init();
-            if (Config.Instance.UsingRoslyn)
-                RoslynCompletionEngine.Init();
+            // if (Config.Instance.UsingRoslyn)
+            //     RoslynCompletionEngine.Init();
         }
 
         static IEngine MonoEngine = new MonoCompletionEngine();
 
-        static IEngine RoslynEngine
-        {
-            get
-            {
-                return RoslynCompletionEngine.GetInstance();
-            }
-        }
+        // static IEngine RoslynEngine
+        // {
+        //     get
+        //     {
+        //         return RoslynCompletionEngine.GetInstance();
+        //     }
+        // }
 
         public static char[] Delimiters = "\\\t\n\r .,:;'\"=[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
         public static char[] CSS_Delimiters = "\\\t\n\r .,:;'\"=[]{}()-!?@$%^&*«»><#|~`".ToCharArray();
@@ -121,7 +121,9 @@ namespace CSScriptIntellisense
         public static void ResetProject(Tuple<string, string>[] sourceFiles = null, params string[] assemblies)
         {
             if (Config.Instance.UsingRoslyn)
-                RoslynEngine.ResetProject(sourceFiles, assemblies);
+            {
+                // RoslynEngine.ResetProject(sourceFiles, assemblies);
+            }
             else
                 MonoEngine.ResetProject(sourceFiles, assemblies); //at this stage always reset mono project as it is always used for other then autocomplete operations
         }
@@ -182,11 +184,8 @@ namespace CSScriptIntellisense
         {
             if (Config.Instance.UsingRoslyn)
             {
-                var syntaxer = true;
-                if (syntaxer)
-                    return Syntaxer.GetMemberInfo(editorText, fileName, offset, collapseOverloads, out methodStartPos);
-                else
-                    return RoslynEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+                return Syntaxer.GetMemberInfo(editorText, fileName, offset, collapseOverloads, out methodStartPos);
+                // return RoslynEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
             }
             else
                 return MonoEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);

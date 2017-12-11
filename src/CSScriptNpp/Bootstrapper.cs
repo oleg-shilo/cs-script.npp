@@ -34,7 +34,7 @@ namespace CSScriptNpp
                                                     Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
             syntaxerDir =
-            CSScriptIntellisense.Syntaxer.syntaxerDir = dependenciesDir.PathJoin("Syntaxer");
+            CSScriptIntellisense.Syntaxer.syntaxerDir = dependenciesDir.PathJoin("Roslyn");
             CSScriptIntellisense.Syntaxer.cscsFile = pluginDir.PathJoin("cscs.exe");
 
             var cscs = sourceDir.PathJoin("cscs.exe");
@@ -136,8 +136,8 @@ namespace CSScriptNpp
                     return Assembly.LoadFrom(Path.Combine(rootDir, @"CSScriptNpp\CSScriptIntellisense.dll"));
                 else if (args.Name.StartsWith("CSScriptLibrary,"))
                     return Assembly.LoadFrom(Path.Combine(rootDir, @"CSScriptNpp\CSScriptLibrary.dll"));
-                else if (args.Name.StartsWith("NLog,"))
-                    return Assembly.LoadFrom(Path.Combine(rootDir, @"CSScriptNpp\NLog.dll"));
+                // else if (args.Name.StartsWith("NLog,"))
+                //     return Assembly.LoadFrom(Path.Combine(rootDir, @"CSScriptNpp\NLog.dll"));
                 else if (args.Name == Assembly.GetExecutingAssembly().FullName)
                     return Assembly.GetExecutingAssembly();
             }

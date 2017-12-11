@@ -10,7 +10,7 @@ using Intellisense.Common;
 
 namespace CSScriptIntellisense
 {
-    internal class Roslyn
+    internal class Roslyn_embedded
     {
         public static string LocateInPluginDir(string fileName, params string[] subDirs)
         {
@@ -27,7 +27,7 @@ namespace CSScriptIntellisense
         }
     }
 
-    public class RoslynCompletionEngine
+    public class RoslynCompletionEngine_old
     {
         public delegate void D2(string s);
 
@@ -102,24 +102,25 @@ namespace CSScriptIntellisense
         {
             if (engine != null) return;
 
-            WithCompatibilityCheck(() =>
-            {
-                var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\", Environment.CurrentDirectory);
+            // syntaxer migration
+            // WithCompatibilityCheck(() =>
+            // {
+            //     var file = Roslyn.LocateInPluginDir("RoslynIntellisense.exe", "Roslyn", @".\", Environment.CurrentDirectory);
 
-                if (!File.Exists(file))
-                {
-                    var path = Environment.GetEnvironmentVariable("roslynintellisense_path") ?? "";
-                    if (File.Exists(path))
-                        file = path;
-                }
+            //     if (!File.Exists(file))
+            //     {
+            //         var path = Environment.GetEnvironmentVariable("roslynintellisense_path") ?? "";
+            //         if (File.Exists(path))
+            //             file = path;
+            //     }
 
-                intellisense = Assembly.LoadFrom(file);
-                engine = (IEngine)intellisense.CreateInstance("RoslynIntellisense.Engine");
-                engine.SetOption("ReflectionOutDir", Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes"));
-            });
+            //     intellisense = Assembly.LoadFrom(file);
+            //     engine = (IEngine)intellisense.CreateInstance("RoslynIntellisense.Engine");
+            //     engine.SetOption("ReflectionOutDir", Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes"));
+            // });
 
-            if (engine != null)
-                Task.Factory.StartNew(() => WithCompatibilityCheck(engine.Preload));
+            // if (engine != null)
+            //     Task.Factory.StartNew(() => WithCompatibilityCheck(engine.Preload));
         }
 
         static public GetAutocompletionForDlgt GetAutocompletionFor;
