@@ -85,10 +85,10 @@ namespace CSScriptIntellisense
                 e.Graphics.FillRectangle(Brushes.LightGray, separatorBounds);
             }
 
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(253, 244, 191)), itemBounds);
-            else
-                e.Graphics.FillRectangle(SystemBrushes.Menu, itemBounds);
+            e.Graphics.FillRectangle(
+                (e.State & DrawItemState.Selected) == DrawItemState.Selected
+                    ? new SolidBrush(Color.FromArgb(253, 244, 191))
+                    : SystemBrushes.Menu, itemBounds);
 
             Rectangle rect = itemBounds;
             rect.Offset(18, 3);
@@ -138,8 +138,7 @@ namespace CSScriptIntellisense
         {
             var info = (listBox1.SelectedItem as ItemInfo);
 
-            if (info != null)
-                info.Handler(info.Text);
+            info?.Handler(info.Text);
         }
 
         private void AutocompleteForm_Deactivate(object sender, EventArgs e)
@@ -154,10 +153,7 @@ namespace CSScriptIntellisense
         }
 
         //Very important to keep it. It prevents the form from stealing the focus
-        protected override bool ShowWithoutActivation
-        {
-            get { return true; }
-        }
+        protected override bool ShowWithoutActivation => true;
 
         private void AutocompleteForm_Load(object sender, EventArgs e)
         {

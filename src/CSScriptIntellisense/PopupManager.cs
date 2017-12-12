@@ -19,13 +19,7 @@ namespace CSScriptIntellisense
             hook.Install();
         }
 
-        public bool Simple
-        {
-            get
-            {
-                return popupForm != null && popupForm.Simple;
-            }
-        }
+        public bool Simple => popupForm != null && popupForm.Simple;
 
         const UInt32 WM_SIZE = 0x0005;
         const UInt32 WM_MOVE = 0x0003;
@@ -118,7 +112,7 @@ namespace CSScriptIntellisense
 
             try
             {
-                popupForm.kbdHook_KeyDown(key, repeatCount);
+                popupForm?.kbdHook_KeyDown(key, repeatCount);
                 CheckIfNeedsClosing();
             }
             catch { }
@@ -141,7 +135,7 @@ namespace CSScriptIntellisense
                 else if (text != null && text[text.Length - 1] == ')')
                 {
                     string typedArgs = text;
-                    if (NRefactoryExtensions.AreBracketsClosed(typedArgs))
+                    if (typedArgs.AreBracketsClosed())
                     {
                         base.Close();
                     }
@@ -239,13 +233,7 @@ namespace CSScriptIntellisense
             popupForm.ShowDialog();
         }
 
-        public bool IsShowing
-        {
-            get
-            {
-                return popupForm != null;
-            }
-        }
+        public bool IsShowing => popupForm != null;
     }
 
     static class UpdaterExtensions

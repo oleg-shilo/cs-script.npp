@@ -49,7 +49,7 @@ namespace CSScriptIntellisense
         {
             lock (typeof(Bootstrapper))
             {
-                var anotherNppInstance = Process.GetProcessesByName("Notepad++").Where(p => p.Id != Process.GetCurrentProcess().Id).FirstOrDefault();
+                var anotherNppInstance = Process.GetProcessesByName("Notepad++").FirstOrDefault(p => p.Id != Process.GetCurrentProcess().Id);
                 if (anotherNppInstance == null && Directory.Exists(Reflector.DefaultTempDir))
                 {
                     foreach (string file in Directory.GetFiles(Reflector.DefaultTempDir))
@@ -62,31 +62,37 @@ namespace CSScriptIntellisense
             }
         }
 
-        static public bool IsInConflictWithCSScriptNpp()
+        public static bool IsInConflictWithCSScriptNpp()
         {
             //CSScriptIntellisense Plugin - C:\Program Files (x86)\Notepad++\plugins\CSScriptIntellisense.dll
             //CSScriptNpp Plugin - C:\Program Files (x86)\Notepad++\plugins\CSScriptNpp\CSScriptIntellisense.dll
 
             //conflict criteria: this asm is part of CSScriptIntellisense plugin and CSScriptNpp plugin is installed
             string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return File.Exists(Path.Combine(rootDir, @"CSScriptNpp\CSScriptIntellisense.dll"));
+
+            // checking rootDir is not null
+            return rootDir != null && File.Exists(Path.Combine(rootDir, @"CSScriptNpp\CSScriptIntellisense.dll"));
         }
 
         static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            try
+            if (rootDir != null)
             {
-                if (args.Name.StartsWith("Mono.Cecil,"))
-                    return Assembly.LoadFrom(Path.Combine(rootDir, @"CSharpIntellisense\Mono.Cecil.dll"));
-                else if (args.Name.StartsWith("ICSharpCode.NRefactory.CSharp,"))
-                    return Assembly.LoadFrom(Path.Combine(rootDir, @"CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll"));
-                else if (args.Name.StartsWith("ICSharpCode.NRefactory,"))
-                    return Assembly.LoadFrom(Path.Combine(rootDir, @"CSharpIntellisense\ICSharpCode.NRefactory.dll"));
-                else if (args.Name.StartsWith("CSScriptLibrary,"))
-                    return Assembly.LoadFrom(Path.Combine(rootDir, @"CSharpIntellisense\CSScriptLibrary.dll"));
+                try
+                {
+                    if (args.Name.StartsWith("Mono.Cecil,"))
+                        return Assembly.LoadFrom(Path.Combine(rootDir, @"CSharpIntellisense\Mono.Cecil.dll"));
+                    if (args.Name.StartsWith("ICSharpCode.NRefactory.CSharp,"))
+                        return Assembly.LoadFrom(Path.Combine(rootDir, @"CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll"));
+                    if (args.Name.StartsWith("ICSharpCode.NRefactory,"))
+                        return Assembly.LoadFrom(Path.Combine(rootDir, @"CSharpIntellisense\ICSharpCode.NRefactory.dll"));
+                    if (args.Name.StartsWith("CSScriptLibrary,"))
+                        return Assembly.LoadFrom(Path.Combine(rootDir, @"CSharpIntellisense\CSScriptLibrary.dll"));
+                }
+                catch { }
             }
-            catch { }
+            
             return null;
         }
     }

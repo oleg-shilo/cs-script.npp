@@ -1,19 +1,11 @@
 using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
-
     public static class SocketExtensions
     {
         public static string PathJoin(this string path, params string[] items)

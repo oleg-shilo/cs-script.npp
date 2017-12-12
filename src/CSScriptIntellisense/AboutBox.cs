@@ -14,31 +14,30 @@ namespace CSScriptIntellisense
         public AboutBox()
         {
             InitializeComponent();
-            this.Text = "About C# Intellisense";
-            this.label3.Text = "Version: " + AssemblyVersion;
+            this.Text = @"About C# Intellisense";
+            this.label3.Text = @"Version: " + AssemblyVersion;
             this.label5.Text = AssemblyCopyright;
             this.textBoxDescription.Text = AssemblyDescription;
 
             if (Plugin.Enabled)
             {
-                this.currentParsedFile.Text = "Parsed file: " + TruncatePath(Plugin.currentFile);
+                this.currentParsedFile.Text = @"Parsed file: " + TruncatePath(Plugin.currentFile);
             }
             else
             {
                 this.currentParsedFile.ForeColor = Color.Red;
-                this.currentParsedFile.Text = "Disabled because the complete 'CSScriptNpp' is installed";
+                this.currentParsedFile.Text = @"Disabled because the complete 'CSScriptNpp' is installed";
             }
         }
 
-        string TruncatePath(string path)
+        static string TruncatePath(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return "";
 
             if (path.Length > 100)
                 return "..." + path.Substring(path.Length - 100);
-            else
-                return path;
+            return path;
         }
 
         #region Assembly Attribute Accessors
@@ -60,13 +59,7 @@ namespace CSScriptIntellisense
             }
         }
 
-        public string AssemblyVersion
-        {
-            get
-            {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            }
-        }
+        public string AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public string AssemblyDescription
         {
@@ -127,17 +120,22 @@ namespace CSScriptIntellisense
             {
                 Process.Start("http://csscript.net/npp/license.txt");
             }
-            catch { }
+            catch
+            {
+                MessageBox.Show(@"We couldn't find license file", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-         void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
                 Process.Start("http://csscript.net/npp/");
             }
-            catch { }
-
+            catch
+            {
+                MessageBox.Show(@"Unable to start process", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
-    static public partial class Plugin
+    public static partial class Plugin
     {
         public static string PluginName
         {
@@ -22,23 +22,22 @@ namespace CSScriptIntellisense
             {
                 if (Bootstrapper.IsInConflictWithCSScriptNpp())
                     return "C# Intellisence (disabled)";
-                else
-                    return "C# Intellisence";
+                return "C# Intellisence";
             }
         }
 
-        static internal string currentFile = null;
+        internal static string currentFile = null;
         static int currentFileCssHash = -1;
         static DateTime currentFileTimestamp;
         static List<string> parsedFiles = new List<string>();
 
         static bool SingleFileMode = false;
-        static internal bool Enabled = false;
-        static public Func<bool> SuppressCodeTolltips = () => false;
+        internal static bool Enabled = false;
+        public static Func<bool> SuppressCodeTolltips = () => false;
 
         static MemberInfoPopupManager memberInfoPopup;
 
-        static internal void CommandMenuInit()
+        internal static void CommandMenuInit()
         {
             int cmdIndex = 0;
             CommandMenuInit(ref cmdIndex,
@@ -49,7 +48,7 @@ namespace CSScriptIntellisense
         }
 
         //this method will also be called from the parent plugin
-        static public void CommandMenuInit(ref int cmdIndex, CSScriptNpp.SetMenuCommand setCommand)
+        public static void CommandMenuInit(ref int cmdIndex, CSScriptNpp.SetMenuCommand setCommand)
         {
             //System.Diagnostics.Debug.Assert(false);
 
@@ -319,7 +318,7 @@ namespace CSScriptIntellisense
             catch (Exception e)
             {
                 //for usability reasons is better not to popup message boxes
-                MessageBox.Show("Error: \n" + e.ToString(), "Notepad++");
+                MessageBox.Show(@"Error: \n" + e, @"Notepad++");
             }
 #else
             catch { }
@@ -461,7 +460,7 @@ namespace CSScriptIntellisense
 
                                                                      //Example" "C:\Users\<user>\Documents\C# Scripts\dev.cs(20,5): new Test..."
 
-                                                                     if (StringExtesnions.ParseAsErrorFileReference(refString, out file, out line, out column))
+                                                                     if (refString.ParseAsErrorFileReference(out file, out line, out column))
                                                                      {
                                                                          StringExtesnions.NormaliseFileReference(ref file, ref line);
 
@@ -535,7 +534,7 @@ namespace CSScriptIntellisense
             });
         }
 
-        static public void OnBeforeDocumentSaved()
+        public static void OnBeforeDocumentSaved()
         {
             if (Config.Instance.FormatOnSave)
                 FormatDocument();
@@ -708,7 +707,7 @@ namespace CSScriptIntellisense
                                 string[] output = UltraSharp.Cecil.Reflector.GetCodeCompileOutput(currentDocument);
 
                                 var missingNamespaceErrors = output.Select(x => x.ToFileErrorReference())
-                                                                   .Where(x => string.Compare(x.File, currentDocument, true) == 0)
+                                                                   .Where(x => String.Compare(x.File, currentDocument, StringComparison.OrdinalIgnoreCase) == 0)
                                                                    .ToArray();
 
                                 var namespacesToInsert = new List<string>();
@@ -732,7 +731,7 @@ namespace CSScriptIntellisense
                                     }
                                 }
 
-                                namespacesToInsert.ForEach(x => NppEditor.InsertNamespace(x));
+                                namespacesToInsert.ForEach(NppEditor.InsertNamespace);
                             } while (usingInserted && count < 10); //10 just a safe guard
                         }
                         catch { }
@@ -799,7 +798,7 @@ namespace CSScriptIntellisense
                 form.ShowDialog();
         }
 
-        static public void ShowConfig()
+        public static void ShowConfig()
         {
             using (var form = new ConfigForm(Config.Instance))
             {
@@ -1012,7 +1011,7 @@ namespace CSScriptIntellisense
             }
         }
 
-        static public void OnAutocompleteKeyPress(char keyChar = char.MinValue, bool allowNoText = false)
+        public static void OnAutocompleteKeyPress(char keyChar = char.MinValue, bool allowNoText = false)
         {
             try
             {
@@ -1076,7 +1075,7 @@ namespace CSScriptIntellisense
             EnsureCurrentFileParsedAsynch();
         }
 
-        static public void OnCharTyped(char c)
+        public static void OnCharTyped(char c)
         {
             if (Npp.IsCurrentScriptFile())
             {
@@ -1108,9 +1107,9 @@ namespace CSScriptIntellisense
             }
         }
 
-        static string defaultStatusbarLabel = "C# source file";
+        static string defaultStatusbarLabel = @"C# source file";
 
-        static public void OnCurrentFileChanegd()
+        public static void OnCurrentFileChanegd()
         {
             if (Plugin.Enabled)
             {
@@ -1128,7 +1127,7 @@ namespace CSScriptIntellisense
 
         static MouseMonitor mouseHook = new MouseMonitor();
 
-        static public void OnNppReady()
+        public static void OnNppReady()
         {
             mouseHook.MouseLClick += MouseHook_MouseLClick;
             mouseHook.Install();
@@ -1155,14 +1154,14 @@ namespace CSScriptIntellisense
             }
         }
 
-        static public void EnsureCurrentFileParsedAsynch()
+        public static void EnsureCurrentFileParsedAsynch()
         {
             if (Plugin.Enabled)
                 Task.Factory.StartNew(EnsureCurrentFileParsed);
         }
 
-        static public Func<string> ResolveCurrentFile = Npp.GetCurrentFile; //the implementation can be injected by the host or other plugins. To be used in the future.
-        static public Action<string> DisplayInOutputPanel = Npp.DisplayInNewDocument; //the implementation can be injected by the host or other plugins. To be used in the future.
+        public static Func<string> ResolveCurrentFile = Npp.GetCurrentFile; //the implementation can be injected by the host or other plugins. To be used in the future.
+        public static Action<string> DisplayInOutputPanel = Npp.DisplayInNewDocument; //the implementation can be injected by the host or other plugins. To be used in the future.
 
         static Dictionary<string, DateTime> currentSourcesStates = new Dictionary<string, DateTime>();
 
@@ -1182,7 +1181,7 @@ namespace CSScriptIntellisense
                 currentSourcesStates.Add(file, File.GetLastWriteTimeUtc(file));
         }
 
-        static public void EnsureCurrentFileParsed()
+        public static void EnsureCurrentFileParsed()
         {
             if (Plugin.Enabled)
                 lock (typeof(Plugin))

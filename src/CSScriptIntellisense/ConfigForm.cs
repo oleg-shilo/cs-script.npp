@@ -58,14 +58,13 @@ namespace CSScriptIntellisense
 
         void ConfigForm_Load(object sender, EventArgs e)
         {
-            string tooltip =
-                         "Checking this option remap C# Intellisense to Ctrl+Space.\n" +
-                         "This will also force C# Intellisense to invoke\n" +
-                         "native Notepad++ Auto-Completion for non .cs files." +
-                         "\n" +
-                         "Note that it will also remap \"Add missing 'using'\" to Ctrl+.\n" +
-                         "to make it more consistent with the default Visual Studio\n" +
-                         "shortcut mapping";
+            const string tooltip = "Checking this option remap C# Intellisense to Ctrl+Space.\n" +
+                                   "This will also force C# Intellisense to invoke\n" +
+                                   "native Notepad++ Auto-Completion for non .cs files." +
+                                   "\n" +
+                                   "Note that it will also remap \"Add missing 'using'\" to Ctrl+.\n" +
+                                   "to make it more consistent with the default Visual Studio\n" +
+                                   "shortcut mapping";
             this.toolTip1.SetToolTip(this.intercept, tooltip);
         }
 
@@ -77,13 +76,13 @@ namespace CSScriptIntellisense
                     try
                     {
                         DateTime timestamp = File.GetLastWriteTimeUtc(file);
-                        Process.Start("notepad.exe", file).WaitForExit();
+                        Process.Start("notepad.exe", file)?.WaitForExit();
                         if (File.GetLastWriteTimeUtc(file) != timestamp)
                             Config.Instance.Open();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error: \n" + ex.ToString(), "Notepad++");
+                        MessageBox.Show(@"Error: \n" + ex, @"Notepad++");
                     }
                 });
 
