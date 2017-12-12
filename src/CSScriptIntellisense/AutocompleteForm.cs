@@ -330,7 +330,7 @@ namespace CSScriptIntellisense
             return Math.Min(pattern.Length, text.Length);
         }
 
-        static string[] lineDelimiters = new string[] { "\r\n", "\n" };
+        static readonly string[] lineDelimiters = new string[] { "\r\n", "\n" };
 
         public static string TruncateLines(this string text, int maxLineCount, string truncationPrompt)
         {

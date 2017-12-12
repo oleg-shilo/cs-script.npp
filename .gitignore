@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/src/.vs/CSScriptNpp.2017/v15/sqlite3
+/src/CompatibilityTest/obj/Debug
+/src/ConsoleHost/obj/Debug
+/src/css_dbg

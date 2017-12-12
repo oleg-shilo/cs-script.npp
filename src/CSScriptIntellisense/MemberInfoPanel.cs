@@ -23,23 +23,20 @@ namespace CSScriptIntellisense
 
         public Point LeftBottomCorner;
 
-        int index = 0;
+        int index;
 
         public bool IsVisible()
         {
             return Visible;
         }
 
-        protected override bool ShowWithoutActivation
-        {
-            get { return true; }
-        }
+        protected override bool ShowWithoutActivation => true;
 
         int lastHintCount = -1;
 
         public void ProcessMethodOverloadHint(IEnumerable<string> hint)
         {
-            int hintCount = (hint == null ? 0 : hint.Count());
+            int hintCount = hint?.Count() ?? 0;
 
             if (lastHintCount == hintCount)
                 return; //nothing changed so no need to do anything
@@ -89,7 +86,7 @@ namespace CSScriptIntellisense
 
         string ReformatSignatureInfo(string signarure)
         {
-            int pos = signarure.IndexOf(Environment.NewLine);
+            int pos = signarure.IndexOf(Environment.NewLine, StringComparison.Ordinal);
             if (pos != -1)
                 signarure = signarure.Insert(pos, Environment.NewLine); //separate signature from the documentation with extra line break
 
@@ -138,7 +135,7 @@ namespace CSScriptIntellisense
 
         public bool Simple = false;
 
-        public bool AutoClose { get { return Simple; } }
+        public bool AutoClose => Simple;
 
         public MemberInfoPanel()
         {
@@ -247,15 +244,7 @@ namespace CSScriptIntellisense
 
         Font docFont;
 
-        Font DocFont
-        {
-            get
-            {
-                if (docFont == null)
-                    docFont = new Font(this.Font, FontStyle.Italic);
-                return docFont;
-            }
-        }
+        Font DocFont => docFont ?? (docFont = new Font(this.Font, FontStyle.Italic));
 
         void QuickInfoPanel_Paint(object sender, PaintEventArgs e)
         {
@@ -312,7 +301,7 @@ namespace CSScriptIntellisense
 
         string GetOverloadingStats()
         {
-            return string.Format("{0} of {1}", index + 1, items.Count);
+            return $"{index + 1} of {items.Count}";
         }
 
         private void MemberInfoPanel_MouseDown(object sender, MouseEventArgs e)

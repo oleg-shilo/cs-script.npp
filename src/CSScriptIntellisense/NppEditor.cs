@@ -1,4 +1,3 @@
-using Mono.CSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -70,8 +69,8 @@ namespace CSScriptIntellisense
 
         public static IEnumerable<string> GetMethodOverloadHint(int methodStartPos)
         {
-            string text;
-            return GetMethodOverloadHint(methodStartPos, out text);
+            // inline declaration of string text variable
+            return GetMethodOverloadHint(methodStartPos, out string text);
         }
         public static IEnumerable<string> GetMethodOverloadHint(int methodStartPos, out string text)
         {
