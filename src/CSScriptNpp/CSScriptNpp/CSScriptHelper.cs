@@ -1200,11 +1200,13 @@ class Script
             {
                 //only CSSCodeProvider.v4.0.dll can support VB
                 var provider = Plugin.PluginDir.PathJoin(Config.Instance.VbCodeProvider);
+                // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll");
                 result = " \"-provider:" + provider + "\"";
             }
             else if (Config.Instance.UseRoslynProvider)
             {
-                var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll");
+                // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll"); //before Syntaxer approach
+                var provider = Bootstrapper.dependenciesDir.PathJoin("CSSRoslynProvider.dll");
                 result = " \"-provider:" + provider + "\"";
             }
 

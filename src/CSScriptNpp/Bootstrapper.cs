@@ -18,6 +18,7 @@ namespace CSScriptNpp
 
         public static string dependenciesDir;
         public static string syntaxerDir;
+        public static string cscsDir;
 
         public static void InitSyntaxer(string sourceDir)
         {
@@ -37,23 +38,28 @@ namespace CSScriptNpp
             CSScriptIntellisense.Syntaxer.syntaxerDir = dependenciesDir.PathJoin("Roslyn");
             CSScriptIntellisense.Syntaxer.cscsFile = pluginDir.PathJoin("cscs.exe");
 
-            var cscs = sourceDir.PathJoin("cscs.exe");
-
 #if !DEBUG
             if (!Directory.Exists(syntaxerDir))
 #endif
             {
                 Directory.CreateDirectory(syntaxerDir);
 
+                SafeCopy("CSSRoslynProvider.dll", sourceDir, dependenciesDir);
+
                 CSScriptIntellisense.Syntaxer.Exit();
-                try
-                {
-                    File.Copy(sourceDir.PathJoin("syntaxer.exe"),
-                                                  syntaxerDir.PathJoin("syntaxer.exe"),
-                                                  true);
-                }
-                catch { }
+                SafeCopy("syntaxer.exe", sourceDir, syntaxerDir);
             }
+        }
+
+        static void SafeCopy(string file, string srcDir, string destDir)
+        {
+            try
+            {
+                File.Copy(srcDir.PathJoin(file),
+                          destDir.PathJoin(file),
+                          true);
+            }
+            catch { }
         }
 
         public static void Init()
@@ -68,7 +74,8 @@ namespace CSScriptNpp
                 //must be a separate method to allow assembly probing
                 pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName().PathJoin("CSScriptNpp");
 
-                InitSyntaxer(pluginDir);
+                Task.Factory.StartNew(() =>
+                                InitSyntaxer(pluginDir));
 
                 Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
                 Environment.SetEnvironmentVariable("NPP_HOSTING", "true");

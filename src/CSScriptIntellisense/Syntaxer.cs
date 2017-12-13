@@ -27,8 +27,26 @@ namespace CSScriptIntellisense
             Task.Factory.StartNew(() =>
             {
                 HandeErrors(() =>
-                    Process.Start(syntaxerDir.PathJoin("syntaxer.exe"),
-                                  $"-listen -port:{port} -timeout:{timeout} \"-cscs_path:{cscsFile}\""));
+                {
+                    bool hidden = true;
+                    if (hidden)
+                    {
+                        var p = new Process();
+
+                        p.StartInfo.UseShellExecute = false;
+                        p.StartInfo.CreateNoWindow = true;
+                        p.StartInfo.RedirectStandardOutput = true;
+                        p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                        p.StartInfo.FileName = syntaxerDir.PathJoin("syntaxer.exe");
+                        p.StartInfo.Arguments = $"-listen -port:{port} -timeout:{timeout} \"-cscs_path:{cscsFile}\"";
+                        p.Start();
+                    }
+                    else
+                    {
+                        Process.Start(syntaxerDir.PathJoin("syntaxer.exe"),
+                                      $"-listen -port:{port} -timeout:{timeout} \"-cscs_path:{cscsFile}\"");
+                    }
+                });
 
                 for (int i = 0; i < 25; i++)
                 {
