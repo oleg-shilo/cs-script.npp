@@ -28,7 +28,10 @@ namespace CSScriptIntellisense
             {
                 HandeErrors(() =>
                 {
+                    // Debug.Assert(false);
+
                     bool hidden = true;
+                    // hidden = false;
                     if (hidden)
                     {
                         var p = new Process();
