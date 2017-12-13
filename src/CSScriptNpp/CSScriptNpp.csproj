@@ -551,30 +551,6 @@
   <ItemGroup>
     <None Include="Resources\css_logo_vb_16x16_tb.png" />
     <None Include="Resources\DebugScript .csproj.user" />
-    <None Include="CSScriptNpp\Roslyn\csc.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\Roslyn\CSSCodeProvider.v4.6.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.CSharp.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\Roslyn\Microsoft.CodeAnalysis.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\Roslyn\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\Roslyn\System.Collections.Immutable.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\Roslyn\System.Reflection.Metadata.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Resources\dbg_refresh.png" />
     <None Include="CSScriptNpp\MDbg\DbgAgent.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

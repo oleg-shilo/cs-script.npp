@@ -9,7 +9,7 @@ namespace Testing
     {
         public ReferenceResolving()
         {
-            RoslynHost.Init();
+            // RoslynHost.Init();
         }
 
         private static string code =

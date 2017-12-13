@@ -110,7 +110,7 @@ namespace NSTest
 
         public Misc()
         {
-            RoslynHost.Init();
+            // RoslynHost.Init();
         }
 
         [Fact(Skip = "Need Syntaxer running")]

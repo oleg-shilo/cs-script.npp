@@ -8,7 +8,7 @@ namespace Testing
     {
         public MethodInfo()
         {
-            RoslynHost.Init();
+            // RoslynHost.Init();
         }
 
         [Fact]
