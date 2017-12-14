@@ -32,7 +32,7 @@ namespace CSScriptIntellisense
         public delegate void D2(string s);
 
         static IEngine engine;
-        static Assembly intellisense;
+        //static Assembly intellisense;
 
         public static IEngine GetInstance()
         {
