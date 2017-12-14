@@ -246,7 +246,8 @@ namespace CSScriptIntellisense
             {
                 string value = data.Replace("event", "_event").Replace("namespace", "_namespace");
 
-                if (!Enum.TryParse(value, out CompletionType type))
+                CompletionType type;
+                if (!Enum.TryParse(value, out type))
                     type = CompletionType.unresolved;
 
                 return type;

@@ -4,8 +4,8 @@ image: Visual Studio 2017
 
 environment:
   matrix:
-    - PlatformToolset: v140
-    - PlatformToolset: v141
+    - PlatformToolset: VS15
+    - PlatformToolset: VS17
 
 platform:
     #- x64
@@ -22,7 +22,8 @@ install:
     - if "%platform%"=="Any CPU" set archi=x86
     - if "%platform%"=="Any CPU" set platform_input=Any CPU
 
-    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
+    - if "%PlatformToolset%"=="VS15" call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %archi%
+    - if "%PlatformToolset%"=="VS17" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
     - nuget restore "%APPVEYOR_BUILD_FOLDER%"\src\CSScriptNpp.Test\packages.config -PackagesDirectory "%APPVEYOR_BUILD_FOLDER%"\src\packages
     - nuget restore "%APPVEYOR_BUILD_FOLDER%"\src\Roslyn.Intellisesne\Roslyn.Intellisense\packages.config -PackagesDirectory "%APPVEYOR_BUILD_FOLDER%"\src\packages
 
@@ -30,15 +31,10 @@ install:
 init:
     - git config --global core.autocrlf true
 
-
-build:
-    parallel: true                  # enable MSBuild parallel builds
-    verbosity: minimal
-
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"\src
-    - if "%PlatformToolset%"=="v140" msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-    - if "%PlatformToolset%"=="v141" msbuild CSScriptNpp.2017.sln  /p:configuration="%configuration%" /p:platform="%platform_input%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - if "%PlatformToolset%"=="VS15" msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - if "%PlatformToolset%"=="VS17" msbuild CSScriptNpp.2017.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
     # - cd "%APPVEYOR_BUILD_FOLDER%"\src\CSScriptNpp
@@ -52,7 +48,7 @@ after_build:
     #         Push-AppveyorArtifact "bin\$env:PLATFORM\$env:CONFIGURATION\CSScriptNpp.dll" -FileName CSScriptNpp.dll
     #     }
 
-    #     if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v141") {
+    #     if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "VS17") {
     #         if($env:PLATFORM -eq "x64"){
     #         $ZipFileName = "CSScriptNpp_$($env:APPVEYOR_REPO_TAG_NAME)_x64.zip"
     #         7z a $ZipFileName bin\$env:PLATFORM\$env:CONFIGURATION\CSScriptNpp.dll
@@ -77,5 +73,5 @@ deploy:
     # force_update: true
     # on:
     #     appveyor_repo_tag: true
-    #     PlatformToolset: v141
+    #     PlatformToolset: VS17
     #     configuration: Release
