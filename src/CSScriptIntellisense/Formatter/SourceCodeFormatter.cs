@@ -122,7 +122,7 @@ namespace CSScriptIntellisense
 
         delegate string FormatMethod(string code, string file);
 
-        static FormatMethod RoslynFormat;
+        //static FormatMethod RoslynFormat;
 
         static string FormatCodeWithRoslyn(string code, ref int pos, string file)
         {
