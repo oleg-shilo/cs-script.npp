@@ -22,10 +22,13 @@ namespace CSScriptIntellisense
         static int timeout = 60000;
         static int procId = Process.GetCurrentProcess().Id;
 
-        public static void StartServer()
+        public static void StartServer(bool onlyIfNotRunning)
         {
             Task.Factory.StartNew(() =>
             {
+                if (onlyIfNotRunning && IsRunning())
+                    return;
+
                 HandeErrors(() =>
                 {
                     // Debug.Assert(false);
@@ -60,6 +63,12 @@ namespace CSScriptIntellisense
                         Thread.Sleep(1000);
                 }
             });
+        }
+
+        public static bool IsRunning()
+        {
+            var response = Send($"-client:{procId}");
+            return (response != null);
         }
 
         public static void Exit()
@@ -165,7 +174,7 @@ namespace CSScriptIntellisense
         static string SendCommand(string command)
         {
             var response = Send(command);
-            if (response == null) StartServer();
+            if (response == null) StartServer(onlyIfNotRunning: false);
             return response;
         }
 

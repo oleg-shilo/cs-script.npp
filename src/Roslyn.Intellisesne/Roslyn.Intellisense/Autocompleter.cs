@@ -712,6 +712,7 @@ namespace RoslynIntellisense
                     Column = type.GetLocation().GetLineSpan().StartLinePosition.Character,
                     DisplayName = type.Identifier.Text,
                     ParentDisplayName = parentType.GetFullName(),
+                    ParentDisplayType = "Enum",
                     MemberType = "Enum"
                 });
             }

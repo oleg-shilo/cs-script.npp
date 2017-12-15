@@ -20,6 +20,7 @@ namespace RoslynIntellisense
             return kind == SyntaxKind.ClassDeclaration ? "class" :
                 kind == SyntaxKind.StructDeclaration ? "struct" :
                 kind == SyntaxKind.EnumDeclaration ? "enum" :
+                kind == SyntaxKind.InterfaceDeclaration ? "interface" :
                 "";
         }
 

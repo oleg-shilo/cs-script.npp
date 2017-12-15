@@ -24,7 +24,7 @@ namespace CSScriptNpp
         {
             // needs to be a separate routine to avoid premature assembly loading
             DeploySyntaxer(sourceDir);
-            CSScriptIntellisense.Syntaxer.StartServer();
+            CSScriptIntellisense.Syntaxer.StartServer(onlyIfNotRunning: true);
         }
 
         public static void DeploySyntaxer(string sourceDir)
