@@ -765,7 +765,7 @@ class Script
         }
 
         //NRefactory is not ready yet
-        //[Fact]
+        [Fact]
         public void ShouldFormattWithNRefactory()
         {
             //            var code = @"using System;

@@ -395,8 +395,8 @@ namespace Testing
                                      .GetLines();
             Assert.True(code.Length > 3);
             Assert.Equal(@"//", code[0]);
-            Assert.True(code[1].StartsWith("// This file has been decompiled from "));
-            Assert.True(code[1].EndsWith("CSScriptNpp.Test.dll"));
+            Assert.StartsWith("// This file has been decompiled from ", code[1]);
+            Assert.EndsWith("CSScriptNpp.Test.dll", code[1]);
             Assert.Equal(@"//", code[2]);
         }
 
@@ -665,7 +665,7 @@ class Script
 class TestCls<T>
 {
 }", 267, "test.cs");
-            Assert.True(result.FileName.EndsWith(".cs"));
+            Assert.EndsWith(".cs", result.FileName);
             Assert.Equal(240, result.BeginLine);
             Assert.Equal(240, result.EndLine);
         }
@@ -699,7 +699,7 @@ class Test
     //public Test(int count){}
 }", 127, "test.cs");
 
-            Assert.True(result.FileName.EndsWith(".cs"));
+            Assert.EndsWith(".cs", result.FileName);
             Assert.Equal(15, result.BeginLine);
             Assert.Equal(18, result.EndLine);
         }

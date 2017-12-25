@@ -1153,7 +1153,7 @@ namespace CSScriptNpp
          * hwndFrom is really an environment specific window handle or pointer
          * but most clients of Scintilla.h do not have this type visible. */
         public IntPtr hwndFrom;
-        public uint idFrom;
+        public IntPtr idFrom;
         public uint code;
     }
 
@@ -1169,8 +1169,8 @@ namespace CSScriptNpp
         public int length;                /* SCN_MODIFIED */
         public int linesAdded;            /* SCN_MODIFIED */
         public int message;                /* SCN_MACRORECORD */
-        public uint wParam;                /* SCN_MACRORECORD */
-        public int lParam;                /* SCN_MACRORECORD */
+        public IntPtr wParam;                /* SCN_MACRORECORD */
+        public IntPtr lParam;                /* SCN_MACRORECORD */
         public int line;                /* SCN_MODIFIED */
         public int foldLevelNow;        /* SCN_MODIFIED */
         public int foldLevelPrev;        /* SCN_MODIFIED */
@@ -2289,10 +2289,10 @@ namespace CSScriptNpp
             for (int i = 0; i < num; i++)
             {
                 IntPtr item = Marshal.AllocHGlobal(stringCapacity);
-                Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (i * IntPtr.Size)), item);
+                Marshal.WriteIntPtr((IntPtr)(_nativeArray + (i * IntPtr.Size)), item);
                 _nativeItems.Add(item);
             }
-            Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (num * IntPtr.Size)), IntPtr.Zero);
+            Marshal.WriteIntPtr((IntPtr)(_nativeArray + (num * IntPtr.Size)), IntPtr.Zero);
         }
 
         public ClikeStringArray(List<string> lstStrings)
@@ -2302,10 +2302,10 @@ namespace CSScriptNpp
             for (int i = 0; i < lstStrings.Count; i++)
             {
                 IntPtr item = Marshal.StringToHGlobalUni(lstStrings[i]);
-                Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (i * IntPtr.Size)), item);
+                Marshal.WriteIntPtr((IntPtr)(_nativeArray + (i * IntPtr.Size)), item);
                 _nativeItems.Add(item);
             }
-            Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (lstStrings.Count * IntPtr.Size)), IntPtr.Zero);
+            Marshal.WriteIntPtr((IntPtr)(_nativeArray + (lstStrings.Count * IntPtr.Size)), IntPtr.Zero);
         }
 
         public IntPtr NativePointer { get { return _nativeArray; } }
