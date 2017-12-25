@@ -33,8 +33,7 @@ init:
 
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"\src
-    - if "%PlatformToolset%"=="VS15" msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-    - if "%PlatformToolset%"=="VS17" msbuild CSScriptNpp.2017.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
     # - cd "%APPVEYOR_BUILD_FOLDER%"\src\CSScriptNpp
