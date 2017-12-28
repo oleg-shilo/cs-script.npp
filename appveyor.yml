@@ -8,7 +8,7 @@ environment:
     - PlatformToolset: VS17
 
 platform:
-    #- x64
+    - x64
     - Any CPU
 
 configuration:
@@ -16,8 +16,8 @@ configuration:
     #- Debug
 
 install:
-    # - if "%platform%"=="x64" set archi=amd64
-    # - if "%platform%"=="x64" set platform_input=x64
+    - if "%platform%"=="x64" set archi=amd64
+    - if "%platform%"=="x64" set platform_input=x64
 
     - if "%platform%"=="Any CPU" set archi=x86
     - if "%platform%"=="Any CPU" set platform_input=Any CPU
@@ -33,8 +33,7 @@ init:
 
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"\src
-    - if "%PlatformToolset%"=="VS15" msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-    - if "%PlatformToolset%"=="VS17" msbuild CSScriptNpp.2017.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
     # - cd "%APPVEYOR_BUILD_FOLDER%"\src\CSScriptNpp

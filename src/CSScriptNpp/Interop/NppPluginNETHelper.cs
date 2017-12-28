@@ -117,17 +117,17 @@ namespace CSScriptNpp
                 RtlMoveMemory(newPointer, _nativePointer, oldSize);
                 Marshal.FreeHGlobal(_nativePointer);
             }
-            IntPtr ptrPosNewItem = (IntPtr)((int)newPointer + oldSize);
+            IntPtr ptrPosNewItem = (IntPtr)(newPointer.ToInt64() + oldSize);
             byte[] aB = Encoding.Unicode.GetBytes(funcItem._itemName + "\0");
             Marshal.Copy(aB, 0, ptrPosNewItem, aB.Length);
-            ptrPosNewItem = (IntPtr)((int)ptrPosNewItem + 128);
+            ptrPosNewItem = (IntPtr)(ptrPosNewItem.ToInt64() + 128);
             IntPtr p = (funcItem._pFunc != null) ? Marshal.GetFunctionPointerForDelegate(funcItem._pFunc) : IntPtr.Zero;
             Marshal.WriteIntPtr(ptrPosNewItem, p);
-            ptrPosNewItem = (IntPtr)((int)ptrPosNewItem + IntPtr.Size);
+            ptrPosNewItem = (IntPtr)(ptrPosNewItem.ToInt64() + IntPtr.Size);
             Marshal.WriteInt32(ptrPosNewItem, funcItem._cmdID);
-            ptrPosNewItem = (IntPtr)((int)ptrPosNewItem + 4);
+            ptrPosNewItem = (IntPtr)(ptrPosNewItem.ToInt64() + 4);
             Marshal.WriteInt32(ptrPosNewItem, Convert.ToInt32(funcItem._init2Check));
-            ptrPosNewItem = (IntPtr)((int)ptrPosNewItem + 4);
+            ptrPosNewItem = (IntPtr)(ptrPosNewItem.ToInt64() + 4);
             if (funcItem._pShKey._key != 0)
             {
                 IntPtr newShortCutKey = Marshal.AllocHGlobal(4);
@@ -146,15 +146,15 @@ namespace CSScriptNpp
             {
                 FuncItem updatedItem = new FuncItem();
                 updatedItem._itemName = _funcItems[i]._itemName;
-                ptrPosItem = (IntPtr)((int)ptrPosItem + 128);
+                ptrPosItem = (IntPtr)(ptrPosItem.ToInt64() + 128);
                 updatedItem._pFunc = _funcItems[i]._pFunc;
-                ptrPosItem = (IntPtr)((int)ptrPosItem + IntPtr.Size);
+                ptrPosItem = (IntPtr)(ptrPosItem.ToInt64() + IntPtr.Size);
                 updatedItem._cmdID = Marshal.ReadInt32(ptrPosItem);
-                ptrPosItem = (IntPtr)((int)ptrPosItem + 4);
+                ptrPosItem = (IntPtr)(ptrPosItem.ToInt64() + 4);
                 updatedItem._init2Check = _funcItems[i]._init2Check;
-                ptrPosItem = (IntPtr)((int)ptrPosItem + 4);
+                ptrPosItem = (IntPtr)(ptrPosItem.ToInt64() + 4);
                 updatedItem._pShKey = _funcItems[i]._pShKey;
-                ptrPosItem = (IntPtr)((int)ptrPosItem + IntPtr.Size);
+                ptrPosItem = (IntPtr)(ptrPosItem.ToInt64() + IntPtr.Size);
 
                 _funcItems[i] = updatedItem;
             }
@@ -1153,7 +1153,7 @@ namespace CSScriptNpp
          * hwndFrom is really an environment specific window handle or pointer
          * but most clients of Scintilla.h do not have this type visible. */
         public IntPtr hwndFrom;
-        public uint idFrom;
+        public IntPtr idFrom;
         public uint code;
     }
 
@@ -1169,8 +1169,8 @@ namespace CSScriptNpp
         public int length;                /* SCN_MODIFIED */
         public int linesAdded;            /* SCN_MODIFIED */
         public int message;                /* SCN_MACRORECORD */
-        public uint wParam;                /* SCN_MACRORECORD */
-        public int lParam;                /* SCN_MACRORECORD */
+        public IntPtr wParam;                /* SCN_MACRORECORD */
+        public IntPtr lParam;                /* SCN_MACRORECORD */
         public int line;                /* SCN_MODIFIED */
         public int foldLevelNow;        /* SCN_MODIFIED */
         public int foldLevelPrev;        /* SCN_MODIFIED */
@@ -2289,10 +2289,10 @@ namespace CSScriptNpp
             for (int i = 0; i < num; i++)
             {
                 IntPtr item = Marshal.AllocHGlobal(stringCapacity);
-                Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (i * IntPtr.Size)), item);
+                Marshal.WriteIntPtr((IntPtr)(_nativeArray + (i * IntPtr.Size)), item);
                 _nativeItems.Add(item);
             }
-            Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (num * IntPtr.Size)), IntPtr.Zero);
+            Marshal.WriteIntPtr((IntPtr)(_nativeArray + (num * IntPtr.Size)), IntPtr.Zero);
         }
 
         public ClikeStringArray(List<string> lstStrings)
@@ -2302,10 +2302,10 @@ namespace CSScriptNpp
             for (int i = 0; i < lstStrings.Count; i++)
             {
                 IntPtr item = Marshal.StringToHGlobalUni(lstStrings[i]);
-                Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (i * IntPtr.Size)), item);
+                Marshal.WriteIntPtr((IntPtr)(_nativeArray + (i * IntPtr.Size)), item);
                 _nativeItems.Add(item);
             }
-            Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (lstStrings.Count * IntPtr.Size)), IntPtr.Zero);
+            Marshal.WriteIntPtr((IntPtr)(_nativeArray + (lstStrings.Count * IntPtr.Size)), IntPtr.Zero);
         }
 
         public IntPtr NativePointer { get { return _nativeArray; } }
