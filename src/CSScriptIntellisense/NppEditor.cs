@@ -12,10 +12,12 @@ namespace CSScriptIntellisense
         {
             bool isVB = Npp1.Editor.GetCurrentFilePath().IsVbFile();
 
+            var document = Npp.GetCurrentDocument();
+
             //it is unlikely all 'usings' take more than 2000 lines
             for (int i = 0; i < Math.Min(Npp1.GetLineCount(), 2000); i++)
             {
-                string line = Npp1.GetLine(i);
+                string line = document.GetLine(i);
 
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//") || line.StartsWith("/*") || line.StartsWith("*/") || line.StartsWith("*"))
                     continue;
@@ -27,13 +29,13 @@ namespace CSScriptIntellisense
                 if (line.TrimStart().StartsWith(usingKeyword)) //first 'using' statement
                 {
                     var pos = Npp1.GetLineStart(i);
-                    Npp1.SetTextBetween(text + Environment.NewLine, pos, pos);
+                    document.SetTextBetween(text + Environment.NewLine, pos, pos);
                     return;
                 }
             }
 
             //did not find any 'usings' so insert on top
-            Npp1.SetTextBetween(text + Environment.NewLine, 0, 0);
+            document.SetTextBetween(text + Environment.NewLine, 0, 0);
         }
 
         public static void ProcessDeleteKeyDown()
@@ -81,7 +83,8 @@ namespace CSScriptIntellisense
             int currentPos = Npp1.GetCaretPosition();
             if (currentPos > methodStartPos)
             {
-                text = Npp1.GetTextBetween(methodStartPos, currentPos);
+                var document = Npp.GetCurrentDocument();
+                text = document.GetTextBetween(methodStartPos, currentPos);
                 return text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }
             else
@@ -90,10 +93,10 @@ namespace CSScriptIntellisense
 
         public static string GetSuggestionHint()
         {
-            int currentPos = Npp1.GetCaretPosition();
-            IntPtr sci = Npp1.CurrentScintilla;
+            var document = Npp.GetCurrentDocument();
+            int currentPos = document.GetCurrentPos();
 
-            string text = Npp1.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
+            string text = document.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
             int pos = text.LastIndexOfAny(SimpleCodeCompletion.Delimiters);
             if (pos != -1)
             {

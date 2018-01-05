@@ -1572,7 +1572,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         public unsafe string GetLine(int line)
         {
-            byte[] textBuffer = new byte[10000];
+            int length = LineLength(line);
+            byte[] textBuffer = new byte[length + 2];
             fixed (byte* textPtr = textBuffer)
             {
                 IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINE, line, (IntPtr)textPtr);

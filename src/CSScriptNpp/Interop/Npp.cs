@@ -13,24 +13,6 @@ namespace CSScriptNpp
     {
         /***********************************/
 
-        /// <summary>
-        /// Determines whether the current file has the specified extension (e.g. ".cs").
-        /// <para>Note it is case insensitive.</para>
-        /// </summary>
-        /// <param name="extension">The extension.</param>
-        /// <returns></returns>
-        static public bool IsCurrentFileHasExtension(string extension)
-        {
-            var file = Npp.Editor.GetCurrentFilePath();
-            return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
-        }
-
-        static public bool IsCurrentScriptFile()
-        {
-            var file = Npp.Editor.GetCurrentFilePath();
-            return !string.IsNullOrWhiteSpace(file) && file.IsScriptFile();
-        }
-
         // public static IntPtr CurrentScintilla { get { return PluginBase.GetCurrentScintilla(); } }
 
         // public static IntPtr NppHandle { get { return PluginBase.nppData._nppHandle; } }

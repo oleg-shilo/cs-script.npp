@@ -75,7 +75,8 @@ namespace CSScriptIntellisense
 
         static public void ReplaceTextAtIndicator(string text, Point indicatorRange)
         {
-            Npp1.SetTextBetween(text, indicatorRange);
+            var document = Npp.GetCurrentDocument();
+            document.SetTextBetween(text, indicatorRange);
 
             //restore the indicator
             Npp1.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
@@ -89,16 +90,17 @@ namespace CSScriptIntellisense
             foreach (var range in indicators)
                 Npp1.ClearIndicator(SnippetContext.indicatorId, range.X, range.Y);
 
+            var document = Npp.GetCurrentDocument();
             var caretPoint = indicators.Where(point =>
-            {
-                string text = Npp1.GetTextBetween(point);
-                return text == " " || text == "|";
-            })
-                .FirstOrDefault();
+                                              {
+                                                  string text = document.GetTextBetween(point);
+                                                  return text == " " || text == "|";
+                                              })
+                                       .FirstOrDefault();
 
             if (caretPoint.X != caretPoint.Y)
             {
-                Npp1.SetTextBetween("", caretPoint);
+                document.SetTextBetween("", caretPoint);
                 Npp1.SetSelection(caretPoint.X, caretPoint.X);
             }
         }
@@ -116,6 +118,8 @@ namespace CSScriptIntellisense
             Npp1.SetSelection(currentParam.X, currentParam.X);
             string currentParamDetectedText = Npp1.GetWordAtCursor("\t\n\r ,;'\"".ToCharArray());
 
+            var document = Npp.GetCurrentDocument();
+
             if (currentParamOriginalText != currentParamDetectedText)
             {
                 //current parameter is modified, indicator is destroyed so restore the indicator first
@@ -124,13 +128,14 @@ namespace CSScriptIntellisense
 
                 indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
 
-                var paramsInfo = indicators.Select(p => new
-                {
-                    Index = indicators.IndexOf(p),
-                    Text = Npp1.GetTextBetween(p),
-                    Range = p,
-                    Pos = p.X
-                })
+                var paramsInfo = indicators.Select(p =>
+                                                   new
+                                                   {
+                                                       Index = indicators.IndexOf(p),
+                                                       Text = document.GetTextBetween(p),
+                                                       Range = p,
+                                                       Pos = p.X
+                                                   })
                                            .OrderBy(x => x.Pos)
                                            .ToArray();
 
@@ -146,7 +151,7 @@ namespace CSScriptIntellisense
             Point? nextParameter = null;
 
             int currentParamIndex = indicators.FindIndex(x => x.X >= currentParam.X); //can also be logical 'next'
-            var prevParamsValues = indicators.Take(currentParamIndex).Select(p => Npp1.GetTextBetween(p)).ToList();
+            var prevParamsValues = indicators.Take(currentParamIndex).Select(p => document.GetTextBetween(p)).ToList();
             prevParamsValues.Add(currentParamOriginalText);
             prevParamsValues.Add(currentParamDetectedText);
             prevParamsValues.Add(" ");
@@ -154,7 +159,7 @@ namespace CSScriptIntellisense
 
             foreach (var range in indicators.ToArray())
             {
-                if (currentParam.X < range.X && !prevParamsValues.Contains(Npp1.GetTextBetween(range)))
+                if (currentParam.X < range.X && !prevParamsValues.Contains(document.GetTextBetween(range)))
                 {
                     nextParameter = range;
                     break;
@@ -168,7 +173,7 @@ namespace CSScriptIntellisense
             if (context.CurrentParameter.HasValue)
             {
                 Npp1.SetSelection(context.CurrentParameter.Value.X, context.CurrentParameter.Value.Y);
-                context.CurrentParameterValue = Npp1.GetTextBetween(context.CurrentParameter.Value);
+                context.CurrentParameterValue = document.GetTextBetween(context.CurrentParameter.Value);
             }
 
             return true;
@@ -218,7 +223,7 @@ namespace CSScriptIntellisense
         {
             get
             {
-                string configDir = Path.Combine(Npp1.GetConfigDir(), "CSharpIntellisense");
+                string configDir = Path.Combine(Npp.Editor.GetPluginsConfigDir(), "CSharpIntellisense");
 
                 if (!Directory.Exists(configDir))
                     Directory.CreateDirectory(configDir);

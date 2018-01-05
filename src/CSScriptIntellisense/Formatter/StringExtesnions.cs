@@ -17,9 +17,13 @@ namespace CSScriptIntellisense
     {
         public static bool IsScriptFile(this string file)
         {
+            if (string.IsNullOrWhiteSpace(file))
+                return false;
+
             //return file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".csx", StringComparison.InvariantCultureIgnoreCase);
-            return file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase) || 
-                   (Config.Instance.VbSupportEnabled && file.IsVbFile()) || 
+
+            return file.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase) ||
+                   (Config.Instance.VbSupportEnabled && file.IsVbFile()) ||
                    file.EndsWith(".csx", StringComparison.InvariantCultureIgnoreCase);
         }
 
@@ -49,7 +53,7 @@ namespace CSScriptIntellisense
 
                 while (reader.Peek() >= 0)
                 {
-                    var c = (char) reader.Read();
+                    var c = (char)reader.Read();
 
                     if (lineCount == line && columnCount == column)
                         break;
@@ -502,7 +506,7 @@ namespace CSScriptIntellisense
     {
         public static int MapAbsPosition(string textA, int positionA, string textB)
         {
-            //position is a caret position that is a strong pos+1 for the case when the caret is 
+            //position is a caret position that is a strong pos+1 for the case when the caret is
             //after the char at pos
             if (positionA == textA.Length)
                 return textB.Length;
@@ -548,7 +552,6 @@ namespace CSScriptIntellisense
 
                 if (i == pos)
                     break;
-
             }
 
             return syntaxLength;

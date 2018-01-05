@@ -34,8 +34,10 @@ namespace CSScriptIntellisense
         {
             if (Config.Instance.FormatAsYouType)
             {
-                int currentLineNum = Npp1.GetCaretLineNumber();
-                string prevLineText = Npp1.GetLine(currentLineNum - 1).TrimEnd();
+                var document = Npp.GetCurrentDocument();
+
+                int currentLineNum = NppExtensions.GetCurrentLineNumber(document);
+                string prevLineText = document.GetLine(currentLineNum - 1).TrimEnd();
 
                 if (prevLineText != "")
                     SourceCodeFormatter.FormatDocumentPrevLines();
@@ -48,8 +50,9 @@ namespace CSScriptIntellisense
 
         static void FormatCurrentLine()
         {
-            int currentLineNum = Npp1.GetCaretLineNumber();
-            string prevLineText = Npp1.GetLine(currentLineNum - 1).TrimEnd();
+            var document = Npp.GetCurrentDocument();
+            int currentLineNum = NppExtensions.GetCurrentLineNumber(document);
+            string prevLineText = document.GetLine(currentLineNum - 1).TrimEnd();
 
             if (prevLineText.EndsWith("{") || prevLineText.IsControlStatement())
                 Perform(InsertIndent);
@@ -57,10 +60,11 @@ namespace CSScriptIntellisense
 
         static void OnOpenBracket()
         {
-            int currentPos = Npp1.GetCaretPosition();
-            int currentLineNum = Npp1.GetLineNumber(currentPos);
-            string currLineText = Npp1.GetLine(currentLineNum);
-            string prevLineText = Npp1.GetLine(currentLineNum - 1);
+            var document = Npp.GetCurrentDocument();
+
+            int currentLineNum = NppExtensions.GetCurrentLineNumber(document);
+            string currLineText = document.GetLine(currentLineNum);
+            string prevLineText = document.GetLine(currentLineNum - 1);
 
             if (currLineText.Trim() == "{" && prevLineText.IsControlStatement())
                 Perform(RemoveIndent);
@@ -68,9 +72,8 @@ namespace CSScriptIntellisense
 
         static void OnCloseBracket()
         {
-            int currentPos = Npp1.GetCaretPosition();
-            int currentLineNum = Npp1.GetLineNumber(currentPos);
-            string currLineText = Npp1.GetLine(currentLineNum);
+            var document = Npp.GetCurrentDocument();
+            string currLineText = document.GetCurrentLine();
             string prevText = Npp1.TextBeforeCursor(500); //do not load all all "top" document but its substantial part
 
             if (currLineText.Trim() == "}" && IsBracketOpened(prevText))

@@ -1,3 +1,4 @@
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -12,7 +13,7 @@ namespace CSScriptIntellisense
     /// </summary>
     public class Config : IniFile
     {
-        public static string Location = Path.Combine(Npp1.GetConfigDir(), "CSharpIntellisense");
+        public static string Location = Path.Combine(Npp.Editor.GetPluginsConfigDir(), "CSharpIntellisense");
 
         public static Shortcuts Shortcuts = new Shortcuts();
         public static Config Instance { get { return instance ?? (instance = new Config()); } }

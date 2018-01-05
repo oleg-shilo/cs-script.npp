@@ -20,6 +20,17 @@ namespace CSScriptIntellisense
             return Path.Combine(new[] { path }.Concat(items).ToArray());
         }
 
+        /// <summary>
+        /// Determines whether the file has the specified extension (e.g. ".cs").
+        /// <para>Note it is case insensitive.</para>
+        /// </summary>
+        /// <param name="extension">The extension.</param>
+        /// <returns></returns>
+        public static bool HasExtension(this string file, string extension)
+        {
+            return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
+        }
+
         public static string GetDirName(this string path)
         {
             return Path.GetDirectoryName(path);

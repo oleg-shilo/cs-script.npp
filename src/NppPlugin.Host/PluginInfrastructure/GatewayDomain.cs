@@ -80,6 +80,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             get { return pos; }
         }
 
+        public static implicit operator Position(int pos)
+        {
+            return new Position(pos);
+        }
+
+        public static implicit operator int(Position pos)
+        {
+            return pos.Value;
+        }
+
         public static Position operator +(Position a, int b)
         {
             return new Position(a.pos + b);

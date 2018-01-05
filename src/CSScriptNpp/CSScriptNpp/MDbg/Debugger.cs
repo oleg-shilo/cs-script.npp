@@ -30,7 +30,7 @@ namespace CSScriptNpp
 
             //left 'panel' arrow and breakpoint image
             Npp2.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, ColorFromConfig(Config.Instance.DebugStepPointForeColor, Color.Black), debugStepPointColor);
-            // Npp.SetMarkerStyle(MARK_BREAKPOINT, CSScriptNpp.Resources.Resources.breakpoint); // zos
+            // Npp.SetMarkerStyle(MARK_BREAKPOINT, CSScriptNpp.Resources.Resources.breakpoint); // !!!
 
             Debugger.BreakOnException = Config.Instance.BreakOnException;
         }
@@ -526,7 +526,7 @@ namespace CSScriptNpp
                 else if (message.StartsWith(NppCategory.Locals))
                 {
                     Plugin.GetDebugPanel().UpdateLocals(message.Substring(NppCategory.Locals.Length));
-                    NotifyOnDebugStepChanges(); //zos remove
+                    NotifyOnDebugStepChanges(); // !!! remove
                 }
                 else if (message.StartsWith(NppCategory.SourceCode))
                 {

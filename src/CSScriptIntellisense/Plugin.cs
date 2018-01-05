@@ -336,8 +336,9 @@ namespace CSScriptIntellisense
             string replacement = Snippets.GetTemplate(token);
             if (replacement != null)
             {
-                int line = Npp1.GetCaretLineNumber();
-                int lineStartPos = Npp1.GetLineStart(line);
+                var document = Npp.GetCurrentDocument();
+                int currentLineNum = document.GetCurrentLineNumber();
+                int lineStartPos = document.PositionFromLine(currentLineNum);
 
                 int horizontalOffset = tokenPoints.X - lineStartPos;
 
@@ -356,7 +357,7 @@ namespace CSScriptIntellisense
                 if (currentSnippetContext.CurrentParameter.HasValue)
                 {
                     Npp1.SetSelection(currentSnippetContext.CurrentParameter.Value.X, currentSnippetContext.CurrentParameter.Value.Y);
-                    currentSnippetContext.CurrentParameterValue = Npp1.GetTextBetween(currentSnippetContext.CurrentParameter.Value);
+                    currentSnippetContext.CurrentParameterValue = document.GetTextBetween(currentSnippetContext.CurrentParameter.Value);
                 }
 
                 if (autocompleteForm != null)
@@ -648,6 +649,7 @@ namespace CSScriptIntellisense
 
             if (Npp1.IsCurrentScriptFile())
             {
+                var document = Npp.GetCurrentDocument();
                 int pos;
 
                 if (simple)
@@ -659,7 +661,7 @@ namespace CSScriptIntellisense
                 {
                     int rawPos = pos; //note non-decorated position
 
-                    string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
+                    string text = document.GetTextBetween(0, Npp1.DocEnd);
 
                     CSScriptHelper.DecorateIfRequired(ref text, ref pos);
 
@@ -697,12 +699,12 @@ namespace CSScriptIntellisense
 
                             do
                             {
-                                Npp1.Editor.SaveCurrentFile();
-
+                                Npp.Editor.SaveCurrentFile();
+                                var document = Npp.GetCurrentDocument();
                                 usingInserted = false;
                                 count++;
 
-                                List<string> presentUsings = Reflector.GetCodeUsings(Npp1.GetTextBetween(0, -1)).ToList();
+                                List<string> presentUsings = Reflector.GetCodeUsings(document.GetTextBetween(0, -1)).ToList();
 
                                 //c:\Users\user\Documents\C# Scripts\TooltipTest1.cs(27,9): error CS0103: The name 'Debug' does not exist in the current context
 
@@ -753,7 +755,8 @@ namespace CSScriptIntellisense
             {
                 if (Npp1.IsCurrentScriptFile())
                 {
-                    string[] presentUsings = UltraSharp.Cecil.Reflector.GetCodeUsings(Npp1.GetTextBetween(0, -1));
+                    var document = Npp.GetCurrentDocument();
+                    string[] presentUsings = UltraSharp.Cecil.Reflector.GetCodeUsings(document.GetTextBetween(0, -1));
 
                     IEnumerable<Intellisense.Common.TypeInfo> items = ResolveNamespacesAtCaret().Where(x => !presentUsings.Contains(x.Namespace)).ToArray();
 
@@ -864,7 +867,9 @@ namespace CSScriptIntellisense
                     bool cssSugesstion = Npp1.TextBeforeCursor(300).Split('\n').Last().TrimStart().StartsWith("//css_");
                     if (!cssSugesstion)
                     {
-                        bool usingSuggestion = Npp1.GetLine(Npp1.GetCaretLineNumber()).Trim() == "using";
+                        var document = Npp.GetCurrentDocument();
+
+                        bool usingSuggestion = document.GetCurrentLine().Trim() == "using";
                         if (!usingSuggestion)
                             items = items.Concat(GetSnippetsItems());
                     }
@@ -887,11 +892,12 @@ namespace CSScriptIntellisense
                     autocompleteForm.Close();
                 }
 
+                var document = Npp.GetCurrentDocument();
                 Action<ICompletionData> OnAccepted = data => OnAutocompletionAccepted(data, snippetsOnly);
 
                 autocompleteForm = new AutocompleteForm(OnAccepted, items, NppEditor.GetSuggestionHint());
                 autocompleteForm.Left = point.X;
-                autocompleteForm.Top = point.Y + Npp1.GetTextHeight(Npp1.GetCaretLineNumber());
+                autocompleteForm.Top = point.Y + Npp1.GetTextHeight(document.GetCurrentLineNumber());
                 autocompleteForm.FormClosed += (sender, e) =>
                 {
                     if (memberInfoWasShowing)
@@ -912,9 +918,9 @@ namespace CSScriptIntellisense
         {
             if (data != null)
             {
-                IntPtr sci = PluginBase.GetCurrentScintilla();
+                var document = Npp.GetCurrentDocument();
 
-                int currentPos = Npp1.GetCaretPosition();
+                int currentPos = document.GetCurrentPos();
                 Point p;
                 string word = Npp1.GetWordAtCursor(out p);
 
@@ -933,7 +939,7 @@ namespace CSScriptIntellisense
                 }
                 else
                 {
-                    string leftChar = Npp1.GetTextBetween(p.X - 1, p.X);
+                    string leftChar = document.GetTextBetween(p.X - 1, p.X);
                     if (leftChar == "=")
                     {
                         Npp1.SetSelectionText(" "); //add space
@@ -944,7 +950,7 @@ namespace CSScriptIntellisense
 
                     // myForm.Result =   |
                     var lStart = Npp1.GetLineStart(Npp1.GetLineNumber(currentPos));
-                    string lineLeftPart = Npp1.GetTextBetween(lStart, currentPos);
+                    string lineLeftPart = document.GetTextBetween(lStart, currentPos);
                     string textOnLeft = lineLeftPart.TrimEnd();
                     if (textOnLeft.EndsWith("="))
                     {
@@ -1019,9 +1025,10 @@ namespace CSScriptIntellisense
         {
             try
             {
+                var document = Npp.GetCurrentDocument();
                 int currentPos = Npp1.GetCaretPosition();
 
-                string text = Npp1.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
+                string text = document.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
                 string hint = null;
 
                 char[] delimiters = SimpleCodeCompletion.Delimiters;
@@ -1037,8 +1044,8 @@ namespace CSScriptIntellisense
                 else if (text.Length == currentPos) //start of the doc
                     hint = text;
 
-                var charOnRigt = Npp1.GetTextBetween(currentPos, currentPos + 1);
-                var charOnLeft = Npp1.GetTextBetween(currentPos - 1, currentPos);
+                var charOnRigt = document.GetTextBetween(currentPos, currentPos + 1);
+                var charOnLeft = document.GetTextBetween(currentPos - 1, currentPos);
                 Debug.WriteLine("charOnLeft ({0}); charOnRigth ({1})", charOnLeft, charOnRigt);
                 if (char.IsWhiteSpace(charOnLeft[0])) // Console.Wr |
                     hint = null;
@@ -1148,7 +1155,7 @@ namespace CSScriptIntellisense
 
                 if (modifiers.IsCtrl && !modifiers.IsShift && !modifiers.IsAlt)
                 {
-                    if (Npp1.GetSelectedText().IsNullOrEmpty())
+                    if (Npp.GetCurrentDocument().GetSelectedText().IsNullOrEmpty())
                     {
                         var caret = Npp1.GetPositionFromMouseLocation();
                         if (caret != -1)
@@ -1222,7 +1229,7 @@ namespace CSScriptIntellisense
 
                             if (SingleFileMode)
                             {
-                                string code = Npp1.GetTextBetween(0, Npp1.DocEnd);
+                                string code = Npp.GetCurrentDocument().GetTextBetween(0, Npp1.DocEnd);
                                 CSScriptHelper.DecorateIfRequired(ref code);
                                 sourcesInfos.Add(new Tuple<string, string>(code, file));
                             }
@@ -1246,8 +1253,8 @@ namespace CSScriptIntellisense
 
         static void WithTextAtCaret(Action<string, int, string> action)
         {
-            string file = Npp1.Editor.GetCurrentFilePath();
-            string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
+            string file = Npp.Editor.GetCurrentFilePath();
+            string text = Npp.GetCurrentDocument().GetTextBetween(0, Npp1.DocEnd);
             int currentPos = Npp1.GetCaretPosition();
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
@@ -1300,12 +1307,14 @@ namespace CSScriptIntellisense
 
         static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtPosition(int currentPos)
         {
-            string file = Npp1.Editor.GetCurrentFilePath();
-            string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
+            var document = Npp.GetCurrentDocument();
 
-            int lineNum = Npp1.GetLineNumber(currentPos);
+            string file = Npp.Editor.GetCurrentFilePath();
+            string text = document.GetTextBetween(0, Npp1.DocEnd);
+
+            int lineNum = document.LineFromPosition(currentPos);
             int start = Npp1.GetLineStart(lineNum);
-            string line = Npp1.GetLine(lineNum);
+            string line = document.GetLine(lineNum);
 
             int currentPosOffset = currentPos - start; //note the diff between cuurrPos and start of the line
             int[] probingOffsets = WordEndsOf(line); //note the all end positions of the words
@@ -1344,8 +1353,8 @@ namespace CSScriptIntellisense
 
         static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtPositionOld(int currentPos)
         {
-            string file = Npp1.Editor.GetCurrentFilePath();
-            string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
+            string file = Npp.Editor.GetCurrentFilePath();
+            string text = Npp.GetCurrentDocument().GetTextBetween(0, Npp1.DocEnd);
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
@@ -1356,15 +1365,17 @@ namespace CSScriptIntellisense
 
         static DomRegion ResolveMemberAtCaret()
         {
-            string file = Npp1.Editor.GetCurrentFilePath();
-            string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
-            int currentPos = Npp1.GetCaretPosition();
+            var document = Npp.GetCurrentDocument();
+
+            string file = Npp.Editor.GetCurrentFilePath();
+            string text = document.GetTextBetween(0, Npp1.DocEnd);
+            int currentPos = document.GetCurrentPos();
 
             try
             {
-                //just to handle NPP strange concept of caret position being not a point of the text
-                //but an index of the byte array
-                currentPos = Npp1.CaretToTextPosition(currentPos);
+                // just to handle NPP strange concept of caret position being not a point of the text
+                // but an index of the byte array
+                currentPos = document.CaretToTextPosition(currentPos);
             }
             catch { }
 

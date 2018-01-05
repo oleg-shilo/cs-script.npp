@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using ICSharpCode.NRefactory.CSharp;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptIntellisense
 {
@@ -19,9 +20,11 @@ namespace CSScriptIntellisense
         {
             try
             {
+                var document = Npp.GetCurrentDocument();
+
                 int currentPos = Npp1.GetCaretPosition();
                 CaretBeforeLastFormatting = currentPos;
-                string code = Npp1.GetTextBetween(0, Npp1.DocEnd);
+                string code = document.GetTextBetween(0, Npp1.DocEnd);
 
                 if (code.Any() && currentPos != -1 && currentPos < code.Length)
                 {
@@ -34,7 +37,7 @@ namespace CSScriptIntellisense
 
                     if (newCode != null)
                     {
-                        Npp1.SetTextBetween(newCode, 0, Npp1.DocEnd);
+                        document.SetTextBetween(newCode, 0, Npp1.DocEnd);
 
                         Npp1.SetCaretPosition(currentPos);
                         Npp1.ClearSelection();
@@ -64,14 +67,16 @@ namespace CSScriptIntellisense
 
         public static void FormatDocumentPrevLines()
         {
-            int currentLineNum = Npp1.GetCaretLineNumber();
-            int prevLineEnd = Npp1.GetLineStart(currentLineNum) - Environment.NewLine.Length;
+            var document = Npp.GetCurrentDocument();
+
+            int currentLineNum = NppExtensions.GetCurrentLineNumber(document);
+            var prevLineEnd = document.PositionFromLine(currentLineNum) - Environment.NewLine.Length;
             int topScrollOffset = currentLineNum - Npp1.GetFirstVisibleLine();
 
-            string code = Npp1.GetTextBetween(0, prevLineEnd);
-            int currentPos = Npp1.GetCaretPosition();
+            string code = document.GetTextBetween(0, prevLineEnd.Value);
+            int currentPos = document.GetCurrentPos();
             string newCode = FormatCode(code, ref currentPos, Npp1.Editor.GetCurrentFilePath());
-            Npp1.SetTextBetween(newCode, 0, prevLineEnd);
+            document.SetTextBetween(newCode, 0, prevLineEnd.Value);
 
             //no need to set the caret as it is after the formatted text anyway
 

@@ -1,3 +1,4 @@
+using CSScriptIntellisense;
 using CSScriptNpp.Dialogs;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
@@ -212,7 +213,7 @@ namespace CSScriptNpp
             AddInternalShortcuts("_Debug:Alt+F5",
                                  "Debug", () =>
                                   {
-                                      if (!Debugger.IsRunning && Npp2.IsCurrentScriptFile())
+                                      if (!Debugger.IsRunning && Npp1.IsCurrentScriptFile())
                                           DebugScript();
                                   }, uniqueKeys);
 
@@ -247,7 +248,7 @@ namespace CSScriptNpp
             AddInternalShortcuts("RunAsExternal:Ctrl+F5",
                                   "Run As External Process", () =>
                                   {
-                                      if (Npp2.IsCurrentScriptFile())
+                                      if (Npp1.IsCurrentScriptFile())
                                           RunAsExternal();
                                   }, uniqueKeys);
 
@@ -285,7 +286,7 @@ namespace CSScriptNpp
         static bool IsDocumentHotKeyExcluded()
         {
             foreach (string extension in Config.Instance.HotkeyDocumentsExclusions.Split(';'))
-                if (extension.IsNotEmpty() && Npp2.IsCurrentFileHasExtension(extension))
+                if (extension.IsNotEmpty() && Npp.Editor.GetCurrentFilePath().HasExtension(extension))
                     return true;
             return false;
         }
@@ -510,7 +511,7 @@ namespace CSScriptNpp
             {
                 Debugger.Go();
             }
-            else if (Npp2.IsCurrentScriptFile() && runningScript == null)
+            else if (Npp1.IsCurrentScriptFile() && runningScript == null)
             {
                 if (Plugin.ProjectPanel == null)
                     InitProjectPanel();
@@ -699,7 +700,7 @@ namespace CSScriptNpp
             if (CodeMapPanel != null)
                 CodeMapPanel.RefreshContent();
 
-            if (Npp2.IsCurrentScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtNppStartup)
+            if (Npp1.IsCurrentScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtNppStartup)
             {
                 CSScriptHelper.InitRoslyn();
             }

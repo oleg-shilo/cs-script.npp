@@ -1,3 +1,4 @@
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace CSScriptIntellisense
 
         public Shortcuts()
         {
-            var configDir = Path.Combine(Npp1.GetConfigDir(), "CSharpIntellisense");
+            var configDir = Path.Combine(Npp.Editor.GetPluginsConfigDir(), "CSharpIntellisense");
             base.file = Path.Combine(configDir, "shortcuts.ini");
         }
 

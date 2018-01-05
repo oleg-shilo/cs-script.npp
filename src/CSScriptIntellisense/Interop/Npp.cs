@@ -16,7 +16,7 @@ public partial class PluginEnv
     {
         get
         {
-            return Npp1.GetConfigDir().PathJoin("CSScriptNpp").EnsureDir();
+            return Npp.Editor.GetPluginsConfigDir().PathJoin("CSScriptNpp").EnsureDir();
         }
     }
 
@@ -54,6 +54,66 @@ public partial class PluginEnv
 
 namespace CSScriptIntellisense
 {
+    public static class NppExtensions
+    {
+        public static int GetCurrentLineNumber(this ScintillaGateway document)
+        {
+            return document.LineFromPosition(document.GetCurrentPos());
+        }
+
+        public static string GetCurrentLine(this ScintillaGateway document)
+        {
+            return document.GetLine(document.LineFromPosition(document.GetCurrentPos()));
+        }
+
+        static public string GetTextBetween(this ScintillaGateway document, Point point)
+        {
+            return GetTextBetween(document, point.X, point.Y);
+        }
+
+        static public string GetTextBetween(this ScintillaGateway document, int start, int end = -1)
+        {
+            if (end == -1)
+                end = document.GetLength();
+
+            using (var tr = new TextRange(start, end, end - start + 1)) //+1 for null termination
+            {
+                document.GetTextRange(tr);
+                return tr.lpstrText;
+            }
+        }
+
+        static public void SetTextBetween(this ScintillaGateway document, string text, Point point)
+        {
+            document.SetTextBetween(text, point.X, point.Y);
+        }
+
+        static public void SetTextBetween(this ScintillaGateway document, string text, int start, int end = -1)
+        {
+            //supposed not to scroll
+
+            if (end == -1)
+                end = document.GetLength();
+
+            document.SetTargetStart(new Position(start));
+            document.SetTargetEnd(new Position(end));
+            document.ReplaceTarget(text.Length, text);
+        }
+
+        public static int CaretToTextPosition(this ScintillaGateway document, int position)
+        {
+            string text = document.GetTextBetween(0, position);
+            return Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(text)).Length;
+        }
+
+        public static string GetSelectedText(this ScintillaGateway document)
+        {
+            int start = document.GetSelectionStart();
+            int end = document.GetSelectionEnd();
+            return document.GetTextBetween(start, end);
+        }
+    }
+
     public class Npp1
     {
         public static NotepadPPGateway Editor => PluginBase.Editor;
@@ -71,59 +131,38 @@ namespace CSScriptIntellisense
             document.AddText(text);
         }
 
-        /// <summary>
-        /// Determines whether the current file has the specified extension (e.g. ".cs").
-        /// <para>Note it is case insensitive.</para>
-        /// </summary>
-        /// <param name="extension">The extension.</param>
-        /// <returns></returns>
-        static public bool IsCurrentFileHasExtension(string extension)
+        static public bool IsCurrentScriptFile()
         {
-            var path = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
-            string file = path.ToString();
-            return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
+            return Npp.Editor.GetCurrentFilePath().IsScriptFile();
         }
 
         static public void ReloadFile(bool showAlert, string file)
         {
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_RELOADFILE, showAlert ? 1 : 0, file);
-        }
-
-        static public bool IsCurrentScriptFile()
-        {
-            var path = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
-            string file = path.ToString();
-            return !string.IsNullOrWhiteSpace(file) && file.IsScriptFile();
+            Editor.FileNew();
+            Editor.ReloadFile(file, showAlert);
         }
 
         static public void SetIndicatorStyle(int indicator, SciMsg style, Color color)
         {
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int)style);
-            Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, indicator, ColorTranslator.ToWin32(color));
+            var document = Npp.GetCurrentDocument();
+            document.IndicSetStyle(indicator, (int)style);
+            document.IndicSetFore(indicator, new Colour(ColorTranslator.ToWin32(color)));
         }
 
         static public void ClearIndicator(int indicator, int startPos, int endPos)
         {
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-            Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, indicator, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_INDICATORCLEARRANGE, startPos, endPos - startPos);
+            var document = Npp.GetCurrentDocument();
+            document.SetIndicatorCurrent(indicator);
+            document.IndicatorClearRange(startPos, endPos - startPos);
         }
 
         static public void PlaceIndicator(int indicator, int startPos, int endPos)
         {
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-            Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, indicator, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_INDICATORFILLRANGE, startPos, endPos - startPos);
-        }
-
-        static public string GetConfigDir()
-        {
-            var buffer = new StringBuilder(260);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, 260, buffer);
-            return buffer.ToString();
+            // !!!
+            // The implementation is identical to "ClearIndicator". Looks like intentional.
+            var document = Npp.GetCurrentDocument();
+            document.SetIndicatorCurrent(indicator);
+            document.IndicatorClearRange(startPos, endPos - startPos);
         }
 
         const int SW_SHOWNOACTIVATE = 4;
@@ -183,17 +222,6 @@ namespace CSScriptIntellisense
             return ranges.ToArray();
         }
 
-        static public string GetLine(int line)
-        {
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-
-            int length = (int)Win32.SendMessage(sci, SciMsg.SCI_LINELENGTH, line, 0);
-            var buffer = new StringBuilder(length + 1);
-            Win32.SendMessage(sci, SciMsg.SCI_GETLINE, line, buffer);
-            buffer.Length = length; //NPP may inject some rubbish at the end of the line
-            return buffer.ToString();
-        }
-
         static public int GetLineNumber(int position)
         {
             IntPtr sci = PluginBase.GetCurrentScintilla();
@@ -226,19 +254,19 @@ namespace CSScriptIntellisense
 
         static public string GetShortcutsFile()
         {
-            return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp1.GetConfigDir())), "shortcuts.xml");
+            return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.Editor.GetPluginsConfigDir())), "shortcuts.xml");
         }
 
         static public string GetNppConfigFile()
         {
-            return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp1.GetConfigDir())), "config.xml");
+            return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.Editor.GetPluginsConfigDir())), "config.xml");
         }
 
         static public string ContextMenuFile
         {
             get
             {
-                return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp1.GetConfigDir())), "contextMenu.xml");
+                return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.Editor.GetPluginsConfigDir())), "contextMenu.xml");
             }
         }
 
@@ -286,52 +314,6 @@ namespace CSScriptIntellisense
         {
             const int WM_COMMAND = 0x111;
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)WM_COMMAND, (int)NppMenuCmd.IDM_FILE_EXIT, 0);
-        }
-
-        static public string GetTextBetween(Point point)
-        {
-            return GetTextBetween(point.X, point.Y);
-        }
-
-        static public string GetTextBetween(int start, int end = -1)
-        {
-            var document = GetCurrentDocument();
-
-            if (end == -1)
-                end = document.GetLength();
-
-            using (var tr = new TextRange(start, end, end - start + 1)) //+1 for null termination
-            {
-                document.GetTextRange(tr);
-                return tr.lpstrText;
-            }
-        }
-
-        static public void SetTextBetween(string text, Point point)
-        {
-            SetTextBetween(text, point.X, point.Y);
-        }
-
-        static public void SetTextBetween(string text, int start, int end = -1)
-        {
-            //supposed not to scroll
-
-            var document = PluginBase.GetCurrentDocument();
-            if (end == -1)
-                end = document.GetLength();
-
-            document.SetTargetStart(new Position(start));
-            document.SetTargetEnd(new Position(end));
-            document.ReplaceTarget(text.Length, text);
-
-            // IntPtr sci = PluginBase.GetCurrentScintilla();
-
-            // if (end == -1)
-            //     end = (int)Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
-
-            // Win32.SendMessage(sci, SciMsg.SCI_SETTARGETSTART, start, 0);
-            // Win32.SendMessage(sci, SciMsg.SCI_SETTARGETEND, end, 0);
-            // Win32.SendMessage(sci, SciMsg.SCI_REPLACETARGET, text);
         }
 
         static public string TextAfterCursor(int maxLength)
@@ -461,25 +443,11 @@ namespace CSScriptIntellisense
             get { return PluginBase.nppData._nppHandle; }
         }
 
-        public static int CaretToTextPosition(int position)
-        {
-            string text = GetTextBetween(0, position);
-            return Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(text)).Length;
-        }
-
         public static int GetCaretPosition()
         {
             IntPtr sci = PluginBase.GetCurrentScintilla();
             int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             return currentPos;
-        }
-
-        public static int GetCaretLineNumber()
-        {
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
-
-            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
         }
 
         public static int SetCaretPosition(int pos)
@@ -525,13 +493,6 @@ namespace CSScriptIntellisense
             IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, start, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, end, 0);
-        }
-
-        public static string GetSelectedText()
-        {
-            int start = execute(SciMsg.SCI_GETSELECTIONSTART, 0, 0);
-            int end = execute(SciMsg.SCI_GETSELECTIONEND, 0, 0);
-            return GetTextBetween(start, end);
         }
 
         public static void SetSelectionText(string text)

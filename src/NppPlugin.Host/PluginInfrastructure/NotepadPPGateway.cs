@@ -49,6 +49,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             return this;
         }
 
+        public NotepadPPGateway ReloadFile(string file, bool showAlert)
+        {
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_RELOADFILE, showAlert ? 1 : 0, file);
+            return this;
+        }
+
         public NotepadPPGateway SaveCurrentFile()
         {
             send(NppMsg.NPPM_SAVECURRENTFILE, Unused, Unused);

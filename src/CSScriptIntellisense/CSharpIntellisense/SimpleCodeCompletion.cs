@@ -1,4 +1,5 @@
 using Intellisense.Common;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -70,7 +71,9 @@ namespace CSScriptIntellisense
 
                 //suggest default CS-Script usings as well
                 var extraItems = new List<ICompletionData>();
-                var line = Npp1.GetLine(Npp1.GetLineNumber(offset)).Trim();
+                var document = Npp.GetCurrentDocument();
+
+                var line = document.GetLine(document.LineFromPosition(offset)).Trim();
 
                 bool isUsing = (line == "using");
 
