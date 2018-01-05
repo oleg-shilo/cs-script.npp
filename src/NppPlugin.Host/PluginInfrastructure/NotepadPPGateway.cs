@@ -92,7 +92,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public string GetPluginsConfigDir()
         {
             var path = new StringBuilder(2000);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, 0, path);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, path.Capacity, path);
             return path.ToString();
         }
 
@@ -102,7 +102,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public string GetCurrentFilePath()
         {
             var path = new StringBuilder(2000);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETFULLCURRENTPATH, path.Capacity, path);
             return path.ToString();
         }
 

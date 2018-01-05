@@ -79,18 +79,18 @@ namespace CSScriptIntellisense
             document.SetTextBetween(text, indicatorRange);
 
             //restore the indicator
-            Npp1.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
-            Npp1.PlaceIndicator(SnippetContext.indicatorId, indicatorRange.X, indicatorRange.X + text.Length);
+            document.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+            document.PlaceIndicator(SnippetContext.indicatorId, indicatorRange.X, indicatorRange.X + text.Length);
         }
 
         static public void FinalizeCurrent()
         {
+            var document = Npp.GetCurrentDocument();
             var indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);
 
             foreach (var range in indicators)
-                Npp1.ClearIndicator(SnippetContext.indicatorId, range.X, range.Y);
+                document.ClearIndicator(SnippetContext.indicatorId, range.X, range.Y);
 
-            var document = Npp.GetCurrentDocument();
             var caretPoint = indicators.Where(point =>
                                               {
                                                   string text = document.GetTextBetween(point);
@@ -123,8 +123,8 @@ namespace CSScriptIntellisense
             if (currentParamOriginalText != currentParamDetectedText)
             {
                 //current parameter is modified, indicator is destroyed so restore the indicator first
-                Npp1.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
-                Npp1.PlaceIndicator(SnippetContext.indicatorId, currentParam.X, currentParam.X + currentParamDetectedText.Length);
+                document.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+                document.PlaceIndicator(SnippetContext.indicatorId, currentParam.X, currentParam.X + currentParamDetectedText.Length);
 
                 indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
 

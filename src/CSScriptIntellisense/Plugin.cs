@@ -347,11 +347,11 @@ namespace CSScriptIntellisense
 
                 Npp1.ReplaceWordAtCaret(currentSnippetContext.ReplacementString);
 
-                Npp1.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+                document.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
 
                 foreach (var point in currentSnippetContext.Parameters)
                 {
-                    Npp1.PlaceIndicator(SnippetContext.indicatorId, point.X, point.Y);
+                    document.PlaceIndicator(SnippetContext.indicatorId, point.X, point.Y);
                 }
 
                 if (currentSnippetContext.CurrentParameter.HasValue)

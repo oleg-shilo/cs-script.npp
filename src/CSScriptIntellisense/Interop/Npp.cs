@@ -112,6 +112,26 @@ namespace CSScriptIntellisense
             int end = document.GetSelectionEnd();
             return document.GetTextBetween(start, end);
         }
+
+        static public void SetIndicatorStyle(this ScintillaGateway document, int indicator, SciMsg style, Color color)
+        {
+            document.IndicSetStyle(indicator, (int)style);
+            document.IndicSetFore(indicator, new Colour(ColorTranslator.ToWin32(color)));
+        }
+
+        static public void ClearIndicator(this ScintillaGateway document, int indicator, int startPos, int endPos)
+        {
+            document.SetIndicatorCurrent(indicator);
+            document.IndicatorClearRange(startPos, endPos - startPos);
+        }
+
+        static public void PlaceIndicator(this ScintillaGateway document, int indicator, int startPos, int endPos)
+        {
+            // !!!
+            // The implementation is identical to "ClearIndicator". Looks like intentional.
+            document.SetIndicatorCurrent(indicator);
+            document.IndicatorClearRange(startPos, endPos - startPos);
+        }
     }
 
     public class Npp1
@@ -140,29 +160,6 @@ namespace CSScriptIntellisense
         {
             Editor.FileNew();
             Editor.ReloadFile(file, showAlert);
-        }
-
-        static public void SetIndicatorStyle(int indicator, SciMsg style, Color color)
-        {
-            var document = Npp.GetCurrentDocument();
-            document.IndicSetStyle(indicator, (int)style);
-            document.IndicSetFore(indicator, new Colour(ColorTranslator.ToWin32(color)));
-        }
-
-        static public void ClearIndicator(int indicator, int startPos, int endPos)
-        {
-            var document = Npp.GetCurrentDocument();
-            document.SetIndicatorCurrent(indicator);
-            document.IndicatorClearRange(startPos, endPos - startPos);
-        }
-
-        static public void PlaceIndicator(int indicator, int startPos, int endPos)
-        {
-            // !!!
-            // The implementation is identical to "ClearIndicator". Looks like intentional.
-            var document = Npp.GetCurrentDocument();
-            document.SetIndicatorCurrent(indicator);
-            document.IndicatorClearRange(startPos, endPos - startPos);
         }
 
         const int SW_SHOWNOACTIVATE = 4;
