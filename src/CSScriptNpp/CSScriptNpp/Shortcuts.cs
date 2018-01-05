@@ -16,7 +16,7 @@ namespace CSScriptNpp
 
         public Shortcuts()
         {
-            base.file = Path.Combine(Plugin.ConfigDir, "shortcuts.ini");
+            base.file = Path.Combine(PluginEnv.ConfigDir, "shortcuts.ini");
             CSScriptIntellisense.Config.Shortcuts.SetFileName(base.file);
         }
 

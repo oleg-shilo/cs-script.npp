@@ -1,3 +1,4 @@
+using CSScriptIntellisense;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ namespace CSScriptNpp
             Config.Instance.VbSupportEnabled = CSScriptIntellisense.Config.Instance.VbSupportEnabled;
         }
 
-        public static string Location = Plugin.ConfigDir;
+        public static string Location = PluginEnv.ConfigDir;
 
         public static Shortcuts Shortcuts = new Shortcuts();
         public static Config Instance { get { return instance ?? (instance = new Config()); } }
@@ -42,8 +43,10 @@ namespace CSScriptNpp
         public string UseCustomEngine = "";
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
+
         //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
+
         public bool UpdateAfterExit = false;
         public string UpdateMode = "custom";
         public string VSProjectTemplatePath = "";
@@ -64,7 +67,7 @@ namespace CSScriptNpp
         public string TargetVersion = "v4.0.30319";
         public string ScriptsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "C# Scripts");
         public string SkipUpdateVersion = "";
-        public string VbCodeProvider= "CSSCodeProvider.v4.0.dll";
+        public string VbCodeProvider = "CSSCodeProvider.v4.0.dll";
         public string CsSConsoleEncoding = "utf-8";
         public string HotkeyDocumentsExclusions = ".cmd;.bat;.test";
         public string LastExternalProcess = "";
@@ -95,7 +98,7 @@ namespace CSScriptNpp
             {
                 try
                 {
-                   // Debug.WriteLine("---> Config.Save");
+                    // Debug.WriteLine("---> Config.Save");
                     File.WriteAllText(this.file, ""); //clear to get rid of all obsolete values
 
                     SetValue(Section, nameof(ShowProjectPanel), ShowProjectPanel);
@@ -107,7 +110,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(WordWrapInVisualizer), WordWrapInVisualizer);
                     SetValue(Section, nameof(ListManagedProcessesOnly), ListManagedProcessesOnly);
                     SetValue(Section, nameof(RunExternalInDebugMode), RunExternalInDebugMode);
-                    SetValue(Section, nameof(CustomAsyncHost), CustomAsyncHost, forceWriting:true);
+                    SetValue(Section, nameof(CustomAsyncHost), CustomAsyncHost, forceWriting: true);
                     SetValue(Section, nameof(SyncSecondaryPanelsWithProjectPanel), SyncSecondaryPanelsWithProjectPanel);
                     SetValue(Section, nameof(OutputPanelCapacity), OutputPanelCapacity);
                     SetValue(Section, nameof(HotkeyDocumentsExclusions), HotkeyDocumentsExclusions);
@@ -155,7 +158,7 @@ namespace CSScriptNpp
 
                     Shortcuts.Save();
                 }
-                catch 
+                catch
                 {
                     Debug.Assert(false);
                     throw;
@@ -168,7 +171,6 @@ namespace CSScriptNpp
         {
             lock (typeof(Config))
             {
-                //Debug.Assert(false);
                 Debug.WriteLine("---> Config.Open");
                 ShowLineNuberInCodeMap = GetValue(Section, nameof(ShowLineNuberInCodeMap), ShowLineNuberInCodeMap);
                 ShowProjectPanel = GetValue(Section, nameof(ShowProjectPanel), ShowProjectPanel);

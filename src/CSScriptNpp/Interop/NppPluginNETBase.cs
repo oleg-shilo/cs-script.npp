@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,18 +12,18 @@ namespace CSScriptNpp
 {
     partial class Plugin
     {
-        public static NppData NppData;
-        public static FuncItems FuncItems = new FuncItems();
+        // public static NppData NppData;
+        // public static FuncItems FuncItems = new FuncItems();
 
-        public static void SetCommand(int index, string commandName, Action functionPointer)
+        public static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer)
         {
-            SetCommand(index, commandName, functionPointer, new ShortcutKey(), false);
+            PluginBase.SetCommand(index, commandName, functionPointer, new ShortcutKey(), false);
         }
 
-        public static void SetCommand(int index, string commandName, Action functionPointer, ShortcutKey shortcut)
-        {
-            SetCommand(index, commandName, functionPointer, shortcut, false);
-        }
+        // public static void SetCommand(int index, string commandName, Action functionPointer, ShortcutKey shortcut)
+        // {
+        //     SetCommand(index, commandName, functionPointer, shortcut, false);
+        // }
 
         public static void SetCommand(int index, string commandName, Action functionPointer, string shortcutSpec)
         {
@@ -33,33 +34,33 @@ namespace CSScriptNpp
             else
                 shortcutKey = shortcutSpec.ParseAsShortcutKey(commandName);
 
-            SetCommand(index, commandName, functionPointer, shortcutKey, false);
+            PluginBase.SetCommand(index, commandName, new NppFuncItemDelegate(functionPointer), shortcutKey, false);
         }
 
-        public static void SetCommand(int index, string commandName, Action functionPointer, bool checkOnInit)
-        {
-            SetCommand(index, commandName, functionPointer, new ShortcutKey(), checkOnInit);
-        }
+        // public static void SetCommand(int index, string commandName, Action functionPointer, bool checkOnInit)
+        // {
+        //     SetCommand(index, commandName, functionPointer, new ShortcutKey(), checkOnInit);
+        // }
 
-        public static void SetCommand(int index, string commandName, Action functionPointer, ShortcutKey shortcut, bool checkOnInit)
-        {
-            FuncItem funcItem = new FuncItem();
-            funcItem._cmdID = index;
-            funcItem._itemName = commandName;
-            if (functionPointer != null)
-                funcItem._pFunc = new Action(functionPointer);
-            if (shortcut._key != 0)
-                funcItem._pShKey = shortcut;
-            funcItem._init2Check = checkOnInit;
-            FuncItems.Add(funcItem);
-        }
+        // public static void SetCommand(int index, string commandName, Action functionPointer, ShortcutKey shortcut, bool checkOnInit)
+        // {
+        //     FuncItem funcItem = new FuncItem();
+        //     funcItem._cmdID = index;
+        //     funcItem._itemName = commandName;
+        //     if (functionPointer != null)
+        //         funcItem._pFunc = new Action(functionPointer);
+        //     if (shortcut._key != 0)
+        //         funcItem._pShKey = shortcut;
+        //     funcItem._init2Check = checkOnInit;
+        //     FuncItems.Add(funcItem);
+        // }
 
-        public static IntPtr GetCurrentScintilla()
-        {
-            int curScintilla;
-            Win32.SendMessage(NppData._nppHandle, NppMsg.NPPM_GETCURRENTSCINTILLA, 0, out curScintilla);
-            return (curScintilla == 0) ? NppData._scintillaMainHandle : NppData._scintillaSecondHandle;
-        }
+        // public static IntPtr GetCurrentScintilla()
+        // {
+        //     int curScintilla;
+        //     Win32.SendMessage(NppData._nppHandle, NppMsg.NPPM_GETCURRENTSCINTILLA, 0, out curScintilla);
+        //     return (curScintilla == 0) ? NppData._scintillaMainHandle : NppData._scintillaSecondHandle;
+        // }
 
         public static string ConfigDir
         {
@@ -116,7 +117,7 @@ namespace CSScriptNpp
             tbIcons.hToolbarBmp = image.GetHbitmap();
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
             Marshal.StructureToPtr(tbIcons, pTbIcons, false);
-            Win32.SendMessage(NppData._nppHandle, NppMsg.NPPM_ADDTOOLBARICON, FuncItems.Items[pluginId]._cmdID, pTbIcons);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[pluginId]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
         }
 
@@ -138,7 +139,7 @@ namespace CSScriptNpp
             IntPtr _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
             Marshal.StructureToPtr(_nppTbData, _ptrNppTbData, false);
 
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DMMREGASDCKDLG, 0, _ptrNppTbData);
+            Win32.SendMessage(Npp.NppHandle, (uint)NppMsg.NPPM_DMMREGASDCKDLG, 0, _ptrNppTbData);
 
             //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 1); //from this moment the panel is visible
 
@@ -148,7 +149,7 @@ namespace CSScriptNpp
             if (dockedManagedPanels.ContainsKey(scriptId))
             {
                 //there is already another panel
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DMMHIDE, 0, dockedManagedPanels[scriptId].Handle);
+                Win32.SendMessage(Npp.NppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, dockedManagedPanels[scriptId].Handle);
                 dockedManagedPanels[scriptId] = panel;
             }
             else
@@ -164,12 +165,12 @@ namespace CSScriptNpp
         {
             if (visible)
             {
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DMMSHOW, 0, panel.Handle);
+                Win32.SendMessage(Npp.NppHandle, (uint)NppMsg.NPPM_DMMSHOW, 0, panel.Handle);
                 //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 1);
             }
             else
             {
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DMMHIDE, 0, panel.Handle);
+                Win32.SendMessage(Npp.NppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, panel.Handle);
                 //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 0);
             }
         }
@@ -197,8 +198,7 @@ namespace CSScriptNpp
         {
             Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
 
-            string file;
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
+            string file = Npp.GetCurrentFile();
 
             if (string.IsNullOrEmpty(file)) //the Exit request has been processed and user did not cancel it
             {

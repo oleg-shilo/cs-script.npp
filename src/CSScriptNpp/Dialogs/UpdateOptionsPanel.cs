@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -132,12 +133,12 @@ namespace CSScriptNpp.Dialogs
                                         Process updater_proc = Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
 
                                         string npp_exe = Process.GetCurrentProcess().MainModule.FileName;
-                                        string restarter = Path.Combine(Plugin.PluginDir, "launcher.exe");
+                                        string restarter = Path.Combine(PluginEnv.PluginDir, "launcher.exe");
 
                                         //the re-starter will also wait for updater process to exit
                                         Process.Start(restarter, $"/start {updater_proc.Id} \"{npp_exe}\"");
 
-                                        Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
+                                        PluginBase.Editor.FileExit();
                                     }
                                 }
                             }

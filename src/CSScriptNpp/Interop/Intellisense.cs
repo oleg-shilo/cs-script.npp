@@ -1,3 +1,4 @@
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System.Diagnostics;
 
 namespace CSScriptNpp
@@ -13,7 +14,7 @@ namespace CSScriptNpp
         {
             //Debug.Assert(false);
             //Merge Configs
-            CSScriptIntellisense.Config.Location = Plugin.ConfigDir;
+            CSScriptIntellisense.Config.Location = PluginEnv.ConfigDir;
             CSScriptNpp.Config.InitData(); //will also exchange required data between configs
 
             CSScriptIntellisense.Plugin.SuppressCodeTolltips = () => Debugger.IsInBreak;
@@ -27,7 +28,7 @@ namespace CSScriptNpp
                 () =>
                 {
                     if (string.IsNullOrEmpty(ProjectPanel.currentScript))
-                        return Npp.GetCurrentFile();
+                        return Npp.Editor.GetCurrentFilePath();
                     else
                         return ProjectPanel.currentScript;
                 };

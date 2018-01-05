@@ -19,27 +19,27 @@ namespace CSScriptIntellisense
         {
             try
             {
-                int currentPos = Npp.GetCaretPosition();
+                int currentPos = Npp1.GetCaretPosition();
                 CaretBeforeLastFormatting = currentPos;
-                string code = Npp.GetTextBetween(0, Npp.DocEnd);
+                string code = Npp1.GetTextBetween(0, Npp1.DocEnd);
 
                 if (code.Any() && currentPos != -1 && currentPos < code.Length)
                 {
                     code = NormalizeNewLines(code, ref currentPos);
 
-                    int topScrollOffset = Npp.GetLineNumber(currentPos) - Npp.GetFirstVisibleLine();
+                    int topScrollOffset = Npp1.GetLineNumber(currentPos) - Npp1.GetFirstVisibleLine();
                     TopScrollOffsetBeforeLastFormatting = topScrollOffset;
 
-                    string newCode = FormatCode(code, ref currentPos, Npp.GetCurrentFile());
+                    string newCode = FormatCode(code, ref currentPos, Npp1.Editor.GetCurrentFilePath());
 
                     if (newCode != null)
                     {
-                        Npp.SetTextBetween(newCode, 0, Npp.DocEnd);
+                        Npp1.SetTextBetween(newCode, 0, Npp1.DocEnd);
 
-                        Npp.SetCaretPosition(currentPos);
-                        Npp.ClearSelection();
+                        Npp1.SetCaretPosition(currentPos);
+                        Npp1.ClearSelection();
 
-                        Npp.SetFirstVisibleLine(Npp.GetLineNumber(currentPos) - topScrollOffset);
+                        Npp1.SetFirstVisibleLine(Npp1.GetLineNumber(currentPos) - topScrollOffset);
                     }
                 }
             }
@@ -64,18 +64,18 @@ namespace CSScriptIntellisense
 
         public static void FormatDocumentPrevLines()
         {
-            int currentLineNum = Npp.GetCaretLineNumber();
-            int prevLineEnd = Npp.GetLineStart(currentLineNum) - Environment.NewLine.Length;
-            int topScrollOffset = currentLineNum - Npp.GetFirstVisibleLine();
+            int currentLineNum = Npp1.GetCaretLineNumber();
+            int prevLineEnd = Npp1.GetLineStart(currentLineNum) - Environment.NewLine.Length;
+            int topScrollOffset = currentLineNum - Npp1.GetFirstVisibleLine();
 
-            string code = Npp.GetTextBetween(0, prevLineEnd);
-            int currentPos = Npp.GetCaretPosition();
-            string newCode = FormatCode(code, ref currentPos, Npp.GetCurrentFile());
-            Npp.SetTextBetween(newCode, 0, prevLineEnd);
+            string code = Npp1.GetTextBetween(0, prevLineEnd);
+            int currentPos = Npp1.GetCaretPosition();
+            string newCode = FormatCode(code, ref currentPos, Npp1.Editor.GetCurrentFilePath());
+            Npp1.SetTextBetween(newCode, 0, prevLineEnd);
 
             //no need to set the caret as it is after the formatted text anyway
 
-            Npp.SetFirstVisibleLine(Npp.GetLineNumber(currentPos) - topScrollOffset);
+            Npp1.SetFirstVisibleLine(Npp1.GetLineNumber(currentPos) - topScrollOffset);
         }
 
         public static string FormatCodeWithNRefactory(string code, ref int pos)

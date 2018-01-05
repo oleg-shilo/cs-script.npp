@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
@@ -115,7 +116,7 @@ namespace CSScriptNpp
         {
             foreach (int key in keys)
             {
-                //ignore for now as anyway the extra invoke will not do any harm 
+                //ignore for now as anyway the extra invoke will not do any harm
                 //but eventually it needs to be ref counting based
                 //KeysToIntercept.RemoveAll(k => k == key);
             }
@@ -126,13 +127,13 @@ namespace CSScriptNpp
 
         override protected bool HandleHookEvent(IntPtr wParam, IntPtr lParam)
         {
-            int key = (int)wParam;
-            int context = (int)lParam;
+            var key = wParam.ToInt32();
 
             if (KeysToIntercept.Contains(key))
             {
+                var context = (long)lParam;
                 bool down = ((context & KB_TRANSITION_FLAG) != KB_TRANSITION_FLAG);
-                int repeatCount = (context & 0xFF00);
+                var repeatCount = (int)(context & 0x0000FF00);
                 if (down && KeyDown != null)
                 {
                     bool handled = false;

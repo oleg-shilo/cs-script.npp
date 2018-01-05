@@ -10,6 +10,7 @@ using CSScriptNpp.Dialogs;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using CSScriptIntellisense.Interop;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
@@ -38,7 +39,7 @@ namespace CSScriptNpp
                     if (file.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
                         LoadScript(file);
                     else
-                        Npp.OpenFile(file);
+                        Npp2.OpenFile(file, true);
                 };
 
             RefreshControls();
@@ -89,7 +90,7 @@ namespace CSScriptNpp
 
         //FileSystemWatcher watcher = new FileSystemWatcher();
 
-        string settingsFile = Path.Combine(Plugin.ConfigDir, "toolbar_buttons.txt");
+        string settingsFile = Path.Combine(PluginEnv.ConfigDir, "toolbar_buttons.txt");
 
         //ToolStripItem[] buttons;
 
@@ -103,7 +104,6 @@ namespace CSScriptNpp
         //}
 
         //string[] ButtonsDefaultLayout;
-
 
         void UpdateButtonsTooltips()
         {
@@ -184,7 +184,7 @@ namespace CSScriptNpp
 
         void EditItem(string scriptFile)
         {
-            Npp.OpenFile(scriptFile);
+            Npp2.OpenFile(scriptFile, true);
         }
 
         void newBtn_Click(object sender, EventArgs e)
@@ -219,21 +219,27 @@ namespace CSScriptNpp
                 if (!File.Exists(newScript))
                 {
                     File.WriteAllText(newScript, scriptCode);
-                    Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, newScript);
-                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+
+                    PluginBase.Editor.Open(newScript);
+                    PluginBase.GetCurrentDocument().GrabFocus();
 
                     loadBtn.PerformClick();
                 }
                 else
                 {
-                    Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_NEW);
-                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, scriptCode.GetByteCount(), scriptCode);
+                    PluginBase.Editor.FileNew();
+                    var document = PluginBase.GetCurrentDocument();
+                    document.GrabFocus();
+                    document.AddText(scriptCode);
+
+                    // Win32.SendMessage(Npp.NppHandle, (uint)NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_NEW);
+                    // Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+                    // Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, scriptCode.GetByteCount(), scriptCode);
 
                     //for some reason setting the lexer does not work
                     int SCLEX_CPP = 3;
-                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_SETLEXER, SCLEX_CPP, 0);
-                    Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_SETLEXERLANGUAGE, 0, "cpp");
+                    Win32.SendMessage(Npp.GetCurrentDocument().Handle, SciMsg.SCI_SETLEXER, SCLEX_CPP, 0);
+                    Win32.SendMessage(Npp.GetCurrentDocument().Handle, SciMsg.SCI_SETLEXERLANGUAGE, 0, "cpp");
                 }
             }
         }
@@ -264,8 +270,7 @@ namespace CSScriptNpp
 
         bool CurrentDocumentBelongsToProject()
         {
-            string file;
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
+            string file = Npp.Editor.GetCurrentFilePath();
             return DocumentBelongsToProject(file);
         }
 
@@ -318,8 +323,7 @@ void main(string[] args)
 
         void synchBtn_Click(object sender, EventArgs e)
         {
-            string path;
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out path);
+            string path = Npp.Editor.GetCurrentFilePath();
             SelectScript(path);
         }
 
@@ -362,8 +366,7 @@ void main(string[] args)
                     if (!CurrentDocumentBelongsToProject())
                         EditItem(currentScript);
 
-                    Npp.SaveDocuments(GetProjectDocuments());
-
+                    Npp2.SaveDocuments(GetProjectDocuments());
 
                     if (asExternal)
                     {
@@ -412,7 +415,7 @@ void main(string[] args)
                                 {
                                     Plugin.RunningScript = null;
                                     RefreshControls();
-                                    Npp.GrabFocus();
+                                    Npp.GetCurrentDocument().GrabFocus();
                                 });
                             }
                         });
@@ -441,7 +444,7 @@ void main(string[] args)
             }
             else
             {
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+                PluginBase.Editor.SaveCurrentFile();
 
                 bool canCompile = CSScriptHelper.Verify(currentScript);
 
@@ -471,7 +474,7 @@ void main(string[] args)
                             else
                             {
                                 string targetType = Debugger.DebugAsConsole ? CSScriptHelper.cscs_exe : CSScriptHelper.csws_exe;
-                                string debuggingHost = Path.Combine(Plugin.PluginDir, "css_dbg.exe");
+                                string debuggingHost = Path.Combine(PluginEnv.PluginDir, "css_dbg.exe");
                                 Debugger.Start(debuggingHost, string.Format("\"{0}\" /d /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs(currentScript)), Debugger.CpuType.Any);
                             }
 
@@ -500,7 +503,8 @@ void main(string[] args)
             }
             else
             {
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+                PluginBase.Editor.SaveCurrentFile();
+
                 try
                 {
                     CSScriptHelper.OpenAsVSProjectFor(currentScript);
@@ -516,7 +520,7 @@ void main(string[] args)
         void OnRunStart(Process proc)
         {
             Plugin.RunningScript = proc;
-            this.Invoke((Action) RefreshControls);
+            this.Invoke((Action)RefreshControls);
         }
 
         void OnConsoleOut(string line)
@@ -572,7 +576,7 @@ void main(string[] args)
                         if (!CurrentDocumentBelongsToProject())
                             EditItem(currentScript);
 
-                        Npp.SaveDocuments(GetProjectDocuments());
+                        Npp2.SaveDocuments(GetProjectDocuments());
 
                         CSScriptHelper.Build(currentScript);
 
@@ -601,7 +605,7 @@ void main(string[] args)
         {
             this.InUiThread(() =>
             {
-                if (Npp.GetCurrentFile() == currentScript)
+                if (Npp.Editor.GetCurrentFilePath() == currentScript)
                 {
                     try
                     {
@@ -612,12 +616,12 @@ void main(string[] args)
                         /*
                          root
                          references
-                            assembly_1 
-                            assembly_2 
-                            assembly_n 
-                         script_1 
-                         script_2 
-                         script_N 
+                            assembly_1
+                            assembly_2
+                            assembly_n
+                         script_1
+                         script_2
+                         script_N
                          */
 
                         TreeNode root = treeView1.Nodes[0];
@@ -736,12 +740,11 @@ void main(string[] args)
 
         public void LoadCurrentDoc()
         {
-            string path;
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out path);
+            string path = Npp.Editor.GetCurrentFilePath();
             if (!File.Exists(path))
-                Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_SAVE, 0);
+                PluginBase.Editor.SaveCurrentFile();
 
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out path);
+            path = Npp.Editor.GetCurrentFilePath(); // path may be already changed as the result of saving
             if (File.Exists(path))
                 LoadScript(path);
 
@@ -774,19 +777,19 @@ void main(string[] args)
                 {
                     try
                     {
-                        Npp.OpenFile(scriptFile);
+                        Npp2.OpenFile(scriptFile, true);
 
                         Project project = CSScriptHelper.GenerateProjectFor(scriptFile);
 
                         /*
                         root
                         references
-                           assembly_1 
-                           assembly_2 
-                           assembly_n 
-                        script_1 
-                        script_2 
-                        script_N 
+                           assembly_1
+                           assembly_2
+                           assembly_n
+                        script_1
+                        script_2
+                        script_N
                         */
 
                         treeView1.BeginUpdate();
@@ -861,7 +864,7 @@ void main(string[] args)
             if (SelectedItem != null && !SelectedItem.IsAssembly)
             {
                 EditItem(SelectedItem.File);
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+                PluginBase.Editor.SaveCurrentFile();
             }
         }
 
@@ -983,7 +986,7 @@ void main(string[] args)
                         {
                             EditItem(currentScript);
 
-                            Npp.SaveDocuments(GetProjectDocuments());
+                            Npp2.SaveDocuments(GetProjectDocuments());
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
                             string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp);
@@ -1044,7 +1047,7 @@ void main(string[] args)
         void favoritesBtn_Click(object sender, EventArgs e)
         {
             tabControl1.SelectTabWith(favPanel);
-            favPanel.Add(Npp.GetCurrentFile());
+            favPanel.Add(Npp.Editor.GetCurrentFilePath());
         }
     }
 }

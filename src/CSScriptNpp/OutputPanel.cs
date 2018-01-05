@@ -1,4 +1,5 @@
 ﻿using CSScriptLibrary;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -212,7 +213,7 @@ namespace CSScriptNpp
 
             textBox.Font = new Font("Courier New", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textBox.MouseDoubleClick += textBox_MouseDoubleClick;
-            textBox.KeyDown += TextBox_KeyDown; 
+            textBox.KeyDown += TextBox_KeyDown;
             textBox.AttachMouseControlledZooming();
 
             textBox.Visible = true;
@@ -421,7 +422,7 @@ namespace CSScriptNpp
 
                 RefreshControls();
 
-                System.Diagnostics.Debug.WriteLine("OutputPanel visible changed to -> "+this.Visible);
+                System.Diagnostics.Debug.WriteLine("OutputPanel visible changed to -> " + this.Visible);
             }
         }
 
@@ -435,13 +436,16 @@ namespace CSScriptNpp
         {
             try
             {
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, file);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, line - 1, 0); //SCI lines are 0-based
+                PluginBase.Editor.Open(file);
+
+                var document = PluginBase.GetCurrentDocument();
+
+                document.GrabFocus();
+                document.GotoLine(line - 1); //SCI lines are 0-based
 
                 //at this point the caret is at the most left position (col=0)
-                int currentPos = (int)Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETCURRENTPOS, 0, 0);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOPOS, currentPos + column - 1, 0); //SCI columns are 0-based
+                var currentPos = document.GetCurrentPos();
+                document.GotoPos(currentPos + column - 1);
             }
             catch { }
         }
@@ -488,16 +492,16 @@ namespace CSScriptNpp
 
         /// <summary>
         /// This is a work around that nasty-nasty defect associated with comboboxes hosted by OutputPanel.
-        /// The problem manifests itself in the freshly inserted empty combobox being populated after startup with 
+        /// The problem manifests itself in the freshly inserted empty combobox being populated after startup with
         /// exactly two items:
         /// "English (Great Britain) [!For All Users]"
         /// "English (United States) [!For All Users]"
-        /// And the user code has NO code that inserts ANY item at all!!!!! It inly instantiates the combobox and 
+        /// And the user code has NO code that inserts ANY item at all!!!!! It inly instantiates the combobox and
         /// places it on the form. That is it.
-        /// 
-        /// This happens on NPP startup in ~50% of cases. Hard to tell who does the insertion but the user experience 
+        ///
+        /// This happens on NPP startup in ~50% of cases. Hard to tell who does the insertion but the user experience
         /// is severely affected. Thus the work around is to clear and repopulate the combobox items when we detect that
-        /// the Items content is not what we expect (e.g. Text is none of the Items).      
+        /// the Items content is not what we expect (e.g. Text is none of the Items).
         /// </summary>
         void CheckAndFixCombobox()
         {
@@ -524,14 +528,12 @@ namespace CSScriptNpp
 
         private void OutputPanel_Shown(object sender, EventArgs e)
         {
-
             //System.Diagnostics.Debug.WriteLine("OutputPanel shown");
         }
 
         private void OutputPanel_Activated(object sender, EventArgs e)
         {
             //System.Diagnostics.Debug.WriteLine("OutputPanel activated");
-
         }
 
         private void OutputPanel_Deactivate(object sender, EventArgs e)

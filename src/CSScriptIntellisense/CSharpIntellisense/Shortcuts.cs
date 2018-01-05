@@ -13,11 +13,12 @@ namespace CSScriptIntellisense
 
         public Shortcuts()
         {
-            var configDir = Path.Combine(Npp.GetConfigDir(), "CSharpIntellisense");
+            var configDir = Path.Combine(Npp1.GetConfigDir(), "CSharpIntellisense");
             base.file = Path.Combine(configDir, "shortcuts.ini");
         }
 
         public bool UsingExternalFile = false;
+
         public void SetFileName(string path)
         {
             UsingExternalFile = true;
@@ -28,7 +29,6 @@ namespace CSScriptIntellisense
         {
             return base.file;
         }
-
 
         public string Section = "Shortcuts";
 

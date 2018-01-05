@@ -1,3 +1,4 @@
+using Kbg.NppPluginNET.PluginInfrastructure;
 using Mono.CSharp;
 using System;
 using System.Collections.Generic;
@@ -5,16 +6,16 @@ using System.IO;
 
 namespace CSScriptIntellisense
 {
-    class NppEditor : Npp
+    class NppEditor : Npp1
     {
         public static void InsertNamespace(string text)
         {
-            bool isVB = Npp.GetCurrentFile().IsVbFile();
+            bool isVB = Npp1.Editor.GetCurrentFilePath().IsVbFile();
 
             //it is unlikely all 'usings' take more than 2000 lines
-            for (int i = 0; i < Math.Min(Npp.GetLineCount(), 2000); i++)
+            for (int i = 0; i < Math.Min(Npp1.GetLineCount(), 2000); i++)
             {
-                string line = Npp.GetLine(i);
+                string line = Npp1.GetLine(i);
 
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//") || line.StartsWith("/*") || line.StartsWith("*/") || line.StartsWith("*"))
                     continue;
@@ -25,20 +26,20 @@ namespace CSScriptIntellisense
                 var usingKeyword = isVB ? "Imports " : "using ";
                 if (line.TrimStart().StartsWith(usingKeyword)) //first 'using' statement
                 {
-                    var pos = Npp.GetLineStart(i);
-                    Npp.SetTextBetween(text + Environment.NewLine, pos, pos);
+                    var pos = Npp1.GetLineStart(i);
+                    Npp1.SetTextBetween(text + Environment.NewLine, pos, pos);
                     return;
                 }
             }
 
             //did not find any 'usings' so insert on top
-            Npp.SetTextBetween(text + Environment.NewLine, 0, 0);
+            Npp1.SetTextBetween(text + Environment.NewLine, 0, 0);
         }
 
         public static void ProcessDeleteKeyDown()
         {
-            int currentPos = Npp.GetCaretPosition();
-            IntPtr sci = Npp.CurrentScintilla;
+            int currentPos = Npp1.GetCaretPosition();
+            IntPtr sci = Npp1.CurrentScintilla;
 
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos + 1, 0);
@@ -47,21 +48,21 @@ namespace CSScriptIntellisense
 
         public static string ProcessKeyPress(char keyChar)
         {
-            int currentPos = Npp.GetCaretPosition();
-            IntPtr sci = Npp.CurrentScintilla;
+            var document = PluginBase.GetCurrentDocument();
+            var currentPos = document.GetCurrentPos().Value;
+
             string justTypedText = "";
             if (keyChar == 8)
             {
-                Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos - 1, 0);
-                Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0);
-                Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, "");
+                document.SetSelection(currentPos - 1, currentPos);
+                document.ReplaceSel("");
             }
             else
             {
                 if (keyChar != 0)
                 {
                     justTypedText = keyChar.ToString();
-                    Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, justTypedText);
+                    document.ReplaceSel(justTypedText);
                 }
             }
 
@@ -73,13 +74,14 @@ namespace CSScriptIntellisense
             string text;
             return GetMethodOverloadHint(methodStartPos, out text);
         }
+
         public static IEnumerable<string> GetMethodOverloadHint(int methodStartPos, out string text)
         {
             text = null;
-            int currentPos = Npp.GetCaretPosition();
+            int currentPos = Npp1.GetCaretPosition();
             if (currentPos > methodStartPos)
             {
-                text = Npp.GetTextBetween(methodStartPos, currentPos);
+                text = Npp1.GetTextBetween(methodStartPos, currentPos);
                 return text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }
             else
@@ -88,10 +90,10 @@ namespace CSScriptIntellisense
 
         public static string GetSuggestionHint()
         {
-            int currentPos = Npp.GetCaretPosition();
-            IntPtr sci = Npp.CurrentScintilla;
+            int currentPos = Npp1.GetCaretPosition();
+            IntPtr sci = Npp1.CurrentScintilla;
 
-            string text = Npp.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
+            string text = Npp1.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
             int pos = text.LastIndexOfAny(SimpleCodeCompletion.Delimiters);
             if (pos != -1)
             {

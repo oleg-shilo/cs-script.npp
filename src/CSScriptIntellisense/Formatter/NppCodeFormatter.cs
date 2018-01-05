@@ -1,3 +1,4 @@
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace CSScriptIntellisense
             //{
             //    switch (c)
             //    {
-            //        case '\n': OnNewLine(); break; 
+            //        case '\n': OnNewLine(); break;
             //    }
             //}
         }
@@ -33,8 +34,8 @@ namespace CSScriptIntellisense
         {
             if (Config.Instance.FormatAsYouType)
             {
-                int currentLineNum = Npp.GetCaretLineNumber();
-                string prevLineText = Npp.GetLine(currentLineNum - 1).TrimEnd();
+                int currentLineNum = Npp1.GetCaretLineNumber();
+                string prevLineText = Npp1.GetLine(currentLineNum - 1).TrimEnd();
 
                 if (prevLineText != "")
                     SourceCodeFormatter.FormatDocumentPrevLines();
@@ -47,8 +48,8 @@ namespace CSScriptIntellisense
 
         static void FormatCurrentLine()
         {
-            int currentLineNum = Npp.GetCaretLineNumber();
-            string prevLineText = Npp.GetLine(currentLineNum - 1).TrimEnd();
+            int currentLineNum = Npp1.GetCaretLineNumber();
+            string prevLineText = Npp1.GetLine(currentLineNum - 1).TrimEnd();
 
             if (prevLineText.EndsWith("{") || prevLineText.IsControlStatement())
                 Perform(InsertIndent);
@@ -56,10 +57,10 @@ namespace CSScriptIntellisense
 
         static void OnOpenBracket()
         {
-            int currentPos = Npp.GetCaretPosition();
-            int currentLineNum = Npp.GetLineNumber(currentPos);
-            string currLineText = Npp.GetLine(currentLineNum);
-            string prevLineText = Npp.GetLine(currentLineNum - 1);
+            int currentPos = Npp1.GetCaretPosition();
+            int currentLineNum = Npp1.GetLineNumber(currentPos);
+            string currLineText = Npp1.GetLine(currentLineNum);
+            string prevLineText = Npp1.GetLine(currentLineNum - 1);
 
             if (currLineText.Trim() == "{" && prevLineText.IsControlStatement())
                 Perform(RemoveIndent);
@@ -67,10 +68,10 @@ namespace CSScriptIntellisense
 
         static void OnCloseBracket()
         {
-            int currentPos = Npp.GetCaretPosition();
-            int currentLineNum = Npp.GetLineNumber(currentPos);
-            string currLineText = Npp.GetLine(currentLineNum);
-            string prevText = Npp.TextBeforeCursor(500); //do not load all all "top" document but its substantial part
+            int currentPos = Npp1.GetCaretPosition();
+            int currentLineNum = Npp1.GetLineNumber(currentPos);
+            string currLineText = Npp1.GetLine(currentLineNum);
+            string prevText = Npp1.TextBeforeCursor(500); //do not load all all "top" document but its substantial part
 
             if (currLineText.Trim() == "}" && IsBracketOpened(prevText))
                 Perform(RemoveIndent);
@@ -102,9 +103,12 @@ namespace CSScriptIntellisense
 
         static void InsertIndent()
         {
-            int currentPos = Npp.GetCaretPosition();
-            IntPtr sci = Npp.CurrentScintilla;
-            Win32.SendMessage(sci, SciMsg.SCI_ADDTEXT, IndentText);
+            // int currentPos = Npp.GetCaretPosition();
+            // IntPtr sci = Npp.CurrentScintilla;
+            // Win32.SendMessage(sci, SciMsg.SCI_ADDTEXT, IndentText);
+
+            PluginBase.GetCurrentDocument()
+                      .AddText(IndentText);
         }
 
         static string indentText = null;
@@ -121,7 +125,7 @@ namespace CSScriptIntellisense
                     }
                     else
                     {
-                        int widthInChars = (int)Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETTABWIDTH, 0, 0);
+                        int widthInChars = (int)Win32.SendMessage(Npp1.CurrentScintilla, SciMsg.SCI_GETTABWIDTH, 0, 0);
                         indentText = new string(' ', widthInChars);
                     }
                 }
@@ -142,7 +146,7 @@ namespace CSScriptIntellisense
             {
                 if (!useTabs.HasValue)
                 {
-                    int retval = (int)Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETUSETABS, 0, 0);
+                    int retval = (int)Win32.SendMessage(Npp1.CurrentScintilla, SciMsg.SCI_GETUSETABS, 0, 0);
                     useTabs = (retval == 1);
                 }
                 return useTabs.Value;
@@ -152,14 +156,13 @@ namespace CSScriptIntellisense
 
         static void RemoveIndent()
         {
-            int currentPos = Npp.GetCaretPosition();
-            IntPtr sci = Npp.CurrentScintilla;
+            int currentPos = Npp1.GetCaretPosition();
+            IntPtr sci = Npp1.CurrentScintilla;
             int startPos = currentPos - 1 - IndentText.GetByteCount();
             int endPos = currentPos - 1;
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, startPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, endPos, 0);
-            //Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, "");
-            Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, "");
+            Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, "");
             currentPos = startPos + 1;
             Win32.SendMessage(sci, SciMsg.SCI_SETCURRENTPOS, currentPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
@@ -168,6 +171,7 @@ namespace CSScriptIntellisense
 
         static public char[] operatorChars = new[] { '+', '=', '-', '*', '/', '%', '&', '|', '^', '<', '>', '!' };
         static public char[] wordDelimiters = new[] { '\t', '\n', '\r', '\'', ' ', '.', ';', ',', '[', '{', '(', ')', '}', ']' };
+
         static public char[] AllWordDelimiters
         {
             get

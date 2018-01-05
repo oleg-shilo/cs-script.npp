@@ -221,7 +221,7 @@ namespace CSScriptNpp
         {
             try
             {
-                Process.Start(Plugin.LogDir);
+                Process.Start(PluginEnv.LogDir);
             }
             catch { }
         }

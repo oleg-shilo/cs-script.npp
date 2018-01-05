@@ -1,31 +1,34 @@
-﻿using NppPlugin.DllExport;
+﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using NppPlugin.DllExport;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
-    class UnmanagedExports
+    public class UnmanagedExports
     {
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static bool isUnicode()
+        public static void bind(string hostAssemblyFile)
+        {
+            Assembly.LoadFrom(hostAssemblyFile); // to avoid complicated probing scenarios
+        }
+
+        public static bool isUnicode()
         {
             return true;
         }
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static void setInfo(NppData notepadPlusData)
+        public static void setInfo(NppData notepadPlusData)
         {
-            //System.Diagnostics.Debug.Assert(false);
             try
             {
+                PluginBase.nppData = notepadPlusData;
                 Bootstrapper.Init();
-
-                Plugin.NppData = notepadPlusData;
-
                 InitPlugin();
             }
             catch
@@ -41,20 +44,12 @@ namespace CSScriptNpp
         {
             try
             {
-                CSScriptIntellisense.Plugin.NppData._nppHandle = Plugin.NppData._nppHandle;
-                CSScriptIntellisense.Plugin.NppData._scintillaMainHandle = Plugin.NppData._scintillaMainHandle;
-                CSScriptIntellisense.Plugin.NppData._scintillaSecondHandle = Plugin.NppData._scintillaSecondHandle;
-
+                // Debug.Assert(false);
                 Intellisense.EnsureIntellisenseIntegration();
 
                 CSScriptNpp.Plugin.CommandMenuInit(); //this will also call CSScriptIntellisense.Plugin.CommandMenuInit
 
-                foreach (var item in CSScriptIntellisense.Plugin.FuncItems.Items)
-                    Plugin.FuncItems.Add(item.ToLocal());
-
-                CSScriptIntellisense.Plugin.FuncItems.Items.Clear();
-
-                Debugger.OnFrameChanged += () => Npp.OnCalltipRequest(-2); //clear_all_cache
+                Debugger.OnFrameChanged += () => Npp2.OnCalltipRequest(-2); //clear_all_cache
             }
             catch (Exception e)
             {
@@ -62,15 +57,13 @@ namespace CSScriptNpp
             }
         }
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static IntPtr getFuncsArray(ref int nbF)
+        public static IntPtr getFuncsArray(ref int nbF)
         {
-            nbF = Plugin.FuncItems.Items.Count;
-            return Plugin.FuncItems.NativePointer;
+            nbF = PluginBase._funcItems.Items.Count;
+            return PluginBase._funcItems.NativePointer;
         }
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
+        public static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
         {
             //WM_ACTIVATE                     0x0006
             //WM_ACTIVATEAPP                  0x001C
@@ -82,8 +75,7 @@ namespace CSScriptNpp
 
         static IntPtr _ptrPluginName = IntPtr.Zero;
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static IntPtr getName()
+        public static IntPtr getName()
         {
             if (_ptrPluginName == IntPtr.Zero)
                 _ptrPluginName = Marshal.StringToHGlobalUni(Plugin.PluginName);
@@ -95,74 +87,69 @@ namespace CSScriptNpp
 
         static string lastActivatedBuffer = null;
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static void beNotified(IntPtr notifyCode)
+        public static void beNotified(IntPtr notifyCode)
         {
             try
             {
                 CSScriptIntellisense.Interop.NppUI.OnNppTick();
 
-                SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
+                ScNotification nc = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
 
                 //Debug.WriteLine(">>>>>   ncnc.nmhdr.code={0}, {1}", nc.nmhdr.code, (int)nc.nmhdr.code);
 
-                if (nc.nmhdr.code == (uint)NppMsg.NPPN_READY)
+                if (nc.Header.Code == (uint)NppMsg.NPPN_READY)
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
                     CSScriptNpp.Plugin.OnNppReady();
-                    Npp.SetCalltipTime(500);
+                    Npp2.SetCalltipTime(500);
                 }
-                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {
                     CSScriptNpp.Plugin.StopVBCSCompilers();
                 }
-                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_TBMODIFICATION)
                 {
                     CSScriptNpp.Plugin.OnToolbarUpdate();
                 }
-                else if (nc.nmhdr.code == (uint)NppMsg.NPPM_SAVECURRENTFILEAS ||
-                         (Config.Instance.HandleSaveAs && nc.nmhdr.code == (uint)SciMsg.SCN_SAVEPOINTREACHED)) //for some strange reason NPP doesn't fire NPPM_SAVECURRENTFILEAS but does 2002 instead.
+                else if (nc.Header.Code == (uint)NppMsg.NPPM_SAVECURRENTFILEAS ||
+                         (Config.Instance.HandleSaveAs && nc.Header.Code == (uint)SciMsg.SCN_SAVEPOINTREACHED)) //for some strange reason NPP doesn't fire NPPM_SAVECURRENTFILEAS but does 2002 instead.
                 {
-                    string file = Npp.GetCurrentFile();
+                    string file = Npp.Editor.GetCurrentFilePath();
                     if (file != lastActivatedBuffer)
                         CSScriptNpp.Plugin.OnFileSavedAs(lastActivatedBuffer, file);
                 }
-                else if (nc.nmhdr.code == (uint)SciMsg.SCN_CHARADDED)
+                else if (nc.Header.Code == (uint)SciMsg.SCN_CHARADDED)
                 {
-                    CSScriptIntellisense.Plugin.OnCharTyped((char)nc.ch);
+                    CSScriptIntellisense.Plugin.OnCharTyped(nc.Character);
                 }
-                //else if (nc.nmhdr.code == (uint)SciMsg.SCN_KEY)
-                //{
-                //    System.Diagnostics.Debug.WriteLine("SciMsg.SCN_KEY");
-                //}
-                else if (nc.nmhdr.code == (uint)SciMsg.SCN_MARGINCLICK)
+                else if (nc.Header.Code == (uint)SciMsg.SCN_MARGINCLICK)
                 {
-                    if (nc.margin == _SC_MARGE_SYBOLE && nc.modifiers == SCI_CTRL)
+                    if (nc.Margin == _SC_MARGE_SYBOLE && nc.Mmodifiers == SCI_CTRL)
                     {
-                        int lineClick = Npp.GetLineFromPosition(nc.position);
+                        int lineClick = Npp2.GetLineFromPosition(nc.Position.Value);
                         Debugger.ToggleBreakpoint(lineClick);
                     }
                 }
-                else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLSTART) //tooltip
+                else if (nc.Header.Code == (uint)SciMsg.SCN_DWELLSTART) //tooltip
                 {
                     //Npp.ShowCalltip(nc.position, "\u0001  1 of 3 \u0002  test tooltip " + Environment.TickCount);
                     //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
                     //tooltip = @"Creates all directories and subdirectories as specified by path.
 
-                    Npp.OnCalltipRequest(nc.position);
+                    Npp2.OnCalltipRequest(nc.Position.Value);
                 }
-                else if (nc.nmhdr.code == (uint)SciMsg.SCN_DWELLEND)
+                else if (nc.Header.Code == (uint)SciMsg.SCN_DWELLEND)
                 {
-                    Npp.CancelCalltip();
+                    Npp2.CancelCalltip();
                 }
-                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
-                    string file = Npp.GetCurrentFile();
+                    string file = Npp.Editor.GetCurrentFilePath();
                     lastActivatedBuffer = file;
 
                     if (file.EndsWith("npp.args"))
                     {
-                        Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_CLOSE);
+                        Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_CLOSE);
 
                         string args = File.ReadAllText(file);
 
@@ -178,34 +165,34 @@ namespace CSScriptNpp
                         Debugger.OnCurrentFileChanged();
                     }
                 }
-                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILEOPENED)
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEOPENED)
                 {
-                    string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
+                    string file = Npp2.GetTabFile(nc.Header.IdFrom);
                     Debugger.LoadBreakPointsFor(file);
                 }
-                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED || nc.nmhdr.code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_FILESAVED || nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
                 {
-                    string file = Npp.GetTabFile((int)nc.nmhdr.idFrom);
+                    string file = Npp2.GetTabFile(nc.Header.IdFrom);
                     Debugger.RefreshBreakPointsFromContent();
                     Debugger.SaveBreakPointsFor(file);
 
-                    if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
+                    if (nc.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
                     {
                         Plugin.OnDocumentSaved();
                     }
                 }
-                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
                 {
                     CSScriptIntellisense.Plugin.OnBeforeDocumentSaved();
                 }
-                else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {
                     Marshal.FreeHGlobal(_ptrPluginName);
 
                     Plugin.CleanUp();
                 }
 
-                if (nc.nmhdr.code == (uint)SciMsg.SCI_ENDUNDOACTION)
+                if (nc.Header.Code == (uint)SciMsg.SCI_ENDUNDOACTION)
                 {
                     //CSScriptIntellisense.Plugin.OnSavedOrUndo();
                 }

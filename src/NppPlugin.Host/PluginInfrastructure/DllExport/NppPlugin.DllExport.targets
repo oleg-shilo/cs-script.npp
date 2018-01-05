@@ -1,6 +1,10 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="NppPlugin.DllExport.MSBuild.DllExportTask" AssemblyFile="NppPlugin.DllExport.MSBuild.dll"/>
-  <Target Name="AfterBuild" DependsOnTargets="GetFrameworkPaths">
+﻿<Project
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="NppPlugin.DllExport.MSBuild.DllExportTask"
+             AssemblyFile="NppPlugin.DllExport.MSBuild.dll"/>
+  <Target Name="AfterBuild"
+          DependsOnTargets="GetFrameworkPaths"
+          >
     <DllExportTask Platform="$(Platform)"
                    PlatformTarget="$(PlatformTarget)"
                    CpuType="$(CpuType)"
@@ -15,5 +19,13 @@
                    FrameworkPath="$(TargetedFrameworkDir);$(TargetFrameworkDirectory)"
                    LibToolDllPath="$(DevEnvDir)"
                    SdkPath="$(SDK40ToolsPath)"/>
+                  
+                   <!-- the line below has to be excluded for VS2017 -->
+                   <!-- LibToolPath="$(DevEnvDir)\..\..\VC\bin" -->
+    <!-- <Copy 
+        SourceFiles="$(TargetPath)" 
+        DestinationFolder="C:\Program Files\Notepad++\plugins\" 
+        Condition="Exists('C:\Program Files\Notepad++\plugins\')"
+        ContinueOnError="false" /> -->
   </Target>
 </Project>

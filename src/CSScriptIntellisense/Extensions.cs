@@ -13,7 +13,6 @@ using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
-
     public static class SocketExtensions
     {
         public static string PathJoin(this string path, params string[] items)
@@ -24,6 +23,13 @@ namespace CSScriptIntellisense
         public static string GetDirName(this string path)
         {
             return Path.GetDirectoryName(path);
+        }
+
+        public static string EnsureDir(this string dir)
+        {
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            return dir;
         }
 
         public static byte[] GetBytes(this string data)
@@ -63,5 +69,4 @@ namespace CSScriptIntellisense
             client.WriteAllBytes(data.GetBytes());
         }
     }
-
 }

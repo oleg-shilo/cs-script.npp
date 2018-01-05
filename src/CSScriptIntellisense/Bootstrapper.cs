@@ -29,19 +29,9 @@ namespace CSScriptIntellisense
         //'standalone' is the deployment model that includes CSSCriptIntellisense.dll plugin only
         public static bool Init(bool standalone)
         {
+            // Debug.Assert(false);
+
             ReflectorExtensions.IgnoreDocumentationExceptions = Config.Instance.IgnoreDocExceptions;
-
-            if (standalone) //CSScriptIntellisense Plugin
-            {
-                bool inConflict = IsInConflictWithCSScriptNpp();
-                if (!inConflict)
-                {
-                    Task.Factory.StartNew(ClearReflectionCache);
-                    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-                }
-                return inConflict;
-            }
-
             return true;
         }
 

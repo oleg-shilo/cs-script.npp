@@ -11,6 +11,9 @@ using System.Windows.Forms;
 using CSScriptIntellisense.Interop;
 using Intellisense.Common;
 using UltraSharp.Cecil;
+using Kbg.NppPluginNET.PluginInfrastructure;
+using System.Reflection;
+using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
 
 namespace CSScriptIntellisense
 {
@@ -44,12 +47,12 @@ namespace CSScriptIntellisense
             CommandMenuInit(ref cmdIndex,
                 (index, name, handler, shortcut) =>
                 {
-                    Plugin.SetCommand(index, name, handler, shortcut);
+                    SetCommand(index, name, handler, shortcut);
                 });
         }
 
         //this method will also be called from the parent plugin
-        static public void CommandMenuInit(ref int cmdIndex, CSScriptNpp.SetMenuCommand setCommand)
+        static public void CommandMenuInit(ref int cmdIndex, SetMenuCommand setCommand)
         {
             //System.Diagnostics.Debug.Assert(false);
 
@@ -106,7 +109,7 @@ namespace CSScriptIntellisense
                 KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
             }
             else
-                SetCommand(cmdIndex++, "About", ShowAboutBox);
+                PluginBase.SetCommand(cmdIndex++, "About", ShowAboutBox);
         }
 
         static bool TriggerCodeSnippetInsertion()
@@ -117,7 +120,7 @@ namespace CSScriptIntellisense
             Debug.WriteLine("------------------ TRIGGER called");
 
             Point point;
-            string token = Npp.GetWordAtCursor(out point);
+            string token = Npp1.GetWordAtCursor(out point);
 
             if (Snippets.Contains(token))
             {
@@ -157,7 +160,7 @@ namespace CSScriptIntellisense
 
             if (Config.Instance.CodeSnippetsEnabled && !IsShowingInteractivePopup)
             {
-                if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && Npp.IsCurrentScriptFile())
+                if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && Npp1.IsCurrentScriptFile())
                 {
                     Modifiers modifiers = KeyInterceptor.GetModifiers();
 
@@ -194,29 +197,29 @@ namespace CSScriptIntellisense
                 }
             }
 
-            if (key == Keys.Z && Config.Instance.PostFormattingUndoCaretReset && Npp.IsCurrentScriptFile() && SourceCodeFormatter.CaretBeforeLastFormatting != -1)
+            if (key == Keys.Z && Config.Instance.PostFormattingUndoCaretReset && Npp1.IsCurrentScriptFile() && SourceCodeFormatter.CaretBeforeLastFormatting != -1)
             {
                 Modifiers modifiers = KeyInterceptor.GetModifiers();
                 if (modifiers.IsCtrl && !modifiers.IsShift && !modifiers.IsAlt)
                 {
-                    if (Npp.CanUndo())
+                    if (Npp1.CanUndo())
                     {
                         //Native NPP undo moves caret to the end of text unconditionally if the text was reset completely (e.g. CodeFormatting).
                         //Thus manual resetting is required after UNDO. Though NPP doesn't have undo notification so we use shortcut for this.
                         handled = true;
-                        Npp.Undo();
+                        Npp1.Undo();
 
                         int newCurrentPos = SourceCodeFormatter.CaretBeforeLastFormatting;
                         SourceCodeFormatter.CaretBeforeLastFormatting = -1;
 
-                        Npp.SetCaretPosition(newCurrentPos);
-                        Npp.ClearSelection();
-                        Npp.SetFirstVisibleLine(Npp.GetLineNumber(newCurrentPos) - SourceCodeFormatter.TopScrollOffsetBeforeLastFormatting);
+                        Npp1.SetCaretPosition(newCurrentPos);
+                        Npp1.ClearSelection();
+                        Npp1.SetFirstVisibleLine(Npp1.GetLineNumber(newCurrentPos) - SourceCodeFormatter.TopScrollOffsetBeforeLastFormatting);
                     }
                 }
             }
 
-            if (Config.Instance.InterceptCtrlSpace && Npp.IsCurrentScriptFile())
+            if (Config.Instance.InterceptCtrlSpace && Npp1.IsCurrentScriptFile())
             {
                 foreach (var shortcut in internalShortcuts.Keys)
                     if ((byte)key == shortcut._key)
@@ -234,7 +237,7 @@ namespace CSScriptIntellisense
                     }
             }
 
-            if (key == Keys.R && Npp.IsCurrentScriptFile())
+            if (key == Keys.R && Npp1.IsCurrentScriptFile())
             {
                 Modifiers modifiers = KeyInterceptor.GetModifiers();
 
@@ -333,27 +336,27 @@ namespace CSScriptIntellisense
             string replacement = Snippets.GetTemplate(token);
             if (replacement != null)
             {
-                int line = Npp.GetCaretLineNumber();
-                int lineStartPos = Npp.GetLineStart(line);
+                int line = Npp1.GetCaretLineNumber();
+                int lineStartPos = Npp1.GetLineStart(line);
 
                 int horizontalOffset = tokenPoints.X - lineStartPos;
 
                 //relative selection in the replacement text
                 currentSnippetContext = Snippets.PrepareForIncertion(replacement, horizontalOffset, tokenPoints.X);
 
-                Npp.ReplaceWordAtCaret(currentSnippetContext.ReplacementString);
+                Npp1.ReplaceWordAtCaret(currentSnippetContext.ReplacementString);
 
-                Npp.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+                Npp1.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
 
                 foreach (var point in currentSnippetContext.Parameters)
                 {
-                    Npp.PlaceIndicator(SnippetContext.indicatorId, point.X, point.Y);
+                    Npp1.PlaceIndicator(SnippetContext.indicatorId, point.X, point.Y);
                 }
 
                 if (currentSnippetContext.CurrentParameter.HasValue)
                 {
-                    Npp.SetSelection(currentSnippetContext.CurrentParameter.Value.X, currentSnippetContext.CurrentParameter.Value.Y);
-                    currentSnippetContext.CurrentParameterValue = Npp.GetTextBetween(currentSnippetContext.CurrentParameter.Value);
+                    Npp1.SetSelection(currentSnippetContext.CurrentParameter.Value.X, currentSnippetContext.CurrentParameter.Value.Y);
+                    currentSnippetContext.CurrentParameterValue = Npp1.GetTextBetween(currentSnippetContext.CurrentParameter.Value);
                 }
 
                 if (autocompleteForm != null)
@@ -369,7 +372,7 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentScriptFile())
+                if (Npp1.IsCurrentScriptFile())
                 {
                     DisplayInOutputPanel("Searching for references...");
 
@@ -379,7 +382,7 @@ namespace CSScriptIntellisense
                         //It's hard to believe but Roslyn may return some references if just executed second time.
                         //Somehow timing matters. Most likely it's be fixed in the Roslyn production release.
                         Thread.Sleep(100);
-                        Npp.SaveCurrentFile();
+                        Npp1.Editor.SaveCurrentFile();
                         EnsureCurrentFileParsed();
                         references = FindAllReferencesAtCaret();
                     }
@@ -403,8 +406,8 @@ namespace CSScriptIntellisense
         static int GetDocPosition(string file, int line, int column) //offsets are 1-based
         {
             var pos = 0;
-            if (file == Npp.GetCurrentFile())
-                pos = Npp.GetPositionFromLineColumn(line - 1, column - 1); //more accurate as the file can be modified
+            if (file == Npp1.Editor.GetCurrentFilePath())
+                pos = Npp1.GetPositionFromLineColumn(line - 1, column - 1); //more accurate as the file can be modified
             else
                 pos = StringExtesnions.GetPosition(file, line - 1, column - 1);
             return pos;
@@ -420,15 +423,15 @@ namespace CSScriptIntellisense
             {
                 Cursor.Current = Cursors.WaitCursor;
 
-                if (Npp.IsCurrentScriptFile())
+                if (Npp1.IsCurrentScriptFile())
                 {
                     //note initial state
-                    string currentDocFile = Npp.GetCurrentFile();
-                    int initialCaretPos = Npp.GetCaretPosition();
+                    string currentDocFile = Npp1.Editor.GetCurrentFilePath();
+                    int initialCaretPos = Npp1.GetCaretPosition();
                     Point wordAtCaretLocation;
-                    string wordToReplace = Npp.GetWordAtCursor(out wordAtCaretLocation, SimpleCodeCompletion.Delimiters);
+                    string wordToReplace = Npp1.GetWordAtCursor(out wordAtCaretLocation, SimpleCodeCompletion.Delimiters);
 
-                    Npp.SetSelection(wordAtCaretLocation.X, wordAtCaretLocation.Y);
+                    Npp1.SetSelection(wordAtCaretLocation.X, wordAtCaretLocation.Y);
 
                     //prompt user
                     using (var input = new RenameForm(wordToReplace))
@@ -440,8 +443,8 @@ namespace CSScriptIntellisense
 
                         if (replacementWord.Any() && replacementWord != wordToReplace)
                         {
-                            Npp.ClearSelection();
-                            Npp.SaveCurrentFile();
+                            Npp1.ClearSelection();
+                            Npp1.Editor.SaveCurrentFile();
 
                             //resolve
                             List<string> references = FindAllReferencesAtCaret().ToList();
@@ -517,17 +520,17 @@ namespace CSScriptIntellisense
 
                                 File.WriteAllText(file, newCode.ToString());
                                 Debug.WriteLine(file);
-                                Npp.ReloadFile(false, file);
+                                Npp1.ReloadFile(false, file);
 
                                 if (file == currentDocFile)
                                 {
-                                    Npp.SetCaretPosition(initialCaretPos - diff);
-                                    Npp.ClearSelection();
+                                    Npp1.SetCaretPosition(initialCaretPos - diff);
+                                    Npp1.ClearSelection();
                                 }
                             }
                         }
 
-                        Npp.ClearSelection();
+                        Npp1.ClearSelection();
                     }
                 }
 
@@ -545,7 +548,7 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentScriptFile())
+                if (Npp1.IsCurrentScriptFile())
                 {
                     SourceCodeFormatter.FormatDocument();
                 }
@@ -556,16 +559,16 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentScriptFile())
+                if (Npp1.IsCurrentScriptFile())
                 {
                     DomRegion region = ResolveMemberAtCaret();
 
                     if (!region.IsEmpty)
                     {
-                        Npp.OpenFile(region.FileName);
-                        Npp.GoToLine(region.BeginLine);
-                        Npp.ScrollToCaret();
-                        Npp.GrabFocus();
+                        Npp1.OpenFile(region.FileName);
+                        Npp1.GoToLine(region.BeginLine);
+                        Npp1.ScrollToCaret();
+                        Npp1.GrabFocus();
                     }
                 }
             });
@@ -626,7 +629,7 @@ namespace CSScriptIntellisense
                     if (data.Length > 0)
                     {
                         if (simple && Config.Instance.ShowQuickInfoInStatusBar)
-                            Npp.SetStatusbarLabel(data.FirstOrDefault() ?? defaultStatusbarLabel);
+                            Npp1.SetStatusbarLabel(data.FirstOrDefault() ?? defaultStatusbarLabel);
                         else
                             memberInfoPopup.TriggerPopup(simple, methodStartPosition, data);
                     }
@@ -641,22 +644,22 @@ namespace CSScriptIntellisense
 
         static string[] GetMemberUnderCursorInfo(bool simple, ref int methodStartPosition)
         {
-            string file = Npp.GetCurrentFile();
+            string file = Npp1.Editor.GetCurrentFilePath();
 
-            if (Npp.IsCurrentScriptFile())
+            if (Npp1.IsCurrentScriptFile())
             {
                 int pos;
 
                 if (simple)
-                    pos = Npp.GetPositionFromMouseLocation();
+                    pos = Npp1.GetPositionFromMouseLocation();
                 else
-                    pos = Npp.GetCaretPosition();
+                    pos = Npp1.GetCaretPosition();
 
                 if (pos != -1)
                 {
                     int rawPos = pos; //note non-decorated position
 
-                    string text = Npp.GetTextBetween(0, Npp.DocEnd);
+                    string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
 
                     CSScriptHelper.DecorateIfRequired(ref text, ref pos);
 
@@ -682,7 +685,7 @@ namespace CSScriptIntellisense
             if (UltraSharp.Cecil.Reflector.GetCodeCompileOutput != null)
                 HandleErrors(() =>
                 {
-                    if (Npp.IsCurrentScriptFile())
+                    if (Npp1.IsCurrentScriptFile())
                     {
                         var cursor = Cursor.Current;
                         try
@@ -694,16 +697,16 @@ namespace CSScriptIntellisense
 
                             do
                             {
-                                Npp.SaveCurrentFile();
+                                Npp1.Editor.SaveCurrentFile();
 
                                 usingInserted = false;
                                 count++;
 
-                                List<string> presentUsings = Reflector.GetCodeUsings(Npp.GetTextBetween(0, -1)).ToList();
+                                List<string> presentUsings = Reflector.GetCodeUsings(Npp1.GetTextBetween(0, -1)).ToList();
 
                                 //c:\Users\user\Documents\C# Scripts\TooltipTest1.cs(27,9): error CS0103: The name 'Debug' does not exist in the current context
 
-                                string currentDocument = Npp.GetCurrentFile();
+                                string currentDocument = Npp1.Editor.GetCurrentFilePath();
 
                                 string[] output = UltraSharp.Cecil.Reflector.GetCodeCompileOutput(currentDocument);
 
@@ -715,14 +718,14 @@ namespace CSScriptIntellisense
 
                                 foreach (FileReference item in missingNamespaceErrors)
                                 {
-                                    int errorPosition = Npp.GetLineStart(item.Line - 1) + item.Column - 1;
+                                    int errorPosition = Npp1.GetLineStart(item.Line - 1) + item.Column - 1;
                                     IEnumerable<TypeInfo> items = ResolveNamespacesAtPosition(errorPosition)
                                                                     .Where(x => !presentUsings.Contains(x.Namespace));
 
                                     if (items.Count() == 1) //do only if there is no ambiguity about what namespace it is
                                     {
                                         string resolvedNamespace = items.First().Namespace;
-                                        if (Npp.GetCurrentFile().IsVbFile())
+                                        if (Npp1.Editor.GetCurrentFilePath().IsVbFile())
                                             namespacesToInsert.Add("Imports " + resolvedNamespace);
                                         else
                                             namespacesToInsert.Add("using " + resolvedNamespace + ";");
@@ -748,15 +751,15 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentScriptFile())
+                if (Npp1.IsCurrentScriptFile())
                 {
-                    string[] presentUsings = UltraSharp.Cecil.Reflector.GetCodeUsings(Npp.GetTextBetween(0, -1));
+                    string[] presentUsings = UltraSharp.Cecil.Reflector.GetCodeUsings(Npp1.GetTextBetween(0, -1));
 
                     IEnumerable<Intellisense.Common.TypeInfo> items = ResolveNamespacesAtCaret().Where(x => !presentUsings.Contains(x.Namespace)).ToArray();
 
                     if (items.Count() > 0)
                     {
-                        Point point = Npp.GetCaretScreenLocation();
+                        Point point = Npp1.GetCaretScreenLocation();
 
                         if (namespaceMenu != null && namespaceMenu.Visible)
                         {
@@ -770,7 +773,7 @@ namespace CSScriptIntellisense
                         var usings = items.Where(x => !x.IsNested)
                                           .Select(x =>
                                           {
-                                              if (Npp.GetCurrentFile().IsVbFile())
+                                              if (Npp1.Editor.GetCurrentFilePath().IsVbFile())
                                                   return "Imports " + x.Namespace;
                                               else
                                                   return "using " + x.Namespace + ";";
@@ -784,7 +787,7 @@ namespace CSScriptIntellisense
                         namespaceMenu.AddSeparator();
 
                         foreach (string item in inline)
-                            namespaceMenu.Add(item, null, Npp.ReplaceWordAtCaret);
+                            namespaceMenu.Add(item, null, Npp1.ReplaceWordAtCaret);
 
                         namespaceMenu.Popup();
                         namespaceMenu.Show();
@@ -815,13 +818,13 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentScriptFile())
+                if (Npp1.IsCurrentScriptFile())
                 {
                     ShowSuggestionList(true);
                 }
                 else if (Config.Instance.InterceptCtrlSpace)
                 {
-                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_FUNCCALLTIP, 0);
+                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_FUNCCALLTIP, 0);
                 }
             });
         }
@@ -830,13 +833,13 @@ namespace CSScriptIntellisense
         {
             HandleErrors(() =>
             {
-                if (Npp.IsCurrentScriptFile())
+                if (Npp1.IsCurrentScriptFile())
                 {
                     ShowSuggestionList(false);
                 }
                 else if (Config.Instance.InterceptCtrlSpace)
                 {
-                    Win32.SendMessage(Plugin.NppData._nppHandle, (NppMsg)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_AUTOCOMPLETE, 0);
+                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)WinMsg.WM_COMMAND, (int)NppMenuCmd.IDM_EDIT_AUTOCOMPLETE, 0);
                 }
             });
         }
@@ -853,15 +856,15 @@ namespace CSScriptIntellisense
             {
                 items = GetSuggestionItemsAtCaret();
                 bool namespaceSuggestion = items.All(x => x.CompletionType == CompletionType._namespace);
-                bool memberSugesstion = Npp.TextBeforeCursor(2).EndsWith(".");
-                bool assignmentSugesstion = Npp.TextBeforeCursor(10).TrimEnd().EndsWith("=");
+                bool memberSugesstion = Npp1.TextBeforeCursor(2).EndsWith(".");
+                bool assignmentSugesstion = Npp1.TextBeforeCursor(10).TrimEnd().EndsWith("=");
 
                 if (!memberSugesstion && !namespaceSuggestion && !assignmentSugesstion)
                 {
-                    bool cssSugesstion = Npp.TextBeforeCursor(300).Split('\n').Last().TrimStart().StartsWith("//css_");
+                    bool cssSugesstion = Npp1.TextBeforeCursor(300).Split('\n').Last().TrimStart().StartsWith("//css_");
                     if (!cssSugesstion)
                     {
-                        bool usingSuggestion = Npp.GetLine(Npp.GetCaretLineNumber()).Trim() == "using";
+                        bool usingSuggestion = Npp1.GetLine(Npp1.GetCaretLineNumber()).Trim() == "using";
                         if (!usingSuggestion)
                             items = items.Concat(GetSnippetsItems());
                     }
@@ -877,7 +880,7 @@ namespace CSScriptIntellisense
                     return;
                 }
 
-                Point point = Npp.GetCaretScreenLocation();
+                Point point = Npp1.GetCaretScreenLocation();
 
                 if (autocompleteForm != null && autocompleteForm.Visible)
                 {
@@ -888,7 +891,7 @@ namespace CSScriptIntellisense
 
                 autocompleteForm = new AutocompleteForm(OnAccepted, items, NppEditor.GetSuggestionHint());
                 autocompleteForm.Left = point.X;
-                autocompleteForm.Top = point.Y + Npp.GetTextHeight(Npp.GetCaretLineNumber());
+                autocompleteForm.Top = point.Y + Npp1.GetTextHeight(Npp1.GetCaretLineNumber());
                 autocompleteForm.FormClosed += (sender, e) =>
                 {
                     if (memberInfoWasShowing)
@@ -909,46 +912,46 @@ namespace CSScriptIntellisense
         {
             if (data != null)
             {
-                IntPtr sci = GetCurrentScintilla();
+                IntPtr sci = PluginBase.GetCurrentScintilla();
 
-                int currentPos = Npp.GetCaretPosition();
+                int currentPos = Npp1.GetCaretPosition();
                 Point p;
-                string word = Npp.GetWordAtCursor(out p);
+                string word = Npp1.GetWordAtCursor(out p);
 
                 if (word == "=") // .Load +=|
                 {
-                    Npp.SetSelection(p.X, p.Y);
-                    Npp.SetSelectionText("= ");
+                    Npp1.SetSelection(p.X, p.Y);
+                    Npp1.SetSelectionText("= ");
 
-                    currentPos = Npp.GetCaretPosition();
+                    currentPos = Npp1.GetCaretPosition();
                     word = "";
                 }
 
                 if (word != "")  // e.g. Console.Wr| but not Console.|
                 {
-                    Npp.SetSelection(p.X, p.Y);
+                    Npp1.SetSelection(p.X, p.Y);
                 }
                 else
                 {
-                    string leftChar = Npp.GetTextBetween(p.X - 1, p.X);
+                    string leftChar = Npp1.GetTextBetween(p.X - 1, p.X);
                     if (leftChar == "=")
                     {
-                        Npp.SetSelectionText(" "); //add space
+                        Npp1.SetSelectionText(" "); //add space
 
                         //currentPos = Npp.SetCaretPosition(currentPos + 1);
-                        Npp.ClearSelection();
+                        Npp1.ClearSelection();
                     }
 
                     // myForm.Result =   |
-                    var lStart = Npp.GetLineStart(Npp.GetLineNumber(currentPos));
-                    string lineLeftPart = Npp.GetTextBetween(lStart, currentPos);
+                    var lStart = Npp1.GetLineStart(Npp1.GetLineNumber(currentPos));
+                    string lineLeftPart = Npp1.GetTextBetween(lStart, currentPos);
                     string textOnLeft = lineLeftPart.TrimEnd();
                     if (textOnLeft.EndsWith("="))
                     {
                         int dif = lineLeftPart.Length - textOnLeft.Length;
                         //set it to  myForm.Result = |
                         if (dif > 1)
-                            currentPos = Npp.SetCaretPosition(currentPos - dif + 1);
+                            currentPos = Npp1.SetCaretPosition(currentPos - dif + 1);
                     }
                 }
 
@@ -970,8 +973,8 @@ namespace CSScriptIntellisense
                             if (currentPos < insertionPos)
                                 insertionPos += data.CompletionText.Length;
 
-                            Npp.SetCaretPosition(insertionPos);
-                            Npp.ClearSelection();
+                            Npp1.SetCaretPosition(insertionPos);
+                            Npp1.ClearSelection();
                             InsertCompletion(insertionContent);
                         };
                     }
@@ -997,18 +1000,18 @@ namespace CSScriptIntellisense
             if (completionCaretPos != -1)
             {
                 completionText = completionText.Replace("$|$", "");
-                newCarrentPos = Npp.GetCaretPosition() + completionCaretPos;// + "$|$".Length;
+                newCarrentPos = Npp1.GetCaretPosition() + completionCaretPos;// + "$|$".Length;
             }
 
             //the actual completion injection
-            Npp.SetSelectionText(completionText);
-            Npp.ClearSelection();
+            Npp1.SetSelectionText(completionText);
+            Npp1.ClearSelection();
 
             //process new caret position if was requested
             if (newCarrentPos != -1)
             {
-                Npp.SetCaretPosition(newCarrentPos);
-                Npp.ClearSelection();
+                Npp1.SetCaretPosition(newCarrentPos);
+                Npp1.ClearSelection();
             }
         }
 
@@ -1016,13 +1019,13 @@ namespace CSScriptIntellisense
         {
             try
             {
-                int currentPos = Npp.GetCaretPosition();
+                int currentPos = Npp1.GetCaretPosition();
 
-                string text = Npp.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
+                string text = Npp1.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
                 string hint = null;
 
                 char[] delimiters = SimpleCodeCompletion.Delimiters;
-                string word = Npp.GetWordAtPosition(currentPos);
+                string word = Npp1.GetWordAtPosition(currentPos);
                 if (word.StartsWith("css_")) //CS-Script directive
                     delimiters = SimpleCodeCompletion.CSS_Delimiters;
 
@@ -1034,8 +1037,8 @@ namespace CSScriptIntellisense
                 else if (text.Length == currentPos) //start of the doc
                     hint = text;
 
-                var charOnRigt = Npp.GetTextBetween(currentPos, currentPos + 1);
-                var charOnLeft = Npp.GetTextBetween(currentPos - 1, currentPos);
+                var charOnRigt = Npp1.GetTextBetween(currentPos, currentPos + 1);
+                var charOnLeft = Npp1.GetTextBetween(currentPos - 1, currentPos);
                 Debug.WriteLine("charOnLeft ({0}); charOnRigth ({1})", charOnLeft, charOnRigt);
                 if (char.IsWhiteSpace(charOnLeft[0])) // Console.Wr |
                     hint = null;
@@ -1078,7 +1081,7 @@ namespace CSScriptIntellisense
 
         static public void OnCharTyped(char c)
         {
-            if (Npp.IsCurrentScriptFile())
+            if (Npp1.IsCurrentScriptFile())
             {
                 SourceCodeFormatter.CaretBeforeLastFormatting = -1;
 
@@ -1118,7 +1121,7 @@ namespace CSScriptIntellisense
 
                 if (!Config.Instance.DisableMethodInfo)
                 {
-                    if (Npp.IsCurrentScriptFile())
+                    if (Npp1.IsCurrentScriptFile())
                         memberInfoPopup.Enabled = true;
                     else
                         memberInfoPopup.Enabled = false;
@@ -1145,9 +1148,9 @@ namespace CSScriptIntellisense
 
                 if (modifiers.IsCtrl && !modifiers.IsShift && !modifiers.IsAlt)
                 {
-                    if (Npp.GetSelectedText().IsNullOrEmpty())
+                    if (Npp1.GetSelectedText().IsNullOrEmpty())
                     {
-                        var caret = Npp.GetPositionFromMouseLocation();
+                        var caret = Npp1.GetPositionFromMouseLocation();
                         if (caret != -1)
                             Task.Factory.StartNew(GoToDefinition); //let click to get handled, otherwise accidental selection will occur
                     }
@@ -1161,8 +1164,8 @@ namespace CSScriptIntellisense
                 Task.Factory.StartNew(EnsureCurrentFileParsed);
         }
 
-        static public Func<string> ResolveCurrentFile = Npp.GetCurrentFile; //the implementation can be injected by the host or other plugins. To be used in the future.
-        static public Action<string> DisplayInOutputPanel = Npp.DisplayInNewDocument; //the implementation can be injected by the host or other plugins. To be used in the future.
+        static public Func<string> ResolveCurrentFile = Npp1.Editor.GetCurrentFilePath; //the implementation can be injected by the host or other plugins. To be used in the future.
+        static public Action<string> DisplayInOutputPanel = Npp1.DisplayInNewDocument; //the implementation can be injected by the host or other plugins. To be used in the future.
 
         static Dictionary<string, DateTime> currentSourcesStates = new Dictionary<string, DateTime>();
 
@@ -1219,7 +1222,7 @@ namespace CSScriptIntellisense
 
                             if (SingleFileMode)
                             {
-                                string code = Npp.GetTextBetween(0, Npp.DocEnd);
+                                string code = Npp1.GetTextBetween(0, Npp1.DocEnd);
                                 CSScriptHelper.DecorateIfRequired(ref code);
                                 sourcesInfos.Add(new Tuple<string, string>(code, file));
                             }
@@ -1243,9 +1246,9 @@ namespace CSScriptIntellisense
 
         static void WithTextAtCaret(Action<string, int, string> action)
         {
-            string file = Npp.GetCurrentFile();
-            string text = Npp.GetTextBetween(0, Npp.DocEnd);
-            int currentPos = Npp.GetCaretPosition();
+            string file = Npp1.Editor.GetCurrentFilePath();
+            string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
+            int currentPos = Npp1.GetCaretPosition();
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
             EnsureCurrentFileParsed();
@@ -1270,7 +1273,7 @@ namespace CSScriptIntellisense
 
         static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtCaret()
         {
-            int currentPos = Npp.GetCaretPosition();
+            int currentPos = Npp1.GetCaretPosition();
             return ResolveNamespacesAtPosition(currentPos);
         }
 
@@ -1297,12 +1300,12 @@ namespace CSScriptIntellisense
 
         static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtPosition(int currentPos)
         {
-            string file = Npp.GetCurrentFile();
-            string text = Npp.GetTextBetween(0, Npp.DocEnd);
+            string file = Npp1.Editor.GetCurrentFilePath();
+            string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
 
-            int lineNum = Npp.GetLineNumber(currentPos);
-            int start = Npp.GetLineStart(lineNum);
-            string line = Npp.GetLine(lineNum);
+            int lineNum = Npp1.GetLineNumber(currentPos);
+            int start = Npp1.GetLineStart(lineNum);
+            string line = Npp1.GetLine(lineNum);
 
             int currentPosOffset = currentPos - start; //note the diff between cuurrPos and start of the line
             int[] probingOffsets = WordEndsOf(line); //note the all end positions of the words
@@ -1341,8 +1344,8 @@ namespace CSScriptIntellisense
 
         static IEnumerable<Intellisense.Common.TypeInfo> ResolveNamespacesAtPositionOld(int currentPos)
         {
-            string file = Npp.GetCurrentFile();
-            string text = Npp.GetTextBetween(0, Npp.DocEnd);
+            string file = Npp1.Editor.GetCurrentFilePath();
+            string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
@@ -1353,15 +1356,15 @@ namespace CSScriptIntellisense
 
         static DomRegion ResolveMemberAtCaret()
         {
-            string file = Npp.GetCurrentFile();
-            string text = Npp.GetTextBetween(0, Npp.DocEnd);
-            int currentPos = Npp.GetCaretPosition();
+            string file = Npp1.Editor.GetCurrentFilePath();
+            string text = Npp1.GetTextBetween(0, Npp1.DocEnd);
+            int currentPos = Npp1.GetCaretPosition();
 
             try
             {
                 //just to handle NPP strange concept of caret position being not a point of the text
                 //but an index of the byte array
-                currentPos = Npp.CaretToTextPosition(currentPos);
+                currentPos = Npp1.CaretToTextPosition(currentPos);
             }
             catch { }
 
@@ -1386,6 +1389,30 @@ namespace CSScriptIntellisense
             });
 
             return retval;
+        }
+
+        public static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, string shortcutSpec)
+        {
+            PluginBase.SetCommand(index, commandName, functionPointer, ParseAsShortcutKey(shortcutSpec), false);
+        }
+
+        public static ShortcutKey ParseAsShortcutKey(string shortcutSpec)
+        {
+            var parts = shortcutSpec.Split(':');
+
+            string shortcutName = parts[0];
+            string shortcutData = parts[1];
+
+            try
+            {
+                var actualData = Config.Shortcuts.GetValue(shortcutName, shortcutData);
+                return new ShortcutKey(actualData);
+            }
+            catch
+            {
+                Config.Shortcuts.SetValue(shortcutName, shortcutData);
+                return new ShortcutKey(shortcutData);
+            }
         }
     }
 }

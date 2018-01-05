@@ -1,4 +1,5 @@
 using Intellisense.Common;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -51,7 +52,9 @@ namespace CSScriptIntellisense
         {
             get { throw new NotImplementedException(); }
         }
+
         public string InvokeReturn { get; set; }
+
         public IEnumerable<string> InvokeParameters
         {
             get { throw new NotImplementedException(); }
@@ -72,37 +75,37 @@ namespace CSScriptIntellisense
 
         static public void ReplaceTextAtIndicator(string text, Point indicatorRange)
         {
-            Npp.SetTextBetween(text, indicatorRange);
+            Npp1.SetTextBetween(text, indicatorRange);
 
             //restore the indicator
-            Npp.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
-            Npp.PlaceIndicator(SnippetContext.indicatorId, indicatorRange.X, indicatorRange.X + text.Length);
+            Npp1.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+            Npp1.PlaceIndicator(SnippetContext.indicatorId, indicatorRange.X, indicatorRange.X + text.Length);
         }
 
         static public void FinalizeCurrent()
         {
-            var indicators = Npp.FindIndicatorRanges(SnippetContext.indicatorId);
+            var indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);
 
             foreach (var range in indicators)
-                Npp.ClearIndicator(SnippetContext.indicatorId, range.X, range.Y);
+                Npp1.ClearIndicator(SnippetContext.indicatorId, range.X, range.Y);
 
             var caretPoint = indicators.Where(point =>
             {
-                string text = Npp.GetTextBetween(point);
+                string text = Npp1.GetTextBetween(point);
                 return text == " " || text == "|";
             })
                 .FirstOrDefault();
 
             if (caretPoint.X != caretPoint.Y)
             {
-                Npp.SetTextBetween("", caretPoint);
-                Npp.SetSelection(caretPoint.X, caretPoint.X);
+                Npp1.SetTextBetween("", caretPoint);
+                Npp1.SetSelection(caretPoint.X, caretPoint.X);
             }
         }
 
         static public bool NavigateToNextParam(SnippetContext context)
         {
-            var indicators = Npp.FindIndicatorRanges(SnippetContext.indicatorId);
+            var indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);
 
             if (!indicators.Any())
                 return false;
@@ -110,22 +113,21 @@ namespace CSScriptIntellisense
             Point currentParam = context.CurrentParameter.Value;
             string currentParamOriginalText = context.CurrentParameterValue;
 
-            Npp.SetSelection(currentParam.X, currentParam.X);
-            string currentParamDetectedText = Npp.GetWordAtCursor("\t\n\r ,;'\"".ToCharArray());
-
+            Npp1.SetSelection(currentParam.X, currentParam.X);
+            string currentParamDetectedText = Npp1.GetWordAtCursor("\t\n\r ,;'\"".ToCharArray());
 
             if (currentParamOriginalText != currentParamDetectedText)
             {
                 //current parameter is modified, indicator is destroyed so restore the indicator first
-                Npp.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
-                Npp.PlaceIndicator(SnippetContext.indicatorId, currentParam.X, currentParam.X + currentParamDetectedText.Length);
+                Npp1.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
+                Npp1.PlaceIndicator(SnippetContext.indicatorId, currentParam.X, currentParam.X + currentParamDetectedText.Length);
 
-                indicators = Npp.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
+                indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
 
                 var paramsInfo = indicators.Select(p => new
                 {
                     Index = indicators.IndexOf(p),
-                    Text = Npp.GetTextBetween(p),
+                    Text = Npp1.GetTextBetween(p),
                     Range = p,
                     Pos = p.X
                 })
@@ -137,14 +139,14 @@ namespace CSScriptIntellisense
                 foreach (var param in paramsToUpdate)
                 {
                     Snippets.ReplaceTextAtIndicator(currentParamDetectedText, indicators[param.Index]);
-                    indicators = Npp.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
+                    indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
                 }
             }
 
             Point? nextParameter = null;
 
             int currentParamIndex = indicators.FindIndex(x => x.X >= currentParam.X); //can also be logical 'next'
-            var prevParamsValues = indicators.Take(currentParamIndex).Select(p => Npp.GetTextBetween(p)).ToList();
+            var prevParamsValues = indicators.Take(currentParamIndex).Select(p => Npp1.GetTextBetween(p)).ToList();
             prevParamsValues.Add(currentParamOriginalText);
             prevParamsValues.Add(currentParamDetectedText);
             prevParamsValues.Add(" ");
@@ -152,7 +154,7 @@ namespace CSScriptIntellisense
 
             foreach (var range in indicators.ToArray())
             {
-                if (currentParam.X < range.X && !prevParamsValues.Contains(Npp.GetTextBetween(range)))
+                if (currentParam.X < range.X && !prevParamsValues.Contains(Npp1.GetTextBetween(range)))
                 {
                     nextParameter = range;
                     break;
@@ -165,8 +167,8 @@ namespace CSScriptIntellisense
             context.CurrentParameter = nextParameter;
             if (context.CurrentParameter.HasValue)
             {
-                Npp.SetSelection(context.CurrentParameter.Value.X, context.CurrentParameter.Value.Y);
-                context.CurrentParameterValue = Npp.GetTextBetween(context.CurrentParameter.Value);
+                Npp1.SetSelection(context.CurrentParameter.Value.X, context.CurrentParameter.Value.Y);
+                context.CurrentParameterValue = Npp1.GetTextBetween(context.CurrentParameter.Value);
             }
 
             return true;
@@ -216,7 +218,7 @@ namespace CSScriptIntellisense
         {
             get
             {
-                string configDir = Path.Combine(Npp.GetConfigDir(), "CSharpIntellisense");
+                string configDir = Path.Combine(Npp1.GetConfigDir(), "CSharpIntellisense");
 
                 if (!Directory.Exists(configDir))
                     Directory.CreateDirectory(configDir);
@@ -229,7 +231,7 @@ namespace CSScriptIntellisense
 
         static public void EditSnippetsConfig()
         {
-            Npp.OpenFile(Snippets.ConfigFile);
+            Npp1.OpenFile(Snippets.ConfigFile);
         }
 
         static void configWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -319,11 +321,12 @@ namespace CSScriptIntellisense
     }
 
 #if DEBUG
+
     public class ActiveDev
     {
         static public void SetMarker()
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 0, (int)SciMsg.SC_MARK_CIRCLE);
             Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 1, (int)SciMsg.SC_MARK_ROUNDRECT);
             Win32.SendMessage(sci, SciMsg.SCI_MARKERDEFINE, 2, (int)SciMsg.SC_MARK_ARROW);
@@ -356,7 +359,7 @@ namespace CSScriptIntellisense
 
         public static void Style()
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
 
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 8, (int)SciMsg.INDIC_PLAIN);
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, 9, (int)SciMsg.INDIC_SQUIGGLE);
@@ -378,13 +381,12 @@ namespace CSScriptIntellisense
 
         public static void Unstyle()
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
 
             for (int i = 8; i <= 14; i++)
             {
                 //for (int i = 0; i < length; i++)
                 //{
-
                 //}
 
                 Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, i, 0);
@@ -425,5 +427,6 @@ namespace CSScriptIntellisense
             }
         }
     }
+
 #endif
 }

@@ -245,7 +245,7 @@ namespace CSScriptNpp
                 if (File.Exists(file))
                     return file;
                 else
-                    return Path.Combine(Plugin.PluginDir, name);
+                    return Path.Combine(PluginEnv.PluginDir, name);
             }
         }
 
@@ -258,7 +258,7 @@ namespace CSScriptNpp
                 if (File.Exists(file))
                     return file;
                 else
-                    return Path.Combine(Plugin.PluginDir, name);
+                    return Path.Combine(PluginEnv.PluginDir, name);
             }
         }
 
@@ -271,7 +271,7 @@ namespace CSScriptNpp
                 if (File.Exists(file))
                     return file;
                 else
-                    return Path.Combine(Plugin.PluginDir, name);
+                    return Path.Combine(PluginEnv.PluginDir, name);
             }
         }
 
@@ -283,7 +283,7 @@ namespace CSScriptNpp
                 if (File.Exists(file))
                     return file;
                 else
-                    return Path.Combine(Plugin.PluginDir, "cscs.v3.5.exe");
+                    return Path.Combine(PluginEnv.PluginDir, "cscs.v3.5.exe");
             }
         }
 
@@ -932,7 +932,7 @@ class Script
                     if (net4 && Config.Instance.VbCodeProvider.EndsWith("CSSCodeProvider.v4.0.dll"))
                     {
                         //single file code provider
-                        var providerSrc = Path.Combine(Plugin.PluginDir, Config.Instance.VbCodeProvider);
+                        var providerSrc = Path.Combine(PluginEnv.PluginDir, Config.Instance.VbCodeProvider);
                         var providerDest = providerSrc.PathChangeDir(dir);
                         File.Copy(providerSrc, providerDest);
                     }
@@ -1199,7 +1199,7 @@ class Script
             if (language == "VB" && CSScriptIntellisense.Config.Instance.VbSupportEnabled)
             {
                 //only CSSCodeProvider.v4.0.dll can support VB
-                var provider = Plugin.PluginDir.PathJoin(Config.Instance.VbCodeProvider);
+                var provider = PluginEnv.PluginDir.PathJoin(Config.Instance.VbCodeProvider);
                 // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll");
                 result = " \"-provider:" + provider + "\"";
             }

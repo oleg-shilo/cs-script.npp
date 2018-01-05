@@ -281,7 +281,7 @@ class Script
 
             var data = SimpleCodeCompletion.GetCompletionData(code, pos, "test.cs");
 
-            Assert.Equal(1, data.Count());
+            Assert.Single(data);
             Assert.Contains(data, x => x.DisplayText == "DialogResult - value");
             Assert.Equal("DialogResult.", data.Last().CompletionText);
         }
@@ -400,7 +400,7 @@ class Script
     }
 }", 124, "test.cs", true);
 
-            Assert.Equal(1, info.Count());
+            Assert.Single(info);
             Assert.Equal("Method: void Console.WriteLine(int value) (+ 18 overloads)", info.First().GetLine(0));
         }
 
@@ -426,7 +426,7 @@ class Script
 
             var p = Console.Out;
 
-            Assert.Equal(1, info.Count());
+            Assert.Single(info);
             Assert.Equal("Property: TextWriter Console.Out { get; }", info.First().GetLine(0));
         }
 
@@ -455,7 +455,7 @@ class Script<T,T1,T2>
 
             var p = Console.Out;
 
-            Assert.Equal(1, info.Count());
+            Assert.Single(info);
             Assert.Equal("Constructor: DateTime(long ticks) (+ 11 overloads)", info.First().GetLine(0));
         }
 
@@ -476,7 +476,7 @@ class Script
     }
 }", 124, "test.cs", true);
 
-            Assert.Equal(1, info.Count());
+            Assert.Single(info);
             var firstLine = info.First().GetLines(2).First();
             Assert.Equal("Constructor: DateTime(int year, int month, int day) (+ 11 overloads)", firstLine);
         }
@@ -498,7 +498,7 @@ class Script
     }
 }", 121, "test.cs", true);
 
-            Assert.Equal(1, info.Count());
+            Assert.Single(info);
             Assert.Equal("Constructor: Script()", info.First());
         }
 
@@ -520,7 +520,7 @@ class Script
     }
 }", 61, "test.cs", true);
 
-            Assert.Equal(1, info.Count());
+            Assert.Single(info);
             Assert.Equal("Class: Script", info.First());
         }
 
@@ -603,7 +603,7 @@ class Script
             Assert.Equal("test", builder.GetLineFrom(4));
             Assert.Equal("test", builder.GetLineFrom(5));
             Assert.Equal("TEST", builder.GetLineFrom(9));
-            Assert.Equal(null, builder.GetLineFrom(29));
+            Assert.Null(builder.GetLineFrom(29));
             Assert.Equal("TEST", builder.GetLastLine());
 
             builder.Clear();

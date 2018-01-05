@@ -54,7 +54,7 @@ namespace CSScriptIntellisense
             int extraWidth = 20;
 
             var g = listBox1.CreateGraphics();
-            var wideItem = items.Select(x => (int) g.MeasureString(x.DisplayText, listBox1.Font).Width).Max(x => x);
+            var wideItem = items.Select(x => (int)g.MeasureString(x.DisplayText, listBox1.Font).Width).Max(x => x);
             this.Width = Math.Min(wideItem + 40 + extraWidth, 250);//40 = 20 for icon on left and 20 for scrollbar on right
 
             this.Height = ((itemHeight + verticalSpacing) * Math.Min(listBox1.Items.Count, 10)) + extraHeight;
@@ -90,14 +90,14 @@ namespace CSScriptIntellisense
 
         void listBox1_MeasureItem(object sender, MeasureItemEventArgs e)
         {
-            var item = (ICompletionData) listBox1.Items[e.Index];
+            var item = (ICompletionData)listBox1.Items[e.Index];
 
             string itemString = item.DisplayText;
 
             SizeF size = e.Graphics.MeasureString(item.DisplayText, listBox1.Font);
-            e.ItemHeight = (int) size.Height + verticalSpacing;
+            e.ItemHeight = (int)size.Height + verticalSpacing;
 
-            e.ItemWidth = (int) size.Width + 16 + 10 + 10; //ensure enough space for the icon and the scrollbar
+            e.ItemWidth = (int)size.Width + 16 + 10 + 10; //ensure enough space for the icon and the scrollbar
             listBox1.HorizontalExtent = e.ItemWidth;
         }
 
@@ -128,7 +128,7 @@ namespace CSScriptIntellisense
             if (e.Index == -1)
                 return;
 
-            var item = (ICompletionData) listBox1.Items[e.Index];
+            var item = (ICompletionData)listBox1.Items[e.Index];
 
             e.DrawBackground();
 
@@ -237,7 +237,7 @@ namespace CSScriptIntellisense
             try
             {
                 var g = listBox1.CreateGraphics();
-                itemHeight = (int) g.MeasureString("T", listBox1.Font).Height;
+                itemHeight = (int)g.MeasureString("T", listBox1.Font).Height;
 
                 listBox1.Sorted = false;
                 listBox1.DrawMode = DrawMode.OwnerDrawVariable;
@@ -253,7 +253,7 @@ namespace CSScriptIntellisense
 
                 timer1.Enabled = true;
 
-                if (Config.Instance.AutoInsertSingeSuggestion &&  listBox1.Items.Count == 1)
+                if (Config.Instance.AutoInsertSingeSuggestion && listBox1.Items.Count == 1)
                 {
                     listBox1.SelectedIndex = 0;
                     OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
@@ -274,9 +274,10 @@ namespace CSScriptIntellisense
         }
 
         Rectangle? nppRect;
+
         void timer1_Tick(object sender, EventArgs e)
         {
-            var rect = Npp.GetWindowRect();
+            var rect = Npp1.GetWindowRect();
 
             if (nppRect.HasValue && nppRect.Value != rect)
                 Close();

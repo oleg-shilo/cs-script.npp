@@ -1,5 +1,6 @@
 ﻿using CSScriptIntellisense;
 using Intellisense.Common;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -65,13 +66,15 @@ namespace CSScriptNpp
                     membersList.SelectedItem = null;
                     if (info.Line != -1)
                     {
-                        Npp.GrabFocus();
-                        int currentLineNum = Npp.GetCaretLineNumber();
-                        int prevLineEnd = Npp.GetLineStart(currentLineNum) - Environment.NewLine.Length;
-                        int topScrollOffset = currentLineNum - Npp.GetFirstVisibleLine();
+                        var document = Npp.GetCurrentDocument();
+                        document.GrabFocus();
 
-                        Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, info.Line, 0);
-                        Npp.SetFirstVisibleLine(info.Line - topScrollOffset);
+                        int currentLineNum = Npp2.GetCaretLineNumber();
+                        int prevLineEnd = Npp2.GetLineStart(currentLineNum) - Environment.NewLine.Length;
+                        int topScrollOffset = currentLineNum - Npp2.GetFirstVisibleLine();
+
+                        document.GotoLine(info.Line);
+                        Npp2.SetFirstVisibleLine(info.Line - topScrollOffset);
                     }
                 }
                 catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
@@ -83,7 +86,7 @@ namespace CSScriptNpp
 
         public void RefreshContent()
         {
-            string file = Npp.GetCurrentFile();
+            string file = Npp.Editor.GetCurrentFilePath();
             if (file.IsScriptFile() || file.IsPythonFile())
             {
                 membersList.Visible = true;
@@ -96,9 +99,9 @@ namespace CSScriptNpp
                 }
 
                 if (file.IsScriptFile())
-                    GenerateContent(Npp.GetTextBetween(0));
+                    GenerateContent(Npp2.GetTextBetween(0));
                 else if (file.IsPythonFile())
-                    GenerateContentPython(Npp.GetTextBetween(0));
+                    GenerateContentPython(Npp2.GetTextBetween(0));
             }
             else
             {

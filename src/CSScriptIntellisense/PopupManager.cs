@@ -44,7 +44,7 @@ namespace CSScriptIntellisense
                     form => //on opening
                     {
                         if (!simple)
-                            form.LeftBottomCorner = Npp.GetCaretScreenLocation();
+                            form.LeftBottomCorner = Npp1.GetCaretScreenLocation();
                         else
                             form.LeftBottomCorner = Cursor.Position;
 
@@ -75,14 +75,14 @@ namespace CSScriptIntellisense
 
                             Task.Factory.StartNew(() =>
                                 {
-                                    Rectangle rect = Npp.GetClientRect();
+                                    Rectangle rect = Npp1.GetClientRect();
 
                                     while (popupForm != null)
                                     {
                                         try
                                         {
-                                            Npp.GrabFocus();
-                                            var newRect = Npp.GetClientRect();
+                                            Npp1.GrabFocus();
+                                            var newRect = Npp1.GetClientRect();
                                             if (rect != newRect) //if NPP moved, resized close the popup
                                             {
                                                 base.Close();
@@ -133,7 +133,7 @@ namespace CSScriptIntellisense
                 string text;
                 popupForm.ProcessMethodOverloadHint(NppEditor.GetMethodOverloadHint(methodStartPos, out text));
 
-                int currentPos = Npp.GetCaretPosition();
+                int currentPos = Npp1.GetCaretPosition();
                 if (currentPos <= methodStartPos) //user removed/substituted method token as the result of keyboard input
                 {
                     base.Close();

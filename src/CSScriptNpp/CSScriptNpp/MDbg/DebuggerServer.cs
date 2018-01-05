@@ -117,9 +117,9 @@ namespace CSScriptNpp
             if (IsRunning)
             {
                 MessageQueue.AddCommand(NppCategory.Settings + string.Format(
-                    "breakonexception={0}|maxItemsInTooltipResolve={1}|maxItemsInResolve={2}", 
-                    breakOnException.ToString().ToLower(), 
-                    Config.Instance.CollectionItemsInTooltipsMaxCount, 
+                    "breakonexception={0}|maxItemsInTooltipResolve={1}|maxItemsInResolve={2}",
+                    breakOnException.ToString().ToLower(),
+                    Config.Instance.CollectionItemsInTooltipsMaxCount,
                     Config.Instance.CollectionItemsInVisualizersMaxCount));
             }
         }
@@ -222,11 +222,11 @@ namespace CSScriptNpp
                         if (message == NppCommand.Exit)
                             continue; //ignore ClientServer debugger hand-shaking
 
-                        if (message.StartsWith(NppCategory.BreakEntered)) 
+                        if (message.StartsWith(NppCategory.BreakEntered))
                         {
                             //Debug.WriteLine("----------------------- "+message);
                             //break_entered=><True|False>
-                            IsInBreak = (message == NppCategory.BreakEntered+"True");
+                            IsInBreak = (message == NppCategory.BreakEntered + "True");
                         }
                         else if (message.StartsWith(NppCategory.Process))
                         {
@@ -266,7 +266,6 @@ namespace CSScriptNpp
                     IsInBreak = false;
                     Task.Factory.StartNew(() =>
                         {
-
                             try
                             {
                                 if (OnDebuggeeProcessNotification != null)
@@ -318,8 +317,6 @@ namespace CSScriptNpp
 
         private static bool initialized;
 
-       
-
         static public bool Start(Debugger.CpuType cpu = Debugger.CpuType.Any)
         {
             if (!initialized)
@@ -330,23 +327,22 @@ namespace CSScriptNpp
 
             MessageQueue.Clear();
 
-            string debuggerApp = Plugin.Locate("mdbg.exe", "MDbg");
+            string debuggerApp = PluginEnv.Locate("mdbg.exe", "MDbg");
 
-            if(cpu == Debugger.CpuType.x86)
-                debuggerApp = Plugin.Locate("mdbghost_32.exe", "MDbg");
-            else if(cpu == Debugger.CpuType.x64)
-                debuggerApp = Plugin.Locate("mdbghost_64.exe", "MDbg");
-
+            if (cpu == Debugger.CpuType.x86)
+                debuggerApp = PluginEnv.Locate("mdbghost_32.exe", "MDbg");
+            else if (cpu == Debugger.CpuType.x64)
+                debuggerApp = PluginEnv.Locate("mdbghost_64.exe", "MDbg");
 
             var debugger = Process.Start(new ProcessStartInfo
-                            {
-                                FileName = debuggerApp,
-                                Arguments = "!load npp.dll",
-                                //#if !DEBUG
-                                CreateNoWindow = true,
-                                UseShellExecute = false
-                                //#endif
-                            });
+            {
+                FileName = debuggerApp,
+                Arguments = "!load npp.dll",
+                //#if !DEBUG
+                CreateNoWindow = true,
+                UseShellExecute = false
+                //#endif
+            });
 
             MessageQueue.AddNotification(NppCategory.Diagnostics + debugger.Id + ":STARTED");
             debuggerProcessId = debugger.Id;

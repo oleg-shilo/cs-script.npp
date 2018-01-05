@@ -12,6 +12,7 @@ using CSScriptIntellisense;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Net.Sockets;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
@@ -32,9 +33,9 @@ namespace CSScriptNpp
 
         static public string GetStatementAtCaret()
         {
-            string expression = Npp.GetSelectedText();
+            string expression = Npp2.GetSelectedText();
             if (string.IsNullOrWhiteSpace(expression))
-                expression = CSScriptIntellisense.Npp.GetStatementAtPosition();
+                expression = CSScriptIntellisense.Npp1.GetStatementAtPosition();
             return expression;
         }
 
@@ -240,24 +241,6 @@ namespace CSScriptNpp
                 return false;
         }
 
-        public static CSScriptNpp.FuncItem ToLocal(this CSScriptIntellisense.FuncItem item)
-        {
-            return new CSScriptNpp.FuncItem
-            {
-                _cmdID = item._cmdID,
-                _init2Check = item._init2Check,
-                _itemName = item._itemName,
-                _pFunc = item._pFunc,
-                _pShKey = new ShortcutKey
-                {
-                    _isCtrl = item._pShKey._isCtrl,
-                    _isAlt = item._pShKey._isAlt,
-                    _isShift = item._pShKey._isShift,
-                    _key = item._pShKey._key
-                }
-            };
-        }
-
         public static Icon NppBitmapToIcon(Bitmap bitmap)
         {
             using (Bitmap newBmp = new Bitmap(16, 16))
@@ -277,10 +260,9 @@ namespace CSScriptNpp
 
         static public void RestartNpp()
         {
-            Win32.SendMenuCmd(Npp.NppHandle, NppMenuCmd.IDM_FILE_EXIT, 0);
+            PluginBase.Editor.FileExit();
 
-            string file;
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, out file);
+            string file = Npp.Editor.GetCurrentFilePath();
 
             if (string.IsNullOrEmpty(file)) //the Exit request has been processed and user did not cancel it
             {
@@ -302,7 +284,7 @@ namespace CSScriptNpp
                 }
                 else
                 {
-                    string restarter = Path.Combine(Plugin.PluginDir, "Updater.exe");
+                    string restarter = Path.Combine(PluginEnv.PluginDir, "Updater.exe");
 
                     //the restarter will also wait for this process to exit
                     Process.Start(restarter, string.Format("/restart /asadmin {0} \"{1}\"", processIdToWaitForExit, appToStart));

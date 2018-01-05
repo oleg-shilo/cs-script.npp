@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSScriptNpp", "CSScriptNpp\CSScriptNpp.csproj", "{23B08B10-8297-4A90-9B6D-43DAC7416004}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		AgregateReleaseItems.cmd = AgregateReleaseItems.cmd
 		CopyDebugToNpp.cmd = CopyDebugToNpp.cmd
+		CopyDebugToNpp.x64.cmd = CopyDebugToNpp.x64.cmd
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbMon", "DbMon\DbMon.csproj", "{A2272B4F-44F6-4FB2-86A0-3EC99C0947F7}"
@@ -66,6 +67,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompatibilityTest", "CompatibilityTest\CompatibilityTest.csproj", "{6D4EE83C-2F38-4BB0-A60F-3B86B07E03AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher", "launcher\launcher.csproj", "{D23BF660-56D5-4F01-A067-C014BD04BE51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NppPlugin.Interface", "NppPlugin.Interface\NppPlugin.Interface.csproj", "{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NppPlugin.Host", "NppPlugin.Host\NppPlugin.Host.csproj", "{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -211,6 +216,22 @@ Global
 		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Release|x64.ActiveCfg = Release|x64
 		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Release|x64.Build.0 = Release|x64
+		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Debug|x64.Build.0 = Debug|Any CPU
+		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Release|x64.ActiveCfg = Release|Any CPU
+		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Release|x64.Build.0 = Release|Any CPU
+		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Debug|x64.ActiveCfg = Debug|x64
+		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Debug|x64.Build.0 = Debug|x64
+		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Release|x64.ActiveCfg = Release|x64
+		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -229,5 +250,8 @@ Global
 		{C67D7ED7-F350-4FD4-81B5-5E635FB08765} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{6D4EE83C-2F38-4BB0-A60F-3B86B07E03AF} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
 		{D23BF660-56D5-4F01-A067-C014BD04BE51} = {6511E162-0DBC-4C78-AD15-F64775B641CC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B059BC0A-11DB-4A4F-B33A-2B9B44540F32}
 	EndGlobalSection
 EndGlobal

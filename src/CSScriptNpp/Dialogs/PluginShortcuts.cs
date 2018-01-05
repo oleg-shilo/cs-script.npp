@@ -79,7 +79,7 @@ namespace CSScriptNpp
                                     "if they conflict with the current CS-Script shortcut configuration.",
                                     "CS-Script", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    Plugin.RestartNpp();
+                    Utils.RestartNpp();
                 }
             }
         }

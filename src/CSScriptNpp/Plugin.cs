@@ -1,7 +1,9 @@
 using CSScriptNpp.Dialogs;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -70,14 +72,14 @@ namespace CSScriptNpp
             SetCommand(projectPanelId = index++, "Run", Run, "_Run:F5");
             SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
             SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
-            SetCommand(index++, "---", null);
-            SetCommand(projectPanelId = index++, "Show Project Panel", InitProjectPanel);
-            SetCommand(outputPanelId = index++, "Show Output Panel", InitOutputPanel);
-            SetCommand(debugPanelId = index++, "Show Debug Panel", InitDebugPanel);
-            SetCommand(index++, "---", null);
+            PluginBase.SetCommand(index++, "---", null);
+            PluginBase.SetCommand(projectPanelId = index++, "Show Project Panel", InitProjectPanel);
+            PluginBase.SetCommand(outputPanelId = index++, "Show Output Panel", InitOutputPanel);
+            PluginBase.SetCommand(debugPanelId = index++, "Show Debug Panel", InitDebugPanel);
+            PluginBase.SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
 
-            SetCommand(index++, "About", ShowAbout);
+            PluginBase.SetCommand(index++, "About", ShowAbout);
 
             IEnumerable<Keys> keysToIntercept = BindInteranalShortcuts();
 
@@ -103,6 +105,18 @@ namespace CSScriptNpp
         static public Action RunScriptAsExternal;
         static public Action DebugScript;
 
+        public static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, string shortcutSpec)
+        {
+            ShortcutKey shortcutKey;
+
+            if (string.IsNullOrEmpty(shortcutSpec))
+                shortcutKey = new ShortcutKey(false, false, false, Keys.None);
+            else
+                shortcutKey = shortcutSpec.ParseAsShortcutKey(commandName);
+
+            PluginBase.SetCommand(index, commandName, functionPointer, shortcutKey, false);
+        }
+
         static public void CheckNativeAutocompletionConflict()
         {
             if (!Config.Instance.NativeAutoCompletionChecked)
@@ -111,7 +125,7 @@ namespace CSScriptNpp
                 //<GUIConfig name="auto-completion" autoCAction="0" triggerFromNbChar="1" funcParams="no" />
                 try
                 {
-                    var config = XDocument.Load(CSScriptIntellisense.Npp.GetNppConfigFile())
+                    var config = XDocument.Load(CSScriptIntellisense.Npp1.GetNppConfigFile())
                                                         .Root
                                                         .Descendants("GUIConfig")
                                                         .Where(x => x.Attribute("name")?.Value == "auto-completion")
@@ -198,7 +212,7 @@ namespace CSScriptNpp
             AddInternalShortcuts("_Debug:Alt+F5",
                                  "Debug", () =>
                                   {
-                                      if (!Debugger.IsRunning && Npp.IsCurrentScriptFile())
+                                      if (!Debugger.IsRunning && Npp2.IsCurrentScriptFile())
                                           DebugScript();
                                   }, uniqueKeys);
 
@@ -233,7 +247,7 @@ namespace CSScriptNpp
             AddInternalShortcuts("RunAsExternal:Ctrl+F5",
                                   "Run As External Process", () =>
                                   {
-                                      if (Npp.IsCurrentScriptFile())
+                                      if (Npp2.IsCurrentScriptFile())
                                           RunAsExternal();
                                   }, uniqueKeys);
 
@@ -271,7 +285,7 @@ namespace CSScriptNpp
         static bool IsDocumentHotKeyExcluded()
         {
             foreach (string extension in Config.Instance.HotkeyDocumentsExclusions.Split(';'))
-                if (extension.IsNotEmpty() && Npp.IsCurrentFileHasExtension(extension))
+                if (extension.IsNotEmpty() && Npp2.IsCurrentFileHasExtension(extension))
                     return true;
             return false;
         }
@@ -496,7 +510,7 @@ namespace CSScriptNpp
             {
                 Debugger.Go();
             }
-            else if (Npp.IsCurrentScriptFile() && runningScript == null)
+            else if (Npp2.IsCurrentScriptFile() && runningScript == null)
             {
                 if (Plugin.ProjectPanel == null)
                     InitProjectPanel();
@@ -614,15 +628,11 @@ namespace CSScriptNpp
                     InitDebugPanel();
             }
 
-            StartCheckForUpdates();
-
-            OpenAutomationChannel();
-
-            //if (Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtStartup)
-            //{
-            //    //unfortunately InitRoslyn is ineffective
-            //    Task.Factory.StartNew(CSScriptHelper.InitRoslyn);
-            //}
+            Task.Factory.StartNew(() =>
+            {
+                StartCheckForUpdates();
+                OpenAutomationChannel();
+            });
         }
 
         static internal void OnDocumentSaved()
@@ -680,7 +690,7 @@ namespace CSScriptNpp
             }
         }
 
-        public static void OnNotification(SCNotification data)
+        public static void OnNotification(ScNotification data)
         {
         }
 
@@ -689,7 +699,7 @@ namespace CSScriptNpp
             if (CodeMapPanel != null)
                 CodeMapPanel.RefreshContent();
 
-            if (Npp.IsCurrentScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtNppStartup)
+            if (Npp2.IsCurrentScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtNppStartup)
             {
                 CSScriptHelper.InitRoslyn();
             }
@@ -697,7 +707,7 @@ namespace CSScriptNpp
 
         public static void OnToolbarUpdate()
         {
-            Plugin.FuncItems.RefreshItems();
+            PluginBase._funcItems.RefreshItems();
             SetToolbarImage(Resources.Resources.css_logo_16x16_tb, projectPanelId);
         }
 
@@ -744,5 +754,86 @@ namespace CSScriptNpp
                 catch { }
             }
         }
+
+        static T ShowDockablePanel<T>(string name, int panelId, NppTbMsg tbMsg) where T : Form, new()
+        {
+            if (!dockedManagedPanels.ContainsKey(panelId))
+            {
+                var panel = new T();
+                DockPanel(panel, panelId, name, null, tbMsg); //this will also add the panel to the dockedManagedPanels
+
+                //disabled chck box in menu item since tracking of the visibility of the output panes is impossible (N++ limitation)
+                //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, FuncItems.Items[panelId]._cmdID, 1);
+            }
+            else
+            {
+                ToggleDockedPanelVisible(dockedManagedPanels[panelId], panelId);
+            }
+            return (T)dockedManagedPanels[panelId];
+        }
+
+        public static void ToggleDockedPanelVisible(Form panel, int scriptId)
+        {
+            SetDockedPanelVisible(panel, scriptId, !panel.Visible);
+        }
+
+        public static void DockPanel(Form panel, int scriptId, string name, Icon tollbarIcon, NppTbMsg tbMsg, bool initiallyVisible = true)
+        {
+            var tbIcon = tollbarIcon ?? Utils.NppBitmapToIcon(Resources.Resources.css_logo_16x16);
+
+            NppTbData _nppTbData = new NppTbData();
+            _nppTbData.hClient = panel.Handle;
+            _nppTbData.pszName = name;
+            // the dlgDlg should be the index of funcItem where the current function pointer is,
+            //in this case is 15. so the initial value of funcItem[15]._cmdID - not the updated internal one !
+            _nppTbData.dlgID = scriptId;
+            // define the default docking behavior
+            _nppTbData.uMask = tbMsg;
+            //_nppTbData.uMask = NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
+            _nppTbData.hIconTab = (uint)tbIcon.Handle;
+            _nppTbData.pszModuleName = PluginName;
+            IntPtr _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
+            Marshal.StructureToPtr(_nppTbData, _ptrNppTbData, false);
+
+            Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_DMMREGASDCKDLG, 0, _ptrNppTbData);
+
+            //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, Plugin.FuncItems.Items[scriptId]._cmdID, 1); //from this moment the panel is visible
+
+            if (!initiallyVisible)
+                SetDockedPanelVisible(panel, scriptId, initiallyVisible);
+
+            if (dockedManagedPanels.ContainsKey(scriptId))
+            {
+                //there is already another panel
+                Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_DMMHIDE, 0, (int)dockedManagedPanels[scriptId].Handle);
+                dockedManagedPanels[scriptId] = panel;
+            }
+            else
+                dockedManagedPanels.Add(scriptId, panel);
+        }
+
+        public static void SetDockedPanelVisible(Form panel, int scriptId, bool visible)
+        {
+            if (visible)
+            {
+                Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_DMMSHOW, 0, panel.Handle);
+            }
+            else
+            {
+                Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_DMMHIDE, 0, panel.Handle);
+            }
+        }
+
+        static public void SetToolbarImage(Bitmap image, int pluginId)
+        {
+            var tbIcons = new toolbarIcons();
+            tbIcons.hToolbarBmp = image.GetHbitmap();
+            IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
+            Marshal.StructureToPtr(tbIcons, pTbIcons, false);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[pluginId]._cmdID, pTbIcons);
+            Marshal.FreeHGlobal(pTbIcons);
+        }
+
+        static Dictionary<int, Form> dockedManagedPanels = new Dictionary<int, Form>();
     }
 }

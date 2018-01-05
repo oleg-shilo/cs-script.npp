@@ -69,6 +69,7 @@ namespace CSScriptIntellisense
     public class MouseMonitor : WinHook<MouseMonitor>
     {
         public event Action MouseMove;
+
         public event Action MouseLClick;
 
         override protected bool HandleHookEvent(IntPtr wParam, IntPtr lParam)
@@ -112,7 +113,7 @@ namespace CSScriptIntellisense
         public static bool IsPressed(Keys key)
         {
             const int KEY_PRESSED = 0x8000;
-            return Convert.ToBoolean(GetKeyState((int) key) & KEY_PRESSED);
+            return Convert.ToBoolean(GetKeyState((int)key) & KEY_PRESSED);
         }
 
         public static Modifiers GetModifiers()
@@ -147,7 +148,7 @@ namespace CSScriptIntellisense
         {
             foreach (int key in keys)
             {
-                //ignore for now as anyway the extra invoke will not do any harm 
+                //ignore for now as anyway the extra invoke will not do any harm
                 //but eventually it needs to be ref counting based
                 //KeysToIntercept.RemoveAll(k => k == key);
             }
@@ -158,17 +159,17 @@ namespace CSScriptIntellisense
 
         override protected bool HandleHookEvent(IntPtr wParam, IntPtr lParam)
         {
-            int key = (int) wParam;
-            int context = (int) lParam;
+            int key = wParam.ToInt32();
 
             if (KeysToIntercept.Contains(key))
             {
+                var context = (long)lParam;
                 bool down = ((context & KB_TRANSITION_FLAG) != KB_TRANSITION_FLAG);
-                int repeatCount = (context & 0xFF00);
+                int repeatCount = (int)(context & 0xFF00);
                 if (down && KeyDown != null)
                 {
                     bool handled = false;
-                    KeyDown((Keys) key, repeatCount, ref handled);
+                    KeyDown((Keys)key, repeatCount, ref handled);
                     return handled;
                 }
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,7 +18,6 @@ namespace CSScriptNpp.Dialogs
             keysComboBox.Items.AddRange(Enum.GetValues(typeof(Keys)).Cast<object>().ToArray());
             keysComboBox.SelectedItem = Keys.None;
         }
-
 
         public new string Name
         {
@@ -40,7 +40,6 @@ namespace CSScriptNpp.Dialogs
                 altCheckBox.Checked = s.IsAlt;
                 keysComboBox.SelectedItem = s.Key;
             }
-
         }
 
         private void ok_Click(object sender, EventArgs e)
@@ -48,6 +47,5 @@ namespace CSScriptNpp.Dialogs
             Close();
             DialogResult = DialogResult.OK;
         }
-
     }
 }

@@ -35,7 +35,7 @@ namespace CSScriptIntellisense
 
             if (directiveLine.StartsWith("//css_")) //e.g. '//css_ref'
             {
-                var word = Npp.GetWordAtPosition(offset); //e.g. 'css_ref'
+                var word = Npp1.GetWordAtPosition(offset); //e.g. 'css_ref'
 
                 if (word.StartsWith("css_")) //directive itself
                 {
@@ -70,7 +70,7 @@ namespace CSScriptIntellisense
 
                 //suggest default CS-Script usings as well
                 var extraItems = new List<ICompletionData>();
-                var line = Npp.GetLine(Npp.GetLineNumber(offset)).Trim();
+                var line = Npp1.GetLine(Npp1.GetLineNumber(offset)).Trim();
 
                 bool isUsing = (line == "using");
 

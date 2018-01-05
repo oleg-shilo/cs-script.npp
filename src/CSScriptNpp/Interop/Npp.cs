@@ -5,11 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSScriptIntellisense;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
-    public class Npp
+    public class Npp2
     {
+        /***********************************/
+
         /// <summary>
         /// Determines whether the current file has the specified extension (e.g. ".cs").
         /// <para>Note it is case insensitive.</para>
@@ -18,30 +21,19 @@ namespace CSScriptNpp
         /// <returns></returns>
         static public bool IsCurrentFileHasExtension(string extension)
         {
-            var path = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(Plugin.NppData._nppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
-            string file = path.ToString();
+            var file = Npp.Editor.GetCurrentFilePath();
             return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
         }
 
         static public bool IsCurrentScriptFile()
         {
-            var path = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(Plugin.NppData._nppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
-            string file = path.ToString();
+            var file = Npp.Editor.GetCurrentFilePath();
             return !string.IsNullOrWhiteSpace(file) && file.IsScriptFile();
         }
 
-        public static IntPtr CurrentScintilla { get { return Plugin.GetCurrentScintilla(); } }
+        // public static IntPtr CurrentScintilla { get { return PluginBase.GetCurrentScintilla(); } }
 
-        public static IntPtr NppHandle { get { return Plugin.NppData._nppHandle; } }
-
-        static public string GetConfigDir()
-        {
-            var buffer = new StringBuilder(260);
-            Win32.SendMessage(NppHandle, NppMsg.NPPM_GETPLUGINSCONFIGDIR, 260, buffer);
-            return buffer.ToString();
-        }
+        // public static IntPtr NppHandle { get { return PluginBase.nppData._nppHandle; } }
 
         /// <summary>
         /// Open the file and navigate to the 0-based line and column position.
@@ -53,20 +45,21 @@ namespace CSScriptNpp
         {
             try
             {
-                Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, file);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOLINE, line, 0); //SCI lines are 0-based
+                Npp.Editor.Open(file);
+                var document = Npp.GetCurrentDocument();
+                document.GrabFocus();
+                document.GotoLine(line); //SCI lines are 0-based
 
                 //at this point the caret is at the most left position (col=0)
-                int currentPos = (int) Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GETCURRENTPOS, 0, 0);
-                Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GOTOPOS, currentPos + column - 1, 0); //SCI columns are 0-based
+                var currentPos = document.GetCurrentPos();
+                document.GotoPos(currentPos + column - 1);
             }
             catch { }
         }
 
         static public void CancelCalltip()
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
             Calltip.IsShowing = false;
         }
@@ -94,17 +87,16 @@ namespace CSScriptNpp
 
                 Task.Factory.StartNew(() =>  //must be asynch to allow processing other Debugger notifications
                     {
-                        string underMouseExpression = CSScriptIntellisense.Npp.GetStatementAtPosition(position);
-                        string document = Npp.GetCurrentFile();
+                        string underMouseExpression = CSScriptIntellisense.Npp1.GetStatementAtPosition(position);
+                        string document = Npp.Editor.GetCurrentFilePath();
                         string tooltip = null;
 
                         //if (Debugger.IsInBreak) //The calltips are used to show the values of the variables only. For everything else (e.g. MemberInfo) modal borderless forms are used
                         //{
-
                         if (!string.IsNullOrEmpty(underMouseExpression))
                         {
                             //also need to check expression start position (if not debugging) as the same expression can lead to different tooltip
-                            //NOTE: if DBG frame is changed the LastExpression is cleared 
+                            //NOTE: if DBG frame is changed the LastExpression is cleared
                             if (underMouseExpression == Calltip.LastExpression && Calltip.LastDocument == document)
                             {
                                 if (Debugger.IsInBreak)
@@ -139,7 +131,7 @@ namespace CSScriptNpp
 
                             if (tooltip != null)
                             {
-                                Npp.ShowCalltip(position, tooltip);
+                                Npp2.ShowCalltip(position, tooltip);
                                 return;
                             }
                         }
@@ -153,7 +145,7 @@ namespace CSScriptNpp
 
         static public void ShowCalltip(int position, string text)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPCANCEL, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSHOW, position, text);
         }
@@ -165,7 +157,7 @@ namespace CSScriptNpp
 
         static public void SetCalltipTime(int milliseconds)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             IntPtr tt = Win32.SendMessage(sci, SciMsg.SCI_GETMOUSEDWELLTIME, 0, 0);
 
             //Color: 0xBBGGRR
@@ -177,12 +169,12 @@ namespace CSScriptNpp
 
         static public string GetTextBetween(int start, int end = -1)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
 
             if (end == -1)
-                end = (int) Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
+                end = (int)Win32.SendMessage(sci, SciMsg.SCI_GETLENGTH, 0, 0);
 
-            using (var tr = new Sci_TextRange(start, end, end - start + 1)) //+1 for null termination
+            using (var tr = new TextRange(start, end, end - start + 1)) //+1 for null termination
             {
                 Win32.SendMessage(sci, SciMsg.SCI_GETTEXTRANGE, 0, tr.NativePointer);
                 return tr.lpstrText;
@@ -191,10 +183,10 @@ namespace CSScriptNpp
 
         public static int GetCaretLineNumber()
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            IntPtr sci = PluginBase.GetCurrentScintilla();
+            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
 
-            return (int) Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINEFROMPOSITION, currentPos, 0);
         }
 
         public static int GetLineFromPosition(int pos)
@@ -202,32 +194,31 @@ namespace CSScriptNpp
             return execute(SciMsg.SCI_LINEFROMPOSITION, pos, 0);
         }
 
-        public static string[] GetOpenFiles()
-        {
-            int count = execute(NppMsg.NPPM_GETNBOPENFILES, 0, 0);
-            using (var cStrArray = new ClikeStringArray(count, Win32.MAX_PATH))
-            {
-                if (execute(NppMsg.NPPM_GETOPENFILENAMES, (int) cStrArray.NativePointer, count) != 0)
-                    return cStrArray.ManagedStringsUnicode.ToArray();
-                else
-                    return new string[0];
-            }
-        }
+        // public static string[] GetOpenFiles()
+        // {
+        //     int count = execute(NppMsg.NPPM_GETNBOPENFILES, 0, 0);
+        //     using (var cStrArray = new ClikeStringArray(count, Win32.MAX_PATH))
+        //     {
+        //         if (execute(NppMsg.NPPM_GETOPENFILENAMES, cStrArray.NativePointer, count) != 0)
+        //             return cStrArray.ManagedStringsUnicode.ToArray();
+        //         else
+        //             return new string[0];
+        //     }
+        // }
 
         static public int GetLineStart(int line)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int) Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0);
+            IntPtr sci = PluginBase.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0);
         }
 
         public static void SetCaretPosition(int pos)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETCURRENTPOS, pos, 0);
         }
 
-
-        //Shocking!!! 
+        //Shocking!!!
         //For selection, ranges, text length, navigation
         //Scintilla operates in units, which are not characters but bytes.
         //thus if for the document content "test" you execute selection(start:0,end:3)
@@ -267,8 +258,8 @@ namespace CSScriptNpp
 
         public static void ClearSelection()
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            int currentPos = (int) Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
+            IntPtr sci = PluginBase.GetCurrentScintilla();
+            int currentPos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos, 0); ;
         }
@@ -282,51 +273,44 @@ namespace CSScriptNpp
 
         static public int GetFirstVisibleLine()
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int) Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
+            IntPtr sci = PluginBase.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_GETFIRSTVISIBLELINE, 0, 0);
         }
 
         static public int GetLinesOnScreen()
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int) Win32.SendMessage(sci, SciMsg.SCI_LINESONSCREEN, 0, 0);
+            IntPtr sci = PluginBase.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_LINESONSCREEN, 0, 0);
         }
 
         static public void SetFirstVisibleLine(int line)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETFIRSTVISIBLELINE, line, 0);
-        }
-
-        static public int GrabFocus()
-        {
-            int currentPos = (int) Win32.SendMessage(CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-            return currentPos;
         }
 
         static public void SaveAllButNew()
         {
             //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
 
-            var files = Npp.GetOpenFiles();
-            var current = Npp.GetCurrentFile();
+            var files = PluginBase.Editor.GetOpenFiles();
+            var current = Npp.Editor.GetCurrentFilePath();
             foreach (var item in files)
             {
                 if (Path.IsPathRooted(item))  //the "new" file is not saved so it has no root
                 {
-                    Npp.OpenFile(item);
-                    Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
-
+                    Npp.Editor.Open(item)
+                        .SaveCurrentFile();
                 }
             }
-            Npp.OpenFile(current);
+            PluginBase.Editor.Open(current);
         }
 
         static public void SaveDocuments(string[] files)
         {
             var filesToSave = files.Select(x => Path.GetFullPath(x));
-            var openFiles = Npp.GetOpenFiles();
-            var current = Npp.GetCurrentFile();
+            var openFiles = Npp.Editor.GetOpenFiles();
+            var current = Npp.Editor.GetCurrentFilePath();
             foreach (var item in files)
             {
                 if (Path.IsPathRooted(item))  //the "new" file is not saved so it has no root
@@ -334,57 +318,51 @@ namespace CSScriptNpp
                     var path = Path.GetFullPath(item);
                     if (filesToSave.Contains(path))
                     {
-                        Npp.OpenFile(item);
-                        Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVECURRENTFILE, 0, 0);
+                        Npp.Editor.Open(item)
+                                  .SaveCurrentFile();
                     }
                 }
             }
-            Npp.OpenFile(current);
+            PluginBase.Editor.Open(current);
         }
 
-        static public void OpenFile(string file)
+        static public void OpenFile(string file, bool grabFocus)
         {
-            Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_DOOPEN, 0, file);
-            Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
+            Npp.Editor.Open(file);
+            if (grabFocus)
+                Npp.GetCurrentDocument().GrabFocus();
         }
 
-        static public string GetCurrentFile()
-        {
-            var path = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(NppHandle, NppMsg.NPPM_GETFULLCURRENTPATH, 0, path);
-            return path.ToString();
-        }
-
-        static public string GetTabFile(int index)
+        static public string GetTabFile(IntPtr index)
         {
             var path = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(NppHandle, NppMsg.NPPM_GETFULLPATHFROMBUFFERID, index, path);
+            Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_GETFULLPATHFROMBUFFERID, index, path);
             return path.ToString();
         }
 
         static public int GetPosition(int line, int column)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int) Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0) + column;
+            IntPtr sci = PluginBase.GetCurrentScintilla();
+            return (int)Win32.SendMessage(sci, SciMsg.SCI_POSITIONFROMLINE, line, 0) + column;
         }
 
         static public void SetIndicatorStyle(int indicator, SciMsg style, Color color)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int) style);
+            IntPtr sci = PluginBase.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_INDICSETSTYLE, indicator, (int)style);
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETFORE, indicator, ColorTranslator.ToWin32(color));
         }
 
         static public void SetIndicatorTransparency(int indicator, int innerAlpha, int borderAlpha)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETALPHA, indicator, innerAlpha);
             Win32.SendMessage(sci, SciMsg.SCI_INDICSETOUTLINEALPHA, indicator, borderAlpha);
         }
 
         static public void ClearIndicator(int indicator, int startPos, int endPos = -1)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             if (endPos == -1)
                 endPos = execute(SciMsg.SCI_GETLENGTH, 0, 0);
 
@@ -394,7 +372,7 @@ namespace CSScriptNpp
 
         static public void PlaceIndicator(int indicator, int startPos, int endPos)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_SETINDICATORCURRENT, indicator, 0);
             Win32.SendMessage(sci, SciMsg.SCI_INDICATORFILLRANGE, startPos, endPos - startPos);
         }
@@ -402,7 +380,7 @@ namespace CSScriptNpp
         static public void SetMarkerStyle(int marker, SciMsg style, Color foreColor, Color backColor)
         {
             int mask = execute(SciMsg.SCI_GETMARGINMASKN, 1, 0);
-            execute(SciMsg.SCI_MARKERDEFINE, marker, (int) style);
+            execute(SciMsg.SCI_MARKERDEFINE, marker, (int)style);
             execute(SciMsg.SCI_MARKERSETFORE, marker, ColorTranslator.ToWin32(foreColor));
             execute(SciMsg.SCI_MARKERSETBACK, marker, ColorTranslator.ToWin32(backColor));
             execute(SciMsg.SCI_SETMARGINMASKN, 1, (1 << marker) | mask);
@@ -413,25 +391,25 @@ namespace CSScriptNpp
             int mask = execute(SciMsg.SCI_GETMARGINMASKN, 1, 0);
 
             string bookmark_xpm = Utils.ConvertToXPM(bitmap, "#FF00FF");
-            Win32.SendMessage(Plugin.GetCurrentScintilla(), SciMsg.SCI_MARKERDEFINEPIXMAP, marker, bookmark_xpm);
+            Win32.SendMessage(PluginBase.GetCurrentScintilla(), SciMsg.SCI_MARKERDEFINEPIXMAP, marker, bookmark_xpm);
 
             execute(SciMsg.SCI_SETMARGINMASKN, 1, (1 << marker) | mask);
         }
 
         static int execute(SciMsg msg, int wParam, int lParam = 0)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            return (int) Win32.SendMessage(sci, msg, wParam, lParam);
+            IntPtr result = Win32.SendMessage(PluginBase.GetCurrentScintilla(), msg, wParam, lParam);
+            return (int)result;
         }
 
         static int execute(NppMsg msg, int wParam, int lParam = 0)
         {
-            return (int) Win32.SendMessage(Npp.NppHandle, msg, wParam, lParam);
+            return (int)Win32.SendMessage(Npp.Editor.Handle, (uint)msg, wParam, lParam);
         }
 
         static public IntPtr PlaceMarker(int markerId, int line)
         {
-            return (IntPtr) execute(SciMsg.SCI_MARKERADD, line, markerId);       //'line, marker#
+            return (IntPtr)execute(SciMsg.SCI_MARKERADD, line, markerId);       //'line, marker#
         }
 
         static public int HasMarker(int line)
@@ -441,19 +419,19 @@ namespace CSScriptNpp
 
         static public int GetLineOfMarker(IntPtr markerHandle)
         {
-            return execute(SciMsg.SCI_MARKERLINEFROMHANDLE, (int) markerHandle);
+            return execute(SciMsg.SCI_MARKERLINEFROMHANDLE, (int)markerHandle);
         }
 
         static public void DeleteAllMarkers(int markerId)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
+            IntPtr sci = PluginBase.GetCurrentScintilla();
             Win32.SendMessage(sci, SciMsg.SCI_MARKERDELETEALL, markerId, 0);
         }
 
         static public void DeleteMarker(IntPtr handle)
         {
-            IntPtr sci = Plugin.GetCurrentScintilla();
-            Win32.SendMessage(sci, SciMsg.SCI_MARKERDELETEHANDLE, (int) handle, 0);
+            IntPtr sci = PluginBase.GetCurrentScintilla();
+            Win32.SendMessage(sci, SciMsg.SCI_MARKERDELETEHANDLE, (int)handle, 0);
         }
     }
 }

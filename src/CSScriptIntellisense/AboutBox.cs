@@ -13,21 +13,21 @@ namespace CSScriptIntellisense
     {
         public AboutBox()
         {
-            InitializeComponent();
-            this.Text = "About C# Intellisense";
-            this.label3.Text = "Version: " + AssemblyVersion;
-            this.label5.Text = AssemblyCopyright;
-            this.textBoxDescription.Text = AssemblyDescription;
+            // InitializeComponent();
+            // this.Text = "About C# Intellisense";
+            // this.label3.Text = "Version: " + AssemblyVersion;
+            // this.label5.Text = AssemblyCopyright;
+            // this.textBoxDescription.Text = AssemblyDescription;
 
-            if (Plugin.Enabled)
-            {
-                this.currentParsedFile.Text = "Parsed file: " + TruncatePath(Plugin.currentFile);
-            }
-            else
-            {
-                this.currentParsedFile.ForeColor = Color.Red;
-                this.currentParsedFile.Text = "Disabled because the complete 'CSScriptNpp' is installed";
-            }
+            // if (Plugin.Enabled)
+            // {
+            //     this.currentParsedFile.Text = "Parsed file: " + TruncatePath(Plugin.currentFile);
+            // }
+            // else
+            // {
+            //     this.currentParsedFile.ForeColor = Color.Red;
+            //     this.currentParsedFile.Text = "Disabled because the complete 'CSScriptNpp' is installed";
+            // }
         }
 
         string TruncatePath(string path)
@@ -119,9 +119,10 @@ namespace CSScriptIntellisense
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
-        #endregion
 
-         void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        #endregion Assembly Attribute Accessors
+
+        void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
@@ -130,14 +131,13 @@ namespace CSScriptIntellisense
             catch { }
         }
 
-         void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
                 Process.Start("http://csscript.net/npp/");
             }
             catch { }
-
         }
     }
 }

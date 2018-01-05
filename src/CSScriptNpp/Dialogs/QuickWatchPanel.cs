@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,6 +11,7 @@ namespace CSScriptNpp.Dialogs
         static QuickWatchPanel Instance;
         static bool singleton = true;
         static bool ownedByNpp = true;
+
         static public void PopupDialog()
         {
             if (singleton && Instance != null)
@@ -24,13 +26,13 @@ namespace CSScriptNpp.Dialogs
                 var dialog = new QuickWatchPanel();
                 Instance = dialog;
                 //string expression = Utils.GetStatementAtCaret();
-                string expression = Npp.GetSelectedText(); 
+                string expression = Npp2.GetSelectedText();
 
                 dialog.SetExpression(expression)
                       .SetAutoRefreshAvailable(Config.Instance.QuickViewAutoRefreshAvailable);
 
                 var nativeWindow = new NativeWindow();
-                nativeWindow.AssignHandle(Plugin.NppData._nppHandle);
+                nativeWindow.AssignHandle(PluginBase.nppData._nppHandle);
 
                 dialog.Show(nativeWindow);
             }
@@ -48,10 +50,10 @@ namespace CSScriptNpp.Dialogs
                                     using (QuickWatchPanel dialog = new QuickWatchPanel())
                                     {
                                         Instance = dialog;
-                                        string expression = Npp.GetSelectedText();
+                                        string expression = Npp2.GetSelectedText();
 
                                         if (string.IsNullOrWhiteSpace(expression))
-                                            expression = CSScriptIntellisense.Npp.GetStatementAtPosition();
+                                            expression = CSScriptIntellisense.Npp1.GetStatementAtPosition();
 
                                         dialog.SetExpression(expression);
 
@@ -98,7 +100,7 @@ namespace CSScriptNpp.Dialogs
             content.Dock = DockStyle.Fill;
             content.Visible = true;
             content.OnEditCellComplete += Content_OnEditCellComplete;
-            content.OnEditCellStart += Content_OnEditCellStart; 
+            content.OnEditCellStart += Content_OnEditCellStart;
 
             Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
             Debugger.OnFrameChanged += Debugger_OnFrameChanged;
@@ -154,7 +156,7 @@ namespace CSScriptNpp.Dialogs
 
                 bool repopulate = true;
 
-                if (expression.IsSetExpression() )
+                if (expression.IsSetExpression())
                 {
                     string name = expression.Split('=').First().Trim();
 
@@ -163,7 +165,7 @@ namespace CSScriptNpp.Dialogs
                 }
 
                 if (repopulate)
-                    content.SetData(data); 
+                    content.SetData(data);
             }
             else
                 content.Refresh();
