@@ -22,7 +22,7 @@ namespace CSScriptIntellisense
             {
                 var document = Npp.GetCurrentDocument();
 
-                int currentPos = Npp1.GetCaretPosition();
+                int currentPos = document.GetCurrentPos();
                 CaretBeforeLastFormatting = currentPos;
                 string code = document.GetTextBetween(0, Npp1.DocEnd);
 
@@ -30,19 +30,19 @@ namespace CSScriptIntellisense
                 {
                     code = NormalizeNewLines(code, ref currentPos);
 
-                    int topScrollOffset = Npp1.GetLineNumber(currentPos) - Npp1.GetFirstVisibleLine();
+                    int topScrollOffset = document.LineFromPosition(currentPos) - document.GetFirstVisibleLine();
                     TopScrollOffsetBeforeLastFormatting = topScrollOffset;
 
-                    string newCode = FormatCode(code, ref currentPos, Npp1.Editor.GetCurrentFilePath());
+                    string newCode = FormatCode(code, ref currentPos, Npp.Editor.GetCurrentFilePath());
 
                     if (newCode != null)
                     {
                         document.SetTextBetween(newCode, 0, Npp1.DocEnd);
 
-                        Npp1.SetCaretPosition(currentPos);
-                        Npp1.ClearSelection();
+                        document.SetCurrentPos(currentPos);
+                        document.ClearSelection();
 
-                        Npp1.SetFirstVisibleLine(Npp1.GetLineNumber(currentPos) - topScrollOffset);
+                        document.SetFirstVisibleLine(document.LineFromPosition(currentPos) - topScrollOffset);
                     }
                 }
             }
@@ -71,16 +71,16 @@ namespace CSScriptIntellisense
 
             int currentLineNum = NppExtensions.GetCurrentLineNumber(document);
             var prevLineEnd = document.PositionFromLine(currentLineNum) - Environment.NewLine.Length;
-            int topScrollOffset = currentLineNum - Npp1.GetFirstVisibleLine();
+            int topScrollOffset = currentLineNum - document.GetFirstVisibleLine();
 
             string code = document.GetTextBetween(0, prevLineEnd.Value);
             int currentPos = document.GetCurrentPos();
-            string newCode = FormatCode(code, ref currentPos, Npp1.Editor.GetCurrentFilePath());
+            string newCode = FormatCode(code, ref currentPos, Npp.Editor.GetCurrentFilePath());
             document.SetTextBetween(newCode, 0, prevLineEnd.Value);
 
             //no need to set the caret as it is after the formatted text anyway
 
-            Npp1.SetFirstVisibleLine(Npp1.GetLineNumber(currentPos) - topScrollOffset);
+            document.SetFirstVisibleLine(document.LineFromPosition(currentPos) - topScrollOffset);
         }
 
         public static string FormatCodeWithNRefactory(string code, ref int pos)

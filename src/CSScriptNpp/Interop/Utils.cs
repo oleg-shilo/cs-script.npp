@@ -35,7 +35,7 @@ namespace CSScriptNpp
         {
             string expression = Npp2.GetSelectedText();
             if (string.IsNullOrWhiteSpace(expression))
-                expression = CSScriptIntellisense.Npp1.GetStatementAtPosition();
+                expression = Npp.GetCurrentDocument().GetStatementAtPosition();
             return expression;
         }
 

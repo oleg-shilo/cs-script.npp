@@ -10,12 +10,12 @@ namespace CSScriptIntellisense
     {
         public static void InsertNamespace(string text)
         {
-            bool isVB = Npp1.Editor.GetCurrentFilePath().IsVbFile();
+            bool isVB = Npp.Editor.GetCurrentFilePath().IsVbFile();
 
             var document = Npp.GetCurrentDocument();
 
             //it is unlikely all 'usings' take more than 2000 lines
-            for (int i = 0; i < Math.Min(Npp1.GetLineCount(), 2000); i++)
+            for (int i = 0; i < Math.Min(document.GetLineCount(), 2000); i++)
             {
                 string line = document.GetLine(i);
 
@@ -28,7 +28,7 @@ namespace CSScriptIntellisense
                 var usingKeyword = isVB ? "Imports " : "using ";
                 if (line.TrimStart().StartsWith(usingKeyword)) //first 'using' statement
                 {
-                    var pos = Npp1.GetLineStart(i);
+                    var pos = document.PositionFromLine(i);
                     document.SetTextBetween(text + Environment.NewLine, pos, pos);
                     return;
                 }
@@ -40,17 +40,18 @@ namespace CSScriptIntellisense
 
         public static void ProcessDeleteKeyDown()
         {
-            int currentPos = Npp1.GetCaretPosition();
-            IntPtr sci = Npp1.CurrentScintilla;
+            var document = Npp.GetCurrentDocument();
+            int currentPos = document.GetCurrentPos();
+            IntPtr sci = Npp.GetCurrentDocument().Handle;
 
-            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, currentPos, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONEND, currentPos + 1, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_REPLACESEL, 0, "");
+            document.SetSelectionStart(currentPos);
+            document.SetSelectionEnd(currentPos + 1);
+            document.ReplaceSelection("");
         }
 
         public static string ProcessKeyPress(char keyChar)
         {
-            var document = PluginBase.GetCurrentDocument();
+            var document = Npp.GetCurrentDocument();
             var currentPos = document.GetCurrentPos().Value;
 
             string justTypedText = "";
@@ -64,7 +65,7 @@ namespace CSScriptIntellisense
                 if (keyChar != 0)
                 {
                     justTypedText = keyChar.ToString();
-                    document.ReplaceSel(justTypedText);
+                    document.ReplaceSelection(justTypedText);
                 }
             }
 
@@ -79,11 +80,12 @@ namespace CSScriptIntellisense
 
         public static IEnumerable<string> GetMethodOverloadHint(int methodStartPos, out string text)
         {
+            var document = Npp.GetCurrentDocument();
+
             text = null;
-            int currentPos = Npp1.GetCaretPosition();
+            int currentPos = document.GetCurrentPos();
             if (currentPos > methodStartPos)
             {
-                var document = Npp.GetCurrentDocument();
                 text = document.GetTextBetween(methodStartPos, currentPos);
                 return text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }

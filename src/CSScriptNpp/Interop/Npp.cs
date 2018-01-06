@@ -69,7 +69,7 @@ namespace CSScriptNpp
 
                 Task.Factory.StartNew(() =>  //must be asynch to allow processing other Debugger notifications
                     {
-                        string underMouseExpression = CSScriptIntellisense.Npp1.GetStatementAtPosition(position);
+                        string underMouseExpression = Npp.GetCurrentDocument().GetStatementAtPosition(position);
                         string document = Npp.Editor.GetCurrentFilePath();
                         string tooltip = null;
 

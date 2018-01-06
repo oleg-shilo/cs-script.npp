@@ -36,7 +36,9 @@ namespace CSScriptIntellisense
 
             if (directiveLine.StartsWith("//css_")) //e.g. '//css_ref'
             {
-                var word = Npp1.GetWordAtPosition(offset); //e.g. 'css_ref'
+                var document = Npp.GetCurrentDocument();
+
+                var word = document.GetWordAtPosition(offset); //e.g. 'css_ref'
 
                 if (word.StartsWith("css_")) //directive itself
                 {

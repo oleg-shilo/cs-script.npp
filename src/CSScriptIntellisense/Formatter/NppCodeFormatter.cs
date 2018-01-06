@@ -74,7 +74,7 @@ namespace CSScriptIntellisense
         {
             var document = Npp.GetCurrentDocument();
             string currLineText = document.GetCurrentLine();
-            string prevText = Npp1.TextBeforeCursor(500); //do not load all all "top" document but its substantial part
+            string prevText = document.TextBeforeCursor(500); //do not load all all "top" document but its substantial part
 
             if (currLineText.Trim() == "}" && IsBracketOpened(prevText))
                 Perform(RemoveIndent);
@@ -128,7 +128,7 @@ namespace CSScriptIntellisense
                     }
                     else
                     {
-                        int widthInChars = (int)Win32.SendMessage(Npp1.CurrentScintilla, SciMsg.SCI_GETTABWIDTH, 0, 0);
+                        int widthInChars = Npp.GetCurrentDocument().GetTabWidth();
                         indentText = new string(' ', widthInChars);
                     }
                 }
@@ -149,8 +149,7 @@ namespace CSScriptIntellisense
             {
                 if (!useTabs.HasValue)
                 {
-                    int retval = (int)Win32.SendMessage(Npp1.CurrentScintilla, SciMsg.SCI_GETUSETABS, 0, 0);
-                    useTabs = (retval == 1);
+                    useTabs = Npp.GetCurrentDocument().GetUseTabs();
                 }
                 return useTabs.Value;
             }
@@ -159,8 +158,8 @@ namespace CSScriptIntellisense
 
         static void RemoveIndent()
         {
-            int currentPos = Npp1.GetCaretPosition();
-            IntPtr sci = Npp1.CurrentScintilla;
+            int currentPos = Npp.GetCurrentDocument().GetCurrentPos();
+            IntPtr sci = Npp.GetCurrentDocument().Handle;
             int startPos = currentPos - 1 - IndentText.GetByteCount();
             int endPos = currentPos - 1;
             Win32.SendMessage(sci, SciMsg.SCI_SETSELECTIONSTART, startPos, 0);

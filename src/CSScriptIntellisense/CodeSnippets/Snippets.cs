@@ -101,7 +101,7 @@ namespace CSScriptIntellisense
             if (caretPoint.X != caretPoint.Y)
             {
                 document.SetTextBetween("", caretPoint);
-                Npp1.SetSelection(caretPoint.X, caretPoint.X);
+                document.SetSelection(caretPoint.X, caretPoint.X);
             }
         }
 
@@ -115,10 +115,10 @@ namespace CSScriptIntellisense
             Point currentParam = context.CurrentParameter.Value;
             string currentParamOriginalText = context.CurrentParameterValue;
 
-            Npp1.SetSelection(currentParam.X, currentParam.X);
-            string currentParamDetectedText = Npp1.GetWordAtCursor("\t\n\r ,;'\"".ToCharArray());
-
             var document = Npp.GetCurrentDocument();
+
+            document.SetSelection(currentParam.X, currentParam.X);
+            string currentParamDetectedText = document.GetWordAtCursor("\t\n\r ,;'\"".ToCharArray());
 
             if (currentParamOriginalText != currentParamDetectedText)
             {
@@ -172,7 +172,7 @@ namespace CSScriptIntellisense
             context.CurrentParameter = nextParameter;
             if (context.CurrentParameter.HasValue)
             {
-                Npp1.SetSelection(context.CurrentParameter.Value.X, context.CurrentParameter.Value.Y);
+                document.SetSelection(context.CurrentParameter.Value.X, context.CurrentParameter.Value.Y);
                 context.CurrentParameterValue = document.GetTextBetween(context.CurrentParameter.Value);
             }
 
@@ -236,7 +236,7 @@ namespace CSScriptIntellisense
 
         static public void EditSnippetsConfig()
         {
-            Npp1.OpenFile(Snippets.ConfigFile);
+            Npp.Editor.Open(Snippets.ConfigFile);
         }
 
         static void configWatcher_Changed(object sender, FileSystemEventArgs e)

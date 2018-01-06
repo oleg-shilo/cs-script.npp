@@ -1,4 +1,5 @@
-﻿using Kbg.NppPluginNET.PluginInfrastructure;
+﻿using CSScriptIntellisense;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Linq;
 using System.Threading;
@@ -53,7 +54,7 @@ namespace CSScriptNpp.Dialogs
                                         string expression = Npp2.GetSelectedText();
 
                                         if (string.IsNullOrWhiteSpace(expression))
-                                            expression = CSScriptIntellisense.Npp1.GetStatementAtPosition();
+                                            expression = Npp.GetCurrentDocument().GetStatementAtPosition();
 
                                         dialog.SetExpression(expression);
 

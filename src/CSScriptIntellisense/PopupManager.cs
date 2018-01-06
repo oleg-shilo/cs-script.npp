@@ -1,4 +1,5 @@
 using CSScriptIntellisense.Interop;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Drawing;
 using System.Threading;
@@ -81,7 +82,7 @@ namespace CSScriptIntellisense
                                     {
                                         try
                                         {
-                                            Npp1.GrabFocus();
+                                            Npp.GetCurrentDocument().GrabFocus();
                                             var newRect = Npp1.GetClientRect();
                                             if (rect != newRect) //if NPP moved, resized close the popup
                                             {
@@ -133,7 +134,7 @@ namespace CSScriptIntellisense
                 string text;
                 popupForm.ProcessMethodOverloadHint(NppEditor.GetMethodOverloadHint(methodStartPos, out text));
 
-                int currentPos = Npp1.GetCaretPosition();
+                int currentPos = Npp.GetCurrentDocument().GetCurrentPos();
                 if (currentPos <= methodStartPos) //user removed/substituted method token as the result of keyboard input
                 {
                     base.Close();
