@@ -113,10 +113,38 @@ namespace CSScriptIntellisense
             document.IndicSetFore(indicator, new Colour(ColorTranslator.ToWin32(color)));
         }
 
-        static public void ClearIndicator(this ScintillaGateway document, int indicator, int startPos, int endPos)
+        static public void ClearIndicator(this ScintillaGateway document, int indicator, int startPos, int endPos = -1)
         {
+            if (endPos == -1)
+                endPos = document.GetLength();
+
             document.SetIndicatorCurrent(indicator);
             document.IndicatorClearRange(startPos, endPos - startPos);
+        }
+
+        static public IntPtr PlaceMarker(this ScintillaGateway document, int markerId, int line)
+        {
+            return (IntPtr)document.MarkerAdd(line, markerId);       //'line, marker#
+        }
+
+        static public void DeleteMarker(this ScintillaGateway document, IntPtr handle)
+        {
+            document.MarkerDeleteHandle(handle.ToInt32());
+        }
+
+        static public int HasMarker(this ScintillaGateway document, int line)
+        {
+            return document.MarkerGet(line);
+        }
+
+        static public int GetLineOfMarker(this ScintillaGateway document, IntPtr markerHandle)
+        {
+            return document.MarkerLineFromHandle(markerHandle.ToInt32());
+        }
+
+        static public void DeleteAllMarkers(this ScintillaGateway document, int markerId)
+        {
+            document.MarkerDeleteAll(markerId);
         }
 
         static public void PlaceIndicator(this ScintillaGateway document, int indicator, int startPos, int endPos)
@@ -337,6 +365,106 @@ namespace CSScriptIntellisense
             }
             else
                 return null;
+        }
+
+        /// <summary>
+        /// Open the file and navigate to the 0-based line and column position.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="line"></param>
+        /// <param name="column"></param>
+        static public void NavigateToFileContent(this ScintillaGateway document, string file, int line, int column)
+        {
+            try
+            {
+                Npp.Editor.Open(file);
+                document.GrabFocus();
+                document.GotoLine(line); //SCI lines are 0-based
+
+                //at this point the caret is at the most left position (col=0)
+                var currentPos = document.GetCurrentPos();
+                document.GotoPos(currentPos + column - 1);
+            }
+            catch { }
+        }
+
+        static public void OpenFile(this NotepadPPGateway editor, string file, bool grabFocus)
+        {
+            editor.Open(file);
+            if (grabFocus)
+                Npp.GetCurrentDocument().GrabFocus();
+        }
+
+        static public void SetIndicatorTransparency(this ScintillaGateway document, int indicator, int innerAlpha, int borderAlpha)
+        {
+            document.IndicSetAlpha(indicator, innerAlpha);
+            document.IndicSetOutlineAlpha(indicator, borderAlpha);
+        }
+
+        static public Kbg.NppPluginNET.PluginInfrastructure.Colour ToColour(this Color color)
+        {
+            return new Colour(ColorTranslator.ToWin32(color));
+        }
+
+        static public void SetMarkerStyle(this ScintillaGateway document, int marker, SciMsg style, Color foreColor, Color backColor)
+        {
+            int mask = document.GetMarginMaskN(1);
+            document.MarkerDefine(marker, (int)style);
+            document.MarkerSetFore(marker, foreColor.ToColour());
+            document.MarkerSetBack(marker, backColor.ToColour());
+            document.SetMarginMaskN(1, (1 << marker) | mask);
+        }
+
+        static public void SetMarkerStyle(this ScintillaGateway document, int marker, Bitmap bitmap)
+        {
+            int mask = document.GetMarginMaskN(1);
+
+            string bookmark_xpm = ConvertToXPM(bitmap, "#FF00FF");
+            document.MarkerDefinePixmap(marker, bookmark_xpm);
+            // document.MarkerDefineRGBAImage
+            document.SetMarginMaskN(1, (1 << marker) | mask);
+        }
+
+        public static string ConvertToXPM(Bitmap bmp, string transparentColor)
+        {
+            var sb = new StringBuilder();
+            var colors = new List<string>();
+            var chars = new List<char>();
+            int width = bmp.Width;
+            int height = bmp.Height;
+            int index;
+            sb.Append("/* XPM */static char * xmp_data[] = {\"").Append(width).Append(" ").Append(height).Append(" ? 1\"");
+            int colorsIndex = sb.Length;
+            string col;
+            char c;
+            for (int y = 0; y < height; y++)
+            {
+                sb.Append(",\"");
+                for (int x = 0; x < width; x++)
+                {
+                    col = ColorTranslator.ToHtml(bmp.GetPixel(x, y));
+                    index = colors.IndexOf(col);
+                    if (index < 0)
+                    {
+                        index = colors.Count + 65;
+                        colors.Add(col);
+                        if (index > 90) index += 6;
+                        c = Encoding.ASCII.GetChars(new byte[] { (byte)(index & 0xff) })[0];
+                        chars.Add(c);
+                        sb.Insert(colorsIndex, ",\"" + c + " c " + col + "\"");
+                        colorsIndex += 14;
+                    }
+                    else c = (char)chars[index];
+                    sb.Append(c);
+                }
+                sb.Append("\"");
+            }
+            sb.Append("};");
+            string result = sb.ToString();
+            int p = result.IndexOf("?");
+            string finalColor = result.Substring(0, p) + colors.Count + result.Substring(p + 1).Replace(transparentColor.ToUpper(), "None");
+
+            return finalColor;
         }
     }
 }

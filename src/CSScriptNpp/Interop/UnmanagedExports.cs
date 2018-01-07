@@ -49,7 +49,7 @@ namespace CSScriptNpp
 
                 CSScriptNpp.Plugin.CommandMenuInit(); //this will also call CSScriptIntellisense.Plugin.CommandMenuInit
 
-                Debugger.OnFrameChanged += () => Npp2.OnCalltipRequest(-2); //clear_all_cache
+                Debugger.OnFrameChanged += () => npp.OnCalltipRequest(-2); //clear_all_cache
             }
             catch (Exception e)
             {
@@ -101,7 +101,7 @@ namespace CSScriptNpp
                 {
                     CSScriptIntellisense.Plugin.OnNppReady();
                     CSScriptNpp.Plugin.OnNppReady();
-                    Npp2.SetCalltipTime(500);
+                    npp.SetCalltipTime(500);
                 }
                 else if (nc.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {
@@ -126,7 +126,8 @@ namespace CSScriptNpp
                 {
                     if (nc.Margin == _SC_MARGE_SYBOLE && nc.Mmodifiers == SCI_CTRL)
                     {
-                        int lineClick = Npp2.GetLineFromPosition(nc.Position.Value);
+                        var document = Npp.GetCurrentDocument();
+                        int lineClick = document.LineFromPosition(nc.Position.Value);
                         Debugger.ToggleBreakpoint(lineClick);
                     }
                 }
@@ -136,11 +137,11 @@ namespace CSScriptNpp
                     //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
                     //tooltip = @"Creates all directories and subdirectories as specified by path.
 
-                    Npp2.OnCalltipRequest(nc.Position.Value);
+                    npp.OnCalltipRequest(nc.Position.Value);
                 }
                 else if (nc.Header.Code == (uint)SciMsg.SCN_DWELLEND)
                 {
-                    Npp2.CancelCalltip();
+                    npp.CancelCalltip();
                 }
                 else if (nc.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
@@ -167,12 +168,12 @@ namespace CSScriptNpp
                 }
                 else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEOPENED)
                 {
-                    string file = Npp2.GetTabFile(nc.Header.IdFrom);
+                    string file = Npp.Editor.GetTabFile(nc.Header.IdFrom);
                     Debugger.LoadBreakPointsFor(file);
                 }
                 else if (nc.Header.Code == (uint)NppMsg.NPPN_FILESAVED || nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
                 {
-                    string file = Npp2.GetTabFile(nc.Header.IdFrom);
+                    string file = Npp.Editor.GetTabFile(nc.Header.IdFrom);
                     Debugger.RefreshBreakPointsFromContent();
                     Debugger.SaveBreakPointsFor(file);
 

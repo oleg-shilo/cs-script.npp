@@ -25,11 +25,12 @@ namespace CSScriptNpp
             var debugStepPointColor = ColorFromConfig(Config.Instance.DebugStepPointColor, Color.Yellow);
 
             //selection of the debug step line
-            Npp2.SetIndicatorStyle(INDICATOR_DEBUGSTEP, SciMsg.INDIC_STRAIGHTBOX, debugStepPointColor);
-            Npp2.SetIndicatorTransparency(INDICATOR_DEBUGSTEP, 90, 255);
+            var document = Npp.GetCurrentDocument();
+            document.SetIndicatorStyle(INDICATOR_DEBUGSTEP, SciMsg.INDIC_STRAIGHTBOX, debugStepPointColor);
+            document.SetIndicatorTransparency(INDICATOR_DEBUGSTEP, 90, 255);
 
             //left 'panel' arrow and breakpoint image
-            Npp2.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, ColorFromConfig(Config.Instance.DebugStepPointForeColor, Color.Black), debugStepPointColor);
+            document.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, ColorFromConfig(Config.Instance.DebugStepPointForeColor, Color.Black), debugStepPointColor);
             // Npp.SetMarkerStyle(MARK_BREAKPOINT, CSScriptNpp.Resources.Resources.breakpoint); // !!!
 
             Debugger.BreakOnException = Config.Instance.BreakOnException;
@@ -99,6 +100,7 @@ namespace CSScriptNpp
         {
             try
             {
+                var document = Npp.GetCurrentDocument();
                 string file = Npp.Editor.GetCurrentFilePath();
 
                 string expectedkeyPrefix = file + "|";
@@ -110,7 +112,7 @@ namespace CSScriptNpp
                     {
                         //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
                         int line = int.Parse(key.Split('|').Last()) - 1;
-                        breakpoints[key] = Npp2.PlaceMarker(MARK_BREAKPOINT, line);
+                        breakpoints[key] = document.PlaceMarker(MARK_BREAKPOINT, line);
                     }
                 }
             }
@@ -122,6 +124,7 @@ namespace CSScriptNpp
             var chengedFiles = new List<string>();
 
             var currFile = Npp.Editor.GetCurrentFilePath();
+            var document = Npp.GetCurrentDocument();
 
             foreach (string key in breakpoints.Keys.ToArray())
             {
@@ -138,7 +141,7 @@ namespace CSScriptNpp
                 IntPtr marker = breakpoints[key];
                 if (marker != IntPtr.Zero)
                 {
-                    int line = Npp2.GetLineOfMarker(marker);
+                    int line = document.GetLineOfMarker(marker);
                     if (line != -1 && !key.EndsWith("|" + (line + 1)))
                     {
                         //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
@@ -165,6 +168,7 @@ namespace CSScriptNpp
         public static void OnCurrentFileChanged()
         {
             string file = Npp.Editor.GetCurrentFilePath();
+            var document = Npp.GetCurrentDocument();
 
             string dbg = CSScriptHelper.GetDbgInfoFile(file);
 
@@ -174,7 +178,7 @@ namespace CSScriptNpp
             if (!IsRunning)
             {
                 OnNextFileOpenComplete = null;
-                Npp2.ClearIndicator(INDICATOR_DEBUGSTEP, 0, -1); //clear all document
+                document.ClearIndicator(INDICATOR_DEBUGSTEP, 0, -1); //clear all document
             }
             else
             {
@@ -549,8 +553,8 @@ namespace CSScriptNpp
         static public void NavigateToFileLocation(string sourceLocation)
         {
             var location = FileLocation.Parse(sourceLocation);
-            location.Start = Npp2.CharOffsetToPosition(location.Start, location.File);
-            location.End = Npp2.CharOffsetToPosition(location.End, location.File);
+            location.Start = npp.CharOffsetToPosition(location.Start, location.File);
+            location.End = npp.CharOffsetToPosition(location.End, location.File);
 
             TranslateCompiledLocation(location);
 
@@ -563,7 +567,7 @@ namespace CSScriptNpp
                 else
                 {
                     OnNextFileOpenComplete = () => ShowBreakpointSourceLocation(location);
-                    Npp2.OpenFile(location.File, true); //needs to by asynchronous
+                    Npp.Editor.OpenFile(location.File, true); //needs to by asynchronous
                 }
             }
         }
@@ -586,22 +590,24 @@ namespace CSScriptNpp
         {
             string file = sourceLocation.Split('|').First();
             OnNextFileOpenComplete = () => ProcessOpenStackLocation(sourceLocation);
-            Npp2.OpenFile(file, true); //needs to by asynchronous
+            Npp.Editor.OpenFile(file, true); //needs to by asynchronous
         }
 
         private static void ProcessOpenStackLocation(string sourceLocation)
         {
             var location = Debugger.FileLocation.Parse(sourceLocation);
 
-            int start = Npp2.GetFirstVisibleLine();
-            int end = start + Npp2.GetLinesOnScreen();
+            var document = Npp.GetCurrentDocument();
+
+            int start = document.GetFirstVisibleLine();
+            int end = start + document.LinesOnScreen();
             if (location.Line > end || location.Line < start)
             {
-                Npp2.SetFirstVisibleLine(Math.Max(location.Line - (end - start) / 2, 0));
+                document.SetFirstVisibleLine(Math.Max(location.Line - (end - start) / 2, 0));
             }
 
-            Npp2.SetCaretPosition(location.Start);
-            Npp2.ClearSelection(); //need this one as otherwise parasitic selection can be triggered
+            document.SetCurrentPos(location.Start);
+            document.ClearSelection(); //need this one as otherwise parasitic selection can be triggered
 
             Win32.SetForegroundWindow(Npp.Editor.Handle);
             Win32.SetForegroundWindow(Npp.GetCurrentDocument().Handle);
@@ -687,7 +693,9 @@ namespace CSScriptNpp
             if (IsRunning && IsInBreak)
             {
                 string file = Npp.Editor.GetCurrentFilePath();
-                int line = Npp2.GetCaretLineNumber();
+                var document = Npp.GetCurrentDocument();
+
+                int line = document.GetCurrentLineNumber();
                 string key = BuildBreakpointKey(file, line);
                 string actualBreakpoint = TranslateSourceBreakpoint(key);
                 DebuggerServer.AddBreakpoint(actualBreakpoint);
@@ -702,9 +710,8 @@ namespace CSScriptNpp
         static public void AddWatch(string expression)
         {
             if (!watchExtressions.Contains(expression))
-            {
                 watchExtressions.Add(expression);
-            }
+
             if (IsRunning)
                 DebuggerServer.AddWatchExpression(expression);
         }
@@ -727,6 +734,7 @@ namespace CSScriptNpp
 
         static public void ToggleBreakpoint(int lineClick = -1)
         {
+            var document = Npp.GetCurrentDocument();
             string file = Npp.Editor.GetCurrentFilePath();
 
             int line = 0;
@@ -734,7 +742,7 @@ namespace CSScriptNpp
             if (lineClick != -1)
                 line = lineClick;
             else
-                line = Npp2.GetCaretLineNumber();
+                line = document.GetCurrentLineNumber();
 
             bool isAutoGenerated = file.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase);
 
@@ -747,15 +755,16 @@ namespace CSScriptNpp
 
         static public void RemoveAllBreakpoints()
         {
+            var document = Npp.GetCurrentDocument();
             foreach (var key in breakpoints.Keys)
             {
-                Npp2.DeleteMarker(breakpoints[key]);
+                document.DeleteMarker(breakpoints[key]);
                 if (IsRunning)
                     DebuggerServer.RemoveBreakpoint(key);
             }
             breakpoints.Clear();
 
-            foreach (string file in PluginBase.Editor.GetOpenFiles())
+            foreach (string file in Npp.Editor.GetOpenFiles())
             {
                 string dbgInfo = CSScriptHelper.GetDbgInfoFile(file, false);
                 if (File.Exists(dbgInfo))
@@ -770,11 +779,13 @@ namespace CSScriptNpp
         {
             RefreshBreakPointsFromContent();
 
+            var document = Npp.GetCurrentDocument();
+
             string key = BuildBreakpointKey(file, line);
 
             if (breakpoints.ContainsKey(key))
             {
-                Npp2.DeleteMarker(breakpoints[key]);
+                document.DeleteMarker(breakpoints[key]);
                 breakpoints.Remove(key);
                 if (IsRunning)
                 {
@@ -784,7 +795,7 @@ namespace CSScriptNpp
             }
             else
             {
-                var handle = Npp2.PlaceMarker(MARK_BREAKPOINT, line);
+                var handle = document.PlaceMarker(MARK_BREAKPOINT, line);
                 breakpoints.Add(key, handle);
                 if (IsRunning)
                 {
@@ -889,19 +900,20 @@ namespace CSScriptNpp
             lastLocation = location;
 
             ClearDebuggingMarkers();
+            var document = Npp.GetCurrentDocument();
 
-            Npp2.PlaceIndicator(INDICATOR_DEBUGSTEP, location.Start, location.End);
-            Npp2.PlaceMarker(MARK_DEBUGSTEP, location.Line);
+            document.PlaceIndicator(INDICATOR_DEBUGSTEP, location.Start, location.End);
+            document.PlaceMarker(MARK_DEBUGSTEP, location.Line);
 
-            int start = Npp2.GetFirstVisibleLine();
-            int end = start + Npp2.GetLinesOnScreen();
+            int start = document.GetFirstVisibleLine();
+            int end = start + document.LinesOnScreen();
             if (location.Line > end || location.Line < start)
             {
-                Npp2.SetFirstVisibleLine(Math.Max(location.Line - (end - start) / 2, 0));
+                document.SetFirstVisibleLine(Math.Max(location.Line - (end - start) / 2, 0));
             }
 
-            Npp2.SetCaretPosition(location.Start);
-            Npp2.ClearSelection(); //need this one as otherwise parasitic selection can be triggered
+            document.SetCurrentPos(location.Start);
+            document.ClearSelection(); //need this one as otherwise parasitic selection can be triggered
 
             Win32.SetForegroundWindow(Npp.Editor.Handle);
         }
@@ -910,10 +922,11 @@ namespace CSScriptNpp
         {
             if (lastLocation != null)
             {
+                var document = Npp.GetCurrentDocument();
                 if (string.Compare(Npp.Editor.GetCurrentFilePath(), lastLocation.File, true) == 0)
                 {
-                    Npp2.ClearIndicator(INDICATOR_DEBUGSTEP, lastLocation.Start, lastLocation.End);
-                    Npp2.DeleteAllMarkers(MARK_DEBUGSTEP);
+                    document.ClearIndicator(INDICATOR_DEBUGSTEP, lastLocation.Start, lastLocation.End);
+                    document.DeleteAllMarkers(MARK_DEBUGSTEP);
                 }
             }
         }
@@ -978,8 +991,9 @@ namespace CSScriptNpp
             if (IsRunning && IsInBreak)
             {
                 ClearDebuggingMarkers();
+                var document = Npp.GetCurrentDocument();
 
-                int line = TranslateSourceLineLocation(Npp.Editor.GetCurrentFilePath(), Npp2.GetCaretLineNumber());
+                int line = TranslateSourceLineLocation(Npp.Editor.GetCurrentFilePath(), document.GetCurrentLineNumber());
 
                 DebuggerServer.SetInstructionPointer(line + 1); //debugger is 1-based
                 DebuggerServer.Break(); //need to break to trigger reporting the current step

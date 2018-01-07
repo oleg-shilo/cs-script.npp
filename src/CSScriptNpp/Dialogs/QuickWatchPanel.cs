@@ -22,18 +22,20 @@ namespace CSScriptNpp.Dialogs
                 return;
             }
 
+            var document = Npp.GetCurrentDocument();
+
             if (ownedByNpp)
             {
                 var dialog = new QuickWatchPanel();
                 Instance = dialog;
                 //string expression = Utils.GetStatementAtCaret();
-                string expression = Npp2.GetSelectedText();
+                string expression = document.GetSelectedText();
 
                 dialog.SetExpression(expression)
                       .SetAutoRefreshAvailable(Config.Instance.QuickViewAutoRefreshAvailable);
 
                 var nativeWindow = new NativeWindow();
-                nativeWindow.AssignHandle(PluginBase.nppData._nppHandle);
+                nativeWindow.AssignHandle(Npp.Editor.Handle);
 
                 dialog.Show(nativeWindow);
             }
@@ -51,7 +53,7 @@ namespace CSScriptNpp.Dialogs
                                     using (QuickWatchPanel dialog = new QuickWatchPanel())
                                     {
                                         Instance = dialog;
-                                        string expression = Npp2.GetSelectedText();
+                                        string expression = document.GetSelectedText();
 
                                         if (string.IsNullOrWhiteSpace(expression))
                                             expression = Npp.GetCurrentDocument().GetStatementAtPosition();

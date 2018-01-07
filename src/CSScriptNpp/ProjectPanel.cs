@@ -39,7 +39,7 @@ namespace CSScriptNpp
                     if (file.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
                         LoadScript(file);
                     else
-                        Npp2.OpenFile(file, true);
+                        Npp.Editor.OpenFile(file, true);
                 };
 
             RefreshControls();
@@ -184,7 +184,7 @@ namespace CSScriptNpp
 
         void EditItem(string scriptFile)
         {
-            Npp2.OpenFile(scriptFile, true);
+            Npp.Editor.OpenFile(scriptFile, true);
         }
 
         void newBtn_Click(object sender, EventArgs e)
@@ -366,7 +366,7 @@ void main(string[] args)
                     if (!CurrentDocumentBelongsToProject())
                         EditItem(currentScript);
 
-                    Npp2.SaveDocuments(GetProjectDocuments());
+                    npp.SaveDocuments(GetProjectDocuments());
 
                     if (asExternal)
                     {
@@ -576,7 +576,7 @@ void main(string[] args)
                         if (!CurrentDocumentBelongsToProject())
                             EditItem(currentScript);
 
-                        Npp2.SaveDocuments(GetProjectDocuments());
+                        npp.SaveDocuments(GetProjectDocuments());
 
                         CSScriptHelper.Build(currentScript);
 
@@ -777,7 +777,7 @@ void main(string[] args)
                 {
                     try
                     {
-                        Npp2.OpenFile(scriptFile, true);
+                        Npp.Editor.OpenFile(scriptFile, true);
 
                         Project project = CSScriptHelper.GenerateProjectFor(scriptFile);
 
@@ -986,7 +986,7 @@ void main(string[] args)
                         {
                             EditItem(currentScript);
 
-                            Npp2.SaveDocuments(GetProjectDocuments());
+                            npp.SaveDocuments(GetProjectDocuments());
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
                             string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp);

@@ -67,14 +67,15 @@ namespace CSScriptNpp
                     if (info.Line != -1)
                     {
                         var document = Npp.GetCurrentDocument();
+
                         document.GrabFocus();
 
-                        int currentLineNum = Npp2.GetCaretLineNumber();
-                        int prevLineEnd = Npp2.GetLineStart(currentLineNum) - Environment.NewLine.Length;
-                        int topScrollOffset = currentLineNum - Npp2.GetFirstVisibleLine();
+                        int currentLineNum = document.GetCurrentLineNumber();
+                        int prevLineEnd = document.PositionFromLine(currentLineNum) - Environment.NewLine.Length;
+                        int topScrollOffset = currentLineNum - document.GetFirstVisibleLine();
 
                         document.GotoLine(info.Line);
-                        Npp2.SetFirstVisibleLine(info.Line - topScrollOffset);
+                        document.SetFirstVisibleLine(info.Line - topScrollOffset);
                     }
                 }
                 catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
@@ -98,10 +99,12 @@ namespace CSScriptNpp
                     watcher.Filter = Path.GetFileName(currentFile);
                 }
 
+                var document = Npp.GetCurrentDocument();
+
                 if (file.IsScriptFile())
-                    GenerateContent(Npp2.GetTextBetween(0));
+                    GenerateContent(document.GetTextBetween(0));
                 else if (file.IsPythonFile())
-                    GenerateContentPython(Npp2.GetTextBetween(0));
+                    GenerateContentPython(document.GetTextBetween(0));
             }
             else
             {

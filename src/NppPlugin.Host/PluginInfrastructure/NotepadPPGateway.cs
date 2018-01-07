@@ -86,6 +86,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             }
         }
 
+        public string GetTabFile(IntPtr index)
+        {
+            var path = new StringBuilder(2000);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETFULLPATHFROMBUFFERID, index, path);
+            return path.ToString();
+        }
+
         /// <summary>
         /// Gets the path of the current document.
         /// </summary>
