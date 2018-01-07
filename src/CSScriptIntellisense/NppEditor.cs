@@ -6,7 +6,7 @@ using System.IO;
 
 namespace CSScriptIntellisense
 {
-    class NppEditor : Npp1
+    class NppEditor : npp
     {
         public static void InsertNamespace(string text)
         {

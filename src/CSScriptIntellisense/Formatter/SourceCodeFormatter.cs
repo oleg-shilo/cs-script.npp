@@ -24,7 +24,7 @@ namespace CSScriptIntellisense
 
                 int currentPos = document.GetCurrentPos();
                 CaretBeforeLastFormatting = currentPos;
-                string code = document.GetTextBetween(0, Npp1.DocEnd);
+                string code = document.GetTextBetween(0, npp.DocEnd);
 
                 if (code.Any() && currentPos != -1 && currentPos < code.Length)
                 {
@@ -37,7 +37,7 @@ namespace CSScriptIntellisense
 
                     if (newCode != null)
                     {
-                        document.SetTextBetween(newCode, 0, Npp1.DocEnd);
+                        document.SetTextBetween(newCode, 0, npp.DocEnd);
 
                         document.SetCurrentPos(currentPos);
                         document.ClearSelection();

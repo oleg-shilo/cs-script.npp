@@ -126,7 +126,7 @@ namespace CSScriptNpp
                 //<GUIConfig name="auto-completion" autoCAction="0" triggerFromNbChar="1" funcParams="no" />
                 try
                 {
-                    var config = XDocument.Load(CSScriptIntellisense.Npp1.GetNppConfigFile())
+                    var config = XDocument.Load(CSScriptIntellisense.npp.GetNppConfigFile())
                                                         .Root
                                                         .Descendants("GUIConfig")
                                                         .Where(x => x.Attribute("name")?.Value == "auto-completion")
@@ -213,7 +213,7 @@ namespace CSScriptNpp
             AddInternalShortcuts("_Debug:Alt+F5",
                                  "Debug", () =>
                                   {
-                                      if (!Debugger.IsRunning && Npp1.IsCurrentScriptFile())
+                                      if (!Debugger.IsRunning && Npp.Editor.IsCurrentDocScriptFile())
                                           DebugScript();
                                   }, uniqueKeys);
 
@@ -248,7 +248,7 @@ namespace CSScriptNpp
             AddInternalShortcuts("RunAsExternal:Ctrl+F5",
                                   "Run As External Process", () =>
                                   {
-                                      if (Npp1.IsCurrentScriptFile())
+                                      if (Npp.Editor.IsCurrentDocScriptFile())
                                           RunAsExternal();
                                   }, uniqueKeys);
 
@@ -511,7 +511,7 @@ namespace CSScriptNpp
             {
                 Debugger.Go();
             }
-            else if (Npp1.IsCurrentScriptFile() && runningScript == null)
+            else if (Npp.Editor.IsCurrentDocScriptFile() && runningScript == null)
             {
                 if (Plugin.ProjectPanel == null)
                     InitProjectPanel();
@@ -700,7 +700,7 @@ namespace CSScriptNpp
             if (CodeMapPanel != null)
                 CodeMapPanel.RefreshContent();
 
-            if (Npp1.IsCurrentScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtNppStartup)
+            if (Npp.Editor.IsCurrentDocScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtNppStartup)
             {
                 CSScriptHelper.InitRoslyn();
             }

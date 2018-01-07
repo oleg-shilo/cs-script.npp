@@ -176,7 +176,7 @@ namespace CSScriptIntellisense
             int fullLength = document.GetLength();
 
             string leftText = document.TextBeforePosition(currentPos, 512);
-            string rightText = Npp1.TextAfterPosition(currentPos, 512);
+            string rightText = document.TextAfterPosition(currentPos, 512);
 
             //if updating do not forger to update SimpleCodeCompletion.Delimiters
             var delimiters = "\\·\t\n\r .,:;'\"=[]{}()+-/!?@$%^&*«»><#|~`".ToCharArray();
@@ -255,13 +255,88 @@ namespace CSScriptIntellisense
             document.SetSelectionEnd(currentPos);
         }
 
-        static public void DisplayInNewDocument(string text)
+        static public Point[] FindIndicatorRanges(this ScintillaGateway document, int indicator)
         {
-            Npp.Editor.FileNew();
+            var ranges = new List<Point>();
 
-            var document = PluginBase.GetCurrentDocument();
-            document.GrabFocus();
-            document.AddText(text);
+            int testPosition = 0;
+
+            while (true)
+            {
+                //finding the indicator ranges
+                //For example indicator 4..6 in the doc 0..10 will have three logical regions:
+                //0..4, 4..6, 6..10
+                //Probing will produce following when outcome:
+                //probe for 0 : 0..4
+                //probe for 4 : 4..6
+                //probe for 6 : 4..10
+
+                int rangeStart = document.IndicatorStart(indicator, testPosition);
+                int rangeEnd = document.IndicatorEnd(indicator, testPosition);
+                int value = document.IndicatorValueAt(indicator, testPosition);
+                if (value == 1) //indicator is present
+                    ranges.Add(new Point(rangeStart, rangeEnd));
+
+                if (testPosition == rangeEnd)
+                    break;
+
+                testPosition = rangeEnd;
+            }
+
+            return ranges.ToArray();
+        }
+
+        [DllImport("user32")]
+        public static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
+
+        [DllImport("user32")]
+        public static extern bool ScreenToClient(IntPtr hWnd, ref Point lpPoint);
+
+        static public Point GetCaretScreenLocation(this ScintillaGateway document)
+        {
+            int pos = document.GetCurrentPos();
+            int x = document.PointXFromPosition(pos);
+            int y = document.PointYFromPosition(pos);
+
+            var point = new Point(x, y);
+            ClientToScreen(document.Handle, ref point);
+            return point;
+        }
+
+        static public int GetPositionFromMouseLocation(this ScintillaGateway document)
+        {
+            Point point = Cursor.Position;
+            ScreenToClient(document.Handle, ref point);
+
+            int pos = document.CharPositionFromPointClose(point.X, point.Y);
+            return pos;
+        }
+
+        static public string TextAfterCursor(this ScintillaGateway document, int maxLength)
+        {
+            int currentPos = document.GetCurrentPos();
+            return TextAfterPosition(document, currentPos, maxLength);
+        }
+
+        static public string TextAfterPosition(this ScintillaGateway document, int position, int maxLength)
+        {
+            int bufCapacity = maxLength + 1;
+            int currentPos = position;
+            int fullLength = document.GetLength();
+            int startPos = currentPos;
+            int endPos = Math.Min(currentPos + bufCapacity, fullLength);
+            int size = endPos - startPos;
+
+            if (size > 0)
+            {
+                using (var tr = new TextRange(startPos, endPos, bufCapacity))
+                {
+                    document.GetTextRange(tr);
+                    return tr.lpstrText;
+                }
+            }
+            else
+                return null;
         }
     }
 }

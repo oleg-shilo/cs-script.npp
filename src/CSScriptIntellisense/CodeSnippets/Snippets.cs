@@ -86,7 +86,7 @@ namespace CSScriptIntellisense
         static public void FinalizeCurrent()
         {
             var document = Npp.GetCurrentDocument();
-            var indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);
+            var indicators = document.FindIndicatorRanges(SnippetContext.indicatorId);
 
             foreach (var range in indicators)
                 document.ClearIndicator(SnippetContext.indicatorId, range.X, range.Y);
@@ -107,15 +107,15 @@ namespace CSScriptIntellisense
 
         static public bool NavigateToNextParam(SnippetContext context)
         {
-            var indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);
+            var document = Npp.GetCurrentDocument();
+
+            var indicators = document.FindIndicatorRanges(SnippetContext.indicatorId);
 
             if (!indicators.Any())
                 return false;
 
             Point currentParam = context.CurrentParameter.Value;
             string currentParamOriginalText = context.CurrentParameterValue;
-
-            var document = Npp.GetCurrentDocument();
 
             document.SetSelection(currentParam.X, currentParam.X);
             string currentParamDetectedText = document.GetWordAtCursor("\t\n\r ,;'\"".ToCharArray());
@@ -126,7 +126,7 @@ namespace CSScriptIntellisense
                 document.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
                 document.PlaceIndicator(SnippetContext.indicatorId, currentParam.X, currentParam.X + currentParamDetectedText.Length);
 
-                indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
+                indicators = document.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
 
                 var paramsInfo = indicators.Select(p =>
                                                    new
@@ -144,7 +144,7 @@ namespace CSScriptIntellisense
                 foreach (var param in paramsToUpdate)
                 {
                     Snippets.ReplaceTextAtIndicator(currentParamDetectedText, indicators[param.Index]);
-                    indicators = Npp1.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
+                    indicators = document.FindIndicatorRanges(SnippetContext.indicatorId);//needs refreshing as the document is modified
                 }
             }
 

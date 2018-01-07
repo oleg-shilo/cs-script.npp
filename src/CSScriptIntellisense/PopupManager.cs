@@ -45,7 +45,7 @@ namespace CSScriptIntellisense
                     form => //on opening
                     {
                         if (!simple)
-                            form.LeftBottomCorner = Npp1.GetCaretScreenLocation();
+                            form.LeftBottomCorner = Npp.GetCurrentDocument().GetCaretScreenLocation();
                         else
                             form.LeftBottomCorner = Cursor.Position;
 
@@ -76,14 +76,14 @@ namespace CSScriptIntellisense
 
                             Task.Factory.StartNew(() =>
                                 {
-                                    Rectangle rect = Npp1.GetClientRect();
+                                    Rectangle rect = npp.GetClientRect();
 
                                     while (popupForm != null)
                                     {
                                         try
                                         {
                                             Npp.GetCurrentDocument().GrabFocus();
-                                            var newRect = Npp1.GetClientRect();
+                                            var newRect = npp.GetClientRect();
                                             if (rect != newRect) //if NPP moved, resized close the popup
                                             {
                                                 base.Close();

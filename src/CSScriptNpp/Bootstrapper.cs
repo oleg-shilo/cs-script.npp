@@ -117,7 +117,7 @@ namespace CSScriptNpp
         {
             try
             {
-                CSScriptHelper.NotifyClient = CSScriptIntellisense.Npp1.SetStatusbarLabel;
+                CSScriptHelper.NotifyClient = CSScriptIntellisense.npp.SetStatusbarLabel;
                 CSScriptIntellisense.CSScriptHelper.GetEngineExe = () => CSScriptHelper.cscs_exe;
                 UltraSharp.Cecil.Reflector.GetCodeCompileOutput = CSScriptHelper.GetCodeCompileOutput;
             }

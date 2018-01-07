@@ -44,14 +44,17 @@ public partial class PluginEnv
 
 namespace CSScriptIntellisense
 {
-    public class Npp1
+    public static class npp_extensions
+    {
+        static public bool IsCurrentDocScriptFile(this NotepadPPGateway editor)
+        {
+            return editor.GetCurrentFilePath().IsScriptFile();
+        }
+    }
+
+    public class npp
     {
         public const int DocEnd = -1;
-
-        static public bool IsCurrentScriptFile()
-        {
-            return Npp.Editor.GetCurrentFilePath().IsScriptFile();
-        }
 
         static public void ReloadFile(bool showAlert, string file)
         {
@@ -83,39 +86,6 @@ namespace CSScriptIntellisense
             SetWindowPos(frm.Handle.ToInt32(), PluginBase.nppData._nppHandle.ToInt32(), frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
         }
 
-        static public Point[] FindIndicatorRanges(int indicator)
-        {
-            var ranges = new List<Point>();
-
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-
-            int testPosition = 0;
-
-            while (true)
-            {
-                //finding the indicator ranges
-                //For example indicator 4..6 in the doc 0..10 will have three logical regions:
-                //0..4, 4..6, 6..10
-                //Probing will produce following when outcome:
-                //probe for 0 : 0..4
-                //probe for 4 : 4..6
-                //probe for 6 : 4..10
-
-                int rangeStart = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORSTART, indicator, testPosition);
-                int rangeEnd = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATOREND, indicator, testPosition);
-                int value = (int)Win32.SendMessage(sci, SciMsg.SCI_INDICATORVALUEAT, indicator, testPosition);
-                if (value == 1) //indicator is present
-                    ranges.Add(new Point(rangeStart, rangeEnd));
-
-                if (testPosition == rangeEnd)
-                    break;
-
-                testPosition = rangeEnd;
-            }
-
-            return ranges.ToArray();
-        }
-
         static public string GetShortcutsFile()
         {
             return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.Editor.GetPluginsConfigDir())), "shortcuts.xml");
@@ -128,73 +98,11 @@ namespace CSScriptIntellisense
 
         static public string ContextMenuFile
         {
-            get
-            {
-                return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.Editor.GetPluginsConfigDir())), "contextMenu.xml");
-            }
+            get { return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Npp.Editor.GetPluginsConfigDir())), "contextMenu.xml"); }
         }
-
-        [DllImport("user32")]
-        public static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
-
-        [DllImport("user32")]
-        public static extern bool ScreenToClient(IntPtr hWnd, ref Point lpPoint);
 
         [DllImport("user32.dll")]
         public static extern long GetWindowRect(IntPtr hWnd, ref Rectangle lpRect);
-
-        static public Point GetCaretScreenLocation()
-        {
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-            int pos = (int)Win32.SendMessage(sci, SciMsg.SCI_GETCURRENTPOS, 0, 0);
-            int x = (int)Win32.SendMessage(sci, SciMsg.SCI_POINTXFROMPOSITION, 0, pos);
-            int y = (int)Win32.SendMessage(sci, SciMsg.SCI_POINTYFROMPOSITION, 0, pos);
-
-            Point point = new Point(x, y);
-            ClientToScreen(sci, ref point);
-            return point;
-        }
-
-        static public int GetPositionFromMouseLocation()
-        {
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-
-            Point point = Cursor.Position;
-            ScreenToClient(sci, ref point);
-
-            int pos = (int)Win32.SendMessage(sci, SciMsg.SCI_CHARPOSITIONFROMPOINTCLOSE, point.X, point.Y);
-
-            return pos;
-        }
-
-        static public string TextAfterCursor(int maxLength)
-        {
-            IntPtr hCurrentEditView = PluginBase.GetCurrentScintilla();
-            int currentPos = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETCURRENTPOS, 0, 0);
-            return TextAfterPosition(currentPos, maxLength);
-        }
-
-        static public string TextAfterPosition(int position, int maxLength)
-        {
-            int bufCapacity = maxLength + 1;
-            IntPtr hCurrentEditView = PluginBase.GetCurrentScintilla();
-            int currentPos = position;
-            int fullLength = (int)Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETLENGTH, 0, 0);
-            int startPos = currentPos;
-            int endPos = Math.Min(currentPos + bufCapacity, fullLength);
-            int size = endPos - startPos;
-
-            if (size > 0)
-            {
-                using (var tr = new TextRange(startPos, endPos, bufCapacity))
-                {
-                    Win32.SendMessage(hCurrentEditView, SciMsg.SCI_GETTEXTRANGE, 0, tr.NativePointer);
-                    return tr.lpstrText;
-                }
-            }
-            else
-                return null;
-        }
 
         static public Rectangle GetClientRect()
         {

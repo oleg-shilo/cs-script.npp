@@ -277,7 +277,7 @@ namespace CSScriptIntellisense
 
         void timer1_Tick(object sender, EventArgs e)
         {
-            var rect = Npp1.GetWindowRect();
+            var rect = npp.GetWindowRect();
 
             if (nppRect.HasValue && nppRect.Value != rect)
                 Close();

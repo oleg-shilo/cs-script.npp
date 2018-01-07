@@ -162,7 +162,7 @@ namespace CSScriptIntellisense
                 if (!currentProcessExe.EndsWith("notepad++.exe", System.StringComparison.OrdinalIgnoreCase))
                     return false;
 
-                var lines = File.ReadAllLines(Npp1.ContextMenuFile).ToList();
+                var lines = File.ReadAllLines(npp.ContextMenuFile).ToList();
                 bool actuallyConfigured = lines.Any(x => x.Contains("PluginEntryName=\"CS-Script\""));
                 if (UseCmdContextMenu != actuallyConfigured)
                 {
@@ -179,7 +179,7 @@ namespace CSScriptIntellisense
                             lines.RemoveAt(separator);
                         lines.RemoveAll(x => x.Contains("PluginEntryName=\"CS-Script\""));
 
-                        File.WriteAllLines(Npp1.ContextMenuFile, lines.ToArray());
+                        File.WriteAllLines(npp.ContextMenuFile, lines.ToArray());
                         updated = true;
                     }
                     else
@@ -198,7 +198,7 @@ namespace CSScriptIntellisense
                         foreach (var item in commands)
                             lines.Insert(start, $"        <Item FolderName=\"{group}\" PluginEntryName=\"{plugin}\" PluginCommandItemName=\"{item}\" ItemNameAs=\"{item}\"/>");
 
-                        File.WriteAllLines(Npp1.ContextMenuFile, lines.ToArray());
+                        File.WriteAllLines(npp.ContextMenuFile, lines.ToArray());
                         updated = true;
                     }
                 }
@@ -207,7 +207,7 @@ namespace CSScriptIntellisense
             {
                 try
                 {
-                    UseCmdContextMenu = File.ReadAllLines(Npp1.ContextMenuFile)
+                    UseCmdContextMenu = File.ReadAllLines(npp.ContextMenuFile)
                                             .Any(x => x.Contains("PluginEntryName=\"CS-Script\""));
                 }
                 catch { }
