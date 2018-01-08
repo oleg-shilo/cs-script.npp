@@ -20,7 +20,7 @@ install:
     - if "%platform%"=="x64" set platform_input=x64
 
     - if "%platform%"=="Any CPU" set archi=x86
-    - if "%platform%"=="Any CPU" set platform_input=Any CPU
+    - if "%platform%"=="Any CPU" set platform_input=x86
 
     - if "%PlatformToolset%"=="VS15" call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %archi%
     - if "%PlatformToolset%"=="VS17" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
@@ -33,7 +33,7 @@ init:
 
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"\src
-    - msbuild CSScriptNpp.sln  /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - msbuild CSScriptNpp.sln /p:configuration="%configuration%" /p:platform="%platform_input%"  /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
     # - cd "%APPVEYOR_BUILD_FOLDER%"\src\CSScriptNpp
