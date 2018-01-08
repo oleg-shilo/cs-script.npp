@@ -9,7 +9,7 @@ environment:
 
 platform:
     - x64
-    - Any CPU
+    - x86
 
 configuration:
     - Release
@@ -19,8 +19,8 @@ install:
     - if "%platform%"=="x64" set archi=amd64
     - if "%platform%"=="x64" set platform_input=x64
 
-    - if "%platform%"=="Any CPU" set archi=x86
-    - if "%platform%"=="Any CPU" set platform_input=x86
+    - if "%platform%"=="x86" set archi=x86
+    - if "%platform%"=="x86" set platform_input=x86
 
     - if "%PlatformToolset%"=="VS15" call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %archi%
     - if "%PlatformToolset%"=="VS17" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
