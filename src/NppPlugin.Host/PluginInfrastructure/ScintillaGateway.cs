@@ -15,7 +15,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         private const int Unused = 0;
 
         private readonly IntPtr scintilla;
-        public IntPtr Handle { get => scintilla; }
+        public IntPtr Handle { get { return scintilla; } }
 
         public static readonly int LengthZeroTerminator = "\0".Length;
 
