@@ -31,7 +31,7 @@ namespace CSScriptNpp
 
             //left 'panel' arrow and breakpoint image
             document.SetMarkerStyle(MARK_DEBUGSTEP, SciMsg.SC_MARK_SHORTARROW, ColorFromConfig(Config.Instance.DebugStepPointForeColor, Color.Black), debugStepPointColor);
-            // Npp.SetMarkerStyle(MARK_BREAKPOINT, CSScriptNpp.Resources.Resources.breakpoint); // !!!
+            document.SetMarkerStyle(MARK_BREAKPOINT, CSScriptNpp.Resources.Resources.breakpoint);
 
             Debugger.BreakOnException = Config.Instance.BreakOnException;
         }
@@ -809,21 +809,22 @@ namespace CSScriptNpp
 
         static public void TranslateCompiledLocation(FileLocation location)
         {
-            //Shocking!!!
-            //For selection, ranges, text length, navigation
-            //Scintilla operates in units, which are not characters but bytes.
-            //thus if for the document content "test" you execute selection(start:0,end:3)
-            //it will select the whole word [test]
-            //However the same for the Cyrillic content "тест" will
-            //select only two characters [те]ст because they compose
-            //4 bytes.
+            // Shocking!!!
+            // For selection, ranges, text length, navigation
+            // Scintilla operates in units, which are not characters but bytes.
+            // thus if for the document content "test" you execute selection(start:0,end:3)
+            // it will select the whole word [test]
+            // However the same for the Cyrillic content "тест" will
+            // select only two characters [те]ст because they compose
+            // 4 bytes.
             //
-            //Basically in Scintilla language "position" is not a character offset
-            //but a byte offset.
+            // Basically in Scintilla language "position" is not a character offset
+            // but a byte offset.
             //
-            //This is a hard to believe Scintilla flaw!!!
-            //The problem is discussed here: https://scintillanet.codeplex.com/discussions/218036
-            //And here: https://scintillanet.codeplex.com/discussions/455082
+            // This is a hard to believe Scintilla design flaw!!!
+            //
+            // The problem is discussed here: https://scintillanet.codeplex.com/discussions/218036
+            // And here: https://scintillanet.codeplex.com/discussions/455082
 
             //Debug.WriteLine("-----------------------------");
             //Debug.WriteLine("Before: {0} ({1},{2})", location.File, location.Start, location.End);

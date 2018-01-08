@@ -1,4 +1,6 @@
-﻿using Kbg.NppPluginNET.PluginInfrastructure;
+﻿using CSScriptNpp;
+using Kbg.NppPluginNET;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using NppPlugin.DllExport;
 using System;
 using System.Diagnostics;
@@ -9,21 +11,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+public class NppPluginBinder
+{
+    static public void bind(string hostAssemblyFile)
+    {
+        Assembly.LoadFrom(hostAssemblyFile); // to avoid complicated probing scenarios
+    }
+}
+
 namespace CSScriptNpp
 {
-    public class UnmanagedExports
+    public class UnmanagedExports : IUnmanagedExports
     {
-        public static void bind(string hostAssemblyFile)
-        {
-            Assembly.LoadFrom(hostAssemblyFile); // to avoid complicated probing scenarios
-        }
-
-        public static bool isUnicode()
+        public bool isUnicode()
         {
             return true;
         }
 
-        public static void setInfo(NppData notepadPlusData)
+        public void setInfo(NppData notepadPlusData)
         {
             try
             {
@@ -40,7 +45,7 @@ namespace CSScriptNpp
             }
         }
 
-        static void InitPlugin()
+        void InitPlugin()
         {
             try
             {
@@ -57,13 +62,13 @@ namespace CSScriptNpp
             }
         }
 
-        public static IntPtr getFuncsArray(ref int nbF)
+        public IntPtr getFuncsArray(ref int nbF)
         {
             nbF = PluginBase._funcItems.Items.Count;
             return PluginBase._funcItems.NativePointer;
         }
 
-        public static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
+        public uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
         {
             //WM_ACTIVATE                     0x0006
             //WM_ACTIVATEAPP                  0x001C
@@ -75,7 +80,7 @@ namespace CSScriptNpp
 
         static IntPtr _ptrPluginName = IntPtr.Zero;
 
-        public static IntPtr getName()
+        public IntPtr getName()
         {
             if (_ptrPluginName == IntPtr.Zero)
                 _ptrPluginName = Marshal.StringToHGlobalUni(Plugin.PluginName);
@@ -87,7 +92,7 @@ namespace CSScriptNpp
 
         static string lastActivatedBuffer = null;
 
-        public static void beNotified(IntPtr notifyCode)
+        public void beNotified(IntPtr notifyCode)
         {
             try
             {

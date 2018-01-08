@@ -493,13 +493,13 @@ namespace CSScriptNpp
         /// <summary>
         /// This is a work around that nasty-nasty defect associated with comboboxes hosted by OutputPanel.
         /// The problem manifests itself in the freshly inserted empty combobox being populated after startup with
-        /// exactly two items:
+        /// exactly these two items:
         /// "English (Great Britain) [!For All Users]"
         /// "English (United States) [!For All Users]"
-        /// And the user code has NO code that inserts ANY item at all!!!!! It inly instantiates the combobox and
-        /// places it on the form. That is it.
+        /// And this is despite the fact that the user code has NO code that inserts ANY item at all!!!!! It only instantiates
+        /// the combobox and places it on the form. That is it.
         ///
-        /// This happens on NPP startup in ~50% of cases. Hard to tell who does the insertion but the user experience
+        /// This happens on NPP startup in ~50% of cases. Hard to tell who does the item insertion but the user experience
         /// is severely affected. Thus the work around is to clear and repopulate the combobox items when we detect that
         /// the Items content is not what we expect (e.g. Text is none of the Items).
         /// </summary>

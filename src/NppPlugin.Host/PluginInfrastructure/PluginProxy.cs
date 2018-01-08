@@ -12,31 +12,37 @@ namespace Kbg.NppPluginNET
 {
     static class PluginProxy
     {
-        static object[] _empty = new object[0];
-        static MethodInfo _isUnicode;
-        static MethodInfo _setInfo;
-        static MethodInfo _getFuncsArray;
-        static MethodInfo _messageProc;
-        static MethodInfo _getName;
-        static MethodInfo _beNotified;
+        static IUnmanagedExports plugin;
 
-        public static bool isUnicode() => (bool)_isUnicode.Invoke(null, _empty);
+        public static bool isUnicode()
+        {
+            return plugin.isUnicode();
+        }
 
-        public static void setInfo(NppData notepadPlusData) => _setInfo.Invoke(null, new object[] { notepadPlusData });
+        public static void setInfo(NppData notepadPlusData)
+        {
+            plugin.setInfo(notepadPlusData);
+        }
 
         public static IntPtr getFuncsArray(ref int nbF)
         {
-            var args = new object[] { nbF };
-            var result = (IntPtr)_getFuncsArray.Invoke(null, args);
-            nbF = (int)args[0];
-            return result;
+            return plugin.getFuncsArray(ref nbF);
         }
 
-        public static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam) => (uint)_messageProc.Invoke(null, new object[] { Message, wParam, lParam });
+        public static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
+        {
+            return plugin.messageProc(Message, wParam, lParam);
+        }
 
-        public static IntPtr getName() => (IntPtr)_getName.Invoke(null, _empty);
+        public static IntPtr getName()
+        {
+            return plugin.getName();
+        }
 
-        public static void beNotified(IntPtr notifyCode) => _beNotified.Invoke(null, new object[] { notifyCode });
+        public static void beNotified(IntPtr notifyCode)
+        {
+            plugin.beNotified(notifyCode);
+        }
 
         public static void Init()
         {
@@ -45,18 +51,20 @@ namespace Kbg.NppPluginNET
 
             string pluginPath = Path.Combine(Path.GetDirectoryName(thisAssembly), pluginName, pluginName + ".dll");
 
+            Assembly pluginAssembly = Assembly.LoadFrom(pluginPath);
+
+            // At this stage any call to pluginAssembly.GetTypes() will throw asm probing error.
+            // That's why we need to bing host and plugin first, so plugin does not have to
+            // resolve/probe NppPlugin.Host assembly.
+
+            Type binder = pluginAssembly.GetType("NppPluginBinder");
+            binder.GetMethod("bind").Invoke(null, new object[] { thisAssembly });
+
             Type exports = Assembly.LoadFrom(pluginPath)
                                    .GetTypes()
-                                   .FirstOrDefault(t => t.Name == "UnmanagedExports");
+                                   .FirstOrDefault(t => t.GetInterface("IUnmanagedExports") != null);
 
-            exports.GetMethod("bind").Invoke(null, new object[] { thisAssembly }); // call so plugin does not have to resolve/probe NppPlugin.Host assembly
-
-            _isUnicode = exports.GetMethod("isUnicode");
-            _setInfo = exports.GetMethod("setInfo");
-            _getFuncsArray = exports.GetMethod("getFuncsArray");
-            _messageProc = exports.GetMethod("messageProc");
-            _getName = exports.GetMethod("getName");
-            _beNotified = exports.GetMethod("beNotified");
+            plugin = (IUnmanagedExports)Activator.CreateInstance(exports);
         }
     }
 }

@@ -68,8 +68,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompatibilityTest", "Compat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher", "launcher\launcher.csproj", "{D23BF660-56D5-4F01-A067-C014BD04BE51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NppPlugin.Interface", "NppPlugin.Interface\NppPlugin.Interface.csproj", "{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NppPlugin.Host", "NppPlugin.Host\NppPlugin.Host.csproj", "{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}"
 EndProject
 Global
@@ -216,14 +214,6 @@ Global
 		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Release|x64.ActiveCfg = Release|x64
 		{D23BF660-56D5-4F01-A067-C014BD04BE51}.Release|x64.Build.0 = Release|x64
-		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Debug|x64.Build.0 = Debug|Any CPU
-		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Release|x64.ActiveCfg = Release|Any CPU
-		{A5CADFE2-6031-40A0-B6F6-1E72A9F279EF}.Release|x64.Build.0 = Release|Any CPU
 		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFD87B89-DE2E-4BD9-AB06-F1F58AF8C252}.Debug|x64.ActiveCfg = Debug|x64

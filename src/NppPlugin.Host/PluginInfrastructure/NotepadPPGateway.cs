@@ -7,9 +7,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 {
     public class Npp
     {
-        public static NotepadPPGateway Editor => PluginBase.Editor;
+        public static NotepadPPGateway Editor { get { return PluginBase.Editor; } }
 
-        public static ScintillaGateway GetCurrentDocument() => (ScintillaGateway)PluginBase.GetCurrentDocument();
+        public static ScintillaGateway GetCurrentDocument()
+        {
+            return (ScintillaGateway)PluginBase.GetCurrentDocument();
+        }
     }
 
     public interface INotepadPPGateway
@@ -29,7 +32,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     /// </summary>
     public class NotepadPPGateway : INotepadPPGateway
     {
-        public IntPtr Handle { get => PluginBase.nppData._nppHandle; }
+        public IntPtr Handle { get { return PluginBase.nppData._nppHandle; } }
 
         private const int Unused = 0;
 

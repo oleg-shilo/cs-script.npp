@@ -112,14 +112,16 @@ namespace CSScriptNpp
 
         static public void SetCalltipTime(int milliseconds)
         {
+            var document = Npp.GetCurrentDocument();
             IntPtr sci = PluginBase.GetCurrentScintilla();
-            IntPtr tt = Win32.SendMessage(sci, SciMsg.SCI_GETMOUSEDWELLTIME, 0, 0);
+            var ttt = document.GetMouseDwellTime();
 
             //Color: 0xBBGGRR
-            Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSETFORE, 0x000000, 0);
-            Win32.SendMessage(sci, SciMsg.SCI_CALLTIPSETBACK, 0xE3E3E3, 0);
 
-            Win32.SendMessage(sci, SciMsg.SCI_SETMOUSEDWELLTIME, milliseconds, 0);
+            document.CallTipSetFore(new Colour(0x000000));
+            document.CallTipSetBack(new Colour(0xE3E3E3));
+
+            document.SetMouseDwellTime(milliseconds);
         }
 
         // Shocking!!!
@@ -134,7 +136,7 @@ namespace CSScriptNpp
         // Basically in Scintilla language "position" is not a character offset
         // but a byte offset.
         //
-        // This is a hard to believe Scintilla flaw!!!
+        // This is a hard to believe Scintilla design flaw!!!
         //
         // The problem is discussed here: https://scintillanet.codeplex.com/discussions/218036
         // And here: https://scintillanet.codeplex.com/discussions/455082
