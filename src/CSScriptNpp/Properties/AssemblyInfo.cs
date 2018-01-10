@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CS-Script")]
 [assembly: AssemblyProduct("CS-Script for Notepad++")]
-[assembly: AssemblyCopyright("Copyright © Oleg Shilo 2014-2017")]
+[assembly: AssemblyCopyright("Copyright © Oleg Shilo 2014-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyDescription("Notepad++ plugin for CS-Script integration. \r\n" +
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.8.0.0")]
-[assembly: AssemblyFileVersion("1.8.0.0")]
+[assembly: AssemblyVersion("1.9.0.0")]
+[assembly: AssemblyFileVersion("1.9.0.0")]

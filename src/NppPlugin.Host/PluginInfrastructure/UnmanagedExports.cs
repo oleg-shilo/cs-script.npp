@@ -59,7 +59,7 @@ namespace Kbg.NppPluginNET
     {
         static UnmanagedExports()
         {
-            Debug.Assert(false);
+            // Debug.Assert(false);
             PluginProxy.Init();
         }
 

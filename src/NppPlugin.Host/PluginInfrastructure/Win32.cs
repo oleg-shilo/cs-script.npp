@@ -6,8 +6,7 @@ using System.Text;
 
 namespace Kbg.NppPluginNET.PluginInfrastructure
 {
-    // cs-script.npp
-    public partial class Win32
+    public class Win32
     {
         [Flags]
         public enum WinMsg : int
@@ -17,33 +16,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         [DllImport("user32.dll")]
         static public extern bool SetForegroundWindow(IntPtr hWnd);
-
-        // [DllImport("user32")]
-        // public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-
-        // public static IntPtr SendMenuCmd(IntPtr hWnd, NppMenuCmd wParam, IntPtr lParam)
-        // {
-        //     return Win32.SendMessage(hWnd, (uint)WinMsg.WM_COMMAND, (IntPtr)wParam, lParam);
-        // }
-
-        // public static IntPtr SendMessage(IntPtr hWnd, NppMsg Msg, int wParam, int lParam)
-        // {
-        //     return SendMessage(hWnd, (UInt32)Msg, new IntPtr(wParam), new IntPtr(lParam));
-        // }
-
-        // public static IntPtr SendMessage(IntPtr hWnd, NppMsg Msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam)
-        // {
-        //     return SendMessage(hWnd, (UInt32)Msg, new IntPtr(wParam), lParam);
-        // }
-
-        // public static IntPtr SendMessage(IntPtr hWnd, SciMsg Msg, string text)
-        // {
-        //     byte[] bites = Encoding.UTF8.GetBytes(text);
-        //     IntPtr ip = ToUnmanagedArray(bites);
-        //     var result = Win32.SendMessage(hWnd, Msg, bites.Length, ip);
-        //     Marshal.FreeHGlobal(ip);
-        //     return result;
-        // }
 
         static IntPtr ToUnmanagedArray(byte[] data)
         {
@@ -58,10 +30,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 return (IntPtr)newArrayPointer;
             }
         }
-    }
 
-    public partial class Win32
-    {
         /// <summary>
         /// You should try to avoid calling this method in your plugin code. Rather use one of the gateways such as
         /// <see cref="ScintillaGateway"/> or <see cref="NotepadPPGateway"/>.
