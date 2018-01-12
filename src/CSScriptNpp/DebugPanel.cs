@@ -17,7 +17,6 @@ namespace CSScriptNpp
         {
             InitializeComponent();
 
-
             UpdateButtonsTooltips();
 
             locals = new LocalsPanel();
@@ -77,14 +76,17 @@ namespace CSScriptNpp
 
         void UpdateControlsState()
         {
-            breakBtn.Enabled = Debugger.IsRunning && !Debugger.IsInBreak;
-            stopBtn.Enabled = Debugger.IsRunning;
-            goBtn.Enabled = !Debugger.IsRunning || (Debugger.IsRunning && Debugger.IsInBreak);
+            this.InUiThread(() =>
+            {
+                breakBtn.Enabled = Debugger.IsRunning && !Debugger.IsInBreak;
+                stopBtn.Enabled = Debugger.IsRunning;
+                goBtn.Enabled = !Debugger.IsRunning || (Debugger.IsRunning && Debugger.IsInBreak);
 
-            runToCursorBtn.Enabled =
-            stepIntoBtn.Enabled =
-            stepOutBtn.Enabled =
-            setNextBtn.Enabled = Debugger.IsRunning && Debugger.IsInBreak;
+                runToCursorBtn.Enabled =
+                stepIntoBtn.Enabled =
+                stepOutBtn.Enabled =
+                setNextBtn.Enabled = Debugger.IsRunning && Debugger.IsInBreak;
+            });
         }
 
         public void Clear()

@@ -11,26 +11,26 @@ using System.IO;
 namespace Kbg.NppPluginNET
 {
     /*
-         ```
-         <x86 ProgramFiles on x64 Windows>
-         ─ Program Files (x86)
-           └─ Notepad++
-              └─ plugins
-                  ├─ MyPlugin
-                  |  └─ MyPlugin.dll <AnyCPU assembly>
-                  └─ MyPlugin.x86.dll <renamed x86 version of NppPlugin.Host.dll>
+        ```
+        <x86 ProgramFiles on x64 Windows>
+        ─ Program Files (x86)
+        └─ Notepad++
+            └─ plugins
+                ├─ MyPlugin
+                |  └─ MyPlugin.dll <AnyCPU assembly>
+                └─ MyPlugin.x86.dll <renamed x86 version of NppPlugin.Host.dll>
 
-         ************************
+        ************************
 
-         <x64 ProgramFiles on x64 Windows>
-         ─ Program Files
-           └─ Notepad++
-              └─ plugins
-                  ├─ MyPlugin
-                  |  └─ MyPlugin.dll <AnyCPU assembly>
-                  └─ MyPlugin.x64.dll <renamed x64 version of NppPlugin.Host.dll>
+        <x64 ProgramFiles on x64 Windows>
+        ─ Program Files
+        └─ Notepad++
+            └─ plugins
+                ├─ MyPlugin
+                |  └─ MyPlugin.dll <AnyCPU assembly>
+                └─ MyPlugin.x64.dll <renamed x64 version of NppPlugin.Host.dll>
 
-         ```
+        ```
 
         From deployment point of view MyPlugin.x86.dll (host) depends on MyPlugin.dll (plugin).
         From CLR point of view it's vise versa, MyPlugin.dll (plugin) depends on MyPlugin.x86.dll (host).

@@ -39,6 +39,7 @@ namespace CSScriptNpp.Dialogs
         }
 
         Dictionary<int, int> columnsStartOffset = new Dictionary<int, int>();
+
         int GetColumnStartOffset(int index)
         {
             if (columnsStartOffset.ContainsKey(index))
@@ -54,7 +55,6 @@ namespace CSScriptNpp.Dialogs
 
         void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-
             focucedItem = listView1.GetItemAt(e.X, e.Y);
 
             // Check the subitem clicked .
@@ -89,7 +89,7 @@ namespace CSScriptNpp.Dialogs
             if (subItem == 0 && (item.Tag as DbgObject).Parent != null)
                 return;
 
-            //if (subItem == 1) //temporary do not allow changing the values as the feature is not ready yet 
+            //if (subItem == 1) //temporary do not allow changing the values as the feature is not ready yet
             //  return;
 
             //changing the value of the item allowed only for the primitive DbgObject
@@ -119,11 +119,15 @@ namespace CSScriptNpp.Dialogs
         }
 
         public delegate void OnEditCellCompleteHandler(int column, string oldValue, string newValue, DbgObject context, ref bool cancel);
+
         public delegate void OnEditCellStartHandler(int column, string value, DbgObject context, ref bool cancel);
+
         public delegate void OnReevaluateRequestHandler(DbgObject context);
 
         public event OnReevaluateRequestHandler ReevaluateRequest;
+
         public event OnEditCellCompleteHandler OnEditCellComplete;
+
         public event OnEditCellStartHandler OnEditCellStart;
 
         new void LostFocus(object sender, System.EventArgs e)
@@ -167,7 +171,6 @@ namespace CSScriptNpp.Dialogs
 
                 if (newText != null && !cancel)
                     focucedItem.SubItems[selectedSubItem].Text = newText;
-
             }
         }
 
@@ -225,6 +228,7 @@ namespace CSScriptNpp.Dialogs
                 ResizeValueColumn();
             }
         }
+
         public void UpdateData(string data)
         {
             DbgObject[] freshObjects = ToWatchObjects(data);
@@ -235,7 +239,6 @@ namespace CSScriptNpp.Dialogs
             var nonRootItems = new List<ListViewItem>();
 
             bool updated = false;
-
 
             foreach (ListViewItem item in listView1.Items)
             {
@@ -382,7 +385,6 @@ namespace CSScriptNpp.Dialogs
                             IsSeparator = true,
                             Children = privateMembers.ToArray()
                         });
-
             }
 
             if (fakeMembers.Any())
@@ -403,11 +405,14 @@ namespace CSScriptNpp.Dialogs
 
         public void InvalidateExpressions()
         {
-            foreach (var item in listView1.GetAllObjects())
-                if (item.IsRefreshable)
-                    item.IsCurrent = false;
+            this.InUiThread(() =>
+            {
+                foreach (var item in listView1.GetAllObjects())
+                    if (item.IsRefreshable)
+                        item.IsCurrent = false;
 
-            listView1.Invalidate();
+                listView1.Invalidate();
+            });
         }
 
         public void AddWatchObject(DbgObject item)

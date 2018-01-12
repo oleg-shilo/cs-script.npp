@@ -252,10 +252,6 @@ namespace CSScriptIntellisense
         {
             document.GotoLine(line + 20);
             document.GotoLine(line - 1);
-            /*
-            SCI_GETFIRSTVISIBLELINE = 2152,
-            SCI_GETLINE = 2153,
-            SCI_GETLINECOUNT = 2154,*/
         }
 
         static public void ScrollToCaret(this ScintillaGateway document)
@@ -421,7 +417,6 @@ namespace CSScriptIntellisense
 
             string bookmark_xpm = ConvertToXPM(bitmap, "#FF00FF");
             document.MarkerDefinePixmap(marker, bookmark_xpm);
-            // document.MarkerDefineRGBAImage
             document.SetMarginMaskN(1, (1 << marker) | mask);
         }
 

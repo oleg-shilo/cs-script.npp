@@ -584,20 +584,13 @@
     </Content>
     <None Include="Resources\favorites.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PluginInfrastructure\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
-    <PostBuildEvent>md "$(SolutionDir)deployment"
-md "$(SolutionDir)deployment\$(PlatformName)"
-md "$(SolutionDir)deployment\$(PlatformName)\plugins\"
-md "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)"
-md "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\MDbg"
+    <PostBuildEvent>md "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)"
+md "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg"
 
-del "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\MDbg\*"/Q
-del "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)*"/Q
-
-copy "$(ProjectDir)$(ProjectName)\NppPlugin.Host.$(PlatformName).dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName).$(PlatformName).dll"
+copy "$(ProjectDir)CSScriptNpp\$(TargetName).$(PlatformName).dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName).$(PlatformName).dll"
+copy "$(TargetPath)" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\$(TargetFileName)"
 copy "$(TargetDir)\CSScriptIntellisense.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\CSScriptIntellisense.dll"
 
 copy "$(ProjectDir)$(ProjectName)\CompatibilityTest.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\CompatibilityTest.exe"
@@ -620,22 +613,21 @@ copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Intellisense.Common.
 copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Mono.Cecil.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mono.Cecil.dll"
 
 copy "$(ProjectDir)$(ProjectName)\MDbg\corapi.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\corapi.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\corapi.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\corapi.dll"
+
 copy "$(ProjectDir)$(ProjectName)\MDbg\DbgAgent.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\DbgAgent.dll"
 copy "$(ProjectDir)$(ProjectName)\MDbg\enc.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\enc.dll"
 copy "$(ProjectDir)$(ProjectName)\MDbg\mdbg.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbg.exe"
 copy "$(ProjectDir)$(ProjectName)\MDbg\mdbgeng.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbgeng.dll"
 copy "$(ProjectDir)$(ProjectName)\MDbg\mdbgext.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbgext.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_32.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mmdbghost_32dbg.exe"
+copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_32.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbghost_32.exe"
 copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_64.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbghost_64.exe"
 copy "$(ProjectDir)$(ProjectName)\MDbg\NativeDebugWrappers.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\NativeDebugWrappers.dll"
 copy "$(ProjectDir)$(ProjectName)\MDbg\npp.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\npp.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\npp.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\enc.dll"
+copy "$(ProjectDir)$(ProjectName)\MDbg\raw.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\raw.dll"
 
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>copy "$(SolutionDir)\NppPlugin.Host\bin\$(PlatformName)\$(ConfigurationName)\NppPlugin.Host.dll" "$(SolutionDir)CSScriptNpp\CSScriptNpp\$(TargetName).$(PlatformName).dll"</PreBuildEvent>
   </PropertyGroup>
 </Project>

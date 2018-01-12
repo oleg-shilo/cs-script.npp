@@ -66,7 +66,7 @@ namespace CSScriptNpp
         {
             try
             {
-                //Debug.Assert(false);
+                // Debug.Assert(false);
 
                 //must be a separate method to allow assembly probing
                 pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName();
