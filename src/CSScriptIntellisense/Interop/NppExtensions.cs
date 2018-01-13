@@ -399,7 +399,8 @@ namespace CSScriptIntellisense
 
         static public Kbg.NppPluginNET.PluginInfrastructure.Colour ToColour(this Color color)
         {
-            return new Colour(ColorTranslator.ToWin32(color));
+            return new Colour(color.R, color.G, color.B);
+            // return new Colour(ColorTranslator.ToWin32(color));
         }
 
         static public void SetMarkerStyle(this ScintillaGateway document, int marker, SciMsg style, Color foreColor, Color backColor)

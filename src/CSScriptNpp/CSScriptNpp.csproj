@@ -46,42 +46,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release\</OutputPath>
-    <Optimize>true</Optimize>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <Optimize>true</Optimize>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -259,6 +223,9 @@
   <ItemGroup>
     <Reference Include="CSScriptLibrary">
       <HintPath>CSScriptNpp\CSScriptLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="NppPlugin.x86">
+      <HintPath>..\NppPlugin.Host\output\NppPlugin.x86.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -442,10 +409,6 @@
       <Project>{C67D7ED7-F350-4FD4-81B5-5E635FB08765}</Project>
       <Name>Intellisense.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NppPlugin.Host\NppPlugin.Host.csproj">
-      <Project>{ffd87b89-de2e-4bd9-ab06-f1f58af8c252}</Project>
-      <Name>NppPlugin.Host</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="CSScriptNpp\MDbg\enc.dll">
@@ -586,48 +549,51 @@
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
-    <PostBuildEvent>md "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)"
-md "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg"
+    <PostBuildEvent>md "$(SolutionDir)output\plugins\$(TargetName)"
+md "$(SolutionDir)output\plugins\$(TargetName)\Mdbg"
 
-copy "$(ProjectDir)CSScriptNpp\$(TargetName).$(PlatformName).dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName).$(PlatformName).dll"
-copy "$(TargetPath)" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\$(TargetFileName)"
-copy "$(TargetDir)\CSScriptIntellisense.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\CSScriptIntellisense.dll"
+copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x64.dll" "$(SolutionDir)output\plugins\$(TargetName).x64.dll"
+copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x86.dll" "$(SolutionDir)output\plugins\$(TargetName).x86.dll"
 
-copy "$(ProjectDir)$(ProjectName)\CompatibilityTest.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\CompatibilityTest.exe"
-copy "$(ProjectDir)$(ProjectName)\cscs.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\cscs.exe"
-copy "$(ProjectDir)$(ProjectName)\cscs.v3.5.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\cscs.v3.5.exe"
-copy "$(ProjectDir)$(ProjectName)\csws.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\csws.exe"
-copy "$(ProjectDir)$(ProjectName)\css_dbg.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\css_dbg.exe"
-copy "$(ProjectDir)$(ProjectName)\launcher.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\launcher.exe"
-copy "$(ProjectDir)$(ProjectName)\npp_jit.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\npp_jit.exe"
-copy "$(ProjectDir)$(ProjectName)\nuget.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\nuget.exe"
-copy "$(ProjectDir)$(ProjectName)\syntaxer.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\syntaxer.exe"
-copy "$(ProjectDir)$(ProjectName)\Updater.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Updater.exe"
-copy "$(ProjectDir)$(ProjectName)\CSScriptLibrary.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\CSScriptLibrary.dll"
-copy "$(ProjectDir)$(ProjectName)\CSSRoslynProvider.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\CSSRoslynProvider.dll"
-copy "$(ProjectDir)$(ProjectName)\CSScriptLibrary.xml" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\CSScriptLibrary.xml"
+copy "$(TargetPath)" "$(SolutionDir)output\plugins\$(TargetName)\$(TargetFileName)"
+copy "$(TargetDir)\CSScriptIntellisense.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptIntellisense.dll"
 
-copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\ICSharpCode.NRefactory.CSharp.dll"
-copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\ICSharpCode.NRefactory.dll"
-copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Intellisense.Common.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Intellisense.Common.dll"
-copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Mono.Cecil.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mono.Cecil.dll"
+copy "$(ProjectDir)$(ProjectName)\CompatibilityTest.exe" "$(SolutionDir)output\plugins\$(TargetName)\CompatibilityTest.exe"
+copy "$(ProjectDir)$(ProjectName)\cscs.exe" "$(SolutionDir)output\plugins\$(TargetName)\cscs.exe"
+copy "$(ProjectDir)$(ProjectName)\cscs.v3.5.exe" "$(SolutionDir)output\plugins\$(TargetName)\cscs.v3.5.exe"
+copy "$(ProjectDir)$(ProjectName)\csws.exe" "$(SolutionDir)output\plugins\$(TargetName)\csws.exe"
+copy "$(ProjectDir)$(ProjectName)\css_dbg.exe" "$(SolutionDir)output\plugins\$(TargetName)\css_dbg.exe"
+copy "$(ProjectDir)$(ProjectName)\launcher.exe" "$(SolutionDir)output\plugins\$(TargetName)\launcher.exe"
+copy "$(ProjectDir)$(ProjectName)\npp_jit.exe" "$(SolutionDir)output\plugins\$(TargetName)\npp_jit.exe"
+copy "$(ProjectDir)$(ProjectName)\nuget.exe" "$(SolutionDir)output\plugins\$(TargetName)\nuget.exe"
+copy "$(ProjectDir)$(ProjectName)\syntaxer.exe" "$(SolutionDir)output\plugins\$(TargetName)\syntaxer.exe"
+copy "$(ProjectDir)$(ProjectName)\Updater.exe" "$(SolutionDir)output\plugins\$(TargetName)\Updater.exe"
+copy "$(ProjectDir)$(ProjectName)\CSScriptLibrary.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptLibrary.dll"
+copy "$(ProjectDir)$(ProjectName)\CSSRoslynProvider.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSSRoslynProvider.dll"
+copy "$(ProjectDir)$(ProjectName)\CSScriptLibrary.xml" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptLibrary.xml"
 
-copy "$(ProjectDir)$(ProjectName)\MDbg\corapi.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\corapi.dll"
+copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll" "$(SolutionDir)output\plugins\$(TargetName)\ICSharpCode.NRefactory.CSharp.dll"
+copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.dll" "$(SolutionDir)output\plugins\$(TargetName)\ICSharpCode.NRefactory.dll"
+copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Intellisense.Common.dll" "$(SolutionDir)output\plugins\$(TargetName)\Intellisense.Common.dll"
+copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Mono.Cecil.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mono.Cecil.dll"
 
-copy "$(ProjectDir)$(ProjectName)\MDbg\DbgAgent.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\DbgAgent.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\enc.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\enc.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbg.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbg.exe"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbgeng.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbgeng.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbgext.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbgext.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_32.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbghost_32.exe"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_64.exe" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\mdbghost_64.exe"
-copy "$(ProjectDir)$(ProjectName)\MDbg\NativeDebugWrappers.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\NativeDebugWrappers.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\npp.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\npp.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\raw.dll" "$(SolutionDir)deployment\$(PlatformName)\plugins\$(TargetName)\Mdbg\raw.dll"
+copy "$(ProjectDir)$(ProjectName)\MDbg\corapi.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\corapi.dll"
+
+copy "$(ProjectDir)$(ProjectName)\MDbg\DbgAgent.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\DbgAgent.dll"
+copy "$(ProjectDir)$(ProjectName)\MDbg\enc.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\enc.dll"
+copy "$(ProjectDir)$(ProjectName)\MDbg\mdbg.exe" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbg.exe"
+copy "$(ProjectDir)$(ProjectName)\MDbg\mdbgeng.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbgeng.dll"
+copy "$(ProjectDir)$(ProjectName)\MDbg\mdbgext.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbgext.dll"
+copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_32.exe" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbghost_32.exe"
+copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_64.exe" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbghost_64.exe"
+copy "$(ProjectDir)$(ProjectName)\MDbg\NativeDebugWrappers.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\NativeDebugWrappers.dll"
+copy "$(ProjectDir)$(ProjectName)\MDbg\npp.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\npp.dll"
+copy "$(ProjectDir)$(ProjectName)\MDbg\raw.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\raw.dll"
 
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>copy "$(SolutionDir)\NppPlugin.Host\bin\$(PlatformName)\$(ConfigurationName)\NppPlugin.Host.dll" "$(SolutionDir)CSScriptNpp\CSScriptNpp\$(TargetName).$(PlatformName).dll"</PreBuildEvent>
+    <PreBuildEvent>
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

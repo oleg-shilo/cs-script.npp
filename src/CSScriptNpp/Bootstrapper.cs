@@ -9,6 +9,8 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Drawing;
+using CSScriptIntellisense;
 
 namespace CSScriptNpp
 {
@@ -67,6 +69,12 @@ namespace CSScriptNpp
             try
             {
                 // Debug.Assert(false);
+
+                // var c = ColorTranslator.ToWin32(Color.Yellow);
+                // var f = Color.Yellow.ToColour().Value;
+                // var Red = Color.Yellow.R;
+                // var Green = Color.Yellow.G;
+                // var Blue = Color.Yellow.B;
 
                 //must be a separate method to allow assembly probing
                 pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName();

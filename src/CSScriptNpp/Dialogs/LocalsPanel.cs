@@ -12,6 +12,7 @@ namespace CSScriptNpp.Dialogs
     public partial class LocalsPanel : Form
     {
         DebugObjectsPanel content;
+
         public LocalsPanel()
         {
             InitializeComponent();
@@ -23,7 +24,7 @@ namespace CSScriptNpp.Dialogs
             content.Dock = DockStyle.Fill;
             content.Visible = true;
             content.OnEditCellStart += Content_OnEditCellStart;
-            content.OnEditCellComplete += Content_OnEditCellComplete;        
+            content.OnEditCellComplete += Content_OnEditCellComplete;
 
             Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
         }
@@ -45,7 +46,7 @@ namespace CSScriptNpp.Dialogs
 
         void Debugger_OnWatchUpdate(string data)
         {
-            content.UpdateData(data);
+            content.InUiThread(() => content.UpdateData(data));
         }
 
         public void SetData(string data)
