@@ -43,7 +43,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         public int Value
         {
-            get { return Red + (Blue << 8) + (Green << 16); }
+            get { return Red | (Green << 8) | (Blue << 16); }
         }
     }
 
