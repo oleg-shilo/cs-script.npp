@@ -488,7 +488,8 @@ namespace CSScriptNpp
         {
             if (keepRoslynLoadedTimer == null)
             {
-                LoadRoslyn();
+                // LoadRoslyn();
+                Task.Factory.StartNew(LoadRoslyn);
 
                 keepRoslynLoadedTimer = new Timer();
                 keepRoslynLoadedTimer.Interval = 1000 * 60 * 9; //9 min
@@ -503,6 +504,7 @@ namespace CSScriptNpp
 
         static public void LoadRoslyn()
         {
+            // Debug.Assert(false);
             //disabled as unreliable; it can even potentially crash csc.exe if MS CodeAnalysis asms are probed incorrectly
             try
             {
@@ -525,6 +527,8 @@ class Script
     }
 }");
                 File.SetLastWriteTimeUtc(file, DateTime.Now.ToUniversalTime());
+                Execute(file, null, x => { });
+                return;
 
                 string args = string.Format("-d -l {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
                 //Process.Start(csws_exe, args);

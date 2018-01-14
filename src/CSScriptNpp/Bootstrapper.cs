@@ -70,17 +70,14 @@ namespace CSScriptNpp
             {
                 // Debug.Assert(false);
 
-                // var c = ColorTranslator.ToWin32(Color.Yellow);
-                // var f = Color.Yellow.ToColour().Value;
-                // var Red = Color.Yellow.R;
-                // var Green = Color.Yellow.G;
-                // var Blue = Color.Yellow.B;
-
                 //must be a separate method to allow assembly probing
                 pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName();
 
                 Task.Factory.StartNew(() =>
-                                InitSyntaxer(pluginDir));
+                {
+                    InitSyntaxer(pluginDir);
+                    // CSScriptHelper.InitRoslyn();
+                });
 
                 Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
                 Environment.SetEnvironmentVariable("NPP_HOSTING", "true");
