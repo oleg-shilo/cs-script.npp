@@ -224,8 +224,8 @@
     <Reference Include="CSScriptLibrary">
       <HintPath>CSScriptNpp\CSScriptLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="NppPlugin.x86">
-      <HintPath>..\NppPlugin.Host\output\NppPlugin.x86.dll</HintPath>
+    <Reference Include="NppPlugin.host">
+      <HintPath>..\NppPlugin.Host\output\NppPlugin.host.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
