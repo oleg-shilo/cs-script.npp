@@ -396,12 +396,19 @@ namespace CSScriptNpp
             string outputFile = null;
             try
             {
+                // test for nasty loading delay (non-cscs related)
+                // MessageBox.Show("Started");
+                // Process.Start(@"E:\Galos\Projects\CS-Script\GitHub\cs-script\Source\cscscript\bin\Debug\console_loader.exe").WaitForExit();
+                // MessageBox.Show("Done");
+                // return;
+
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
                 p.StartInfo.Arguments = "-l -d " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
                 bool useFileRedirection = false;
+                useFileRedirection = true;
 
                 if (needsElevation)
                 {
@@ -495,7 +502,7 @@ namespace CSScriptNpp
                 keepRoslynLoadedTimer.Interval = 1000 * 60 * 9; //9 min
                 keepRoslynLoadedTimer.Tick += (s, e) =>
                                                 {
-                                                    LoadRoslyn();
+                                                    Task.Factory.StartNew(LoadRoslyn);
                                                 };
                 keepRoslynLoadedTimer.Enabled = true;
                 keepRoslynLoadedTimer.Start();
@@ -530,14 +537,17 @@ class Script
                 Execute(file, null, x => { });
                 return;
 
-                string args = string.Format("-d -l {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
-                //Process.Start(csws_exe, args);
-                var p = new Process();
-                p.StartInfo.FileName = cscs_exe;
-                p.StartInfo.Arguments = args;
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.UseShellExecute = false;
-                p.Start();
+                // string args = string.Format("-d -l -verbose {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
+                // // Process.Start(csws_exe, args);
+                // // Process.Start(cscs_exe, args); return;
+                // var p = new Process();
+                // p.StartInfo.FileName = cscs_exe;
+                // p.StartInfo.Arguments = args;
+                // p.StartInfo.CreateNoWindow = true;
+                // p.StartInfo.UseShellExecute = false;
+                // p.Start();
+                // p.WaitForExit();
+                // MessageBox.Show("Roslyn Loaded");
             }
             catch { }
         }

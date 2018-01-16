@@ -764,7 +764,7 @@ namespace CSScriptNpp
             }
             breakpoints.Clear();
 
-            foreach (string file in Npp.Editor.GetOpenFiles())
+            foreach (string file in Npp.Editor.GetOpenFilesSafe())
             {
                 string dbgInfo = CSScriptHelper.GetDbgInfoFile(file, false);
                 if (File.Exists(dbgInfo))

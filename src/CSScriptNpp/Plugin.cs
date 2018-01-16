@@ -631,6 +631,7 @@ namespace CSScriptNpp
 
             Task.Factory.StartNew(() =>
             {
+                Bootstrapper.LoadRoslynResources();
                 StartCheckForUpdates();
                 OpenAutomationChannel();
             });

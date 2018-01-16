@@ -1,87 +1,93 @@
 echo off
 
+cscs -l tools\set_host_version.cs
+
+
+
+
 set programfiles=%PROGRAMFILES(X86)%
 
-cscs pkill VBCSCompiler
 
-md "..\bin\Plugins\CSScriptNpp"
-md "..\bin\Plugins\CSScriptNpp\Mdbg"
-md "%programfiles%\Notepad++\plugins\CSScriptNpp"
-md "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
+REM cscs pkill VBCSCompiler
 
-rem CSScriptIntellisense.dll cannot be copied from build events as it would copy the assembly before DllExport is performed
-rem so it needs to be done manually.
+REM md "..\bin\Plugins\CSScriptNpp"
+REM md "..\bin\Plugins\CSScriptNpp\Mdbg"
+REM md "%programfiles%\Notepad++\plugins\CSScriptNpp"
+REM md "%programfiles%\Notepad++\plugins\CSScriptNpp\Mdbg"
 
-set plugins=%programfiles%\Notepad++\plugins
-set config=Release
+REM rem CSScriptIntellisense.dll cannot be copied from build events as it would copy the assembly before DllExport is performed
+REM rem so it needs to be done manually.
 
-copy "CSScriptIntellisense\bin\%config%\CSScriptIntellisense.dll" "%plugins%\CSScriptNpp\CSScriptIntellisense.dll"
-copy "CSScriptIntellisense\bin\%config%\CSharpIntellisense\*.dll" "%plugins%\CSScriptNpp"
+REM set plugins=%programfiles%\Notepad++\plugins
+REM set config=Release
 
-copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
-copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
+REM copy "CSScriptIntellisense\bin\%config%\CSScriptIntellisense.dll" "%plugins%\CSScriptNpp\CSScriptIntellisense.dll"
+REM copy "CSScriptIntellisense\bin\%config%\CSharpIntellisense\*.dll" "%plugins%\CSScriptNpp"
 
-
-copy "CSScriptNpp\bin\%config%\CSScriptNpp\*.exe" "%plugins%\CSScriptNpp"
-
-copy "CSScriptNpp\bin\%config%\CSScriptNpp\Mdbg\*.dll" "%plugins%\CSScriptNpp\Mdbg"
-copy "CSScriptNpp\bin\%config%\CSScriptNpp\Mdbg\*.exe" "%plugins%\CSScriptNpp\Mdbg"
+REM copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
+REM copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
 
 
-copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%plugins%\CSScriptNpp\Mdbg"
+REM copy "CSScriptNpp\bin\%config%\CSScriptNpp\*.exe" "%plugins%\CSScriptNpp"
 
-copy "CSScriptNpp\CSScriptNpp\launcher.exe" "%plugins%\CSScriptNpp\launcher.exe"
-copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%plugins%\CSScriptNpp\Updater.exe"
-copy "CSScriptNpp\CSScriptNpp\syntaxer.exe" "%plugins%\CSScriptNpp\syntaxer.exe"
-copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%plugins%\CSScriptNpp\npp_jit.exe"
-copy "CSScriptNpp\CSScriptNpp\CompatibilityTest.exe" "%plugins%\CSScriptNpp\CompatibilityTest.exe"
-
-copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
-copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
-copy "CSScriptNpp\CSScriptNpp\CSSRoslynProvider.dll" "%plugins%\CSScriptNpp\CSSRoslynProvider.dll"
-copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%plugins%\CSScriptNpp\CSSCodeProvider.v4.0.dll"
+REM copy "CSScriptNpp\bin\%config%\CSScriptNpp\Mdbg\*.dll" "%plugins%\CSScriptNpp\Mdbg"
+REM copy "CSScriptNpp\bin\%config%\CSScriptNpp\Mdbg\*.exe" "%plugins%\CSScriptNpp\Mdbg"
 
 
-echo ---------------------------------------------------------------
-set bin=..\bin\Plugins
+REM copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%plugins%\CSScriptNpp\Mdbg"
 
-copy "CSScriptIntellisense\bin\%config%\CSScriptIntellisense.dll" "%bin%\CSScriptNpp\CSScriptIntellisense.dll"
-copy "CSScriptIntellisense\bin\%config%\CSharpIntellisense\*.dll" "%bin%\CSScriptNpp"
+REM copy "CSScriptNpp\CSScriptNpp\launcher.exe" "%plugins%\CSScriptNpp\launcher.exe"
+REM copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%plugins%\CSScriptNpp\Updater.exe"
+REM copy "CSScriptNpp\CSScriptNpp\syntaxer.exe" "%plugins%\CSScriptNpp\syntaxer.exe"
+REM copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%plugins%\CSScriptNpp\npp_jit.exe"
+REM copy "CSScriptNpp\CSScriptNpp\CompatibilityTest.exe" "%plugins%\CSScriptNpp\CompatibilityTest.exe"
 
-copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%bin%\CSScriptNpp\CSScriptLibrary.dll"
-copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%bin%\CSScriptNpp\CSScriptLibrary.xml"
-
-
-copy "CSScriptNpp\bin\%config%\CSScriptNpp\*.exe" "%bin%\CSScriptNpp"
-
-copy "CSScriptNpp\bin\%config%\CSScriptNpp\Mdbg\*.dll" "%bin%\CSScriptNpp\Mdbg"
-copy "CSScriptNpp\bin\%config%\CSScriptNpp\Mdbg\*.exe" "%bin%\CSScriptNpp\Mdbg"
+REM copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%plugins%\CSScriptNpp\CSScriptLibrary.dll"
+REM copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%plugins%\CSScriptNpp\CSScriptLibrary.xml"
+REM copy "CSScriptNpp\CSScriptNpp\CSSRoslynProvider.dll" "%plugins%\CSScriptNpp\CSSRoslynProvider.dll"
+REM copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%plugins%\CSScriptNpp\CSSCodeProvider.v4.0.dll"
 
 
-copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%bin%\CSScriptNpp\Mdbg"
+REM echo ---------------------------------------------------------------
+REM set bin=..\bin\Plugins
 
-copy "CSScriptNpp\CSScriptNpp\launcher.exe" "%bin%\CSScriptNpp\launcher.exe"
-copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%bin%\CSScriptNpp\Updater.exe"
-copy "CSScriptNpp\CSScriptNpp\syntaxer.exe" "%bin%\CSScriptNpp\syntaxer.exe"
-copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%bin%\CSScriptNpp\npp_jit.exe"
-copy "CSScriptNpp\CSScriptNpp\CompatibilityTest.exe" "%bin%\CSScriptNpp\CompatibilityTest.exe"
+REM copy "CSScriptIntellisense\bin\%config%\CSScriptIntellisense.dll" "%bin%\CSScriptNpp\CSScriptIntellisense.dll"
+REM copy "CSScriptIntellisense\bin\%config%\CSharpIntellisense\*.dll" "%bin%\CSScriptNpp"
 
-copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%bin%\CSScriptNpp\CSScriptLibrary.dll"
-copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%bin%\CSScriptNpp\CSScriptLibrary.xml"
-copy "CSScriptNpp\CSScriptNpp\CSSRoslynProvider.dll" "%bin%\CSScriptNpp\CSSRoslynProvider.dll"
-copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%bin%\CSScriptNpp\CSSCodeProvider.v4.0.dll"
-copy "CSScriptNpp\bin\%config%\CSScriptNpp.dll" "%bin%\CSScriptNpp.dll"
+REM copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%bin%\CSScriptNpp\CSScriptLibrary.dll"
+REM copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%bin%\CSScriptNpp\CSScriptLibrary.xml"
 
-rem -------------------------------------
 
-del "%plugins%\CSScriptNpp\MDbg\*.pdb"
-del "%bin%\CSScriptNpp\MDbg\*.pdb"
+REM copy "CSScriptNpp\bin\%config%\CSScriptNpp\*.exe" "%bin%\CSScriptNpp"
 
-copy "..\readme.txt" "..\bin\readme.txt"
-copy "..\license.txt" "..\bin\license.txt"
+REM copy "CSScriptNpp\bin\%config%\CSScriptNpp\Mdbg\*.dll" "%bin%\CSScriptNpp\Mdbg"
+REM copy "CSScriptNpp\bin\%config%\CSScriptNpp\Mdbg\*.exe" "%bin%\CSScriptNpp\Mdbg"
 
-echo ----------------------------
-rem need to keep it last so copy errors (if any) are visible
-copy "CSScriptNpp\bin\%config%\CSScriptNpp.dll" "%plugins%\CSScriptNpp.dll"
+
+REM copy "CSScriptNpp\CSScriptNpp\Mdbg\mdbghost*.exe" "%bin%\CSScriptNpp\Mdbg"
+
+REM copy "CSScriptNpp\CSScriptNpp\launcher.exe" "%bin%\CSScriptNpp\launcher.exe"
+REM copy "CSScriptNpp\CSScriptNpp\Updater.exe" "%bin%\CSScriptNpp\Updater.exe"
+REM copy "CSScriptNpp\CSScriptNpp\syntaxer.exe" "%bin%\CSScriptNpp\syntaxer.exe"
+REM copy "CSScriptNpp\CSScriptNpp\npp_jit.exe" "%bin%\CSScriptNpp\npp_jit.exe"
+REM copy "CSScriptNpp\CSScriptNpp\CompatibilityTest.exe" "%bin%\CSScriptNpp\CompatibilityTest.exe"
+
+REM copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll" "%bin%\CSScriptNpp\CSScriptLibrary.dll"
+REM copy "CSScriptNpp\CSScriptNpp\CSScriptLibrary.xml" "%bin%\CSScriptNpp\CSScriptLibrary.xml"
+REM copy "CSScriptNpp\CSScriptNpp\CSSRoslynProvider.dll" "%bin%\CSScriptNpp\CSSRoslynProvider.dll"
+REM copy "CSScriptNpp\CSScriptNpp\CSSCodeProvider.v4.0.dll" "%bin%\CSScriptNpp\CSSCodeProvider.v4.0.dll"
+REM copy "CSScriptNpp\bin\%config%\CSScriptNpp.dll" "%bin%\CSScriptNpp.dll"
+
+REM rem -------------------------------------
+
+REM del "%plugins%\CSScriptNpp\MDbg\*.pdb"
+REM del "%bin%\CSScriptNpp\MDbg\*.pdb"
+
+REM copy "..\readme.txt" "..\bin\readme.txt"
+REM copy "..\license.txt" "..\bin\license.txt"
+
+REM echo ----------------------------
+REM rem need to keep it last so copy errors (if any) are visible
+REM copy "CSScriptNpp\bin\%config%\CSScriptNpp.dll" "%plugins%\CSScriptNpp.dll"
 
 pause

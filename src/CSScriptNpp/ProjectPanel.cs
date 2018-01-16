@@ -386,14 +386,14 @@ void main(string[] args)
                     {
                         OutputPanel outputPanel = Plugin.ShowOutputPanel();
 
-                        outputPanel.AttachDebuger();
+                        outputPanel.AttachDebgMonitor();
                         outputPanel.ClearAllDefaultOutputs();
 
                         Task.Factory.StartNew(() =>
                         {
                             try
                             {
-                                outputPanel.ShowDebugOutput();
+                                // outputPanel.ShowDebugOutput();
                                 if (Config.Instance.InterceptConsole)
                                 {
                                     CSScriptHelper.Execute(currentScript, OnRunStart, OnConsoleOutChar);
@@ -405,9 +405,12 @@ void main(string[] args)
                             }
                             catch (Exception e)
                             {
-                                outputPanel.ShowBuildOutput()
-                                           .WriteLine(e.Message)
-                                           .SetCaretAtStart();
+                                this.InUiThread(() =>
+                                {
+                                    outputPanel.ShowBuildOutput()
+                                               .WriteLine(e.Message)
+                                               .SetCaretAtStart();
+                                });
                             }
                             finally
                             {

@@ -1,6 +1,7 @@
 //css_ref %WIXSHARP_DIR%\WixSharp.dll;
 //css_dir %WIXSHARP_DIR%\\Wix_bin\SDK;
 
+using System.Reflection;
 using Microsoft.Win32;
 using IO = System.IO;
 using System;
@@ -13,21 +14,20 @@ class Script
     [STAThread]
     static public void Main(string[] args)
     {
-        string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp.dll");
-        Version version = System.Reflection.Assembly.ReflectionOnlyLoadFrom(pluginFile).GetName().Version;
+        string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp\CSScriptNpp.dll");
+        Version version = AssemblyName.GetAssemblyName(pluginFile).Version;
+        Console.WriteLine("Building CSScriptNpp." + version + ".x86.msi");
 
         var project =
             new Project("CS-Script for Notepad++",
                 new Dir(@"%ProgramFiles%\Notepad++\Plugins",
-                    new File(@"Plugins\CSScriptNpp.dll"),
+                    new File(@"Plugins\CSScriptNpp.x86.dll"),
                     new Dir("CSScriptNpp",
                         new DirFiles(@"Plugins\CSScriptNpp\*.*"),
                         new Dir("Mdbg",
-                            new DirFiles(@"Plugins\CSScriptNpp\Mdbg\*.*")),
-                        new Dir("Roslyn",
-                            new DirFiles(@"Plugins\CSScriptNpp\Roslyn\*.*")))));
+                            new DirFiles(@"Plugins\CSScriptNpp\Mdbg\*.*")))));
 
-        project.ControlPanelInfo.UrlInfoAbout = "https://csscriptnpp.codeplex.com/";
+        project.ControlPanelInfo.UrlInfoAbout = "https://github.com/oleg-shilo/cs-script.npp/";
         project.ControlPanelInfo.Contact = "Product owner";
         project.ControlPanelInfo.Manufacturer = "Oleg Shilo";
 
@@ -47,7 +47,7 @@ class Script
 
         Compiler.ClientAssembly = System.Reflection.Assembly.GetExecutingAssembly().Location;
 
-        //project.PreserveTempFiles = true;
+        // project.PreserveTempFiles = true;
         Compiler.BuildMsi(project, "CSScriptNpp." + version + ".msi");
     }
 }

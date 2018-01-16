@@ -18,7 +18,21 @@ namespace CSScriptNpp
     {
         public static string pluginDir;
 
-        public static string dependenciesDir;
+        public static string _dependenciesDir;
+
+        public static string dependenciesDir
+        {
+            get
+            {
+                if (_dependenciesDir == null)
+                    _dependenciesDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+                                                          .PathJoin("CS-Script",
+                                                                    "CSScriptNpp",
+                                                                    Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                return _dependenciesDir;
+            }
+        }
+
         public static string syntaxerDir;
         public static string cscsDir;
 
@@ -31,11 +45,6 @@ namespace CSScriptNpp
 
         public static void DeploySyntaxer(string sourceDir)
         {
-            dependenciesDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
-                                         .PathJoin("CS-Script",
-                                                   "CSScriptNpp",
-                                                    Assembly.GetExecutingAssembly().GetName().Version.ToString());
-
             syntaxerDir =
             CSScriptIntellisense.Syntaxer.syntaxerDir = dependenciesDir.PathJoin("Roslyn");
             CSScriptIntellisense.Syntaxer.cscsFile = pluginDir.PathJoin("cscs.exe");
@@ -64,20 +73,23 @@ namespace CSScriptNpp
             catch { }
         }
 
+        public static void LoadRoslynResources()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                //must be a separate method to allow assembly probing
+                InitSyntaxer(pluginDir);
+                CSScriptHelper.InitRoslyn();
+            });
+        }
+
         public static void Init()
         {
             try
             {
                 // Debug.Assert(false);
 
-                //must be a separate method to allow assembly probing
                 pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName();
-
-                Task.Factory.StartNew(() =>
-                {
-                    InitSyntaxer(pluginDir);
-                    // CSScriptHelper.InitRoslyn();
-                });
 
                 Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
                 Environment.SetEnvironmentVariable("NPP_HOSTING", "true");
@@ -128,12 +140,17 @@ namespace CSScriptNpp
             }
             catch (Exception e)
             {
-                e.LogAsError();
+                Logger.LogAsDebugAsync(e, 500);
             }
 
             CSScriptIntellisense.Logger.Error = PluginLogger.Error;
             CSScriptIntellisense.Logger.Debug = PluginLogger.Debug;
-            Logger.LogAsDebug("Plugin has been loaded");
+            Task.Factory.StartNew(() =>
+            {
+                //Logger.LogAsDebugAsync("Plugin has been loaded", 1000);
+            });
+
+            // MessageBox.Show("rrr");
         }
     }
 }

@@ -113,7 +113,7 @@ namespace CSScriptNpp
             return retval;
         }
 
-        public void AttachDebuger()
+        public void AttachDebgMonitor()
         {
             if (dbgMonitor == null)
             {
@@ -341,6 +341,9 @@ namespace CSScriptNpp
             {
                 var output = this.DebugOutput;
 
+                if (!Config.Instance.AllowDebugMonitor)
+                    return;
+
                 ShowOutput(DebugOutputName);
 
                 Task.Factory.StartNew(() =>
@@ -363,6 +366,7 @@ namespace CSScriptNpp
                         p.StartInfo.UseShellExecute = false;
                         p.StartInfo.RedirectStandardOutput = true;
                         p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+
                         //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
 
                         p.Start();

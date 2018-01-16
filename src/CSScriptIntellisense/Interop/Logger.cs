@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 public static class Logger
 {
@@ -18,6 +19,16 @@ public static class Logger
         var method = new StackFrame(1).GetMethod();
         string caller = method.DeclaringType.ToString() + "." + method.Name;
         PluginLogger.Debug(caller + "|" + message ?? "<null>");
+    }
+
+    public static void LogAsDebugAsync(this object message, int asyncDelay = 0)
+    {
+        Task.Factory.StartNew(() =>
+        {
+            if (asyncDelay > 0)
+                System.Threading.Thread.Sleep(asyncDelay);
+            PluginLogger.Debug(message);
+        });
     }
 }
 

@@ -167,7 +167,7 @@ namespace CSScriptNpp
             //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
             var document = Npp.GetCurrentDocument();
 
-            var files = Npp.Editor.GetOpenFiles();
+            var files = Npp.Editor.GetOpenFilesSafe();
             var current = Npp.Editor.GetCurrentFilePath();
             foreach (var item in files)
             {
@@ -182,23 +182,27 @@ namespace CSScriptNpp
 
         static public void SaveDocuments(string[] files)
         {
-            var document = Npp.GetCurrentDocument();
-
-            var filesToSave = files.Select(x => Path.GetFullPath(x));
-            var openFiles = Npp.Editor.GetOpenFiles();
-            var current = Npp.Editor.GetCurrentFilePath();
-
-            // the "new" file is not saved so it has no root
-            foreach (var item in openFiles.Where(Path.IsPathRooted))
+            try
             {
-                var path = Path.GetFullPath(item);
-                if (filesToSave.Contains(path))
+                var filesToSave = files.Select(x => Path.GetFullPath(x));
+
+                var openFiles = Npp.Editor.GetOpenFilesSafe();
+                var document = Npp.GetCurrentDocument();
+                var current = Npp.Editor.GetCurrentFilePath();
+
+                // the "new" file is not saved so it has no root
+                foreach (var item in openFiles.Where(Path.IsPathRooted))
                 {
-                    Npp.Editor.Open(item)
-                              .SaveCurrentFile();
+                    var path = Path.GetFullPath(item);
+                    if (filesToSave.Contains(path))
+                    {
+                        Npp.Editor.Open(item)
+                                  .SaveCurrentFile();
+                    }
                 }
+                Npp.Editor.Open(current);
             }
-            Npp.Editor.Open(current);
+            catch { }
         }
     }
 }
