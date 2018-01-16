@@ -2,6 +2,7 @@
 using System;
 using System.Text;
 using NppPluginNET.PluginInfrastructure;
+using System.Collections.Generic;
 
 namespace Kbg.NppPluginNET.PluginInfrastructure
 {
@@ -76,7 +77,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             return this;
         }
 
-        public string[] GetOpenFiles()
+        public string[] GetOpenFilesRaw()
         {
             var count = send(NppMsg.NPPM_GETNBOPENFILES, Unused, Unused);
 
@@ -87,6 +88,37 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 else
                     return new string[0];
             }
+        }
+
+        public IntPtr GetTabCount()
+        {
+            return send(NppMsg.NPPM_GETNBOPENFILES, Unused, Unused);
+        }
+
+        public IntPtr GetBufferIdFromTab(int tabIndex)
+        {
+            return send(NppMsg.NPPM_GETBUFFERIDFROMPOS, tabIndex, 0);
+        }
+
+        public string GetTabFileFromPosition(int tabIndex)
+        {
+            var id = this.GetBufferIdFromTab(tabIndex);
+            return this.GetTabFile(id);
+        }
+
+        public string[] GetOpenFilesSafe()
+        {
+            var count = this.GetTabCount().ToInt32();
+
+            var files = new List<string>();
+            for (int i = 0; i < count; i++)
+            {
+                var file = this.GetTabFileFromPosition(i);
+
+                if (!string.IsNullOrEmpty(file))
+                    files.Add(file);
+            }
+            return files.ToArray();
         }
 
         public string GetTabFile(IntPtr index)
