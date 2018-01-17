@@ -867,12 +867,19 @@ namespace CSScriptIntellisense
                 var document = Npp.GetCurrentDocument();
                 items = GetSuggestionItemsAtCaret();
                 bool namespaceSuggestion = items.All(x => x.CompletionType == CompletionType._namespace);
-                bool memberSugesstion = document.TextBeforeCursor(2).EndsWith(".");
-                bool assignmentSugesstion = document.TextBeforeCursor(10).TrimEnd().EndsWith("=");
+
+                Point point;
+                document.GetWordAtCursor(out point);
+                int wordStartPos = point.X;
+
+                string textOnLeft = document.TextBeforePosition(wordStartPos, 300);
+
+                bool memberSugesstion = textOnLeft.EndsWith(".");
+                bool assignmentSugesstion = textOnLeft.TrimEnd().EndsWith("=");
 
                 if (!memberSugesstion && !namespaceSuggestion && !assignmentSugesstion)
                 {
-                    bool cssSugesstion = document.TextBeforeCursor(300).Split('\n').Last().TrimStart().StartsWith("//css_");
+                    bool cssSugesstion = textOnLeft.Split('\n').Last().TrimStart().StartsWith("//css_");
                     if (!cssSugesstion)
                     {
                         bool usingSuggestion = document.GetCurrentLine().Trim() == "using";
@@ -925,7 +932,7 @@ namespace CSScriptIntellisense
             if (data != null)
             {
                 var document = Npp.GetCurrentDocument();
-
+                // int newSelEnd = -1;
                 int currentPos = document.GetCurrentPos();
                 Point p;
                 string word = document.GetWordAtCursor(out p);
@@ -970,7 +977,20 @@ namespace CSScriptIntellisense
                 }
 
                 //Note CompletionText caret position if any
-                InsertCompletion(data.CompletionText);
+                var completionText = data.CompletionText;
+                if (data.CompletionText.EndsWith("()"))
+                {
+                    int selEnd = p.Y;
+                    string rightText = document.TextAfterPosition(selEnd, 512);
+                    if (rightText.TrimStart().StartsWith("()"))
+                    {
+                        // the completion text ends with "()" and the word at the caret already has "()"
+                        // so to avoid duplication trim completion text brackets
+                        completionText = completionText.Substring(0, completionText.Length - 2);
+                    }
+                }
+
+                InsertCompletion(completionText);
 
                 //check for extra content to insert
                 if (data.Tag is Dictionary<string, object>)

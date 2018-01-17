@@ -42,9 +42,12 @@ namespace CSScriptIntellisense
 
             listBox1.Items.Clear();
 
-            //Debug.WriteLine("hint: " + partialName);
+            Debug.WriteLine("hint: " + partialName);
 
             IEnumerable<ICompletionData> items = ProcessSuggestionHint(partialName, rawItems);
+
+            if (!items.Any())
+                items = rawItems.ToArray();
 
             listBox1.Items.AddRange(items.ToArray());
             //listBox1.SelectedItem = items.FirstOrDefault(); //inconvenient and inconsistent with VS UX
@@ -60,7 +63,11 @@ namespace CSScriptIntellisense
             this.Height = ((itemHeight + verticalSpacing) * Math.Min(listBox1.Items.Count, 10)) + extraHeight;
 
             if (items.Count() == 1 && items.First().DisplayText == partialName)
-                Dispatcher.Schedule(10, Close); //no need to suggest as the token is already completed
+            {
+                //no need to suggest as the token is already completed
+                OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+                Dispatcher.Schedule(10, Close);
+            }
             //this.Width = 120;
         }
 
@@ -74,7 +81,8 @@ namespace CSScriptIntellisense
             {
                 //try partial matches (both the text an the pattern)
                 var query = from item in inputItems
-                            let matchCount = item.DisplayText.MatchingStartChars(partialName, ignoreCase: true)
+                                // let matchCount = item.DisplayText.MatchingStartChars(partialName, ignoreCase: true)
+                            let matchCount = item.DisplayText.MatchingChars(partialName, ignoreCase: true)
                             group item by matchCount into g
                             orderby g.Key descending
                             select new { MatchingDegree = g.Key, Items = g };
@@ -329,6 +337,21 @@ namespace CSScriptIntellisense
                     return i;
             }
             return Math.Min(pattern.Length, text.Length);
+        }
+
+        public static int MatchingChars(this string text, string pattern, bool ignoreCase = false)
+        {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(pattern))
+                return 0;
+
+            if (ignoreCase)
+            {
+                text = text.ToLower();
+                pattern = pattern.ToLower();
+            }
+
+            var match = text.IndexOf(pattern);
+            return (match == -1) ? 0 : 1;
         }
 
         static string[] lineDelimiters = new string[] { "\r\n", "\n" };
