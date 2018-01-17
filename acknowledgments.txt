@@ -1,8 +1,12 @@
-The C# Intellisense is making use of the following OSS projects:
+The C# Intellisense is making use of the following OS projects:
 
+Productls used at runtime
 * CSScriptLibrary from the CS-Script project (http://csscript.net/) and is used under the CS-Script license: http://csscript.net/Licence.html
 * DbMon.NET from http://www.codeproject.com/Articles/13345/DbMon-NET-A-simple-NET-OutputDebugString-capturer
 * ICSharpCode.NRefactory from the SharpDevelop project (http://sharpdevelop.net) and is used under the MIT X11 license: https://github.com/icsharpcode/NRefactory/blob/735cb8595e642bfb3afabc7bd0750b73c5c0ec18/doc/license.txt
 * Mono.Cecil - (https://github.com/jbevain/cecil/) under the MIT license: http://www.mono-project.com/Licensing
 * Roslyn - Apache Licence 2.0 (https://github.com/dotnet/roslyn/blob/master/License.txt)
 * 7Zip - http://www.7-zip.org/license.txt
+
+Productls used during development
+* Resource Hacker™ - http://www.angusj.com/resourcehacker/
