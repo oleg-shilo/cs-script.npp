@@ -596,10 +596,10 @@ namespace CSScriptNpp
 
         static void UpdateLocalDebugInfo()
         {
-            if (runningScript == null)
-                Plugin.OutputPanel.localDebugPrefix = null;
-            else
+            if (runningScript != null)
                 Plugin.OutputPanel.localDebugPrefix = runningScript.Id.ToString() + ": ";
+            // else
+            //     Plugin.OutputPanel.localDebugPrefix = null;
         }
 
         internal static void StopVBCSCompilers()

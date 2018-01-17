@@ -408,7 +408,6 @@ namespace CSScriptNpp
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
                 bool useFileRedirection = false;
-                useFileRedirection = true;
 
                 if (needsElevation)
                 {

@@ -283,7 +283,6 @@ namespace CSScriptNpp
 
         static Process dbgMonitor;
         public string localDebugPrefix = null;
-        public string[] ignoreLocalDebug = new[] { "SHIMVIEW: ShimInfo(Complete)" }; //some system dll injection
 
         public static void Clean()
         {
@@ -341,8 +340,8 @@ namespace CSScriptNpp
             {
                 var output = this.DebugOutput;
 
-                if (!Config.Instance.AllowDebugMonitor)
-                    return;
+                // if (!Config.Instance.AllowDebugMonitor)
+                //     return;
 
                 ShowOutput(DebugOutputName);
 
@@ -370,6 +369,8 @@ namespace CSScriptNpp
                         //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
 
                         p.Start();
+
+                        string[] ignoreLocalDebug = Config.Instance.BlockLocalDebugOutputContaining.Split(new string[] { "{NL}" }, StringSplitOptions.None);
 
                         string line = null;
                         while (null != (line = p.StandardOutput.ReadLine()))

@@ -386,14 +386,18 @@ void main(string[] args)
                     {
                         OutputPanel outputPanel = Plugin.ShowOutputPanel();
 
-                        outputPanel.AttachDebgMonitor();
+                        if (Config.Instance.StartDebugMonitorOnScriptExecution)
+                            outputPanel.AttachDebgMonitor();
+
                         outputPanel.ClearAllDefaultOutputs();
 
                         Task.Factory.StartNew(() =>
                         {
                             try
                             {
-                                // outputPanel.ShowDebugOutput();
+                                if (Config.Instance.StartDebugMonitorOnScriptExecution)
+                                    outputPanel.ShowDebugOutput();
+
                                 if (Config.Instance.InterceptConsole)
                                 {
                                     CSScriptHelper.Execute(currentScript, OnRunStart, OnConsoleOutChar);
