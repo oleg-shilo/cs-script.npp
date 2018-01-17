@@ -39,6 +39,7 @@ namespace CSScriptNpp
         public bool DistributeScriptAsScriptByDefault = true;
         public bool DistributeScriptAsWindowApp = false;
         public bool InterceptConsole = true;
+        public bool InterceptConsoleByCharacter = false;
         public bool UseEmbeddedEngine = true;
         public string UseCustomEngine = "";
         public bool QuickViewAutoRefreshAvailable = false;
@@ -121,6 +122,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(NavigateToRawCodeOnDblClickInOutput), NavigateToRawCodeOnDblClickInOutput);
                     SetValue(Section, nameof(QuickViewAutoRefreshAvailable), QuickViewAutoRefreshAvailable);
                     SetValue(Section, nameof(InterceptConsole), InterceptConsole);
+                    SetValue(Section, nameof(InterceptConsoleByCharacter), InterceptConsoleByCharacter);
                     SetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
                     SetValue(Section, nameof(UseCustomEngine), UseCustomEngine);
                     SetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
@@ -201,6 +203,7 @@ namespace CSScriptNpp
                 HotkeyDocumentsExclusions = GetValue(Section, nameof(HotkeyDocumentsExclusions), HotkeyDocumentsExclusions);
                 NavigateToRawCodeOnDblClickInOutput = GetValue(Section, nameof(NavigateToRawCodeOnDblClickInOutput), NavigateToRawCodeOnDblClickInOutput);
                 InterceptConsole = GetValue(Section, nameof(InterceptConsole), InterceptConsole);
+                InterceptConsoleByCharacter = GetValue(Section, nameof(InterceptConsoleByCharacter), InterceptConsoleByCharacter);
                 UseEmbeddedEngine = GetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
                 UseCustomEngine = GetValue(Section, nameof(UseCustomEngine), UseCustomEngine);
                 //QuickViewAutoRefreshAvailable = GetValue(Section, nameof(QuickViewAutoRefreshAvailable), QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized

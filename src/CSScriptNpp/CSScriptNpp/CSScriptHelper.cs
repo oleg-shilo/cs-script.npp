@@ -391,17 +391,11 @@ namespace CSScriptNpp
             catch { }
         }
 
-        static public void Execute(string scriptFile, Action<Process> onStart = null, Action<char[]> onStdOut = null)
+        static public void Execute(string scriptFile, Action<Process> onStart = null, Action<object> onStdOut = null)
         {
             string outputFile = null;
             try
             {
-                // test for nasty loading delay (non-cscs related)
-                // MessageBox.Show("Started");
-                // Process.Start(@"E:\Galos\Projects\CS-Script\GitHub\cs-script\Source\cscscript\bin\Debug\console_loader.exe").WaitForExit();
-                // MessageBox.Show("Done");
-                // return;
-
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
                 p.StartInfo.Arguments = "-l -d " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
@@ -422,6 +416,7 @@ namespace CSScriptNpp
                 {
                     if (useFileRedirection)
                     {
+                        // interferes with dbmon redirection as the PID of the actual script process becomes unknown
                         outputFile = Path.GetTempFileName();
 
                         string cmdText = string.Format("\"{0}\" {1} > \"{2}\"", p.StartInfo.FileName, p.StartInfo.Arguments, outputFile);
@@ -448,17 +443,23 @@ namespace CSScriptNpp
 
                 if (onStdOut != null && !useFileRedirection)
                 {
-                    //string line;
-                    //while (null != (line=p.StandardOutput.ReadLine()))
-                    //{
-                    //    output.AppendLine(line);
-                    //    onStdOut(line.ToCharArray());
-                    //}
-                    char[] buf = new char[1];
-                    while (0 != p.StandardOutput.Read(buf, 0, 1))
+                    if (Config.Instance.InterceptConsoleByCharacter)
                     {
-                        output.Append(buf[0]);
-                        onStdOut(buf);
+                        char[] buf = new char[1];
+                        while (0 != p.StandardOutput.Read(buf, 0, 1))
+                        {
+                            output.Append(buf[0]);
+                            onStdOut(buf);
+                        }
+                    }
+                    else
+                    {
+                        string line;
+                        while (null != (line = p.StandardOutput.ReadLine()))
+                        {
+                            output.AppendLine(line);
+                            onStdOut(line);
+                        }
                     }
                 }
                 p.WaitForExit();

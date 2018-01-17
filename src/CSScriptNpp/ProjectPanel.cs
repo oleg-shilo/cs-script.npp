@@ -400,7 +400,7 @@ void main(string[] args)
 
                                 if (Config.Instance.InterceptConsole)
                                 {
-                                    CSScriptHelper.Execute(currentScript, OnRunStart, OnConsoleOutChar);
+                                    CSScriptHelper.Execute(currentScript, OnRunStart, OnConsoleObjectOut);
                                 }
                                 else
                                 {
@@ -536,6 +536,18 @@ void main(string[] args)
                 Plugin.OutputPanel.ShowConsoleOutput();
 
             Plugin.OutputPanel.ConsoleOutput.WriteLine(line);
+        }
+
+        void OnConsoleObjectOut(object obj)
+        {
+            if (Plugin.OutputPanel.ConsoleOutput.IsEmpty)
+                Plugin.OutputPanel.ShowConsoleOutput();
+
+            if (obj is string)
+                Plugin.OutputPanel.ConsoleOutput.WriteLine((string)obj);
+            else
+                foreach (char c in (char[])obj)
+                    Plugin.OutputPanel.ConsoleOutput.WriteConsoleChar(c);
         }
 
         void OnConsoleOutChar(char[] buf)
