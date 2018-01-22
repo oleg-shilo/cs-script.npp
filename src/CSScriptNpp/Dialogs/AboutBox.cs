@@ -151,7 +151,7 @@ namespace CSScriptNpp
 
         void CheckForUpdates()
         {
-            string version = CSScriptHelper.GetLatestAvailableVersion();
+            Distro distro = CSScriptHelper.GetLatestAvailableVersion();
 
             Invoke((Action)delegate
             {
@@ -159,7 +159,7 @@ namespace CSScriptNpp
                 Cursor = Cursors.Default;
             });
 
-            if (version == null)
+            if (distro == null)
             {
                 MessageBox.Show("Cannot check for updates. The latest release Web page will be opened instead.", "CS-Script");
                 try
@@ -170,23 +170,23 @@ namespace CSScriptNpp
             }
             else
             {
-                var latestVersion = new Version(version);
+                var latestVersion = new Version(distro.Version);
                 var nppVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
                 if (nppVersion == latestVersion)
                 {
-                    MessageBox.Show("You are already running the latest version - v" + version, "CS-Script");
+                    MessageBox.Show("You are already running the latest version - v" + distro.Version, "CS-Script");
                 }
                 else if (nppVersion > latestVersion)
                 {
-                    MessageBox.Show("Wow... your version is even newer than the latest one - v" + version + ".", "CS-Script");
+                    MessageBox.Show("Wow... your version is even newer than the latest one - v" + distro.Version + ".", "CS-Script");
                 }
                 else if (nppVersion < latestVersion)
                 {
                     PostCloseAction = //Task.Factory.StartNew(
                         () =>
                     {
-                        using (var dialog = new UpdateOptionsPanel(version))
+                        using (var dialog = new UpdateOptionsPanel(distro))
                             dialog.ShowDialog();
                     };//);
                     Close();

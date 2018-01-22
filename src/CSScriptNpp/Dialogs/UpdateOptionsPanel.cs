@@ -10,23 +10,23 @@ namespace CSScriptNpp.Dialogs
 {
     public partial class UpdateOptionsPanel : Form
     {
-        string version;
+        Distro distro;
 
-        public UpdateOptionsPanel(string version)
+        public UpdateOptionsPanel(Distro distro)
         {
             InitializeComponent();
 
             DoLayout();
 
-            this.version = version;
-            versionLbl.Text = version;
+            this.distro = distro;
+            versionLbl.Text = distro.Version;
 
             updateAfterExit.Checked = Config.Instance.UpdateAfterExit;
             customDeployment.Checked = (Config.Instance.UpdateMode == (string)customDeployment.Tag);
             msiDeployment.Checked = (Config.Instance.UpdateMode == (string)msiDeployment.Tag);
             manualDeployment.Checked = (Config.Instance.UpdateMode == (string)manualDeployment.Tag);
 
-            releaseInfo.Text = CSScriptHelper.GetLatestReleaseInfo(version);
+            releaseInfo.Text = CSScriptHelper.GetLatestReleaseInfo(this.distro);
         }
 
         void UpdateProgress(long currentStep, long totalSteps)
@@ -67,14 +67,14 @@ namespace CSScriptNpp.Dialogs
                         string distroFile = null;
                         if (msiDeployment.Checked)
                         {
-                            distroFile = CSScriptHelper.GetLatestAvailableDistro(version, ".msi", UpdateProgress);
+                            distroFile = CSScriptHelper.DownloadDistro(distro.MsiUrl, UpdateProgress);
                         }
                         else if (customDeployment.Checked || manualDeployment.Checked)
                         {
                             if (customDeployment.Checked && updateAfterExit.Checked)
-                                distroFile = version;
+                                distroFile = distro.ZipUrl;
                             else
-                                distroFile = CSScriptHelper.GetLatestAvailableDistro(version, ".zip", UpdateProgress);
+                                distroFile = CSScriptHelper.DownloadDistro(distro.ZipUrl, UpdateProgress);
                         }
                         else
                         {
@@ -87,7 +87,7 @@ namespace CSScriptNpp.Dialogs
                             return;
                         }
 
-                        if (distroFile == null || (!File.Exists(distroFile) && distroFile != version))
+                        if (distroFile == null || (!File.Exists(distroFile) && distroFile != distro.ZipUrl))
                         {
                             MessageBox.Show("Cannot download the binaries. The latest release Web page will be opened instead.", "CS-Script");
                             try
@@ -122,7 +122,7 @@ namespace CSScriptNpp.Dialogs
 
                                 if (updateAfterExit.Checked)
                                 {
-                                    Process.Start(updater, string.Format("\"{0}\" \"{1}\" /asynch_update", version, targetDir));
+                                    Process.Start(updater, string.Format("\"{0}\" \"{1}\" /asynch_update", distro, targetDir));
                                     MessageBox.Show("The plugin will be updated after you close Notepad++", "CS-Script");
                                 }
                                 else
@@ -180,7 +180,7 @@ namespace CSScriptNpp.Dialogs
 
         void releaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://csscript.net/npp/CSScriptNpp." + version + ".ReleaseNotes.html");
+            Process.Start("http://csscript.net/npp/CSScriptNpp." + distro + ".ReleaseNotes.html");
         }
 
         void showOptions_CheckedChanged(object sender, EventArgs e)
@@ -214,7 +214,7 @@ namespace CSScriptNpp.Dialogs
 
         void skipBtn_Click(object sender, EventArgs e)
         {
-            Config.Instance.SkipUpdateVersion = version;
+            Config.Instance.SkipUpdateVersion = distro.Version;
             Config.Instance.Save();
             Close();
         }

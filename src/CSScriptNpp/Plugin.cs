@@ -653,7 +653,7 @@ namespace CSScriptNpp
             CloseAutomationChannel();
         }
 
-        internal static string HomeUrl = "https://csscriptnpp.codeplex.com/";
+        internal static string HomeUrl = "https://github.com/oleg-shilo/cs-script.npp";
 
         static void StartCheckForUpdates()
         {
@@ -677,16 +677,16 @@ namespace CSScriptNpp
         {
             Thread.Sleep(2000); //let Notepad++ to complete all initialization
 
-            string version = CSScriptHelper.GetLatestAvailableVersion();
+            Distro distro = CSScriptHelper.GetLatestAvailableVersion();
 
-            if (version != null && version != Config.Instance.SkipUpdateVersion)
+            if (distro != null && distro.Version != Config.Instance.SkipUpdateVersion)
             {
-                var latestVersion = new Version(version);
+                var latestVersion = new Version(distro.Version);
                 var nppVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
                 if (nppVersion < latestVersion)
                 {
-                    using (var dialog = new UpdateOptionsPanel(version))
+                    using (var dialog = new UpdateOptionsPanel(distro))
                         dialog.ShowDialog();
                 }
             }

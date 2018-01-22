@@ -415,6 +415,13 @@ namespace RoslynIntellisense
                                         .ThenBy(c => c.DisplayText)
                                         .ToList();
 
+                if (!result.Any() && partialWord.HasText())
+                {
+                    result = completions.Where(s => s.DisplayText.HasText())
+                                        .OrderBy(c => c.DisplayText)
+                                        .ToList();
+                }
+
                 if (opContext != null) //only if a single assignment/add is identified
                 {
                     if (opContext == "+=")

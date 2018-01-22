@@ -14,6 +14,38 @@ using System.Xml;
 
 namespace CSScriptNpp
 {
+    public class Distro
+    {
+        public string Version;
+        public string URL_root;
+
+        public string MsiUrl
+        {
+            get { return URL_root + FileNameWithoutExtension + ".msi"; }
+        }
+
+        public string ZipUrl
+        {
+            get { return URL_root + FileNameWithoutExtension + ".zip"; }
+        }
+
+        public string ReleaseNotesUrl
+        {
+            get { return URL_root + "CSScriptNpp." + Version + ".ReleaseInfo.txt"; }
+        }
+
+        string FileNameWithoutExtension
+        {
+            get
+            {
+                var distroCpu = ".x86";
+                if (IntPtr.Size == 8)
+                    distroCpu = ".x64";
+                return "CSScriptNpp." + Version + distroCpu;
+            }
+        }
+    }
+
     public class CSScriptHelper
     {
         static string consoleHostPath;
@@ -726,19 +758,21 @@ class Script
             return scriptFile;
         }
 
-        static public string GetLatestAvailableDistro(string version, string distroExtension, Action<long, long> onProgress)
+        static public string DownloadDistro(string distroUrl, Action<long, long> onProgress)
         {
             try
             {
                 string downloadDir = KnownFolders.UserDownloads;
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(distroUrl);
+                string distroExtension = Path.GetExtension(distroUrl);
 
-                string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + distroExtension);
+                string destFile = Path.Combine(downloadDir, fileNameWithoutExtension + distroExtension);
 
-                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp." + version + "*" + distroExtension).Count();
+                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, fileNameWithoutExtension + "*" + distroExtension).Count();
                 if (numOfAlreadyDownloaded > 0)
-                    destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + " (" + (numOfAlreadyDownloaded + 1) + ")" + distroExtension);
+                    destFile = Path.Combine(downloadDir, fileNameWithoutExtension + " (" + (numOfAlreadyDownloaded + 1) + ")" + distroExtension);
 
-                DownloadBinary("http://csscript.net/npp/CSScriptNpp." + version + distroExtension, destFile, onProgress);
+                DownloadBinary(distroUrl, destFile, onProgress);
 
                 return destFile;
             }
@@ -748,7 +782,7 @@ class Script
             }
         }
 
-        static public string GetLatestReleaseInfo(string version)
+        static public string GetLatestReleaseInfo(Distro version)
         {
             try
             {
@@ -766,23 +800,27 @@ class Script
             }
         }
 
-        static public string GetLatestAvailableVersion()
+        static public Distro GetLatestAvailableVersion()
         {
+            var github_distro_latest_version = "https://raw.githubusercontent.com/oleg-shilo/cs-script.npp/master/bin/latest_version.txt";
+            // github_repo_latest_version = "http://csscript.net/npp/latest_version.txt";
+
             bool update_always = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_UPDATE_ALWAYS") != null;
-            string url = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL") ?? "http://csscript.net/npp/latest_version.txt";
+            string url = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL") ?? github_distro_latest_version;
 #if DEBUG
-            url = "http://csscript.net/npp/latest_version_dbg.txt";
+            // url = "http://csscript.net/npp/latest_version_dbg.txt";
 #endif
-            string stableVersion = GetLatestAvailableVersion(url);
+
+            Distro stableVersion = GetLatestAvailableVersion(url);
 
             if (Config.Instance.CheckPrereleaseUpdates)
             {
-                string prereleaseVersion = GetLatestAvailableVersion(url.Replace(".txt", ".pre.txt"));
-                if (stableVersion.IsEmpty())
+                Distro prereleaseVersion = GetLatestAvailableVersion(url.Replace(".txt", ".pre.txt"));
+                if (stableVersion != null)
                 {
                     return prereleaseVersion;
                 }
-                if (prereleaseVersion.IsEmpty())
+                if (prereleaseVersion == null)
                 {
                     return stableVersion;
                 }
@@ -790,7 +828,7 @@ class Script
                 {
                     try
                     {
-                        if (Version.Parse(prereleaseVersion) > Version.Parse(stableVersion))
+                        if (Version.Parse(prereleaseVersion.Version) > Version.Parse(stableVersion.Version))
                             return prereleaseVersion;
                         else
                             return stableVersion;
@@ -802,11 +840,17 @@ class Script
             return stableVersion;
         }
 
-        static public string GetLatestAvailableVersion(string url)
+        static public Distro GetLatestAvailableVersion(string url)
         {
             try
             {
-                return DownloadText(url).Trim();
+                var lines = DownloadText(url).Trim().GetLines();
+
+                return new Distro
+                {
+                    Version = lines[0],
+                    URL_root = lines[1]
+                };
             }
             catch
             {

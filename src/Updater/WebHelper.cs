@@ -72,7 +72,7 @@ namespace CSScriptNpp.Deployment
             }
         }
 
-        private static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
+        internal static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
         {
             var sb = new StringBuilder();
             byte[] buf = new byte[1024 * 4];

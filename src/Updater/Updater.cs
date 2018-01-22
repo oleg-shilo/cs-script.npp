@@ -19,7 +19,7 @@ namespace CSScriptNpp.Deployment
         {
             //Debug.Assert(false);
 
-            string tempDir = Path.Combine(targetDir, "CSScriptNpp.Update");
+            string tempDir = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.ManualUpdate", "temp");
 
             try
             {
@@ -35,8 +35,16 @@ namespace CSScriptNpp.Deployment
                 // To my disbelieve Directory.Move is very unreliable as it complains constantly about files being locked. While
                 // custom *Dir(,) methods with retry work quite well
                 DeleteDir(pluginBackupDir, retryDelay: 1000);
-                CopyDir(pluginDir, pluginBackupDir);
-                DeleteDir(pluginDir);
+                if (Directory.Exists(pluginDir))
+                {
+                    CopyDir(pluginDir, pluginBackupDir);
+                    DeleteDir(pluginDir);
+                }
+
+                // delete old version of plugin host
+                var host_old_dll = Directory.GetFiles(targetDir, "CSCSriptNpp*.dll").FirstOrDefault();
+                if (File.Exists(host_old_dll))
+                    DeleteFile(host_old_dll);
 
                 Exract(zipFile, tempDir);
 
@@ -114,7 +122,7 @@ namespace CSScriptNpp.Deployment
                 foreach (string file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
                     DeleteFile(file);
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 3 && Directory.Exists(dir); i++)
                     try { Directory.Delete(dir, true); }
                     catch { Thread.Sleep(retryDelay); }
             }

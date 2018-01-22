@@ -26,11 +26,17 @@ namespace CSScriptNpp.Deployment
                     string distroFile = UserInputForm.GetDistro();
                     if (!string.IsNullOrEmpty(distroFile))
                     {
-                        //Debug.Assert(false);
+                        // Debug.Assert(false);
                         StopVBCSCompilers();
                         if (EnsureNppNotRunning(false) && EnsureVBCSCompilerNotLocked(false))
                         {
-                            DeployItselfAndRestart(distroFile, FindPluginDir());
+                            if (distroFile.StartsWith("http"))
+                            {
+                                var url = distroFile;
+                                distroFile = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.ManualUpdate", Path.GetFileName(distroFile));
+                                WebHelper.DownloadBinary(url, distroFile);
+                            }
+                            DeployItselfAndRestart(distroFile, FindPluginDir(distroFile));
                         }
                     }
                     return;
@@ -47,7 +53,7 @@ namespace CSScriptNpp.Deployment
 
                 // <zipFile> [<pluginDir>] [/asynchUpdateArg]
                 string zipFile = args[0];
-                string pluginDir = args.Length > 1 ? args[1] : FindPluginDir();
+                string pluginDir = args.Length > 1 ? args[1] : FindPluginDir(zipFile);
 
                 string updaterDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -67,7 +73,7 @@ namespace CSScriptNpp.Deployment
                     if (pluginDir == null)
                         throw new Exception($"Cannot find Notepad++ installation.");
 
-                    //Debug.Assert(false);
+                    Debug.Assert(false);
 
                     if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                     {
@@ -101,10 +107,19 @@ namespace CSScriptNpp.Deployment
             }
         }
 
-        static string FindPluginDir()
+        static string FindPluginDir(string distroFile)
         {
-            var pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            // CSScriptNpp.x86.zip
+            var cpu = Path.GetExtension(Path.GetFileNameWithoutExtension(distroFile));
+            if (cpu == null || cpu == ".x86")
+                return findPluginDir(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86));
+            else if (cpu == ".x64")
+                return findPluginDir(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+            return null;
+        }
 
+        static string findPluginDir(string pf)
+        {
             var pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (pluginDir.EndsWith("CSScriptNpp") && pluginDir.StartsWith(pf, StringComparison.OrdinalIgnoreCase))
                 return Path.GetDirectoryName(pluginDir);
@@ -170,7 +185,7 @@ namespace CSScriptNpp.Deployment
 
         static void DeployItselfAndRestart(string zipFile, string pluginDir)
         {
-            string downloadDir = KnownFolders.UserDownloads;
+            // string downloadDir = KnownFolders.UserDownloads;
             string destDir = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.Updater");
             string destUpdater = Path.Combine(destDir, "updater.exe");
 

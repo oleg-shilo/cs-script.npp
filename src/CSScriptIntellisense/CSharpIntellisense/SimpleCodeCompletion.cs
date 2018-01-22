@@ -63,20 +63,21 @@ namespace CSScriptIntellisense
 
                 var effectiveOffset = offset;
 
-                if (offset > 0)
-                {
-                    for (int i = offset - 1; i >= 0; i--)
-                    {
-                        if (char.IsWhiteSpace(editorText[i]))
-                        {
-                            break;
-                        }
-                        else if (editorText[i] == '.')
-                        {
-                            effectiveOffset = i + 1;
-                        }
-                    }
-                }
+                // VS experience
+                // if (offset > 0)
+                // {
+                //     for (int i = offset - 1; i >= 0; i--)
+                //     {
+                //         if (char.IsWhiteSpace(editorText[i]))
+                //         {
+                //             break;
+                //         }
+                //         else if (editorText[i] == '.')
+                //         {
+                //             effectiveOffset = i + 1;
+                //         }
+                //     }
+                // }
 
                 var data = Config.Instance.UsingRoslyn ?
                             Syntaxer.GetCompletions(editorText, fileName, effectiveOffset).ToList() :
