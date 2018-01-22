@@ -844,7 +844,7 @@ class Script
         {
             try
             {
-                var lines = DownloadText(url).Trim().GetLines();
+                var lines = DownloadText(url).Trim().Replace("\r\n", "\n").Split('\n');
 
                 return new Distro
                 {

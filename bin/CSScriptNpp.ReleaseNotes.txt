@@ -1,0 +1,19 @@
+Release beta-1.7.7.3
+
+* beta-3
+  - Autocompletion user experience made consistent (e.g. suggestion filtering) with Visual Studio Intellisense.
+  - Added `Config.Instance.InterceptConsoleByCharacter` (false by default) to allow faster ConsoleOutput rendering
+  - Added `Config.BlockLocalDebugOutputContaining` to block unwanted Debug output content.
+  - Added `Config.StartDebugMonitorOnScriptExecution` to prevent auto-attaching DBMon as it can cause significant startup delay for any process being started from the common parent (Notepad++ exe).
+  - Updated packaging provcess to support x64.
+  - Added patching  CSScriptNpp.<x86|x64>.dll (renamed NppPlugin.Host.dll) with the correctc plugin version
+  - Fixed nasty problem with interop corrupting unamanged memory. `Npp.Editor.GetOpenFiles` replaced with more conservative but safer `Npp.Editor.GetOpenFilesSafe`
+  - Various loading optimization changes.
+  - Provided safe version of `Npp.Editor.GetOpenFilesRaw()`
+
+* beta-2
+  - Fixed debugger current step marker rendering problem
+  
+* beta-1
+  - Fixed debugger problem caused by the css_dbg.exe release-build being packaged instead of the debug-build.
+

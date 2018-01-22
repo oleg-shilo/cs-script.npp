@@ -189,7 +189,11 @@ namespace CSScriptNpp
                         using (var dialog = new UpdateOptionsPanel(distro))
                             dialog.ShowDialog();
                     };//);
-                    Close();
+
+                    Invoke((Action)delegate
+                    {
+                        Close();
+                    });
                 }
             }
         }
