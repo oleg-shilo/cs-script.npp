@@ -126,7 +126,7 @@ namespace CSScriptIntellisense
         {
             try
             {
-                Process.Start("http://csscript.net/npp/license.txt");
+                Process.Start("https://github.com/oleg-shilo/cs-script.npp/blob/master/license.txt");
             }
             catch { }
         }
@@ -135,14 +135,13 @@ namespace CSScriptIntellisense
         {
             try
             {
-                Process.Start("http://csscript.net/npp/");
+                Process.Start("https://github.com/oleg-shilo/cs-script.npp");
             }
             catch { }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
         }
     }
 }

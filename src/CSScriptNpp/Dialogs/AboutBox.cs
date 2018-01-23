@@ -111,7 +111,7 @@ namespace CSScriptNpp
         {
             try
             {
-                Process.Start("http://csscript.net/npp/license.txt");
+                Process.Start("https://github.com/oleg-shilo/cs-script.npp/blob/master/license.txt");
             }
             catch { }
         }
@@ -120,7 +120,7 @@ namespace CSScriptNpp
         {
             try
             {
-                Process.Start("http://csscript.net/npp/");
+                Process.Start("https://github.com/oleg-shilo/cs-script.npp");
             }
             catch { }
         }
@@ -202,7 +202,7 @@ namespace CSScriptNpp
         {
             try
             {
-                Process.Start("mailto:csscript.support@gmail.com?subject=CS-Script_Npp");
+                Process.Start("https://github.com/oleg-shilo/cs-script.npp/issues");
             }
             catch { }
         }

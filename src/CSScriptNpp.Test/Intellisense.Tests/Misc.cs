@@ -28,7 +28,7 @@ namespace Testing
         //     Thrown when the strings are not equivalent.
         public static void Equal(string expected, string actual)
         {
-            Assert.Equal(expected.NormalizeLineEnds(), actual.NormalizeLineEnds());
+            Assert.Equal(expected.NormalizeNewLines(), actual.NormalizeNewLines());
         }
     }
 
@@ -37,11 +37,6 @@ namespace Testing
         static public string RemoveOverloadsInfo(this string text)
         {
             return text.Split(new[] { "(+" }, StringSplitOptions.None)[0].TrimEnd();
-        }
-
-        static internal string NormalizeLineEnds(this string text)
-        {
-            return text.Replace("\r\n", "\n");
         }
     }
 

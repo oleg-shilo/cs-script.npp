@@ -1,4 +1,5 @@
-﻿using Kbg.NppPluginNET.PluginInfrastructure;
+﻿using CSScriptIntellisense;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -26,7 +27,7 @@ namespace CSScriptNpp.Dialogs
             msiDeployment.Checked = (Config.Instance.UpdateMode == (string)msiDeployment.Tag);
             manualDeployment.Checked = (Config.Instance.UpdateMode == (string)manualDeployment.Tag);
 
-            releaseInfo.Text = CSScriptHelper.GetLatestReleaseInfo(this.distro);
+            releaseInfo.Text = this.distro.ReleaseNotesText.NormalizeNewLines();
         }
 
         void UpdateProgress(long currentStep, long totalSteps)
@@ -89,7 +90,7 @@ namespace CSScriptNpp.Dialogs
 
                         if (distroFile == null || (!File.Exists(distroFile) && distroFile != distro.ZipUrl))
                         {
-                            MessageBox.Show("Cannot download the binaries. The latest release Web page will be opened instead.", "CS-Script");
+                            MessageBox.Show(this, "Cannot download the binaries. The latest release Web page will be opened instead.", "CS-Script");
                             try
                             {
                                 Process.Start(Plugin.HomeUrl);
@@ -122,7 +123,7 @@ namespace CSScriptNpp.Dialogs
 
                                 if (updateAfterExit.Checked)
                                 {
-                                    Process.Start(updater, string.Format("\"{0}\" \"{1}\" /asynch_update", distro, targetDir));
+                                    Process.Start(updater, string.Format("\"{0}\" \"{1}\" /asynch_update", distro.ZipUrl, targetDir));
                                     MessageBox.Show("The plugin will be updated after you close Notepad++", "CS-Script");
                                 }
                                 else
@@ -133,7 +134,9 @@ namespace CSScriptNpp.Dialogs
                                         Process updater_proc = Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
 
                                         string npp_exe = Process.GetCurrentProcess().MainModule.FileName;
-                                        string restarter = Path.Combine(PluginEnv.PluginDir, "launcher.exe");
+
+                                        // launcher.exe is already deployed (along with 7z.exe)
+                                        string restarter = Path.Combine(Path.GetDirectoryName(updater), "launcher.exe");
 
                                         //the re-starter will also wait for updater process to exit
                                         Process.Start(restarter, $"/start {updater_proc.Id} \"{npp_exe}\"");
@@ -148,7 +151,7 @@ namespace CSScriptNpp.Dialogs
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Cannot execute install update: " + ex.Message, "CS-Script");
+                        MessageBox.Show(this, "Cannot execute install update: " + ex.Message, "CS-Script");
                     }
 
                     try { Invoke((Action)Close); }
@@ -158,17 +161,17 @@ namespace CSScriptNpp.Dialogs
 
         string DeployUpdater(string pluginDir, string tempDir)
         {
-            string srcDir = Path.Combine(pluginDir, "CSScriptNpp");
             string deploymentDir = Path.Combine(tempDir, "CSScriptNpp.Updater");
 
             if (!Directory.Exists(deploymentDir))
                 Directory.CreateDirectory(deploymentDir);
 
-            Action<string> deploy = file => File.Copy(Path.Combine(srcDir, file), Path.Combine(deploymentDir, file), true);
+            Action<string> deploy = file => File.Copy(Path.Combine(pluginDir, file), Path.Combine(deploymentDir, file), true);
 
             deploy("updater.exe");
-            //deploy("7z.exe");
-            //deploy("7z.dll");
+            // deploy("7z.exe"); // 7Zip is deployed by the updater itself
+            // deploy("7z.dll");
+            deploy("launcher.exe");
 
             return Path.Combine(deploymentDir, "updater.exe");
         }
@@ -180,7 +183,7 @@ namespace CSScriptNpp.Dialogs
 
         void releaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://csscript.net/npp/CSScriptNpp." + distro + ".ReleaseNotes.html");
+            Process.Start(distro.ReleasePageUrl);
         }
 
         void showOptions_CheckedChanged(object sender, EventArgs e)

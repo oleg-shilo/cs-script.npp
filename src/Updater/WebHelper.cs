@@ -9,66 +9,27 @@ namespace CSScriptNpp.Deployment
 {
     class WebHelper
     {
-        static public string GetLatestAvailableDistro(string version, string distroExtension, Action<long, long> onProgress)
+        static public string DownloadDistro(string distroUrl, Action<long, long> onProgress)
         {
             try
             {
                 string downloadDir = KnownFolders.UserDownloads;
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(distroUrl);
+                string distroExtension = Path.GetExtension(distroUrl);
 
-                string destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + distroExtension);
+                string destFile = Path.Combine(downloadDir, fileNameWithoutExtension + distroExtension);
 
-                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, "CSScriptNpp." + version + "*" + distroExtension).Count();
+                int numOfAlreadyDownloaded = Directory.GetFiles(downloadDir, fileNameWithoutExtension + "*" + distroExtension).Count();
                 if (numOfAlreadyDownloaded > 0)
-                    destFile = Path.Combine(downloadDir, "CSScriptNpp." + version + " (" + (numOfAlreadyDownloaded + 1) + ")" + distroExtension);
+                    destFile = Path.Combine(downloadDir, fileNameWithoutExtension + " (" + (numOfAlreadyDownloaded + 1) + ")" + distroExtension);
 
-                DownloadBinary("http://csscript.net/npp/CSScriptNpp." + version + distroExtension, destFile, onProgress);
+                DownloadBinary(distroUrl, destFile, onProgress);
 
                 return destFile;
             }
             catch
             {
                 return null;
-            }
-        }
-
-        public static string DownloadDistro(string version, Action<long, long> onProgress)
-        {
-            if (version.IsUrl())
-            {
-                var url = version;
-                return DownloadDistroFrom(url, onProgress);
-            }
-            else
-            {
-                return DownloadDistroOf(version, onProgress);
-            }
-        }
-
-        public static string DownloadDistroOf(string version, Action<long, long> onProgress)
-        {
-            return GetLatestAvailableDistro(version, ".zip", onProgress);
-        }
-
-        static public string DownloadDistroFrom(string url, Action<long, long> onProgress)
-        {
-            try
-            {
-                var file = Path.GetFileName(url);
-                string destFile = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.ManualUpdate", file);
-
-                if (File.Exists(destFile))
-                    File.Delete(destFile);
-
-                DownloadBinary(url, destFile, onProgress);
-
-                if (File.ReadAllText(destFile).Contains("Error 404"))
-                    throw new Exception($"Resource {url} cannot be downloaded.");
-
-                return destFile;
-            }
-            catch
-            {
-                throw;
             }
         }
 

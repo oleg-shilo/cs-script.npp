@@ -68,6 +68,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CSScriptNpp\CSScriptNpp\Distro.cs">
+      <Link>Distro.cs</Link>
+    </Compile>
     <Compile Include="..\CSScriptNpp\Interop\KnownFolders.cs">
       <Link>KnownFolders.cs</Link>
     </Compile>

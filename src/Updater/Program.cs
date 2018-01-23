@@ -21,6 +21,8 @@ namespace CSScriptNpp.Deployment
         {
             try
             {
+                Debug.Assert(false);
+
                 if (!args.Any())
                 {
                     string distroFile = UserInputForm.GetDistro();
@@ -62,6 +64,10 @@ namespace CSScriptNpp.Deployment
                     DeployItselfAndRestart(zipFile, pluginDir);
                     return;
                 }
+                else
+                {
+                    DeployDependencies();
+                }
 
                 if (IsAdmin())
                 {
@@ -85,7 +91,8 @@ namespace CSScriptNpp.Deployment
                             zipFile = WebHelper.DownloadDistro(args[0], WaitPrompt.OnProgress);
                         }
 
-                        Updater.Deploy(zipFile, pluginDir);
+                        // pluginDir: C:\Program Files\Notepad++\plugins\CSScriptNpp
+                        Updater.Deploy(zipFile, Path.GetDirectoryName(pluginDir));
 
                         WaitPrompt.Hide();
 
@@ -118,14 +125,14 @@ namespace CSScriptNpp.Deployment
             return null;
         }
 
-        static string findPluginDir(string pf)
+        static string findPluginDir(string programFilesDir)
         {
             var pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (pluginDir.EndsWith("CSScriptNpp") && pluginDir.StartsWith(pf, StringComparison.OrdinalIgnoreCase))
+            if (pluginDir.EndsWith("CSScriptNpp") && pluginDir.StartsWith(programFilesDir, StringComparison.OrdinalIgnoreCase))
                 return Path.GetDirectoryName(pluginDir);
             else
             {
-                pluginDir = Path.Combine(pf, @"Notepad++\plugins");
+                pluginDir = Path.Combine(programFilesDir, @"Notepad++\plugins");
                 string nppExe = Path.Combine(pluginDir, @"..\notepad++.exe");
 
                 if (Directory.Exists(pluginDir) && File.Exists(nppExe))
@@ -193,10 +200,18 @@ namespace CSScriptNpp.Deployment
                 Directory.CreateDirectory(destDir);
 
             File.Copy(Path.Combine(Assembly.GetExecutingAssembly().Location), destUpdater, true);
-            File.WriteAllBytes(Path.Combine(destDir, "7z.exe"), Resource1._7z_exe);
-            File.WriteAllBytes(Path.Combine(destDir, "7z.dll"), Resource1._7z_dll);
+            DeployDependencies();
 
             Process.Start(destUpdater, $"\"{zipFile}\" \"{pluginDir}\"");
+        }
+
+        static void DeployDependencies()
+        {
+            string destDir = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.Updater");
+            if (!Directory.Exists(destDir))
+                Directory.CreateDirectory(destDir);
+            File.WriteAllBytes(Path.Combine(destDir, "7z.exe"), Resource1._7z_exe);
+            File.WriteAllBytes(Path.Combine(destDir, "7z.dll"), Resource1._7z_dll);
         }
 
         static bool EnsureVBCSCompilerNotLocked(bool backgroundWait)

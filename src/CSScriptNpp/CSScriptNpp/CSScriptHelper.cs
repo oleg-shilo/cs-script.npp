@@ -14,38 +14,6 @@ using System.Xml;
 
 namespace CSScriptNpp
 {
-    public class Distro
-    {
-        public string Version;
-        public string URL_root;
-
-        public string MsiUrl
-        {
-            get { return URL_root + FileNameWithoutExtension + ".msi"; }
-        }
-
-        public string ZipUrl
-        {
-            get { return URL_root + FileNameWithoutExtension + ".zip"; }
-        }
-
-        public string ReleaseNotesUrl
-        {
-            get { return URL_root + "CSScriptNpp." + Version + ".ReleaseInfo.txt"; }
-        }
-
-        string FileNameWithoutExtension
-        {
-            get
-            {
-                var distroCpu = ".x86";
-                if (IntPtr.Size == 8)
-                    distroCpu = ".x64";
-                return "CSScriptNpp." + Version + distroCpu;
-            }
-        }
-    }
-
     public class CSScriptHelper
     {
         static string consoleHostPath;
@@ -782,24 +750,6 @@ class Script
             }
         }
 
-        static public string GetLatestReleaseInfo(Distro version)
-        {
-            try
-            {
-                string url = "http://csscript.net/npp/CSScriptNpp." + version + ".ReleaseInfo.txt";
-
-                string text = DownloadText(url);
-                if (text.Trim().StartsWith("<html>"))
-                    text = "Complete release notes can be found here:\r\n\r\n" + url.Replace("ReleaseInfo", "ReleaseNotes");
-
-                return text;
-            }
-            catch
-            {
-                return "";
-            }
-        }
-
         static public Distro GetLatestAvailableVersion()
         {
             var github_distro_latest_version = "https://raw.githubusercontent.com/oleg-shilo/cs-script.npp/master/bin/latest_version.txt";
@@ -808,14 +758,13 @@ class Script
             bool update_always = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_UPDATE_ALWAYS") != null;
             string url = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL") ?? github_distro_latest_version;
 #if DEBUG
-            // url = "http://csscript.net/npp/latest_version_dbg.txt";
 #endif
 
-            Distro stableVersion = GetLatestAvailableVersion(url);
+            Distro stableVersion = GetLatestAvailableDistro(url);
 
             if (Config.Instance.CheckPrereleaseUpdates)
             {
-                Distro prereleaseVersion = GetLatestAvailableVersion(url.Replace(".txt", ".pre.txt"));
+                Distro prereleaseVersion = GetLatestAvailableDistro(url.Replace(".txt", ".pre.txt"));
                 if (stableVersion != null)
                 {
                     return prereleaseVersion;
@@ -840,17 +789,11 @@ class Script
             return stableVersion;
         }
 
-        static public Distro GetLatestAvailableVersion(string url)
+        static public Distro GetLatestAvailableDistro(string url)
         {
             try
             {
-                var lines = DownloadText(url).Trim().Replace("\r\n", "\n").Split('\n');
-
-                return new Distro
-                {
-                    Version = lines[0],
-                    URL_root = lines[1]
-                };
+                return Distro.FromVersionInfo(DownloadText(url));
             }
             catch
             {
