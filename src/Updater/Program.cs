@@ -21,7 +21,7 @@ namespace CSScriptNpp.Deployment
         {
             try
             {
-                Debug.Assert(false);
+                // Debug.Assert(false);
 
                 if (!args.Any())
                 {
@@ -79,7 +79,7 @@ namespace CSScriptNpp.Deployment
                     if (pluginDir == null)
                         throw new Exception($"Cannot find Notepad++ installation.");
 
-                    Debug.Assert(false);
+                    // Debug.Assert(false);
 
                     if (EnsureNppNotRunning(isAsynchUpdate) && EnsureVBCSCompilerNotLocked(isAsynchUpdate))
                     {

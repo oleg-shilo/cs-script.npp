@@ -59,7 +59,23 @@ namespace CSScriptNpp
 
                 CSScriptIntellisense.Syntaxer.Exit();
                 SafeCopy("syntaxer.exe", sourceDir, syntaxerDir);
+
+                var oldSyntaxerVersions = Directory.GetDirectories(Path.GetDirectoryName(sourceDir)).Where(x => x != syntaxerDir);
+                foreach (var dir in oldSyntaxerVersions)
+                    DeleteDir(dir);
             }
+        }
+
+        static void DeleteDir(string dir)
+        {
+            foreach (string file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
+                try
+                { File.Delete(file); }
+                catch { }
+
+            for (int i = 0; i < 3 && Directory.Exists(dir); i++)
+                try { Directory.Delete(dir, true); }
+                catch { Thread.Sleep(200); }
         }
 
         static void SafeCopy(string file, string srcDir, string destDir)
