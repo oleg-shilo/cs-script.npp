@@ -16,6 +16,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSScriptNpp", "CSScriptNpp\
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C1911DCC-6B6A-44AE-948D-8CB0A311C73C}"
+	ProjectSection(SolutionItems) = preProject
+		..\bin\package.readme = ..\bin\package.readme
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbMon", "DbMon\DbMon.csproj", "{A2272B4F-44F6-4FB2-86A0-3EC99C0947F7}"
 EndProject

@@ -13,6 +13,7 @@ Special thanks to @kbilsted for his excellent kbilsted/NotepadPlusPlusPluginPack
  - Merged CSScriptIntellisense.Npp and SScriptNpp.Npp classes 
 
 * Plugin functionality changes and fixes
+ - All plugin's references to the external resources are changed from CodePlex (R.I.P.) to GitHub.  
  - Autocompletion user experience made consistent (e.g. suggestion filtering) with Visual Studio Intellisense.
  - Added `Config.Instance.InterceptConsoleByCharacter` (false by default) to allow faster ConsoleOutput rendering
  - Added `Config.BlockLocalDebugOutputContaining` to block unwanted Debug output content.

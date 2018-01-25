@@ -58,7 +58,7 @@
             // 
             this.msiDeployment.AutoSize = true;
             this.msiDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.msiDeployment.Location = new System.Drawing.Point(13, 64);
+            this.msiDeployment.Location = new System.Drawing.Point(275, 57);
             this.msiDeployment.Name = "msiDeployment";
             this.msiDeployment.Size = new System.Drawing.Size(248, 43);
             this.msiDeployment.TabIndex = 0;
@@ -66,13 +66,14 @@
             this.msiDeployment.Text = "Download &MSI.\r\nNot suitable for Notepad++ portable installation.\r\nThis option ma" +
     "y require system reboot.";
             this.msiDeployment.UseVisualStyleBackColor = true;
+            this.msiDeployment.Visible = false;
             // 
             // customDeployment
             // 
             this.customDeployment.AutoSize = true;
             this.customDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.customDeployment.Checked = true;
-            this.customDeployment.Location = new System.Drawing.Point(13, 15);
+            this.customDeployment.Location = new System.Drawing.Point(16, 22);
             this.customDeployment.Name = "customDeployment";
             this.customDeployment.Size = new System.Drawing.Size(256, 43);
             this.customDeployment.TabIndex = 1;
@@ -99,7 +100,7 @@
             // 
             this.manualDeployment.AutoSize = true;
             this.manualDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.manualDeployment.Location = new System.Drawing.Point(13, 113);
+            this.manualDeployment.Location = new System.Drawing.Point(16, 83);
             this.manualDeployment.Name = "manualDeployment";
             this.manualDeployment.Size = new System.Drawing.Size(287, 30);
             this.manualDeployment.TabIndex = 0;
