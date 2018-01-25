@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("CSScriptNpp")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("CS-Script")]
+[assembly: AssemblyCompany("Oleg Shilo")]
 [assembly: AssemblyProduct("CS-Script for Notepad++")]
 [assembly: AssemblyCopyright("Copyright © Oleg Shilo 2014-2018")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.7.7.3")]
-[assembly: AssemblyFileVersion("1.7.7.3")]
+[assembly: AssemblyVersion("1.7.8.0")]
+[assembly: AssemblyFileVersion("1.7.8.0")]

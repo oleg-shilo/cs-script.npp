@@ -60,7 +60,7 @@ namespace CSScriptNpp
                 CSScriptIntellisense.Syntaxer.Exit();
                 SafeCopy("syntaxer.exe", sourceDir, syntaxerDir);
 
-                var oldSyntaxerVersions = Directory.GetDirectories(Path.GetDirectoryName(sourceDir)).Where(x => x != syntaxerDir);
+                var oldSyntaxerVersions = Directory.GetDirectories(Path.GetDirectoryName(dependenciesDir)).Where(x => x != dependenciesDir);
                 foreach (var dir in oldSyntaxerVersions)
                     DeleteDir(dir);
             }

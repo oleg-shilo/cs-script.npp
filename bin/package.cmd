@@ -1,4 +1,4 @@
-echo off 
+echo off
 
 echo(
 echo Patching host assemblies with the version info...
@@ -26,8 +26,9 @@ xcopy "..\src\output\plugins" ".\plugins" /s /Y
 del ".\plugins\original_*"
 del ".\plugins\*.zip"
 
-move latest_version.txt latest_version.txt_                   >nul 2>&1  
-move latest_version_dbg.txt latest_version_dbg.txt_           >nul 2>&1
+move latest_version.txt latest_version.txt_                         >nul 2>&1
+move latest_version.pre.txt latest_version.pre.txt_                 >nul 2>&1
+move latest_version_dbg.txt latest_version_dbg.txt_                 >nul 2>&1
 
 "C:\Program Files\7-Zip\7z.exe" a -t7z CSScriptNpp.x86.7z *.txt -x!plugins\CSScriptNpp.x64.dll plugins
 "C:\Program Files\7-Zip\7z.exe" a -t7z CSScriptNpp.x64.7z *.txt -x!plugins\CSScriptNpp.x86.dll plugins
@@ -41,6 +42,7 @@ cscs /l package
 echo Cleanup...
 echo(
 move latest_version.txt_ latest_version.txt                         >nul 2>&1
+move latest_version.pre.txt_ latest_version.pre.txt                 >nul 2>&1
 move latest_version_dbg.txt_ latest_version_dbg.txt                 >nul 2>&1
 
 pause
