@@ -1,6 +1,8 @@
 # CS-Script Plugin (CSScript.Npp)   
 <img align="right" src="wiki/css_npp_logo_clear.png" alt="" style="float:right">
 
+[Download latest release](https://github.com/oleg-shilo/cs-script.npp/releases)
+
 *This Notepad++ plugin requires .NET v4.0 or higher.* 
 
 Total downloads via Notepad++ Plugin Manager: Total Downloads Count: ![](http://www.csscript.net/statistics/css.npp.count.jpeg)            
