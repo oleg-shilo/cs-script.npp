@@ -1,0 +1,27 @@
+1.a Update Resources\WhatsNew.txt
+1.b Build Release
+
+2. Run package.cmd
+
+3. Commit the code
+
+4. Update GitHub (make release)
+
+5. Update and commit latest_version.txt
+
+x64
+---------------------------------
+6. Update N++ Plugin Manager
+
+x86
+---------------------------------
+6. Upload (FTP):
+    CSScriptNpp.<version>.7z
+    CSScriptNpp.<version>.msi
+    CSScriptNpp.<version>.zip
+    CSScriptNpp.<version>.ReleaseNotes.txt
+    CSScriptNpp.<version>.ReleaseNotes.html
+    latest_version.txt
+    latest_version_dbg.txt
+
+7. Update N++ Plugin Manager

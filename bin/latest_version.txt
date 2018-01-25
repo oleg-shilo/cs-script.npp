@@ -1,20 +1,29 @@
-1.7.7.3
-https://github.com/oleg-shilo/cs-script.npp/releases/download/beta-v1.7.7.3
-Release beta-1.7.7.3
+1.7.8.0
+https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.8.0
+Release v1.7.8
 
-* beta-3
-  - Autocompletion user experience made consistent (e.g. suggestion filtering) with Visual Studio Intellisense.
-  - Added `Config.Instance.InterceptConsoleByCharacter` (false by default) to allow faster ConsoleOutput rendering
-  - Added `Config.BlockLocalDebugOutputContaining` to block unwanted Debug output content.
-  - Added `Config.StartDebugMonitorOnScriptExecution` to prevent auto-attaching DBMon as it can cause significant startup delay for any process being started from the common parent (Notepad++ exe).
-  - Updated packaging provcess to support x64.
-  - Added patching  CSScriptNpp.<x86|x64>.dll (renamed NppPlugin.Host.dll) with the correctc plugin version
-  - Fixed nasty problem with interop corrupting unamanged memory. `Npp.Editor.GetOpenFiles` replaced with more conservative but safer `Npp.Editor.GetOpenFilesSafe`
-  - Various loading optimization changes.
-  - Provided safe version of `Npp.Editor.GetOpenFilesRaw()`
+This is the first truly portable release. The same plugin binaries are running on both x86 and x64 versions of Notepad++.
+Special thanks to @kbilsted for his excellent kbilsted/NotepadPlusPlusPluginPack.Net x64 compatible Notepad++ managed hosting solution.
 
-* beta-2
-  - Fixed debugger current step marker rendering problem
-  
-* beta-1
-  - Fixed debugger problem caused by the css_dbg.exe release-build being packaged instead of the debug-build.
+This version can only be installed via PluginManager or manually. The plugin's own embedded updater will be able to check and perform future updates after v1.7.8 is installed.
+
+* x64 migration
+ - Implemented NppPlugin.Host loosely coupled CPU specific launcher
+ - CSScriptIntellisense+CSScriptNpp made AnyCPU
+ - Changed updater.exe to meet new x64 requirements
+ - All NPP API code migrated to CPU neutral interface.
+ - Updated packaging process to support x64.
+ - Fixed nasty problem with interop corrupting unamanged memory. `Npp.Editor.GetOpenFiles` replaced with more conservative but safer `Npp.Editor.GetOpenFilesSafe`
+ - Merged CSScriptIntellisense.Npp and SScriptNpp.Npp classes
+
+* Plugin functionality changes and fixes
+ - All plugin's references to the external resources are changed from CodePlex (R.I.P.) to GitHub.
+ - Autocompletion user experience made consistent (e.g. suggestion filtering) with Visual Studio Intellisense.
+ - Added `Config.Instance.InterceptConsoleByCharacter` (false by default) to allow faster ConsoleOutput rendering
+ - Added `Config.BlockLocalDebugOutputContaining` to block unwanted Debug output content.
+ - Added `Config.StartDebugMonitorOnScriptExecution` to prevent auto-attaching DBMon as it can cause significant startup delay for any process being started from the common parent (Notepad++ exe).
+
+* Fixes
+ - Fixed debugger current step marker rendering problem
+ - Various loading optimization changes.
+ - Added extra error handling in custom-draw CodeMap routine.
