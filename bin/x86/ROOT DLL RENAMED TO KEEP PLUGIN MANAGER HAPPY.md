@@ -1,0 +1,1 @@
+Plugin manager x32 cannot work with the root dll and plugin folder being named differently (e.g. .\CSScriptNpp.x86.dll and .\CSScriptNpp\)
