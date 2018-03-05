@@ -1,5 +1,8 @@
-Release v1.7.8
+Release v1.7.8.1
+v1.7.8.1
+* Fixed packaging problem with css_dbg.exe wrong build being included in the v1.7.8.0 distro.
 
+v1.7.8.0
 The first truly portable release. The same plugin binaries are running on both x86 and x64 versions of Notepad++ 
 Special thanks to @kbilsted for his excellent kbilsted/NotepadPlusPlusPluginPack.Net x64 compatible Notepad++ managed hosting solution.
 

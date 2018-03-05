@@ -38,6 +38,7 @@ move latest_version_dbg.txt latest_version_dbg.txt_                 >nul 2>&1
 
 rem cscs /l setup
 cscs /l package
+cscs /l md5
 
 echo Cleanup...
 echo(
