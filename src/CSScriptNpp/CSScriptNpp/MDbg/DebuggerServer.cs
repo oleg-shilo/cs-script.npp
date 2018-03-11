@@ -273,7 +273,8 @@ namespace CSScriptNpp
 
                                 //debugger often stuck even if debuggee is terminated
                                 Process.GetProcessById(debuggeeProcessId).WaitForExit();
-                                Process.GetProcessById(debuggerProcessId).Kill();
+                                if (debuggerProcessId != 0)
+                                    Process.GetProcessById(debuggerProcessId).Kill();
                             }
                             catch { }
 
@@ -338,10 +339,10 @@ namespace CSScriptNpp
             {
                 FileName = debuggerApp,
                 Arguments = "!load npp.dll",
-                //#if !DEBUG
+#if !DEBUG
                 CreateNoWindow = true,
                 UseShellExecute = false
-                //#endif
+#endif
             });
 
             MessageQueue.AddNotification(NppCategory.Diagnostics + debugger.Id + ":STARTED");

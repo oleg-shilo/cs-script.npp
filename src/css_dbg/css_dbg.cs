@@ -16,7 +16,14 @@ class Program
         if (args.Count() >= 2)
         {
             string engine_name = args[0];
-            ExecuteScript(engine_name, args.Skip(1).ToArray());
+            try
+            {
+                ExecuteScript(engine_name, args.Skip(1).ToArray());
+            }
+            catch (Exception e)
+            {
+                // MessageBox.Show(e.Message, "css_dbg");
+            }
         }
     }
 
@@ -35,8 +42,7 @@ class Program
         }
 
         if (css_asm.EndsWith("csws.exe", StringComparison.OrdinalIgnoreCase))
-                Environment.SetEnvironmentVariable("CSS_IsRuntimeErrorReportingSupressed", "true");
-            AppDomain.CurrentDomain.ExecuteAssembly(css_asm, args);
+            Environment.SetEnvironmentVariable("CSS_IsRuntimeErrorReportingSupressed", "true");
+        AppDomain.CurrentDomain.ExecuteAssembly(css_asm, args);
     }
 }
-

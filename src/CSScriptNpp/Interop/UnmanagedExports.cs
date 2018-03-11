@@ -3,6 +3,7 @@ using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using NppPlugin.DllExport;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -100,6 +101,13 @@ namespace CSScriptNpp
 
                 ScNotification nc = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
 
+                void save_breakpoints()
+                {
+                    string file = Npp.Editor.GetTabFile(nc.Header.IdFrom);
+                    Debugger.RefreshBreakPointsFromContent();
+                    Debugger.SaveBreakPointsFor(file);
+                }
+
                 //Debug.WriteLine(">>>>>   ncnc.nmhdr.code={0}, {1}", nc.nmhdr.code, (int)nc.nmhdr.code);
 
                 if (nc.Header.Code == (uint)NppMsg.NPPN_READY)
@@ -176,20 +184,20 @@ namespace CSScriptNpp
                     string file = Npp.Editor.GetTabFile(nc.Header.IdFrom);
                     Debugger.LoadBreakPointsFor(file);
                 }
-                else if (nc.Header.Code == (uint)NppMsg.NPPN_FILESAVED || nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
                 {
-                    string file = Npp.Editor.GetTabFile(nc.Header.IdFrom);
-                    Debugger.RefreshBreakPointsFromContent();
-                    Debugger.SaveBreakPointsFor(file);
-
-                    if (nc.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
-                    {
-                        Plugin.OnDocumentSaved();
-                    }
+                    Plugin.OnDocumentSaved();
+                    Debugger.RefreshBreakPointsInContent();
+                }
+                else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
+                {
+                    save_breakpoints();
                 }
                 else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
                 {
                     CSScriptIntellisense.Plugin.OnBeforeDocumentSaved();
+                    // Formatting may have shifted all breakpoints
+                    Debugger.ResetBreaksPointsFromContent();
                 }
                 else if (nc.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
                 {

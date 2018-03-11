@@ -160,6 +160,11 @@ namespace CSScriptIntellisense
             return (IntPtr)document.MarkerAdd(line, markerId);       //'line, marker#
         }
 
+        static public string AllText(this ScintillaGateway document)
+        {
+            return document.GetText(document.GetLength() + 10);
+        }
+
         static public void DeleteMarker(this ScintillaGateway document, IntPtr handle)
         {
             document.MarkerDeleteHandle(handle.ToInt32());
@@ -168,6 +173,27 @@ namespace CSScriptIntellisense
         static public int HasMarker(this ScintillaGateway document, int line)
         {
             return document.MarkerGet(line);
+        }
+
+        static public int[] LinesOfMarker(this ScintillaGateway document, int marker)
+        {
+            Application.DoEvents();
+
+            int mask = 1 << marker;
+            var result = new List<int>();
+
+            // int line = -1;
+            // while (-1 != (line = document.MarkerNext(++line, mask)))
+            //     result.Add(line);
+
+            for (int line = 0; line < document.GetLineCount(); line++)
+            {
+                var markers = document.HasMarker(line);
+                if ((markers & mask) != 0)
+                    result.Add(line);
+            }
+
+            return result.ToArray();
         }
 
         static public int GetLineOfMarker(this ScintillaGateway document, IntPtr markerHandle)

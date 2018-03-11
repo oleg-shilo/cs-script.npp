@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, Unrestricted = true)] //required for MDbg
 

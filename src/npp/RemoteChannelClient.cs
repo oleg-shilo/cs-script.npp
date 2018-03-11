@@ -48,7 +48,7 @@ namespace npp.CSScriptNpp
         public static string CallStack = "callstack=>";
         public static string Locals = "locals=>";
         public static string Threads = "threads=>";
-        public static string BreakEntered = "break_entered=>"; 
+        public static string BreakEntered = "break_entered=>";
         public static string Modules = "modules=>";
         public static string Watch = "watch=>";
         public static string Invoke = "invoke=>";

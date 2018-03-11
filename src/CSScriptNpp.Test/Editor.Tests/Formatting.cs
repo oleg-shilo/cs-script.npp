@@ -780,5 +780,75 @@ class Script
             //}";
             // new CSharpFormatter (FormattingOptionsFactory.CreateAllman ()).Format (code));
         }
+
+        [Fact]
+        public void ShouldTrackPositionAfterFormatting()
+        {
+            var code_before =
+                "using System;\r\n\r\n\r\n\r\n\r\n\r\n" +
+@"
+                                      class Test
+                  {
+                    public static void Main(string[] args)
+                      {
+                          if (args != null ) {
+                      }
+                 }";
+
+            var code_after =
+                @"using System;
+                  class Test
+                  {
+                      public static void Main(string[] args)
+                      {
+                          if (args != null ) {
+                      }
+                  }";
+
+            var pos_before = code_before.IndexOf("public");
+            var pos_after = code_after.MapPos(pos_before, code_before);
+
+            var pos_after_word = code_after.Substring(pos_after, 6);
+            var pos_before_word = code_before.Substring(pos_before, 6);
+
+            Assert.Equal(pos_before_word, pos_after_word);
+        }
+
+        [Fact]
+        public void ShouldTrackPositionAfterFormatting2()
+        {
+            var code_before = "a\r\n" +  // 0
+                              "\r\n" +   // 1
+                              "\r\n" +   // 2
+                              "\r\n" +   // 3
+                              "b\r\n" +   // 4
+                              "\r\n" +   // 5
+                              "\r\n" +   // 6
+                              "c";       // 7
+
+            var code_after = "a\r\n" +  // 0
+                             "\r\n" +   // 1
+                             "b\r\n" +  // 2
+                             "\r\n" +   // 3
+                             "c";       // 4
+
+            var line_after = 0;
+
+            line_after = code_after.MapLine(0, code_before); Assert.Equal(0, line_after);
+
+            line_after = code_after.MapLine(1, code_before); Assert.Equal(1, line_after);
+
+            line_after = code_after.MapLine(2, code_before); Assert.Equal(1, line_after);
+
+            line_after = code_after.MapLine(3, code_before); Assert.Equal(1, line_after);
+
+            line_after = code_after.MapLine(4, code_before); Assert.Equal(2, line_after);
+
+            line_after = code_after.MapLine(5, code_before); Assert.Equal(3, line_after);
+
+            line_after = code_after.MapLine(6, code_before); Assert.Equal(3, line_after);
+
+            line_after = code_after.MapLine(7, code_before); Assert.Equal(4, line_after);
+        }
     }
 }

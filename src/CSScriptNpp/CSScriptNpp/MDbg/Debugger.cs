@@ -12,6 +12,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
+// ToDo
+// - osh-ubook (work) does not debug
+//      - Does is compiled with -dbg and start+attach.
+//        Looks like *.dbg either corrupted or not loaded correctly
+//        Need to check if in-mem assembly has anything to do with it
+//      - Probably need to offer automated dbg and start+attach
+
 namespace CSScriptNpp
 {
     internal class Debugger : DebuggerServer
@@ -96,7 +103,7 @@ namespace CSScriptNpp
             }
         }
 
-        private static void PlaceBreakPointsForCurrentTab()
+        internal static void PlaceBreakPointsForCurrentTab()
         {
             try
             {
@@ -119,10 +126,54 @@ namespace CSScriptNpp
             catch { }
         }
 
+        public static Dictionary<int, string> NoteBreakpoints()
+        {
+            var result = new Dictionary<int, string>();
+            var document = Npp.GetCurrentDocument();
+            string file = Npp.Editor.GetCurrentFilePath();
+
+            string expectedkeyPrefix = file + "|";
+            string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPrefix, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+            foreach (var key in fileBreakpoints)
+            {
+                //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
+                int line = int.Parse(key.Split('|').Last()) - 1;
+                var linetText = document.GetLine(line);
+                result.Add(line, linetText.Replace(" ", "")
+                                          .Replace("\t", "")
+                                          .TrimEnd('}'));
+            }
+
+            return result;
+        }
+
+        public static void RefreshBreakPointsInContent()
+        {
+            try
+            {
+                var document = Npp.GetCurrentDocument();
+                string file = Npp.Editor.GetCurrentFilePath();
+
+                //clear all
+                document.ClearIndicator(INDICATOR_DEBUGSTEP, 0, -1);
+
+                string expectedkeyPrefix = file + "|";
+                string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPrefix, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+                foreach (var key in fileBreakpoints)
+                {
+                    //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
+                    int line = int.Parse(key.Split('|').Last()) - 1;
+                    breakpoints[key] = document.PlaceMarker(MARK_BREAKPOINT, line);
+                    Debug.WriteLine($@"Refresh BP Line: {line}");
+                }
+            }
+            catch { }
+        }
+
         public static void RefreshBreakPointsFromContent()
         {
-            var chengedFiles = new List<string>();
-
             var currFile = Npp.Editor.GetCurrentFilePath();
             var document = Npp.GetCurrentDocument();
 
@@ -144,21 +195,55 @@ namespace CSScriptNpp
                     int line = document.GetLineOfMarker(marker);
                     if (line != -1 && !key.EndsWith("|" + (line + 1)))
                     {
+                        Debug.WriteLine($@"Save BP Line: {line}");
                         //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
                         string file = key.Split('|').First();
-
-                        if (!chengedFiles.Contains(file))
-                            chengedFiles.Add(file);
 
                         string newKey = file + "|" + (line + 1);
 
                         breakpoints.Remove(key);
-                        if (breakpoints.ContainsKey(newKey))
+                        if (!breakpoints.ContainsKey(newKey))
                             breakpoints.Add(newKey, marker);
                         else
                             breakpoints[newKey] = marker;
                     }
                 }
+            }
+
+            if (OnBreakpointChanged != null)
+                OnBreakpointChanged();
+        }
+
+        public static void ResetBreaksPointsFromContent()
+        {
+            var currFile = Npp.Editor.GetCurrentFilePath();
+            var document = Npp.GetCurrentDocument();
+            int[] actual_markers = document.LinesOfMarker(MARK_BREAKPOINT);
+
+            var currentFileKeys = breakpoints.Keys.Where(k => k.StartsWith(currFile, StringComparison.OrdinalIgnoreCase));
+
+            foreach (string key in currentFileKeys.ToArray())
+            {
+                //IMPORTANT: GetLineOfMarker returns line form the handle of the marker within a
+                //current file. Value of handles are file specific and reused between the files/documents.
+                //This is because marker handles are just marker indexes within a document.
+                //Thus resolving a given handle for a non current document can in fact return a proper line
+                //of the current doc if it has the marker with the same handle value. This already led to
+                //the break points drifting.
+
+                IntPtr marker = breakpoints[key];
+                if (marker != IntPtr.Zero)
+                    document.DeleteMarker(marker);
+                breakpoints.Remove(key);
+            }
+
+            document.DeleteAllMarkers(MARK_BREAKPOINT);
+
+            foreach (var line in actual_markers)
+            {
+                IntPtr marker = document.PlaceMarker(MARK_BREAKPOINT, line);
+                string newKey = currFile + "|" + (line + 1);
+                breakpoints[newKey] = marker;
             }
 
             if (OnBreakpointChanged != null)
@@ -1026,9 +1111,12 @@ namespace CSScriptNpp
             {
                 lastLocation = null;
                 Start(cpu);
+
                 SendSettings(BreakOnException);
                 watchExtressions.ForEach(x => DebuggerServer.AddWatchExpression(x));
+
                 Run(app, args ?? "");
+
                 EntryBreakpointFile = null;
             }
         }

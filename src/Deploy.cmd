@@ -4,7 +4,7 @@ set config=Debug
 set cpu=x86
 set dest_root=C:\Program Files (x86)
 
-set plugin_root=%dest_root%\Notepad++\plugins
+set plugin_root=%dest_root%\Notepad++ (32)\plugins
 
 md "%plugin_root%\CSScriptNpp"
 md "%plugin_root%\CSScriptNpp\Mdbg"

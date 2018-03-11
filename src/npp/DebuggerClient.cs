@@ -129,7 +129,6 @@ namespace npp
                 //    //Debug.Assert(false);
             }
 
-
             if (command == "break") //not native Mdbg command
             {
                 Break(true);
@@ -144,7 +143,6 @@ namespace npp
             }
             //else if (command.StartsWith("dbg_execute")) //not native Mdbg command
             //{
-
             //}
             else if (command.StartsWith("gotoframe")) //not native Mdbg command
             {
@@ -658,7 +656,6 @@ namespace npp
                         string stValue = val.DisplayValue.Trim('{', '}');
                         result.Add(new XAttribute("isComplex", false),
                                    new XAttribute("value", substituteValue ?? stValue));
-
                     }
                     else
                     {
@@ -1068,6 +1065,7 @@ namespace npp
                     shell.Debugger.Processes.Active.PostDebugEvent += OnPostDebugEvent;
                     lastActiveprocessId = shell.Debugger.Processes.Active.CorProcess.Id;
                     MessageQueue.AddNotification(NppCategory.Process + lastActiveprocessId + ":STARTED");
+                    // Console.Write("Mdbg: " + NppCategory.Process + lastActiveprocessId + ":STARTED");
                     lastActiveprocess = shell.Debugger.Processes.Active;
                 }
 
@@ -1076,8 +1074,9 @@ namespace npp
                     ReportCurrentState();
                     ReportWatch();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Console.Write("Mdbg (AnalyseExecutionPosition): " + e.Message);
                 }
             }
         }
@@ -1088,8 +1087,30 @@ namespace npp
 
         void OnPostDebugEvent(object sender, CustomPostCallbackEventArgs e)
         {
+            Console.Write(e.CallbackType);
             if (e.CallbackType == ManagedCallbackType.OnProcessExit)
                 ReportDebugTermination();
+
+            if (e.CallbackType == ManagedCallbackType.OnCreateProcess)
+            {
+                if (lastActiveprocess == null)
+                {
+                    shell.Debugger.Processes.Active.PostDebugEvent += OnPostDebugEvent;
+                    lastActiveprocessId = shell.Debugger.Processes.Active.CorProcess.Id;
+                    MessageQueue.AddNotification(NppCategory.Process + lastActiveprocessId + ":STARTED");
+                    lastActiveprocess = shell.Debugger.Processes.Active;
+                }
+
+                // try
+                // {
+                //     ReportCurrentState();
+                //     ReportWatch();
+                // }
+                // catch (Exception ex)
+                // {
+                //     Console.Write("Mdbg (OnPostDebugEvent): " + ex.Message);
+                // }
+            }
 
             if (e.CallbackType == ManagedCallbackType.OnBreakpoint || e.CallbackType == ManagedCallbackType.OnBreak || e.CallbackType == ManagedCallbackType.OnStepComplete)
             {

@@ -193,7 +193,7 @@ namespace CSScriptNpp
 
         public static IEnumerable<string> GetProcessList(int procId = -1)
         {
-            string host32 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"CSScriptNpp\MDbg\mdbghost_32.exe");
+            string host32 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"MDbg\mdbghost_32.exe");
             string host64 = host32.Remove(host32.Length - 6) + "64.exe";
             string file = Path.GetTempFileName();
 
