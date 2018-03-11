@@ -93,6 +93,12 @@ namespace CSScriptNpp
 
         static string lastActivatedBuffer = null;
 
+        void SaveBreakpoints(string contentFile)
+        {
+            Debugger.RefreshBreakPointsFromContent();
+            Debugger.SaveBreakPointsFor(contentFile);
+        }
+
         public void beNotified(IntPtr notifyCode)
         {
             try
@@ -100,13 +106,7 @@ namespace CSScriptNpp
                 CSScriptIntellisense.Interop.NppUI.OnNppTick();
 
                 ScNotification nc = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
-
-                void save_breakpoints()
-                {
-                    string file = Npp.Editor.GetTabFile(nc.Header.IdFrom);
-                    Debugger.RefreshBreakPointsFromContent();
-                    Debugger.SaveBreakPointsFor(file);
-                }
+                string contentFile = Npp.Editor.GetTabFile(nc.Header.IdFrom);
 
                 //Debug.WriteLine(">>>>>   ncnc.nmhdr.code={0}, {1}", nc.nmhdr.code, (int)nc.nmhdr.code);
 
@@ -191,7 +191,7 @@ namespace CSScriptNpp
                 }
                 else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
                 {
-                    save_breakpoints();
+                    SaveBreakpoints(contentFile);
                 }
                 else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
                 {
