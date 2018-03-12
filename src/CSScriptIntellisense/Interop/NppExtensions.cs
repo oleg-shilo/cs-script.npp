@@ -155,6 +155,27 @@ namespace CSScriptIntellisense
             document.IndicatorClearRange(startPos, endPos - startPos);
         }
 
+        static public int ClosestNonEmptyLineTo(this ScintillaGateway document, int line)
+        {
+            if (document.GetLine(line).HasText())
+                return line;
+
+            int lineCount = document.GetLineCount();
+
+            for (int i = 1; i < lineCount; i++)
+            {
+                if (line - i >= 0)
+                    if (document.GetLine(line - i).HasText())
+                        return line - i;
+
+                if (line + i < lineCount)
+                    if (document.GetLine(line + i).HasText())
+                        return line + i;
+            }
+
+            return -1;
+        }
+
         static public IntPtr PlaceMarker(this ScintillaGateway document, int markerId, int line)
         {
             return (IntPtr)document.MarkerAdd(line, markerId);       //'line, marker#

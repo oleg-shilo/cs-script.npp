@@ -31,6 +31,11 @@ namespace CSScriptIntellisense
             return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
         }
 
+        public static bool HasText(this string text)
+        {
+            return !string.IsNullOrWhiteSpace(text);
+        }
+
         public static string GetDirName(this string path)
         {
             return Path.GetDirectoryName(path);

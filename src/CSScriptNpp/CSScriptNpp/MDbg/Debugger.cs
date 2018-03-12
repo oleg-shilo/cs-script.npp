@@ -126,27 +126,27 @@ namespace CSScriptNpp
             catch { }
         }
 
-        public static Dictionary<int, string> NoteBreakpoints()
-        {
-            var result = new Dictionary<int, string>();
-            var document = Npp.GetCurrentDocument();
-            string file = Npp.Editor.GetCurrentFilePath();
+        // public static Dictionary<int, string> NoteBreakpoints()
+        // {
+        //     var result = new Dictionary<int, string>();
+        //     var document = Npp.GetCurrentDocument();
+        //     string file = Npp.Editor.GetCurrentFilePath();
 
-            string expectedkeyPrefix = file + "|";
-            string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPrefix, StringComparison.OrdinalIgnoreCase)).ToArray();
+        //     string expectedkeyPrefix = file + "|";
+        //     string[] fileBreakpoints = breakpoints.Keys.Where(x => x.StartsWith(expectedkeyPrefix, StringComparison.OrdinalIgnoreCase)).ToArray();
 
-            foreach (var key in fileBreakpoints)
-            {
-                //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
-                int line = int.Parse(key.Split('|').Last()) - 1;
-                var linetText = document.GetLine(line);
-                result.Add(line, linetText.Replace(" ", "")
-                                          .Replace("\t", "")
-                                          .TrimEnd('}'));
-            }
+        //     foreach (var key in fileBreakpoints)
+        //     {
+        //         //key = <file>|<line + 1> //server debugger operates in '1-based' and NPP in '0-based' lines
+        //         int line = int.Parse(key.Split('|').Last()) - 1;
+        //         var linetText = document.GetLine(line);
+        //         result.Add(line, linetText.Replace(" ", "")
+        //                                   .Replace("\t", "")
+        //                                   .TrimEnd('}'));
+        //     }
 
-            return result;
-        }
+        //     return result;
+        // }
 
         public static void RefreshBreakPointsInContent()
         {
@@ -172,8 +172,31 @@ namespace CSScriptNpp
             catch { }
         }
 
+        /*
+
+                if (conservative_breakpoint_processing)
+            {
+                // remove all active break point handles and read them again from the content
+                ResetBreaksPointsFromContent();
+            }
+            else
+            {
+                // remove no longer active break point handles and update the valid ones
+
+             */
+
         public static void RefreshBreakPointsFromContent()
         {
+            var conservative_breakpoint_processing = true;
+            if (conservative_breakpoint_processing)
+                ResetBreaksPointsFromContent();
+            else
+                UpdateBreakPointsFromContent();
+        }
+
+        public static void UpdateBreakPointsFromContent()
+        {
+            // remove no longer active break point handles and update the valid ones
             var currFile = Npp.Editor.GetCurrentFilePath();
             var document = Npp.GetCurrentDocument();
 
@@ -216,6 +239,7 @@ namespace CSScriptNpp
 
         public static void ResetBreaksPointsFromContent()
         {
+            // remove all active break point handles and read them again from the content
             var currFile = Npp.Editor.GetCurrentFilePath();
             var document = Npp.GetCurrentDocument();
             int[] actual_markers = document.LinesOfMarker(MARK_BREAKPOINT);
@@ -880,12 +904,34 @@ namespace CSScriptNpp
             }
             else
             {
-                var handle = document.PlaceMarker(MARK_BREAKPOINT, line);
-                breakpoints.Add(key, handle);
-                if (IsRunning)
+                var validLine = document.ClosestNonEmptyLineTo(line);
+
+                if (validLine != -1 && validLine != line)
                 {
-                    string actualKey = TranslateSourceBreakpoint(key);
-                    DebuggerServer.AddBreakpoint(actualKey);
+                    key = BuildBreakpointKey(file, validLine);
+                    line = validLine;
+                }
+
+                // after valid line was fount it is possible that it aleady has a brealpoint
+                if (breakpoints.ContainsKey(key))
+                {
+                    document.DeleteMarker(breakpoints[key]);
+                    breakpoints.Remove(key);
+                    if (IsRunning)
+                    {
+                        string actualKey = TranslateSourceBreakpoint(key);
+                        DebuggerServer.RemoveBreakpoint(key);
+                    }
+                }
+                else
+                {
+                    var handle = document.PlaceMarker(MARK_BREAKPOINT, validLine);
+                    breakpoints.Add(key, handle);
+                    if (IsRunning)
+                    {
+                        string actualKey = TranslateSourceBreakpoint(key);
+                        DebuggerServer.AddBreakpoint(actualKey);
+                    }
                 }
             }
 
