@@ -17,6 +17,7 @@ void main(string[] args)
 
     var result = run(md5_exe, @"plugins\CSScriptNpp.x64.dll") +
                  run(md5_exe, @"plugins\CSScriptNpp\*.dll") +
+                 run(md5_exe, @"plugins\CSScriptNpp\*.pdb") +
                  run(md5_exe, @"plugins\CSScriptNpp\*.exe") +
                  run(md5_exe, @"plugins\CSScriptNpp\Mdbg\*.exe") +
                  run(md5_exe, @"plugins\CSScriptNpp\Mdbg\*.dll");

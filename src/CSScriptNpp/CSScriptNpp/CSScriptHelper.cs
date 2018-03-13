@@ -296,7 +296,7 @@ namespace CSScriptNpp
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
-                p.StartInfo.Arguments = "-ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
+                p.StartInfo.Arguments = "-check " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.CreateNoWindow = true;
@@ -1204,10 +1204,14 @@ class Script
                 // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll");
                 result = " \"-provider:" + provider + "\"";
             }
-            else if (Config.Instance.UseRoslynProvider)
+            else
             {
-                // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll"); //before Syntaxer approach
-                var provider = Bootstrapper.dependenciesDir.PathJoin("CSSRoslynProvider.dll");
+                var provider = "none";
+                if (Config.Instance.UseRoslynProvider)
+                {
+                    // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll"); //before Syntaxer approach
+                    provider = Bootstrapper.dependenciesDir.PathJoin("CSSRoslynProvider.dll");
+                }
                 result = " \"-provider:" + provider + "\"";
             }
 

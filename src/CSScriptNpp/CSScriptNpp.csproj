@@ -564,6 +564,7 @@ copy "$(ProjectDir)$(ProjectName)\cscs.exe" "$(SolutionDir)output\plugins\$(Targ
 copy "$(ProjectDir)$(ProjectName)\cscs.v3.5.exe" "$(SolutionDir)output\plugins\$(TargetName)\cscs.v3.5.exe"
 copy "$(ProjectDir)$(ProjectName)\csws.exe" "$(SolutionDir)output\plugins\$(TargetName)\csws.exe"
 copy "$(ProjectDir)$(ProjectName)\css_dbg.exe" "$(SolutionDir)output\plugins\$(TargetName)\css_dbg.exe"
+copy "$(ProjectDir)$(ProjectName)\css_dbg.pdb" "$(SolutionDir)output\plugins\$(TargetName)\css_dbg.pdb"
 copy "$(ProjectDir)$(ProjectName)\launcher.exe" "$(SolutionDir)output\plugins\$(TargetName)\launcher.exe"
 copy "$(ProjectDir)$(ProjectName)\npp_jit.exe" "$(SolutionDir)output\plugins\$(TargetName)\npp_jit.exe"
 copy "$(ProjectDir)$(ProjectName)\nuget.exe" "$(SolutionDir)output\plugins\$(TargetName)\nuget.exe"

@@ -340,8 +340,8 @@ namespace CSScriptNpp
                 FileName = debuggerApp,
                 Arguments = "!load npp.dll",
 #if !DEBUG
-                CreateNoWindow = true,
-                UseShellExecute = false
+                // CreateNoWindow = true,
+                // UseShellExecute = false
 #endif
             });
 
