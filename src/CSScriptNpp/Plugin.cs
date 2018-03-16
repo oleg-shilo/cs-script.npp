@@ -594,6 +594,8 @@ namespace CSScriptNpp
             }
         }
 
+        public static object Asseembly { get; private set; }
+
         static void UpdateLocalDebugInfo()
         {
             if (runningScript != null)
@@ -607,9 +609,15 @@ namespace CSScriptNpp
             try
             {
                 if (Config.Instance.UseRoslynProvider)
-                    foreach (var p in Process.GetProcessesByName("VBCSCompiler"))
-                        try { p.Kill(); }
-                        catch { } //cannot analyse main module as it may not be accessible for x86 vs. x64 reasons
+                {
+                    var roslyn_compiler_patern = Bootstrapper.dependenciesDirRoot.PathJoin("*", "VBCSCompiler.exe");
+
+                    var plugin_dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    string restarter = plugin_dir.PathJoin("launcher.exe");
+
+                    try { Process.Start(restarter, "-kill_process:" + roslyn_compiler_patern); }
+                    catch { }
+                }
             }
             catch { }
         }

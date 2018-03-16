@@ -30,7 +30,7 @@ class Program
 
                 ExecuteScript(engine_name, args.Skip(1).ToArray());
             }
-            catch (Exception e)
+            catch
             {
                 // MessageBox.Show(e.Message, "css_dbg");
             }

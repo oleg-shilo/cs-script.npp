@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace CSScriptNpp
 {
@@ -9,7 +11,7 @@ namespace CSScriptNpp
     {
         public static T To<T>(this object obj)
         {
-            return (T) obj;
+            return (T)obj;
         }
 
         public static string PathJoin(this string path, params string[] items)
@@ -93,5 +95,41 @@ namespace CSScriptNpp
             if (method != null)
                 method.Invoke(obj, args);
         }
+    }
+}
+
+// later (cleaner) solution
+static class Utils
+{
+    [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    static extern bool IsWow64Process([In] IntPtr hProcess, [Out] out bool lpSystemInfo);
+
+    static bool Is64Bit()
+    {
+        if (IntPtr.Size == 8 || (IntPtr.Size == 4 && Is32BitProcessOn64BitProcessor()))
+            return true;
+        else
+            return false;
+    }
+
+    static bool Is32BitProcessOn64BitProcessor()
+    {
+        bool retVal;
+
+        IsWow64Process(Process.GetCurrentProcess().Handle, out retVal);
+
+        return retVal;
+    }
+
+    public static bool Is64BitOperatingSystem()
+    {
+        return Environment.OSVersion.Is64Bit();
+    }
+
+    public static bool Is64Bit(this OperatingSystem os)
+    {
+        // note cannot use Environment.Is64BitOperatingSystem as it is not available on all .NET versions
+        return Is64Bit() || Is32BitProcessOn64BitProcessor();
     }
 }

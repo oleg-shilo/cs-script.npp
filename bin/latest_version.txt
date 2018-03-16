@@ -1,3 +1,9 @@
+Release v1.7.8.4
+v1.7.8.1-4 - beta
+* Fixed problem with breakpoints correct location being lost upon document formatting.
+* Fixed packaging problem with css_dbg.pdb not being included in the distro.
+* Fixed packaging problem with css_dbg.exe wrong build being included in the v1.7.8.0 distro.
+
 1.7.8.0
 https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.8.0
 Release v1.7.8

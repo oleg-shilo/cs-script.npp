@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,7 +21,7 @@ class Program
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            if (args.First().StartsWith("/lp"))
+            if (args.First().StartsWith("/lp")) // list process
             {
                 Process currentProcess = Process.GetCurrentProcess();
                 bool isCurrentProcWin64 = currentProcess.IsWin64();

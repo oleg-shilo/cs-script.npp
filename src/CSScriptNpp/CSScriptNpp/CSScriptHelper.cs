@@ -495,10 +495,11 @@ namespace CSScriptNpp
         {
             if (keepRoslynLoadedTimer == null)
             {
+                keepRoslynLoadedTimer = new Timer();
+
                 // LoadRoslyn();
                 Task.Factory.StartNew(LoadRoslyn);
 
-                keepRoslynLoadedTimer = new Timer();
                 keepRoslynLoadedTimer.Interval = 1000 * 60 * 9; //9 min
                 keepRoslynLoadedTimer.Tick += (s, e) =>
                                                 {
@@ -511,45 +512,30 @@ namespace CSScriptNpp
 
         static public void LoadRoslyn()
         {
-            // Debug.Assert(false);
-            //disabled as unreliable; it can even potentially crash csc.exe if MS CodeAnalysis asms are probed incorrectly
             try
             {
-                string file = Path.Combine(Path.GetTempPath(), "load_roslyn.cs");
+                var p = new Process();
+                p.StartInfo.FileName = cscs_exe;
+                p.StartInfo.Arguments = "-preload " + GenerateRoslynProviderArg();
 
-                File.WriteAllText(file,
-@"
-using System;
-using System.Windows.Forms;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
 
-class Script
-{
-    [STAThread]
-    static public void Main(string[] args)
-    {
-        for (int i = 0; i < args.Length; i++)
-        {
-            Console.WriteLine(args[i]);
-        }
-    }
-}");
-                File.SetLastWriteTimeUtc(file, DateTime.Now.ToUniversalTime());
-                Execute(file, null, x => { });
-                return;
+                p.Start();
 
-                // string args = string.Format("-d -l -verbose {0} \"{1}\"", GenerateDefaultArgs("code.cs"), file);
-                // // Process.Start(csws_exe, args);
-                // // Process.Start(cscs_exe, args); return;
-                // var p = new Process();
-                // p.StartInfo.FileName = cscs_exe;
-                // p.StartInfo.Arguments = args;
-                // p.StartInfo.CreateNoWindow = true;
-                // p.StartInfo.UseShellExecute = false;
-                // p.Start();
-                // p.WaitForExit();
-                // MessageBox.Show("Roslyn Loaded");
+                // var output = "";
+                // string line;
+                // while (null != (line = p.StandardOutput.ReadLine()))
+                // {
+                //     output += line + "\n";
+                // }
+
+                p.WaitForExit();
             }
-            catch { }
+            catch (Exception e)
+            {
+            }
         }
 
         static public void ExecuteAsynch(string scriptFile)
@@ -1191,6 +1177,14 @@ class Script
             return GenerateConfigFileExecutionArg() + GenerateProbingDirArg() + GenerateNppExecutionArg(scriptFile);
         }
 
+        internal static string GenerateRoslynProviderArg()
+        {
+            var provider = "none";
+            if (Config.Instance.UseRoslynProvider)
+                provider = Bootstrapper.dependenciesDir.PathJoin("CSSRoslynProvider.dll");
+            return " \"-provider:" + provider + "\"";
+        }
+
         static string GenerateNppExecutionArg(string scriptFile)
         {
             string result = "";
@@ -1206,13 +1200,7 @@ class Script
             }
             else
             {
-                var provider = "none";
-                if (Config.Instance.UseRoslynProvider)
-                {
-                    // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll"); //before Syntaxer approach
-                    provider = Bootstrapper.dependenciesDir.PathJoin("CSSRoslynProvider.dll");
-                }
-                result = " \"-provider:" + provider + "\"";
+                result = GenerateRoslynProviderArg();
             }
 
             return result;

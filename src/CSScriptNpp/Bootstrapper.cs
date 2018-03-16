@@ -19,16 +19,20 @@ namespace CSScriptNpp
         public static string pluginDir;
 
         public static string _dependenciesDir;
+        public static string dependenciesDirRoot;
 
         public static string dependenciesDir
         {
             get
             {
                 if (_dependenciesDir == null)
-                    _dependenciesDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
-                                                          .PathJoin("CS-Script",
-                                                                    "CSScriptNpp",
-                                                                    Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                {
+                    dependenciesDirRoot = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+                                                      .PathJoin("CS-Script", "CSScriptNpp");
+
+                    _dependenciesDir = dependenciesDirRoot.PathJoin(Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                }
+
                 return _dependenciesDir;
             }
         }
