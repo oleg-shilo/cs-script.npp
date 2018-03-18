@@ -202,31 +202,34 @@ namespace CSScriptNpp
 
                     var members = SimpleCodeCompletion.GetMapOf(code, currentFile).OrderBy(x => x.ParentDisplayName).ToArray();
 
-                    membersList.Items.Clear();
-
-                    string currentType = null;
-
-                    foreach (CodeMapItem item in members)
+                    this.Invoke((Action)delegate ()
                     {
-                        if (currentType != item.ParentDisplayName)
+                        membersList.Items.Clear();
+
+                        string currentType = null;
+
+                        foreach (CodeMapItem item in members)
                         {
-                            currentType = item.ParentDisplayName;
+                            if (currentType != item.ParentDisplayName)
+                            {
+                                currentType = item.ParentDisplayName;
 
-                            if (membersList.Items.Count != 0)
-                                membersList.Items.Add(new MemberInfo { Line = -1 });
+                                if (membersList.Items.Count != 0)
+                                    membersList.Items.Add(new MemberInfo { Line = -1 });
 
-                            membersList.Items.Add(new MemberInfo { Content = item.ParentDisplayName, Line = -1 });
+                                membersList.Items.Add(new MemberInfo { Content = item.ParentDisplayName, Line = -1 });
+                            }
+
+                            membersList.Items.Add(new MemberInfo { Content = item.DisplayName, ContentIndent = "    ", Line = item.Line - 1 });
                         }
-
-                        membersList.Items.Add(new MemberInfo { Content = item.DisplayName, ContentIndent = "    ", Line = item.Line - 1 });
-                    }
+                    });
 
                     ErrorMessage = null;
                 }
             }
             catch (SyntaxErrorParsingException e)
             {
-                membersList.Items.Clear();
+                this.Invoke((Action)membersList.Items.Clear);
                 ErrorMessage = e.Message;
             }
             catch

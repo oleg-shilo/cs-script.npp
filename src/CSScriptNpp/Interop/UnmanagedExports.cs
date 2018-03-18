@@ -127,6 +127,11 @@ namespace CSScriptNpp
                 else if (nc.Header.Code == (uint)NppMsg.NPPM_SAVECURRENTFILEAS ||
                          (Config.Instance.HandleSaveAs && nc.Header.Code == (uint)SciMsg.SCN_SAVEPOINTREACHED)) //for some strange reason NPP doesn't fire NPPM_SAVECURRENTFILEAS but does 2002 instead.
                 {
+                    if (Plugin.ProjectPanel != null)
+                    {
+                        var panel_visible = Plugin.ProjectPanel.Visible;
+                    }
+
                     string file = Npp.Editor.GetCurrentFilePath();
                     if (file != lastActivatedBuffer)
                         CSScriptNpp.Plugin.OnFileSavedAs(lastActivatedBuffer, file);

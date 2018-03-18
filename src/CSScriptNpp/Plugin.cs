@@ -74,7 +74,12 @@ namespace CSScriptNpp
             SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
             SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
             PluginBase.SetCommand(index++, "---", null);
-            PluginBase.SetCommand(projectPanelId = index++, "Show Project Panel", InitProjectPanel);
+
+            var showPanelCommandTitle = "Show Project Panel";
+            if (Config.Instance.UseTogglingPanelVisibility)
+                showPanelCommandTitle = "Toggle Project Panel visibility";
+
+            PluginBase.SetCommand(projectPanelId = index++, showPanelCommandTitle, InitProjectPanel);
             PluginBase.SetCommand(outputPanelId = index++, "Show Output Panel", InitOutputPanel);
             PluginBase.SetCommand(debugPanelId = index++, "Show Debug Panel", InitDebugPanel);
             PluginBase.SetCommand(index++, "---", null);
@@ -440,9 +445,18 @@ namespace CSScriptNpp
         static public void InitProjectPanel()
         {
             if (ProjectPanel == null)
+            {
                 ProjectPanel = ShowDockablePanel<ProjectPanel>("CS-Script", projectPanelId, NppTbMsg.DWS_DF_CONT_LEFT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            }
             else
-                SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, true);
+            {
+                bool requeredIsVisibleState = true;
+                if (Config.Instance.UseTogglingPanelVisibility)
+                    requeredIsVisibleState = !ProjectPanel.Visible;
+
+                SetDockedPanelVisible(dockedManagedPanels[projectPanelId], projectPanelId, requeredIsVisibleState);
+            }
+
             ProjectPanel.Focus();
             Application.DoEvents();
         }

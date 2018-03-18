@@ -49,6 +49,7 @@ namespace CSScriptNpp
         public bool BreakOnException = false;
 
         public bool UpdateAfterExit = false;
+        public bool UseTogglingPanelVisibility = true;
         public string UpdateMode = "custom";
         public string VSProjectTemplatePath = "";
         public bool CheckUpdatesOnStartup = true;
@@ -138,6 +139,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                     SetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
                     SetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
+                    SetValue(Section, nameof(UseTogglingPanelVisibility), UseTogglingPanelVisibility);
                     SetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                     SetValue(Section, nameof(VbCodeProvider), VbCodeProvider);
@@ -219,6 +221,7 @@ namespace CSScriptNpp
                 UpdateAfterExit = GetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
                 CheckUpdatesOnStartup = GetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
+                UseTogglingPanelVisibility = GetValue(Section, nameof(UseTogglingPanelVisibility), UseTogglingPanelVisibility);
                 CheckPrereleaseUpdates = GetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                 ScriptsDir = GetValue(Section, nameof(ScriptsDir), ScriptsDir);
