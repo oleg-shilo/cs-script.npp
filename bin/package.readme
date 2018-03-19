@@ -26,9 +26,11 @@ x86
     CSScriptNpp.<version>.7z
     CSScriptNpp.<version>.msi
     CSScriptNpp.<version>.zip
+    CSScriptNpp.<version>.Releaseinfo.txt
     CSScriptNpp.<version>.ReleaseNotes.txt
     CSScriptNpp.<version>.ReleaseNotes.html
     latest_version.txt
     latest_version_dbg.txt
 
 7. Update N++ Plugin Manager
+   https://npppm.bruderste.in/
