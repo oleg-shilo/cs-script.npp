@@ -15,17 +15,10 @@ x64
    - Pull into Projects\NppPluginManager\npp-plugins-x64 from https://github.com/bruderstein/npp-plugins-x64
          git.exe pull --progress -v --no-rebase "https://github.com/bruderstein/npp-plugins-x64" master
 
-   - Updated npp-plugins-x64\plugins\plugins64.xml
-   - Updated npp-plugins-x64\plugins\validate.xml
-   - Commit tets  
-
-Release v1.7.9
-- Updated CS-Script engine to v3.28.2
-- Issue [#16](https://github.com/oleg-shilo/cs-script.npp/issues/16): Impossible to hide CS-Script's main panel
-- Added option to (config value UseTogglingPanelVisibility) to allow toggling mode for "Show Project Panel" button. Toggling is the default mode.
-- Added killing Npp specific instances of VBCSCompiler.exe on editor shutdown.
-- Fixed problem with breakpoints correct location being lost upon document formatting.
-- Fixed packaging problem with css_dbg.pdb not being included in the distro.
+   - Update npp-plugins-x64\plugins\plugins64.xml
+   - Update npp-plugins-x64\plugins\validate.json
+   - Commit and Push to origin
+   - Create PR from https://github.com/oleg-shilo/npp-plugins-x64
 
 x86
 ---------------------------------
