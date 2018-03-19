@@ -1,5 +1,7 @@
 ﻿using CSScriptNpp.Dialogs;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace CSScriptNpp
@@ -59,6 +61,20 @@ namespace CSScriptNpp
             RefreshBreakOnException();
 
             UpdateControlsState();
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            //Listen for the closing of the dockable panel as the result of Npp native close ("cross") button on the window
+            switch (m.Msg)
+            {
+                case win32.WM_NOTIFY:
+                    var notify = (ScNotificationHeader)Marshal.PtrToStructure(m.LParam, typeof(ScNotificationHeader));
+                    if (notify.Code == (int)DockMgrMsg.DMN_CLOSE)
+                        Plugin.SetDockedPanelVisible(this, Plugin.debugPanelId, false);
+                    break;
+            }
+            base.WndProc(ref m);
         }
 
         void UpdateButtonsTooltips()

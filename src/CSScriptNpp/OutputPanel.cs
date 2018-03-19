@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -95,6 +96,20 @@ namespace CSScriptNpp
 #if DEBUG
             AddOutputType(PluginLogOutputName);
 #endif
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            //Listen for the closing of the dockable panel as the result of Npp native close ("cross") button on the window
+            switch (m.Msg)
+            {
+                case win32.WM_NOTIFY:
+                    var notify = (ScNotificationHeader)Marshal.PtrToStructure(m.LParam, typeof(ScNotificationHeader));
+                    if (notify.Code == (int)DockMgrMsg.DMN_CLOSE)
+                        Plugin.SetDockedPanelVisible(this, Plugin.outputPanelId, false);
+                    break;
+            }
+            base.WndProc(ref m);
         }
 
         public Output GetOutputType(string name)

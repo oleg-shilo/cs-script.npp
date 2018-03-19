@@ -5,6 +5,11 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using Kbg.NppPluginNET.PluginInfrastructure;
 
+internal class win32
+{
+    public const int WM_NOTIFY = 0x004E;
+}
+
 namespace CSScriptNpp
 {
     public class WinHook<T> : LocalWindowsHook, IDisposable where T : new()

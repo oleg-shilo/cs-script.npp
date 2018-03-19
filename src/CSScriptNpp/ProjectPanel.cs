@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using CSScriptIntellisense.Interop;
 using Kbg.NppPluginNET.PluginInfrastructure;
+using System.Runtime.InteropServices;
 
 namespace CSScriptNpp
 {
@@ -60,6 +61,20 @@ namespace CSScriptNpp
             //watcher.NotifyFilter = NotifyFilters.LastWrite;
             //watcher.Changed += watcher_Changed;
             //watcher.EnableRaisingEvents = true;
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            //Listen for the closing of the dockable panel as the result of Npp native close ("cross") button on the window
+            switch (m.Msg)
+            {
+                case win32.WM_NOTIFY:
+                    var notify = (ScNotificationHeader)Marshal.PtrToStructure(m.LParam, typeof(ScNotificationHeader));
+                    if (notify.Code == (int)DockMgrMsg.DMN_CLOSE)
+                        Plugin.SetDockedPanelVisible(this, Plugin.projectPanelId, false);
+                    break;
+            }
+            base.WndProc(ref m);
         }
 
         bool hideSecondaryPanelsScheduled = false;

@@ -1,5 +1,7 @@
 Release v1.7.9.0
 * Updated CS-Script engine to v3.28.2  
+* Added option to (config value `UseTogglingPanelVisibility`) to allow toggling mode for
+ "Show Project Panel" button. Toggling is the default mode. 
 * Fixed problem with breakpoints correct location being lost upon document formatting.
 * Fixed packaging problem with css_dbg.pdb not being included in the distro.
 * Fixed packaging problem with css_dbg.exe wrong build being included in the v1.7.8.0 distro.

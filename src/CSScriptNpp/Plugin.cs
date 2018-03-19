@@ -74,14 +74,9 @@ namespace CSScriptNpp
             SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
             SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
             PluginBase.SetCommand(index++, "---", null);
-
-            var showPanelCommandTitle = "Show Project Panel";
-            if (Config.Instance.UseTogglingPanelVisibility)
-                showPanelCommandTitle = "Toggle Project Panel visibility";
-
-            PluginBase.SetCommand(projectPanelId = index++, showPanelCommandTitle, InitProjectPanel);
-            PluginBase.SetCommand(outputPanelId = index++, "Show Output Panel", InitOutputPanel);
-            PluginBase.SetCommand(debugPanelId = index++, "Show Debug Panel", InitDebugPanel);
+            PluginBase.SetCommand(projectPanelId = index++, "Project Panel", InitProjectPanel);
+            PluginBase.SetCommand(outputPanelId = index++, "Output Panel", InitOutputPanel);
+            PluginBase.SetCommand(debugPanelId = index++, "Debug Panel", InitDebugPanel);
             PluginBase.SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
 
@@ -786,8 +781,14 @@ namespace CSScriptNpp
                 var panel = new T();
                 DockPanel(panel, panelId, name, null, tbMsg); //this will also add the panel to the dockedManagedPanels
 
-                //disabled chck box in menu item since tracking of the visibility of the output panes is impossible (N++ limitation)
-                //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SETMENUITEMCHECK, FuncItems.Items[panelId]._cmdID, 1);
+                if (Config.Instance.UseTogglingPanelVisibility)
+                {
+                    Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_SETMENUITEMCHECK, PluginBase._funcItems.Items[panelId]._cmdID, 1);
+                }
+                else
+                {
+                    //disabled chck box in menu item since tracking of the visibility of the output panes is impossible (N++ limitation)
+                }
             }
             else
             {
@@ -836,16 +837,12 @@ namespace CSScriptNpp
                 dockedManagedPanels.Add(scriptId, panel);
         }
 
-        public static void SetDockedPanelVisible(Form panel, int scriptId, bool visible)
+        public static void SetDockedPanelVisible(Form panel, int panelId, bool show)
         {
-            if (visible)
-            {
-                Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_DMMSHOW, 0, panel.Handle);
-            }
-            else
-            {
-                Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_DMMHIDE, 0, panel.Handle);
-            }
+            Win32.SendMessage(Npp.Editor.Handle, (uint)(show ? NppMsg.NPPM_DMMSHOW : NppMsg.NPPM_DMMHIDE), 0, panel.Handle);
+
+            if (Config.Instance.UseTogglingPanelVisibility)
+                Win32.SendMessage(Npp.Editor.Handle, (uint)NppMsg.NPPM_SETMENUITEMCHECK, PluginBase._funcItems.Items[panelId]._cmdID, show ? 1 : 0);
         }
 
         static public void SetToolbarImage(Bitmap image, int pluginId)

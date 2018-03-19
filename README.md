@@ -39,7 +39,7 @@ Note: the default compiler engine of the plugin is Roslyn. The engine fully supp
  
 * Based on 'plain vanilla' ECMA-compliant C# code
 * Inclusion of the dependency scripts via CS-Script directives
-* Implicit assembly referencing via automatic resolving namesspaces into assemblies
+* Implicit assembly referencing via automatic resolving namespaces into assemblies
 * Explicit assembly referencing via CS-Script directives
 * Debug output interception
 * Console output interception
