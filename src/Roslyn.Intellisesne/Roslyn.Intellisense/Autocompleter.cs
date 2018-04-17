@@ -184,7 +184,7 @@ namespace RoslynIntellisense
             logicalPosition = position;
         }
 
-        public static string[] FindReferencess(string code, int position, string file, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
+        public static string[] FindReferences(string code, int position, string file, string[] references = null, IEnumerable<Tuple<string, string>> includes = null)
         {
             //SymbolFinder.FindReferencesAsync
             try
@@ -227,7 +227,10 @@ namespace RoslynIntellisense
 
                 return locations;
             }
-            catch { } //failed, no need to report, as auto-completion is expected to fail sometimes
+            catch (Exception e)
+            {
+                // Console.WriteLine(e);
+            } //failed, no need to report, as auto-completion is expected to fail sometimes
             return new string[0];
         }
 

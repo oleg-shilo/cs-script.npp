@@ -14,6 +14,11 @@ using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
+    // Ports:
+    // 18000 - Sublime Text 3
+    // 18001 - Notepad++
+    // 18002 - VSCode CodeMap
+
     public class Syntaxer
     {
         public static string syntaxerDir;

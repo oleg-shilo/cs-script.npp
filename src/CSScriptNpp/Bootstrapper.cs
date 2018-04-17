@@ -53,9 +53,9 @@ namespace CSScriptNpp
             CSScriptIntellisense.Syntaxer.syntaxerDir = dependenciesDir.PathJoin("Roslyn");
             CSScriptIntellisense.Syntaxer.cscsFile = pluginDir.PathJoin("cscs.exe");
 
-#if !DEBUG
+            //#if !DEBUG
             if (!Directory.Exists(syntaxerDir))
-#endif
+            //#endif
             {
                 Directory.CreateDirectory(syntaxerDir);
 

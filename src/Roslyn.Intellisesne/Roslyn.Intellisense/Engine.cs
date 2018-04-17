@@ -68,7 +68,7 @@ namespace RoslynIntellisense
             lock (typeof(Autocompleter))
             {
                 Autocompleter.Language = GetLanguageFor(fileName);
-                return Autocompleter.FindReferencess(editorText, offset, fileName,
+                return Autocompleter.FindReferences(editorText, offset, fileName,
                                                      assemblies.ToArray(),
                                                      sources.Where(x => x.Item2 != fileName));
             }

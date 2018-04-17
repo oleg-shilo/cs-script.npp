@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -316,7 +317,8 @@ namespace CSScriptNpp
                         oldNotificationMessage = NotifyClient("Processing NuGet packages...");
                     }
 
-                    if (line.ToString().StartsWith("Error: Specified file could not be compiled."))
+                    if (line.ToString().StartsWith("Error: Specified file could not be compiled.")
+                        || Regex.IsMatch(line, @"Compile: \d error")) // Compile: 1 error(s)
                     {
                         error = true;
                         continue;
