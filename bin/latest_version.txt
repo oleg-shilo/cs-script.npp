@@ -1,1 +1,11 @@
 1.7.9.0
+https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.9.0
+Release v1.7.9
+
+- Updated CS-Script engine to v3.28.2
+- Issue #16: Impossible to hide CS-Script's main panel
+- Added option to (config value UseTogglingPanelVisibility) to allow toggling mode for
+- "Show Project Panel" button. Toggling is the default mode.
+- Added killing Npp specific instances of VBCSCompiler.exe on editor shutdown.
+- Fixed problem with breakpoints correct location being lost upon document formatting.
+- Fixed packaging problem with css_dbg.pdb not being included in the distro.
