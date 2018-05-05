@@ -37,7 +37,7 @@ namespace CSScriptIntellisense
 
                     if (newCode != null)
                     {
-                        document.SetTextBetween(newCode, 0, npp.DocEnd);
+                        document.SetText(newCode);
 
                         document.SetCurrentPos(currentPos);
                         document.ClearSelection();

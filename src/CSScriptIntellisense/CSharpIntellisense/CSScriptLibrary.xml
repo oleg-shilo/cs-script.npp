@@ -115,10 +115,10 @@
         </member>
         <member name="M:csscript.CSharpParser.LoadFile(System.String)">
             <summary>
-            Loads and parces the file the file.
+            Loads and parses the file the file.
             </summary>
             <param name="script">The script.</param>
-            <returns>Parser contining parsing result.</returns>
+            <returns>Parser object containing parsing result.</returns>
         </member>
         <member name="M:csscript.CSharpParser.#ctor(System.String,System.Boolean,System.String[])">
             <summary>
@@ -142,11 +142,18 @@
             The result of search for additional C# script directives to search (directive vs. value).
             </summary>
         </member>
+        <member name="F:csscript.CSharpParser.SuppressCodeAnalysis">
+            <summary>
+            Global flag to forcefully suppress any C# code analyses. This flag effectively disables
+            all CS-Script assembly and script probing and most likely some other functionality.
+            <para>You may ever want to suppress code analysis only for profiling purposes or during performance tuning.</para>
+            </summary>
+        </member>
         <member name="F:csscript.CSharpParser.SupressCodeAnalysis">
             <summary>
-            Global flag to forcefuly supress any C# code analysys. This flag efectively disables
+            Global flag to forcefully suppress any C# code analyses. This flag effectively disables
             all CS-Script assembly and script probing and most likely some other functionality.
-            <para>You may ever want to supress code analysys only for profiling perposes or during performance tuning.</para>
+            <para>You may ever want to suppress code analysis only for profiling purposes or during performance tuning.</para>
             </summary>
         </member>
         <member name="M:csscript.CSharpParser.Init(System.String,System.String,System.String[],System.String[])">
@@ -806,7 +813,7 @@
         </member>
         <member name="F:CSScriptLibrary.ScriptParsingResult.CompilerOptions">
             <summary>
-            The compiler options sepcified with `//css_co` directive
+            The compiler options specified with `//css_co` directive
             </summary>
         </member>
         <member name="F:CSScriptLibrary.ScriptParsingResult.SearchDirs">
@@ -886,7 +893,7 @@
             Constructor.
             </summary>
             <param name="fileName">Script file name</param>
-            <param name="searchDirs">Extra ScriptLibrary directory(ies) </param>
+            <param name="searchDirs">Extra ScriptLibrary directory(s) </param>
             <param name="throwOnError">flag to indicate if the file parsing/processing error should raise an exception</param>
         </member>
         <member name="M:CSScriptLibrary.ScriptParser.Init(System.String,System.String[])">
@@ -894,7 +901,7 @@
             Initialization of ScriptParser instance
             </summary>
             <param name="fileName">Script file name</param>
-            <param name="searchDirs">Extra ScriptLibrary directory(ies) </param>
+            <param name="searchDirs">Extra ScriptLibrary directory(s) </param>
         </member>
         <member name="M:CSScriptLibrary.ScriptParser.SaveImportedScripts">
             <summary>
@@ -914,7 +921,7 @@
         </member>
         <member name="M:CSScriptLibrary.ScriptParser.AgregateReferences(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String})">
              <summary>
-             Aggregates the references from the script and its imported scripts. It is a logical equivalent od CSExecutor.AggregateReferencedAssemblies
+             Aggregates the references from the script and its imported scripts. It is a logical equivalent of CSExecutor.AggregateReferencedAssemblies
              but optimized for later .NET versions (e.g LINQ) and completely decoupled. Thus it has no dependencies on internal state
              (e.g. settings, options.shareHostAssemblies).
              <para>It is the method to call for generating list of ref asms as part of the project info.</para>
@@ -922,7 +929,7 @@
              </summary>
              <param name="searchDirs">The search dirs.</param>
              <param name="defaultRefAsms">The default ref asms.</param>
-             <param name="defaultNamespacess">The default namespacess.</param>
+             <param name="defaultNamespacess">The default namespaces.</param>
              <returns></returns>
         </member>
         <member name="P:CSScriptLibrary.ScriptParser.FilesToCompile">
@@ -952,7 +959,7 @@
         </member>
         <member name="P:CSScriptLibrary.ScriptParser.ReferencedNamespaces">
             <summary>
-            Collection of namespaces referenced from code (including those referenced in dependand scripts)
+            Collection of namespaces referenced from code (including those referenced in dependant scripts)
             </summary>
         </member>
         <member name="P:CSScriptLibrary.ScriptParser.IgnoreNamespaces">
@@ -1037,12 +1044,12 @@
         </member>
         <member name="T:csscript.AssemblyCache">
             <summary>
-             Helper calss for IAssemblyCache
+             Helper class for IAssemblyCache
             </summary>
         </member>
         <member name="T:csscript.AssemblyEnum">
             <summary>
-            Helper calss for IAssemblyEnum
+            Helper class for IAssemblyEnum
             </summary>
         </member>
         <member name="M:csscript.NuGet.GetSinglePackageLibDirs(System.String,System.String,System.String)">
@@ -1056,7 +1063,7 @@
         </member>
         <member name="T:csscript.PrecompilationContext">
             <summary>
-            This class is a container for information related to the script precompilation.
+            This class is a container for information related to the script pre-compilation.
             <para>It is used to pass an input information from the script engine to the <c>precompiler</c> instance as well as to pass back
             to the script engine some output information (e.g. added referenced assemblies)</para> .
             </summary>
@@ -1064,7 +1071,7 @@
         <member name="F:csscript.PrecompilationContext.NewReferences">
             <summary>
             Collection of the referenced assemblies to be added to the process script referenced assemblies.
-            <para>You may want to add new items to the referenced assemblies because of the precompilation logic (e.g. some code using assemblies not referenced by the primary script
+            <para>You may want to add new items to the referenced assemblies because of the pre-compilation logic (e.g. some code using assemblies not referenced by the primary script
             is injected in the script).</para>
             </summary>
         </member>
@@ -1084,7 +1091,7 @@
         <member name="F:csscript.PrecompilationContext.NewSearchDirs">
             <summary>
             Collection of the assembly and script probing directories to be added to the process search directories.
-            <para>You may want to add new items to the process search directories because of the precompilation logic.</para>
+            <para>You may want to add new items to the process search directories because of the pre-compilation logic.</para>
             </summary>
         </member>
         <member name="F:csscript.PrecompilationContext.SearchDirs">
@@ -1300,8 +1307,8 @@
             </para>
             <para>
             Thus script caching algorithm has been changed to avoid using the compiled assembly
-            LastModifiedTime file-attribute for storing the script timestamp. Currently caching alogithm
-            uses injected matadata instead.
+            LastModifiedTime file-attribute for storing the script timestamp. Currently caching algorithm
+            uses injected metadata instead.
             </para>
             <para>
             If for whatever reason the old behaver is preferred you can always enable it by either setting
@@ -1356,12 +1363,12 @@
         </member>
         <member name="P:csscript.Settings.HideAutoGeneratedFiles">
             <summary>
-            The value, which indicates if auto-generated files (if any) should should be hidden in the temporary directory.
+            The value, which indicates if auto-generated files (if any) should be hidden in the temporary directory.
             </summary>
         </member>
         <member name="P:csscript.Settings.Precompiler">
             <summary>
-            Path to the precompiller script/assembly (see documentation for details). You can specify multiple recompiles separating them by semicolon.
+            Path to the precompiler script/assembly (see documentation for details). You can specify multiple recompiles separating them by semicolon.
             </summary>
         </member>
         <member name="P:csscript.Settings.CustomHashing">

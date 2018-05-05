@@ -572,7 +572,7 @@ namespace CSScriptIntellisense
 
                     var text_after = doc.AllText();
 
-                    // restore berakpoints after formatting
+                    // restore breakpoints after formatting
                     doc.DeleteAllMarkers(MARK_BREAKPOINT);
                     foreach (var pos_before in break_points)
                     {
