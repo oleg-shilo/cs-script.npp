@@ -1107,6 +1107,9 @@ namespace CSScriptNpp
             var sb = new StringBuilder();
             byte[] buf = new byte[1024 * 4];
 
+            // GitHub does no longer accept SSL3. It's a common trend as SSL3 is 21 years old is no longer secure enough.
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             if (proxyUser != null)
                 WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
 
