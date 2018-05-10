@@ -753,7 +753,7 @@ namespace CSScriptIntellisense
                                 foreach (FileReference item in missingNamespaceErrors)
                                 {
                                     int errorPosition = document.PositionFromLine(item.Line - 1) + item.Column - 1;
-                                    IEnumerable<TypeInfo> items = ResolveNamespacesAtPosition(errorPosition)
+                                    IEnumerable<Intellisense.Common.TypeInfo> items = ResolveNamespacesAtPosition(errorPosition)
                                                                     .Where(x => !presentUsings.Contains(x.Namespace));
 
                                     if (items.Count() == 1) //do only if there is no ambiguity about what namespace it is
@@ -1389,7 +1389,7 @@ namespace CSScriptIntellisense
 
             var actualStart = currentPos - currentPosOffset; //after the decoration currentPos is changed so the line start
 
-            var allUsings = new List<TypeInfo>();
+            var allUsings = new List<Intellisense.Common.TypeInfo>();
             foreach (int offset in probingOffsets) //try to resolve any 'word' in the line
             {
                 var result = SimpleCodeCompletion.GetMissingUsings(text, actualStart + offset, file);

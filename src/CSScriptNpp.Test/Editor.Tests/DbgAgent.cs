@@ -1,8 +1,4 @@
 using DbgAgent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Xunit;
 
 #pragma warning disable 414

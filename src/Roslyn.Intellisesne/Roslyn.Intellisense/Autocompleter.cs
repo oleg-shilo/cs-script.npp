@@ -227,10 +227,11 @@ namespace RoslynIntellisense
 
                 return locations;
             }
-            catch (Exception e)
+            catch
             {
                 // Console.WriteLine(e);
-            } //failed, no need to report, as auto-completion is expected to fail sometimes
+                // failed, no need to report, as auto-completion is expected to fail sometimes
+            }
             return new string[0];
         }
 

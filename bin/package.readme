@@ -7,7 +7,7 @@
 
 4. Update GitHub (make release)
 
-5. Update and commit latest_version.txt
+5. Update and commit latest_version.txt (IMPORTANT as it is used in "check for update")
 
 x64
 ---------------------------------

@@ -535,7 +535,7 @@ namespace CSScriptNpp
 
                 p.WaitForExit();
             }
-            catch (Exception e)
+            catch 
             {
             }
         }
