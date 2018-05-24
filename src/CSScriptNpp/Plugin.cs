@@ -142,7 +142,7 @@ namespace CSScriptNpp
                                             "Note: Disabling 'auto-completion on input' will not disable auto-completion for other languages but only its automatic triggering. " +
                                             "The auto-completion can be triggered at any time manually by pressing Ctrl+Space key combination.", "CS-Script");
 
-                            try { Process.Start("https://csscriptnpp.codeplex.com/wikipage?title=Dealing%20with%20Notepad%2b%2b%20native%20auto-complete"); }
+                            try { Process.Start("https://github.com/oleg-shilo/cs-script.npp/wiki/Dealing-with-Notepad%E2%80%A0%E2%80%A0-native-auto-complete"); }
                             catch { }
                             Config.Instance.NativeAutoCompletionChecked = true;
                             Config.Instance.Save();

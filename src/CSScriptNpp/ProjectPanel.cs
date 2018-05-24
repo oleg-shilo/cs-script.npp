@@ -762,7 +762,7 @@ void main(string[] args)
         {
             try
             {
-                Process.Start("https://csscriptnpp.codeplex.com/documentation");
+                Process.Start("https://github.com/oleg-shilo/cs-script.npp/wiki");
             }
             catch { }
         }
