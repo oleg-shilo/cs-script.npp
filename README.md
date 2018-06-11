@@ -8,6 +8,8 @@
 Total downloads via Notepad++ Plugin Manager: Total Downloads Count: ![](http://www.csscript.net/statistics/css.npp.count.jpeg)            
 [Downloads Statistics](http://www.csscript.net/statistics/css.npp.stats.html)
 
+\* _statistics does not include x64 downloads nor downloads after Notepad++ discontinued shiping editor with the x86 plugin manager included_ 
+
 Starting from v1.3 plugin delivers full support for VB.NET syntax. [More reading...](https://github.com/oleg-shilo/cs-script.npp/wiki/VB.NET-Support)  
 
 ____
