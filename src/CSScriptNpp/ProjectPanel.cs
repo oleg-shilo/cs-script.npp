@@ -1023,7 +1023,7 @@ void main(string[] args)
                             npp.SaveDocuments(GetProjectDocuments());
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
-                            string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp);
+                            string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp, dialog.AsDll);
 
                             if (path != null)
                             {

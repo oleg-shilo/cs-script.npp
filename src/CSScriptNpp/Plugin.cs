@@ -19,7 +19,6 @@ namespace CSScriptNpp
 {
     /*TODO:
      * - Outstanding features
-     *  - Button to update doc. breakpoints from the .dbg file content
      *  - Debugger
      *      - Debugger does not treat DateTime members as primitives
      *      - Some objects cannot be inspected:
@@ -87,7 +86,7 @@ namespace CSScriptNpp
             KeyInterceptor.Instance.Add(Keys.Tab);
             KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
 
-            //setup dependency injection, which may be overwritten by other plugins (e.g. NppScripts)
+            // setup dependency injection, which may be overwritten by other plugins (e.g. NppScripts)
             Plugin.RunScript = () => Plugin.ProjectPanel.Run();
             Plugin.RunScriptAsExternal = () => Plugin.ProjectPanel.RunAsExternal();
             Plugin.DebugScript = () =>

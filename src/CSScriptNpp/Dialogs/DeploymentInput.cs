@@ -49,11 +49,17 @@ namespace CSScriptNpp
             asScript.Checked = Config.Instance.DistributeScriptAsScriptByDefault;
             asExe.Checked = !asScript.Checked;
             windowApp.Checked = Config.Instance.DistributeScriptAsWindowApp;
+            asDll.Checked = Config.Instance.DistributeScriptAsDll;
         }
 
         public bool AsScript
         {
             get { return asScript.Checked; }
+        }
+
+        public bool AsDll
+        {
+            get { return asDll.Checked; }
         }
 
         public bool AsWindowApp
@@ -66,6 +72,7 @@ namespace CSScriptNpp
             Config.Instance.TargetVersion = SelectedVersion.Version;
             Config.Instance.DistributeScriptAsScriptByDefault = asScript.Checked;
             Config.Instance.DistributeScriptAsWindowApp = windowApp.Checked;
+            Config.Instance.DistributeScriptAsDll = asDll.Checked;
             Config.Instance.Save();
         }
 

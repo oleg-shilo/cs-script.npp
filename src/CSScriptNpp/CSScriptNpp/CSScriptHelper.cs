@@ -535,7 +535,7 @@ namespace CSScriptNpp
 
                 p.WaitForExit();
             }
-            catch 
+            catch
             {
             }
         }
@@ -886,7 +886,7 @@ namespace CSScriptNpp
             }
         }
 
-        static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion, bool windowApp)
+        static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion, bool windowApp, bool asDll)
         {
             string dir = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile));
 
@@ -943,13 +943,14 @@ namespace CSScriptNpp
             }
             else
             {
-                string srcExe = Path.ChangeExtension(scriptFile, ".exe");
-                string destExe = Path.Combine(dir, Path.GetFileName(srcExe));
+                string srcBinary = Path.ChangeExtension(scriptFile, asDll? ".dll": ".exe");
+                string destBinary = Path.Combine(dir, Path.GetFileName(srcBinary));
 
                 string script = "\"" + scriptFile + "\"";
 
+                string build_arg = asDll ? "-cd" : "-e" + (windowApp ? "w" : "");
                 string cscs = engineFile;
-                string args = string.Format("-e{2} {0} {1}", GenerateDefaultArgs(scriptFile), script, (windowApp ? "w" : ""));
+                string args = string.Format("{2} {0} {1}", GenerateDefaultArgs(scriptFile), script, build_arg);
 
                 var p = new Process();
                 p.StartInfo.FileName = cscs;
@@ -959,19 +960,19 @@ namespace CSScriptNpp
                 p.Start();
                 p.WaitForExit();
 
-                if (File.Exists(srcExe))
+                if (File.Exists(srcBinary))
                 {
-                    assemblies.Concat(srcExe)
+                    assemblies.Concat(srcBinary)
                               .ForEach(file => copy(file, dir));
 
-                    File.Delete(srcExe);
+                    File.Delete(srcBinary);
                     return dir;
                 }
                 else
                 {
                     //just show why building has failed
                     cscs = "\"" + cscs + "\"";
-                    args = string.Format("{0} -e  {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script);
+                    args = string.Format("{0} {3} {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script, build_arg);
                     Process.Start(ConsoleHostPath, args);
                     return null;
                 }

@@ -214,25 +214,32 @@ namespace CSScriptIntellisense
 
     public static class SyntaxerParser
     {
-        public static string WithTempCopy(this string editorText, string permanentFile, Func<string, string> action)
+        public static string WithTempCopy(this string editorText, string originalFile, Func<string, string> action)
         {
+
             Func<string, string> fixTempFileInsertions = null;
 
-            string tempFileName;
-            if (permanentFile == null)
+            string tempFile;
+            if (originalFile == null)
             {
-                tempFileName = Path.GetTempFileName();
+                tempFile = Path.GetTempFileName();
             }
             else
             {
-                var originalName = Path.GetFileName(permanentFile);
-                var tempName = Path.ChangeExtension(originalName, ".$temp$" + Path.GetExtension(permanentFile));
-                tempFileName = Path.ChangeExtension(permanentFile, ".$temp$" + Path.GetExtension(permanentFile));
+                tempFile = Path.GetTempPath().PathJoin("Roslyn.Intellisense", 
+                                                       "sources", 
+                                                       Guid.NewGuid() + Path.GetExtension(originalFile));
+
+                Path.GetDirectoryName(tempFile).EnsureDir();
+
+                var originalName = Path.GetFileName(originalFile);
+                var tempName = Path.GetFileName(tempFile);
 
                 fixTempFileInsertions = txt =>
                 {
                     if (!string.IsNullOrEmpty(txt))
-                        return txt.Replace(tempName, originalName);
+                        return txt.Replace(tempName, originalName)  // compiler may report errors by file name only
+                                  .Replace(tempFile, originalFile); // handle compiler errors by full file path
                     else
                         return txt;
                 };
@@ -240,8 +247,8 @@ namespace CSScriptIntellisense
 
             try
             {
-                File.WriteAllText(tempFileName, editorText);
-                string response = action(tempFileName);
+                File.WriteAllText(tempFile, editorText);
+                string response = action(tempFile);
 
                 if (fixTempFileInsertions != null)
                     response = fixTempFileInsertions(response);
@@ -250,7 +257,7 @@ namespace CSScriptIntellisense
             }
             finally
             {
-                try { if (File.Exists(tempFileName)) File.Delete(tempFileName); } catch { }
+                try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
             }
         }
 

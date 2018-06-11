@@ -1,4 +1,4 @@
-Release v1.7.10.0
+Release v1.7.11.0
 
-* Target runtime is updated to .NET v4.6.1
-* Issue #18: corrupted the code while saving 
+* Added handling/processing unsaved changes in the source files without creating a `<file>.$temp$.cs` file in the script directory. 
+* Added option to prepare script for deployment as dll (project panel toolbar)

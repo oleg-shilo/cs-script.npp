@@ -38,6 +38,7 @@ namespace CSScriptNpp
         public bool ClasslessScriptByDefault = false;
         public bool DistributeScriptAsScriptByDefault = true;
         public bool DistributeScriptAsWindowApp = false;
+        public bool DistributeScriptAsDll = false;
         public bool InterceptConsole = true;
         public bool InterceptConsoleByCharacter = false;
         public bool UseEmbeddedEngine = true;
@@ -161,6 +162,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(ClasslessScriptByDefault), ClasslessScriptByDefault);
                     SetValue(Section, nameof(DistributeScriptAsScriptByDefault), DistributeScriptAsScriptByDefault);
                     SetValue(Section, nameof(DistributeScriptAsWindowApp), DistributeScriptAsWindowApp);
+                    SetValue(Section, nameof(DistributeScriptAsDll), DistributeScriptAsDll);
 
                     CSScriptIntellisense.Config.Instance.Save();
 
@@ -237,6 +239,7 @@ namespace CSScriptNpp
                 ClasslessScriptByDefault = GetValue(Section, nameof(ClasslessScriptByDefault), ClasslessScriptByDefault);
                 DistributeScriptAsScriptByDefault = GetValue(Section, nameof(DistributeScriptAsScriptByDefault), DistributeScriptAsScriptByDefault);
                 DistributeScriptAsWindowApp = GetValue(Section, nameof(DistributeScriptAsWindowApp), DistributeScriptAsWindowApp);
+                DistributeScriptAsDll = GetValue(Section, nameof(DistributeScriptAsDll), DistributeScriptAsDll);
 
                 CSScriptIntellisense.Config.Instance.Open();
 
