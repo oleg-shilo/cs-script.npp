@@ -226,8 +226,8 @@ namespace CSScriptIntellisense
             }
             else
             {
-                tempFile = Path.GetTempPath().PathJoin("Roslyn.Intellisense", 
-                                                       "sources", 
+                tempFile = Path.GetTempPath().PathJoin("Roslyn.Intellisense",
+                                                       "sources",
                                                        Guid.NewGuid() + Path.GetExtension(originalFile));
 
                 Path.GetDirectoryName(tempFile).EnsureDir();
@@ -247,7 +247,13 @@ namespace CSScriptIntellisense
 
             try
             {
-                File.WriteAllText(tempFile, editorText);
+                var code = editorText;
+
+                if (originalFile != null)
+                    code = "//css_syntaxer source:" + originalFile + Environment.NewLine + code;
+
+                File.WriteAllText(tempFile, code);
+
                 string response = action(tempFile);
 
                 if (fixTempFileInsertions != null)

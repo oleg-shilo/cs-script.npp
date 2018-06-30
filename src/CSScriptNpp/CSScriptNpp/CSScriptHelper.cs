@@ -743,10 +743,7 @@ namespace CSScriptNpp
             var github_distro_latest_version = "https://raw.githubusercontent.com/oleg-shilo/cs-script.npp/master/bin/latest_version.txt";
             // github_repo_latest_version = "http://csscript.net/npp/latest_version.txt";
 
-            bool update_always = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_UPDATE_ALWAYS") != null;
             string url = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL") ?? github_distro_latest_version;
-#if DEBUG
-#endif
 
             Distro stableVersion = GetLatestAvailableDistro(url);
 

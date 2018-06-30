@@ -665,7 +665,7 @@ namespace CSScriptNpp
             CloseAutomationChannel();
         }
 
-        internal static string HomeUrl = "https://github.com/oleg-shilo/cs-script.npp";
+        internal static string HomeUrl = "https://github.com/oleg-shilo/cs-script.npp/releases";
 
         static void StartCheckForUpdates()
         {
