@@ -28,7 +28,7 @@ class Script
         Version version = AssemblyName.GetAssemblyName(pluginFile).Version;
 
         // remove the revision value
-        version = new Version(version.Major, version.Minor, version.Build+1, 0);
+        version = new Version(version.Major, version.Minor, version.Build, 0);
 
         Console.WriteLine($"Building CSScriptNpp.{version}.{cpu}.msi");
 
@@ -53,7 +53,7 @@ class Script
         project.Platform = is64 ? Platform.x64 : Platform.x86;
         project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
         project.LicenceFile = "license.rtf";
-        // <RemoveFile Id="Remove_Filetxt" Name="File.txt" On="install" /> 
+        // <RemoveFile Id="Remove_Filetxt" Name="File.txt" On="install" />
         project.WixSourceGenerated += document =>
                 document.FindAll("File")
                         .ForEach(e =>
