@@ -53,7 +53,8 @@ class Script
         project.Platform = is64 ? Platform.x64 : Platform.x86;
         project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
         project.LicenceFile = "license.rtf";
-        // <RemoveFile Id="Remove_Filetxt" Name="File.txt" On="install" />
+        
+        // needed to ensure the files that are possible replaced by manual updates can be overwritten 
         project.WixSourceGenerated += document =>
                 document.FindAll("File")
                         .ForEach(e =>

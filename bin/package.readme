@@ -3,13 +3,15 @@
 
 2. Run package.cmd
 
-3. Commit the code
+3. Commit the code but exclude (latest_version.txt)
 
 4. Update GitHub (make release)
 
-5. Update and commit latest_version.txt (IMPORTANT as it is used in "check for update")
 
-x64
+!!! IMPORTANT as it is used in "check for update" !!!
+5. Update and commit latest_version.txt 
+
+x64e
 ---------------------------------
 6. Update N++ Plugin Manager
    - GitHub steps
