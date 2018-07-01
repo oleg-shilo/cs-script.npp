@@ -1,6 +1,7 @@
-1.7.9.0
-https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.10.0
-Release v1.7.10
+1.7.12.0
+https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.12.0
+Release v1.7.12.0
 
-- Target runtime is updated to .NET v4.6.1
-- Issue #18: corrupted the code while saving
+* Issue #18: corrupted the code while saving
+* Resurrected option to update via msi. Triggered by NPP decision to remove plugin manager.
+* Syntaxer: optimised XML documentation generation on autocompletion request
