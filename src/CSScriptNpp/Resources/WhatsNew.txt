@@ -1,4 +1,5 @@
-Release v1.7.11.0
+Release v1.7.12.0
 
-* Added handling/processing unsaved changes in the source files without creating a `<file>.$temp$.cs` file in the script directory. 
-* Added option to prepare script for deployment as dll (project panel toolbar)
+* Issue #18: corrupted the code while saving
+* Resurrected option to update via msi. Triggered by NPP decision to remove plugin manager.
+* Syntaxer: optimised XML documentation generation on autocompletion request

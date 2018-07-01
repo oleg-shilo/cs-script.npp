@@ -36,7 +36,7 @@ move latest_version_dbg.txt latest_version_dbg.txt_                 >nul 2>&1
 "C:\Program Files\7-Zip\7z.exe" a CSScriptNpp.x64.zip *.txt -x!plugins\CSScriptNpp.x86.dll plugins
 "C:\Program Files\7-Zip\7z.exe" a CSScriptNpp.x86.zip *.txt -x!plugins\CSScriptNpp.x64.dll plugins
 
-cscs /l setup
+cscs /l setup.CPU.cs
 cscs /l package
 cscs /l md5
 
