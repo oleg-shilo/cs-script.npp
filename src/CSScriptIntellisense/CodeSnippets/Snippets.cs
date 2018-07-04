@@ -192,7 +192,7 @@ namespace CSScriptIntellisense
             lock (Map)
             {
                 if (!File.Exists(ConfigFile))
-                    File.WriteAllText(ConfigFile, CSScriptIntellisense.CodeSnippets.Resources.snippets);
+                    File.WriteAllText(ConfigFile, global::CSScriptIntellisense.CodeSnippets.Resources.snippets);
                 Read(ConfigFile);
                 SetupFileWatcher();
             }

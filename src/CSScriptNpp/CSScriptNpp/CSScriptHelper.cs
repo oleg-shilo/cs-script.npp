@@ -1303,10 +1303,6 @@ namespace CSScriptNpp
 
     static class GenericExtensionsved
     {
-        public static string Path(this Environment.SpecialFolder folder)
-        {
-            return Environment.GetFolderPath(folder);
-        }
         public static string RemoveNonUserCompilingInfo(this string compilerOutput)
         {
             //for a better appearance remove CS-Script related stuff

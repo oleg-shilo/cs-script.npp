@@ -19,7 +19,7 @@ public partial class PluginEnv
 
     public static string LogDir
     {
-        get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Notepad++\plugins\logs\CSScriptNpp").EnsureDir(); }
+        get { return Path.Combine(Environment.SpecialFolder.ApplicationData.Path(), @"Notepad++\plugins\logs\CSScriptNpp").EnsureDir(); }
     }
 
     public static string PluginDir
@@ -188,20 +188,4 @@ namespace CSScriptIntellisense
         }
     }
 
-    static class GenericExtensions
-    {
-        public static int IndexOfFirst<T>(this IEnumerable<T> collection, Predicate<T> condition)
-        {
-            var indexOf = collection.Select((item, index) => new { item, index })
-                                    .FirstOrDefault(entry => condition(entry.item))?.index ?? -1;
-            return indexOf;
-        }
-
-        public static int IndexOfLast<T>(this IEnumerable<T> collection, Predicate<T> condition)
-        {
-            var indexOf = collection.Select((item, index) => new { item, index })
-                                    .LastOrDefault(entry => condition(entry.item))?.index ?? -1;
-            return indexOf;
-        }
-    }
 }

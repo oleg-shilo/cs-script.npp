@@ -13,11 +13,25 @@ using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
-    public static class SocketExtensions
+    public static class GenericExtensions
     {
+        public static int IndexOfFirst<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        {
+            var indexOf = collection.Select((item, index) => new { item, index })
+                                    .FirstOrDefault(entry => condition(entry.item))?.index ?? -1;
+            return indexOf;
+        }
+
+        public static int IndexOfLast<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        {
+            var indexOf = collection.Select((item, index) => new { item, index })
+                                    .LastOrDefault(entry => condition(entry.item))?.index ?? -1;
+            return indexOf;
+        }
+
         public static string PathJoin(this string path, params string[] items)
         {
-            return Path.Combine(new[] { path }.Concat(items).ToArray());
+            return System.IO.Path.Combine(new[] { path }.Concat(items).ToArray());
         }
 
         /// <summary>
@@ -43,13 +57,13 @@ namespace CSScriptIntellisense
 
         public static string GetDirName(this string path)
         {
-            return Path.GetDirectoryName(path);
+            return System.IO.Path.GetDirectoryName(path);
         }
 
         public static int MapLine(this string text_after, int line_before, string text_before)
         {
             // map a position/line before and after text formatting
-            // formatting does not remove nor introduces any new character but only whitespces
+            // formatting does not remove nor introduces any new character but only whitespaces
 
             string[] lines_before = text_before.GetLines();
             bool was_an_empty_line = (lines_before[line_before].Trim() == "");
