@@ -14,11 +14,11 @@ class Script
 {
     static void Main(string[] args)
     {
-        BuidMSi(is64: true);
-        BuidMSi(is64: false);
+        BuidMSi(is64: true, guid: "6f930b47-2277-411d-9095-18614525889b");
+        BuidMSi(is64: false, guid: "6f930b47-2277-411d-9095-186145258891");
     }
 
-    static void BuidMSi(bool is64)
+    static void BuidMSi(bool is64, string guid)
     {
         string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp\CSScriptNpp.dll");
 
@@ -33,7 +33,7 @@ class Script
         Console.WriteLine($"Building CSScriptNpp.{version}.{cpu}.msi");
 
         var project =
-            new Project("CS-Script for Notepad++",
+            new Project($"CS-Script for Notepad++ ({cpu})",
                 new Dir(@"%ProgramFiles%\Notepad++\Plugins",
                     new File($@"Plugins\CSScriptNpp.{cpu}.dll"),
                     new Dir("CSScriptNpp",
@@ -47,14 +47,14 @@ class Script
         project.ControlPanelInfo.Contact = "Product owner";
         project.ControlPanelInfo.Manufacturer = "Oleg Shilo";
 
-        project.GUID = new Guid("6f930b47-2277-411d-9095-18614525889b");
+        project.GUID = new Guid(guid);
 
         project.Version = version;
         project.Platform = is64 ? Platform.x64 : Platform.x86;
         project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
         project.LicenceFile = "license.rtf";
-        
-        // needed to ensure the files that are possible replaced by manual updates can be overwritten 
+
+        // needed to ensure the files that are possible replaced by manual updates can be overwritten
         project.WixSourceGenerated += document =>
                 document.FindAll("File")
                         .ForEach(e =>
