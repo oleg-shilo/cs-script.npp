@@ -31,6 +31,11 @@ namespace CSScriptIntellisense
             return !string.IsNullOrWhiteSpace(file) && file.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
         }
 
+        public static string Path(this Environment.SpecialFolder folder)
+        {
+            return Environment.GetFolderPath(folder);
+        }
+
         public static bool HasText(this string text)
         {
             return !string.IsNullOrWhiteSpace(text);

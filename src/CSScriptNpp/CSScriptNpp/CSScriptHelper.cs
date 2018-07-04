@@ -1184,7 +1184,7 @@ namespace CSScriptNpp
         {
             var provider = "none";
             if (Config.Instance.UseRoslynProvider)
-                provider = Bootstrapper.dependenciesDir.PathJoin("CSSRoslynProvider.dll");
+                provider = Bootstrapper.DependenciesDir.PathJoin("CSSRoslynProvider.dll");
             return " \"-provider:" + provider + "\"";
         }
 
@@ -1303,6 +1303,10 @@ namespace CSScriptNpp
 
     static class GenericExtensionsved
     {
+        public static string Path(this Environment.SpecialFolder folder)
+        {
+            return Environment.GetFolderPath(folder);
+        }
         public static string RemoveNonUserCompilingInfo(this string compilerOutput)
         {
             //for a better appearance remove CS-Script related stuff

@@ -18,22 +18,22 @@ namespace CSScriptNpp
     {
         public static string pluginDir;
 
-        public static string _dependenciesDir;
+        public static string dependenciesDir;
         public static string dependenciesDirRoot;
 
-        public static string dependenciesDir
+        public static string DependenciesDir
         {
             get
             {
-                if (_dependenciesDir == null)
+                if (dependenciesDir == null)
                 {
                     dependenciesDirRoot = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
                                                       .PathJoin("CS-Script", "CSScriptNpp");
 
-                    _dependenciesDir = dependenciesDirRoot.PathJoin(Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                    dependenciesDir = dependenciesDirRoot.PathJoin(Assembly.GetExecutingAssembly().GetName().Version.ToString());
                 }
 
-                return _dependenciesDir;
+                return dependenciesDir;
             }
         }
 
@@ -50,7 +50,7 @@ namespace CSScriptNpp
         public static void DeploySyntaxer(string sourceDir)
         {
             syntaxerDir =
-            CSScriptIntellisense.Syntaxer.syntaxerDir = dependenciesDir.PathJoin("Roslyn");
+            CSScriptIntellisense.Syntaxer.syntaxerDir = DependenciesDir.PathJoin("Roslyn");
             CSScriptIntellisense.Syntaxer.cscsFile = pluginDir.PathJoin("cscs.exe");
 
             //#if !DEBUG
@@ -59,12 +59,12 @@ namespace CSScriptNpp
             {
                 Directory.CreateDirectory(syntaxerDir);
 
-                SafeCopy("CSSRoslynProvider.dll", sourceDir, dependenciesDir);
+                SafeCopy("CSSRoslynProvider.dll", sourceDir, DependenciesDir);
 
                 CSScriptIntellisense.Syntaxer.Exit();
                 SafeCopy("syntaxer.exe", sourceDir, syntaxerDir);
 
-                var oldSyntaxerVersions = Directory.GetDirectories(Path.GetDirectoryName(dependenciesDir)).Where(x => x != dependenciesDir);
+                var oldSyntaxerVersions = Directory.GetDirectories(Path.GetDirectoryName(DependenciesDir)).Where(x => x != DependenciesDir);
                 foreach (var dir in oldSyntaxerVersions)
                     DeleteDir(dir);
             }
