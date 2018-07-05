@@ -1,5 +1,7 @@
-Release v1.7.12.0
-
+Release v1.7.12.0-1.7.13.0
+1.7.12.0
 * Issue #18: corrupted the code while saving
 * Resurrected option to update via msi. Triggered by NPP decision to remove plugin manager.
 * Syntaxer: optimised XML documentation generation on autocompletion request
+1.7.13.0
+* Updated packaging to accommodate N++ v5.7.5 changes in the plugin hosting model. It spits the dummy if the plugin dll is not named the same way as the plugin.

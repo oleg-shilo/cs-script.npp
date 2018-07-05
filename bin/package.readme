@@ -30,6 +30,16 @@ x64e
      git pull upstream master
      ```
 
+
+     ---------------------
+     to ensure the same heads between two repositories
+     git remote add upstream /url/to/original/repo
+     git fetch upstream
+     git checkout master
+     git reset --hard upstream/master  
+     git push origin master --force 
+     ---------------------
+
    - TortoiceGI steps (alternative):
      Pull into Projects\NppPluginManager\npp-plugins-x64 from https://github.com/bruderstein/npp-plugins-x64
          git.exe pull --progress -v --no-rebase "https://github.com/bruderstein/npp-plugins-x64" master

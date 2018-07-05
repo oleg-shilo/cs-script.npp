@@ -32,10 +32,14 @@ class Script
 
         Console.WriteLine($"Building CSScriptNpp.{version}.{cpu}.msi");
 
+        // starting from v7.5.7 N++ doesn't like plugin dlls that doe not have the same name as plugin itself.
+
+        System.IO.File.Copy($@"Plugins\CSScriptNpp.{cpu}.dll", @"Plugins\CSScriptNpp.dll", true);
+
         var project =
             new Project($"CS-Script for Notepad++ ({cpu})",
                 new Dir(@"%ProgramFiles%\Notepad++\Plugins",
-                    new File($@"Plugins\CSScriptNpp.{cpu}.dll"),
+                    new File(@"Plugins\CSScriptNpp.dll"),
                     new Dir("CSScriptNpp",
                         new DirFiles(@"Plugins\CSScriptNpp\*.*"),
                         new Dir("Mdbg",

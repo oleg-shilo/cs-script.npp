@@ -30,11 +30,14 @@ move latest_version.txt latest_version.txt_                         >nul 2>&1
 move latest_version.pre.txt latest_version.pre.txt_                 >nul 2>&1
 move latest_version_dbg.txt latest_version_dbg.txt_                 >nul 2>&1
 
-"C:\Program Files\7-Zip\7z.exe" a -t7z CSScriptNpp.x86.7z *.txt -x!plugins\CSScriptNpp.x64.dll plugins
-"C:\Program Files\7-Zip\7z.exe" a -t7z CSScriptNpp.x64.7z *.txt -x!plugins\CSScriptNpp.x86.dll plugins
+copy plugins\CSScriptNpp.x86.dll plugins\CSScriptNpp.dll
+"C:\Program Files\7-Zip\7z.exe" a CSScriptNpp.x86.zip *.txt -x!plugins\CSScriptNpp.x??.dll plugins
+"C:\Program Files\7-Zip\7z.exe" a -t7z CSScriptNpp.x86.7z *.txt -x!plugins\CSScriptNpp.x??.dll plugins
 
-"C:\Program Files\7-Zip\7z.exe" a CSScriptNpp.x64.zip *.txt -x!plugins\CSScriptNpp.x86.dll plugins
-"C:\Program Files\7-Zip\7z.exe" a CSScriptNpp.x86.zip *.txt -x!plugins\CSScriptNpp.x64.dll plugins
+del plugins\CSScriptNpp.dll
+copy plugins\CSScriptNpp.x64.dll plugins\CSScriptNpp.dll
+"C:\Program Files\7-Zip\7z.exe" a CSScriptNpp.x64.zip *.txt -x!plugins\CSScriptNpp.x??.dll plugins
+"C:\Program Files\7-Zip\7z.exe" a -t7z CSScriptNpp.x64.7z *.txt -x!plugins\CSScriptNpp.x??.dll plugins
 
 cscs /l setup.CPU.cs
 cscs /l package
