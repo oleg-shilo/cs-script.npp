@@ -9,7 +9,7 @@
 
 
 !!! IMPORTANT as it is used in "check for update" !!!
-5. Update and commit latest_version.txt 
+5. Update and commit latest_version.txt
 
 x64e
 ---------------------------------
@@ -33,11 +33,13 @@ x64e
 
      ---------------------
      to ensure the same heads between two repositories
-     git remote add upstream /url/to/original/repo
+     git remote add upstream https://github.com/bruderstein/npp-plugins-x64.git
      git fetch upstream
      git checkout master
-     git reset --hard upstream/master  
-     git push origin master --force 
+     git reset --hard upstream/master
+     git push origin master --force
+     ---------------------
+     certUtil -hashfile .\CSScriptNpp\CSScriptNpp.dll MD5
      ---------------------
 
    - TortoiceGI steps (alternative):

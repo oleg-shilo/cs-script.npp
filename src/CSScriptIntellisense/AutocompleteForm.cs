@@ -50,8 +50,9 @@ namespace CSScriptIntellisense
                 items = rawItems.ToArray();
 
             listBox1.Items.AddRange(items.ToArray());
-            //listBox1.SelectedItem = items.FirstOrDefault(); //inconvenient and inconsistent with VS UX
-
+            if (Config.Instance.AutoSelectFirstSuggestion)
+                listBox1.SelectedItem = items.FirstOrDefault(); //inconvenient and inconsistent with VS UX
+            
             //extras are for the better appearance and they are discovered via experiment
             int extraHeight = 10;
             int extraWidth = 20;

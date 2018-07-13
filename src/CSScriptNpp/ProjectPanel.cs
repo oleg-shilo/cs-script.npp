@@ -367,7 +367,7 @@ void main(string[] args)
 
         void Run(bool asExternal)
         {
-            if (currentScript == null)
+            if (currentScript == null || (Config.Instance.ReloadActiveScriptOnRun && currentScript != Npp.Editor.GetCurrentFilePath() ))
                 loadBtn.PerformClick();
 
             if (currentScript == null)

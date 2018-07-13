@@ -517,6 +517,12 @@ namespace CSScriptNpp
             }
             else if (Npp.Editor.IsCurrentDocScriptFile() && runningScript == null)
             {
+                // if (Config.Instance.ReloadActiveScriptOnRun)
+                // {
+                //     if (ProjectPanel.currentScript != Npp.Editor.GetCurrentFilePath())
+                //         ProjectPanel.LoadCurrentDoc();
+                // }
+
                 if (Plugin.ProjectPanel == null)
                     InitProjectPanel();
                 Plugin.RunScript();

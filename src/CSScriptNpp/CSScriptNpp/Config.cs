@@ -48,6 +48,7 @@ namespace CSScriptNpp
 
         //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
+        public bool ReloadActiveScriptOnRun = true;
 
         public bool UpdateAfterExit = false;
         public bool UseTogglingPanelVisibility = true;
@@ -137,6 +138,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(DebugPanelInitialTab), DebugPanelInitialTab);
                     SetValue(Section, nameof(LocalDebug), LocalDebug);
                     SetValue(Section, nameof(BreakOnException), BreakOnException);
+                    SetValue(Section, nameof(ReloadActiveScriptOnRun), ReloadActiveScriptOnRun);
                     SetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                     SetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
                     SetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
@@ -220,6 +222,7 @@ namespace CSScriptNpp
                 NativeAutoCompletionChecked = GetValue(Section, nameof(NativeAutoCompletionChecked), NativeAutoCompletionChecked);
                 ReleaseNotesViewedFor = GetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
                 BreakOnException = GetValue(Section, nameof(BreakOnException), BreakOnException);
+                ReloadActiveScriptOnRun = GetValue(Section, nameof(ReloadActiveScriptOnRun), ReloadActiveScriptOnRun);
                 UpdateAfterExit = GetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
                 CheckUpdatesOnStartup = GetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);

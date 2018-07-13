@@ -1146,6 +1146,20 @@ namespace CSScriptIntellisense
             {
                 SourceCodeFormatter.CaretBeforeLastFormatting = -1;
 
+                var document = Npp.GetCurrentDocument();
+                var caret = document.GetCurrentPos();
+                bool typingNewWord = false;
+
+                if (Config.Instance.AutoSuggestOnOpenEndLine)
+                {
+                    string textOnRight = document.GetTextBetween(caret, -1);
+                    if (textOnRight.HasText() && !char.IsWhiteSpace(c))
+                    {
+                        textOnRight = textOnRight.GetLines(2).FirstOrDefault() ?? "";
+                        typingNewWord = textOnRight.Trim() == "";
+                    }
+                }
+
                 if (c == '.' || c == '_' || (c == '='))
                 {
                     ShowSuggestionList();
@@ -1157,6 +1171,10 @@ namespace CSScriptIntellisense
                         if (!memberInfoPopup.IsShowing || memberInfoPopup.Simple)
                             Dispatcher.Schedule(1, ShowMethodInfo); //to allow N++ bracket auto-insertion to proceed
                     }
+                }
+                else if (typingNewWord)
+                {
+                    ShowSuggestionList();
                 }
                 else if (memberInfoPopup.IsShowing)
                 {

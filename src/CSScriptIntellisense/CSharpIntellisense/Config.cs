@@ -62,8 +62,10 @@ namespace CSScriptIntellisense
         public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
         public bool DisableMethodInfoAutoPopup = false;
+        public bool AutoSuggestOnOpenEndLine = false;
         public bool FormatOnSave = true;
         public bool AutoInsertSingeSuggestion = false;
+        public bool AutoSelectFirstSuggestion = false;
         public bool FallbackFormatting = false;
         public bool VbSupportEnabled = true;
         public bool FormatAsYouType = true;
@@ -94,6 +96,8 @@ namespace CSScriptIntellisense
                 SetValue(Section, "VbSupportEnabled", VbSupportEnabled);
                 SetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 SetValue(Section, "DisableMethodInfoAutoPopup", DisableMethodInfoAutoPopup);
+                SetValue(Section, "AutoSelectFirstSuggestion", AutoSelectFirstSuggestion);
+                SetValue(Section, "AutoSuggestOnOpenEndLine", AutoSuggestOnOpenEndLine);
                 SetValue(Section, "FormatOnSave", FormatOnSave);
                 SetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
@@ -134,8 +138,10 @@ namespace CSScriptIntellisense
                 DefaultNamespaces = GetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
+                AutoSelectFirstSuggestion = GetValue(Section, "AutoSelectFirstSuggestion", AutoSelectFirstSuggestion);
                 DisableMethodInfoAutoPopup = GetValue(Section, "DisableMethodInfoAutoPopup", DisableMethodInfoAutoPopup);
                 FormatOnSave = GetValue(Section, "FormatOnSave", FormatOnSave);
+                AutoSuggestOnOpenEndLine = GetValue(Section, "AutoSuggestOnOpenEndLine", AutoSuggestOnOpenEndLine);
                 AutoInsertSingeSuggestion = GetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
                 RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);
