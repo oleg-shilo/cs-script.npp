@@ -3,5 +3,5 @@ Release v1.7.14.0
   Added option `ReloadActiveScriptOnRun = true`
 - Issue #23: Automatically select "First" occurrence of suggestion(s)
   Added option `AutoSelectFirstSuggestion = false`
-- Issue #22: Plaese add support for class Auto-completion
+- Issue #22: Please add support for class Auto-completion
   Added option `AutoSuggestOnOpenEndLine = false`
