@@ -46,6 +46,7 @@ namespace CSScriptNpp
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
 
+        public bool ShowOpenInVsAlways = false;
         //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
         public bool ReloadActiveScriptOnRun = true;
@@ -138,6 +139,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(DebugPanelInitialTab), DebugPanelInitialTab);
                     SetValue(Section, nameof(LocalDebug), LocalDebug);
                     SetValue(Section, nameof(BreakOnException), BreakOnException);
+                    SetValue(Section, nameof(ShowOpenInVsAlways), ShowOpenInVsAlways);
                     SetValue(Section, nameof(ReloadActiveScriptOnRun), ReloadActiveScriptOnRun);
                     SetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                     SetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
@@ -222,6 +224,7 @@ namespace CSScriptNpp
                 NativeAutoCompletionChecked = GetValue(Section, nameof(NativeAutoCompletionChecked), NativeAutoCompletionChecked);
                 ReleaseNotesViewedFor = GetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
                 BreakOnException = GetValue(Section, nameof(BreakOnException), BreakOnException);
+                ShowOpenInVsAlways = GetValue(Section, nameof(ShowOpenInVsAlways), ShowOpenInVsAlways);
                 ReloadActiveScriptOnRun = GetValue(Section, nameof(ReloadActiveScriptOnRun), ReloadActiveScriptOnRun);
                 UpdateAfterExit = GetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);

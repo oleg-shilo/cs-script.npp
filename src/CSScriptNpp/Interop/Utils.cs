@@ -25,8 +25,16 @@ namespace CSScriptNpp
                 using (var vs2010 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.10.0", false))
                 using (var vs2012 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.11.0", false))
                 using (var vs2013 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.12.0", false))
+                using (var vs2015 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.14.0", false))
+                using (var vs2017 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.15.0", false))
                 {
-                    return (vs2010 != null || vs2012 != null || vs2013 != null);
+                    return (
+                        Config.Instance.ShowOpenInVsAlways ||
+                        vs2010 != null || 
+                        vs2012 != null || 
+                        vs2013 != null || 
+                        vs2015 != null || 
+                        vs2017 != null);
                 }
             }
         }
