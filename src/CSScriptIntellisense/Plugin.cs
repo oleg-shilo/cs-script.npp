@@ -883,6 +883,8 @@ namespace CSScriptIntellisense
         {
             IEnumerable<ICompletionData> items;
 
+            bool cssSugesstion = false;
+
             if (snippetsOnly)
             {
                 items = GetSnippetsItems();
@@ -894,7 +896,7 @@ namespace CSScriptIntellisense
                 bool namespaceSuggestion = items.All(x => x.CompletionType == CompletionType._namespace);
 
                 Point point;
-                document.GetWordAtCursor(out point);
+                var word = document.GetWordAtCursor(out point);
                 int wordStartPos = point.X;
 
                 string textOnLeft = document.TextBeforePosition(wordStartPos, 300);
@@ -904,7 +906,14 @@ namespace CSScriptIntellisense
 
                 if (!memberSugesstion && !namespaceSuggestion && !assignmentSugesstion)
                 {
-                    bool cssSugesstion = textOnLeft.Split('\n').Last().TrimStart().StartsWith("//css_");
+                    cssSugesstion = textOnLeft.Split('\n').Last().TrimStart().StartsWith("//css_");
+
+                    if (!cssSugesstion)
+                    {
+                        if (textOnLeft == "//" && word.StartsWith("css_"))
+                            cssSugesstion = true;
+                    }
+
                     if (!cssSugesstion)
                     {
                         bool usingSuggestion = document.GetCurrentLine().Trim() == "using";
@@ -973,7 +982,11 @@ namespace CSScriptIntellisense
 
                 if (word != "")  // e.g. Console.Wr| but not Console.|
                 {
-                    document.SetSelection(p.X, p.Y);
+                    string textOnLeft = document.TextBeforePosition(p.X, 300);
+                    if (textOnLeft.EndsWith("//") && word.StartsWith("css_"))
+                        document.SetSelection(p.X - 2, p.Y);
+                    else
+                        document.SetSelection(p.X, p.Y);
                 }
                 else
                 {

@@ -5253,6 +5253,13 @@
             <param name="assembly">The assembly.</param>
             <returns></returns>
         </member>
+        <member name="M:CSScriptLibrary.AppDomainHelper.GetDirName(System.String)">
+            <summary>
+            Gets the name of the directory from the specified path.
+            </summary>
+            <param name="path">The path.</param>
+            <returns></returns>
+        </member>
         <member name="M:CSScriptLibrary.AppDomainHelper.Clone(System.AppDomain,System.String,System.Security.PermissionSet,System.Security.Policy.StrongName[])">
             <summary>
             Clones the specified <see cref="T:System.AppDomain"/>. The mandatory "creation" properties of the <paramref name="domain"/> are used to create the new instance of <see cref="T:System.AppDomain"/>.

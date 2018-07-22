@@ -45,13 +45,8 @@ namespace CSScriptNpp.Dialogs
             if (columnsStartOffset.ContainsKey(index))
                 return columnsStartOffset[index];
             return -1;
-            //int retval = 0;
-
-            //for (int i = 0; i < index; i++)
-            //    retval += listView1.Columns[i].Width;
-
-            //return retval;
         }
+
 
         void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -70,6 +65,15 @@ namespace CSScriptNpp.Dialogs
                 if (!cancel)
                     StartEditing(focucedItem, selectedSubItem);
             }
+        }
+
+        public DbgObject[] GetItems()
+        {
+            return listView1.Items
+                            .OfType<ListViewItem>()
+                            .Select(x=>x.Tag)
+                            .OfType<DbgObject>()
+                            .ToArray();
         }
 
         void StartEditing(ListViewItem item, int subItem)

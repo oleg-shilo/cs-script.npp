@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSScriptIntellisense.Interop;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -31,7 +32,29 @@ namespace CSScriptNpp.Dialogs
             content.OnEditCellComplete += content_OnEditCellComplete;
             content.ReevaluateRequest += Content_ReevaluateRequest;
             Debugger.OnWatchUpdate += Debugger_OnWatchUpdate;
-            DebuggerServer.OnDebuggerStateChanged += DebuggerServer_OnDebuggerStateChanged;
+            Debugger.OnNotification += (message) =>
+            {
+                if (message.StartsWith("source=>")) // advancing in the source code on the debugger "step next"
+                    ReevaluateAll();
+            };
+
+            Debugger.OnDebuggerStateChanged += DebuggerServer_OnDebuggerStateChanged;
+        }
+
+        private void ReevaluateAll()
+        {
+
+            if (Debugger.IsInBreak)
+                this.InUiThread(
+                () =>
+                {
+                    content.GetItems()
+                        .ForEach((DbgObject item) =>
+                        {
+                            Debugger.RemoveWatch(item.Name);
+                            Debugger.AddWatch(item.Name);
+                        });
+                });
         }
 
         private void Content_ReevaluateRequest(DbgObject context)
@@ -82,7 +105,8 @@ namespace CSScriptNpp.Dialogs
 
         void Debugger_OnWatchUpdate(string data)
         {
-            content.UpdateData(data);
+            this.InUiThread(() =>
+                content.UpdateData(data));
         }
 
         private void addExpressionBtn_Click(object sender, EventArgs e)
@@ -103,6 +127,11 @@ namespace CSScriptNpp.Dialogs
         private void addAtCaretBtn_Click(object sender, EventArgs e)
         {
             content.AddWatchExpression(Utils.GetStatementAtCaret());
+        }
+
+        private void reevaluateAllButton_Click(object sender, EventArgs e)
+        {
+            ReevaluateAll();
         }
     }
 }

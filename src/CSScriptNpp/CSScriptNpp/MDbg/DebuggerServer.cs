@@ -204,8 +204,8 @@ namespace CSScriptNpp
 
         static public event Action OnDebuggerStateChanged; //breakpoint, step advance, process exit
 
-        static protected Action OnBreak; //breakpoint hit
-        static protected Action<string> OnDebuggeeProcessNotification; //debugger process state change
+        static public Action OnBreak; //breakpoint hit
+        static public Action<string> OnDebuggeeProcessNotification; //debugger process state change
 
         /// <summary>
         /// Initializes this instance.

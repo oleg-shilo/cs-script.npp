@@ -134,18 +134,20 @@ namespace CSScriptNpp
             }
         }
 
-        static public void Build(string scriptFile)
+        static public string Build(string scriptFile, Action<string> onCompilerOutput)
         {
             string compilerOutput;
-            bool success = Build(scriptFile, out compilerOutput);
+            bool success = Build(scriptFile, out compilerOutput, onCompilerOutput);
             if (!success)
                 throw new ApplicationException(compilerOutput.RemoveNonUserCompilingInfo());
+
+            return compilerOutput;
         }
 
         static public string[] GetCodeCompileOutput(string scriptFile)
         {
             string compilerOutput;
-            bool success = Build(scriptFile, out compilerOutput);
+            bool success = Build(scriptFile, out compilerOutput, null);
             if (!success)
                 return compilerOutput.RemoveNonUserCompilingInfo().Split('\n');
             else
@@ -288,7 +290,7 @@ namespace CSScriptNpp
             }
         }
 
-        static bool Build(string scriptFile, out string compilerOutput)
+        static bool Build(string scriptFile, out string compilerOutput, Action<string> onCompilerOutput)
         {
             string oldNotificationMessage = null;
             try
@@ -309,10 +311,16 @@ namespace CSScriptNpp
                 var output = new StringBuilder();
 
                 bool error = false;
+                bool printOutput = false;
                 string line = null;
                 while (null != (line = p.StandardOutput.ReadLine()))
                 {
-                    if (line.Contains("NuGet") && NotifyClient != null)
+                    printOutput = printOutput || line.Contains("NuGet");
+
+                    if (printOutput && onCompilerOutput != null)
+                        onCompilerOutput(line);
+
+                    if (line.Contains("NuGet") && NotifyClient != null && !oldNotificationMessage.HasText())
                     {
                         oldNotificationMessage = NotifyClient("Processing NuGet packages...");
                     }
