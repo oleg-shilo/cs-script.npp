@@ -1,9 +1,8 @@
-1.7.14.0
-https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.14.0
-Release v1.7.14.0
-- Added script auto-loading on Run.
-  Added option `ReloadActiveScriptOnRun = true`
-- Issue #23: Automatically select "First" occurrence of suggestion(s)
-  Added option `AutoSelectFirstSuggestion = false`
-- Issue #22: Please add support for class Auto-completion
-  Added option `AutoSuggestOnOpenEndLine = false`
+1.7.15.0
+https://github.com/oleg-shilo/cs-script.npp/releases/tag/v1.7.15.0
+Release v1.7.15.0
+- Disabled FormatOnSave (by default). Done to address occasional potential race condition between N++ and plugin message queue.
+- Debug: fixed problem with re-evaluating watch values on dbg step advance.
+- Fixed native CallTip background color disturbed by new N++ version 7.5.7
+
+
