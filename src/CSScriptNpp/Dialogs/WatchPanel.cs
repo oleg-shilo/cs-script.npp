@@ -48,19 +48,35 @@ namespace CSScriptNpp.Dialogs
                 this.InUiThread(
                 () =>
                 {
-                    content.GetItems()
-                        .ForEach((DbgObject item) =>
-                        {
-                            Debugger.RemoveWatch(item.Name);
-                            Debugger.AddWatch(item.Name);
-                        });
+                    // too harsh. ideally need some more gentle update
+                    // content.ResetAll();
+
+                    var items = content.GetItems();
+
+                    var subItems = items.Where(i => i.Name != i.Path && (i.Parent.IsCollection || i.IsArray));
+                    items = items.Except(subItems).ToArray();
+                    // need to clear only collections
+                    items.ForEach((DbgObject item) =>
+                    {
+                        item.Children = null;
+                        item.IsExpanded = false;
+                        Debugger.RemoveWatch(item.Path);
+                        Debugger.AddWatch(item.Path);
+                    });
+
+                    // subitems are not true watch 
+                    // items but their dynamically explored children.
+                    // tracking them on debug steps is extremely difficult. 
+                    // So close them and reopen as needed. 
+                    // If a child item needs to be watched so pin it.
+                    content.RemoveSubItems(collectionsOnly:true);
                 });
         }
 
         private void Content_ReevaluateRequest(DbgObject context)
         {
-            Debugger.RemoveWatch(context.Name);
-            Debugger.AddWatch(context.Name);
+            Debugger.RemoveWatch(context.Path);
+            Debugger.AddWatch(context.Path);
         }
 
         void DebuggerServer_OnDebuggerStateChanged()

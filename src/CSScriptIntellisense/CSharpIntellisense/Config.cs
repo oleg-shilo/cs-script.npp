@@ -63,7 +63,7 @@ namespace CSScriptIntellisense
         public bool DisableMethodInfo = false;
         public bool DisableMethodInfoAutoPopup = false;
         public bool AutoSuggestOnOpenEndLine = false;
-        public bool FormatOnSave = true;
+        public bool FormatOnSave = false;
         public bool AutoInsertSingeSuggestion = false;
         public bool AutoSelectFirstSuggestion = false;
         public bool FallbackFormatting = false;
@@ -98,7 +98,7 @@ namespace CSScriptIntellisense
                 SetValue(Section, "DisableMethodInfoAutoPopup", DisableMethodInfoAutoPopup);
                 SetValue(Section, "AutoSelectFirstSuggestion", AutoSelectFirstSuggestion);
                 SetValue(Section, "AutoSuggestOnOpenEndLine", AutoSuggestOnOpenEndLine);
-                SetValue(Section, "FormatOnSave", FormatOnSave);
+                SetValue(Section, "FormatOnSave.v2", FormatOnSave);
                 SetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 SetValue(Section, "FallbackFormatting", FallbackFormatting);
                 SetValue(Section, "RoslynFormatting", RoslynFormatting);
@@ -140,7 +140,7 @@ namespace CSScriptIntellisense
                 DisableMethodInfo = GetValue(Section, "DisableMethodInfo", DisableMethodInfo);
                 AutoSelectFirstSuggestion = GetValue(Section, "AutoSelectFirstSuggestion", AutoSelectFirstSuggestion);
                 DisableMethodInfoAutoPopup = GetValue(Section, "DisableMethodInfoAutoPopup", DisableMethodInfoAutoPopup);
-                FormatOnSave = GetValue(Section, "FormatOnSave", FormatOnSave);
+                FormatOnSave = GetValue(Section, "FormatOnSave.v2", FormatOnSave);
                 AutoSuggestOnOpenEndLine = GetValue(Section, "AutoSuggestOnOpenEndLine", AutoSuggestOnOpenEndLine);
                 AutoInsertSingeSuggestion = GetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
                 FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);

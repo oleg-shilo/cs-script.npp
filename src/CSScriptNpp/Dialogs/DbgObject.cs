@@ -58,10 +58,17 @@ namespace CSScriptNpp.Dialogs
             {
                 string retval = Name;
                 var obj = this;
+                var prevChild = "";
                 while (obj.Parent != null)
                 {
                     if (!obj.Parent.IsSeparator)
-                        retval = obj.Parent.Name + "." + retval;
+                    {
+                        if (prevChild.StartsWith("[") && prevChild.EndsWith("]")) // array index
+                            retval = obj.Parent.Name + retval;
+                        else
+                            retval = obj.Parent.Name + "." + retval;
+                        prevChild = obj.Parent.Name;
+                    }
                     obj = obj.Parent;
                 }
                 return retval;

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Res = CSScriptIntellisense.Images;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptIntellisense
 {
@@ -204,7 +205,11 @@ namespace CSScriptIntellisense
                     Close();
                 }
 
-                if (listBox1.SelectedItem == null)
+                var selectedSuggestion = listBox1.SelectedItem;
+                if (selectedSuggestion == null && listBox1.Items.Count == 1)
+                    selectedSuggestion = listBox1.Items[0];
+
+                if (selectedSuggestion == null)
                 {
                     if (key == Keys.Right || key == Keys.Left)
                     {
@@ -219,7 +224,7 @@ namespace CSScriptIntellisense
                        (key == Keys.Right && Config.Instance.UseArrowToAccept) ||
                        (key == Keys.Tab && Config.Instance.UseTabToAccept))
                     {
-                        OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+                        OnAutocompletionAccepted(selectedSuggestion as ICompletionData);
                         Dispatcher.Schedule(10, Close);
 
                         handled = true;
@@ -264,8 +269,17 @@ namespace CSScriptIntellisense
 
                 if (Config.Instance.AutoInsertSingeSuggestion && listBox1.Items.Count == 1)
                 {
-                    listBox1.SelectedIndex = 0;
-                    OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+                    var document = Npp.GetCurrentDocument();
+                    var caret = document.GetCurrentPos();
+                    string lineLeftPart = document.GetTextBetween(Math.Max(0, caret - 200), caret).GetLines().LastOrDefault();
+                    string textOnLeft = lineLeftPart.TrimEnd();
+
+                    if (!textOnLeft.EndsWith("="))
+                    {
+                        // bad UX if it is a '=' character. For example typing 'var i =' will automatically insert 'new int'.
+                        listBox1.SelectedIndex = 0;
+                        OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
+                    }
                 }
             }
             catch { } //FilterFor may close the form

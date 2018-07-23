@@ -118,8 +118,8 @@ namespace CSScriptNpp
 
             //Color: 0xBBGGRR
 
-            document.CallTipSetFore(new Colour(0x000000));
-            document.CallTipSetBack(new Colour(0xE3E3E3));
+            document.CallTipSetFore(new Colour(0,0,0));
+            document.CallTipSetBack(new Colour(0xE3, 0xE3, 0xE3));
 
             document.SetMouseDwellTime(milliseconds);
         }

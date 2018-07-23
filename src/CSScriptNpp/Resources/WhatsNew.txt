@@ -1,7 +1,5 @@
-Release v1.7.14.0
-- Added script auto-loading on Run.
-  Added option `ReloadActiveScriptOnRun = true`
-- Issue #23: Automatically select "First" occurrence of suggestion(s)
-  Added option `AutoSelectFirstSuggestion = false`
-- Issue #22: Please add support for class Auto-completion
-  Added option `AutoSuggestOnOpenEndLine = false`
+Release v1.7.15.0
+- Disabled FormatOnSave (by default)
+- Debugger: fixed problem with re-evaluating watch values on dbg step advance
+- Fixed native `CallTip` background color disrupted by new N++ version 7.5.7
+

@@ -1152,6 +1152,8 @@ namespace CSScriptIntellisense
             currentFile = null;
             EnsureCurrentFileParsedAsynch();
         }
+        
+        static string[] mustBeAssignedWithLitterals = "var,string,String,bool,byte,sbyte,char,decimal,double,float,int,uint,long,ulong,short,ushort,Byte,SByte,Char,Decimal,Double,Single,Int32,UInt32,Int64,UInt64,Int16,UInt16,IntPtr".Split(',');
 
         static public void OnCharTyped(char c)
         {
@@ -1173,8 +1175,23 @@ namespace CSScriptIntellisense
                     }
                 }
 
-                if (c == '.' || c == '_' || (c == '='))
+                if (c == '.' || c == '_' || c == '=')
                 {
+                    // works well but because of auto-accept single suggestion it inserts 
+                    if (c == '=')
+                    {
+                        string lineLeftPart = document.GetTextBetween(Math.Max(0, caret - 200), caret).GetLines().LastOrDefault();
+                        string textOnLeft = lineLeftPart.TrimEnd();
+                        string[] words = textOnLeft.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries)
+                                                   .Reverse()
+                                                   .ToArray();
+                        // = name var
+                        if (words.Count() > 2 && mustBeAssignedWithLitterals.Contains(words[2]))
+                        {
+                            SourceCodeFormatter.OnCharTyped(c);
+                            return;
+                        }
+                    }
                     ShowSuggestionList();
                 }
                 else if (c == '(')

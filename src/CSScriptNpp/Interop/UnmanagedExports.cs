@@ -157,7 +157,8 @@ namespace CSScriptNpp
                         //Npp.ShowCalltip(nc.position, CSScriptIntellisense.Npp.GetWordAtPosition(nc.position));
                         //tooltip = @"Creates all directories and subdirectories as specified by path.
 
-                        npp.OnCalltipRequest(nc.Position.Value);
+                        if (nc.Position.Value != -1)
+                            npp.OnCalltipRequest(nc.Position.Value);
                     }
                     else if (nc.Header.Code == (uint)SciMsg.SCN_DWELLEND)
                     {

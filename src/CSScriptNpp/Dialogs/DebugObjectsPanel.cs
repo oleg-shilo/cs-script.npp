@@ -67,11 +67,30 @@ namespace CSScriptNpp.Dialogs
             }
         }
 
+        public void RemoveSubItems(bool collectionsOnly)
+        {
+            var subItems = listView1.Items
+                             .OfType<ListViewItem>()
+                             .Where(x => x.Tag is DbgObject)
+                             .Where(x =>
+                             {
+                                 var i = x.Tag as DbgObject;
+                                 if (collectionsOnly)
+                                     return i.Name != i.Path && i != AddNewPlaceholder && (i.Parent.IsCollection || i.IsArray);
+                                 else
+                                     return i.Name != i.Path && i != AddNewPlaceholder;
+                             })
+                             .ToArray();
+
+            foreach (var item in subItems)
+                listView1.Items.Remove(item);
+        }
+
         public DbgObject[] GetItems()
         {
             return listView1.Items
                             .OfType<ListViewItem>()
-                            .Select(x=>x.Tag)
+                            .Select(x => x.Tag)
                             .OfType<DbgObject>()
                             .ToArray();
         }
@@ -803,7 +822,25 @@ namespace CSScriptNpp.Dialogs
 
         public void DeleteSelected()
         {
-            var rootsToRemove = listView1.SelectedItems.Cast<ListViewItem>().Where(x => x.GetDbgObject().Parent == null).ToList();
+            DeleteRootItems(listView1.SelectedItems.Cast<ListViewItem>());
+        }
+
+        public void ResetAll()
+        {
+            var rootsToRemove = listView1.Items.Cast<ListViewItem>()
+                .Where(x => x.GetDbgObject().Parent == null)
+                .Where(x => !x.GetDbgObject().IsEditPlaceholder)
+                .ToArray();
+
+            DeleteRootItems(rootsToRemove);
+
+            foreach (var item in rootsToRemove.Select(x => x.GetDbgObject().Name))
+                AddWatchExpression(item);
+        }
+
+        public void DeleteRootItems(IEnumerable<ListViewItem> items)
+        {
+            var rootsToRemove = items.Where(x => x.GetDbgObject().Parent == null).ToArray();
 
             DbgObject[] rootObjectsToRemove = rootsToRemove.Select(x => x.GetDbgObject()).ToArray();
 

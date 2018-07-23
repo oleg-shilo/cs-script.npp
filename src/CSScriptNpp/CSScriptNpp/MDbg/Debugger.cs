@@ -1,4 +1,5 @@
 ﻿using CSScriptIntellisense;
+using CSScriptIntellisense.Interop;
 using CSScriptNpp.Dialogs;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
@@ -270,8 +271,11 @@ namespace CSScriptNpp
                 breakpoints[newKey] = marker;
             }
 
-            if (OnBreakpointChanged != null)
-                OnBreakpointChanged();
+            Dispatcher.Schedule(10, () =>
+             {
+                 if (OnBreakpointChanged != null)
+                     OnBreakpointChanged();
+             });
         }
 
         public static void OnCurrentFileChanged()
@@ -526,8 +530,6 @@ namespace CSScriptNpp
         private static int stepsCount = 0;
         private static bool resumeOnNextBreakPoint = false;
 
-        public static bool readyForEvaluation = false;
-
         private static void HandleNotification(string notification)
         {
             //process=>7924:STARTED
@@ -577,13 +579,10 @@ namespace CSScriptNpp
                         //By default Mdbg always enters break mode at start/attach completed
                         //however we should only resume after mdbg finished the initialization (first break is reported).
                         resumeOnNextBreakPoint = true;
-
-                        readyForEvaluation = true;
                     }
                     else if (message.EndsWith(":ENDED"))
                     {
                         NotifyOnDebugStepChanges();
-                        readyForEvaluation = false;
                     }
                 }
                 else if (message.StartsWith(NppCategory.BreakEntered))
@@ -1160,7 +1159,6 @@ namespace CSScriptNpp
         {
             if (!IsRunning)
             {
-                readyForEvaluation = true; // there will be no "process started" message so do it immediately
                 lastLocation = null;
                 Start(cpu);
 

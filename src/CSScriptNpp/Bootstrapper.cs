@@ -54,7 +54,7 @@ namespace CSScriptNpp
             CSScriptIntellisense.Syntaxer.cscsFile = pluginDir.PathJoin("cscs.exe");
 
             //#if !DEBUG
-            if (!Directory.Exists(syntaxerDir))
+            if (!Directory.Exists(syntaxerDir) || !File.Exists(syntaxerDir.PathJoin("syntaxer.exe")))
             //#endif
             {
                 Directory.CreateDirectory(syntaxerDir);
@@ -108,7 +108,7 @@ namespace CSScriptNpp
             try
             {
                 // Debug.Assert(false);
-
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
                 pluginDir = Assembly.GetExecutingAssembly().Location.GetDirName();
 
                 Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
@@ -121,6 +121,12 @@ namespace CSScriptNpp
                 File.WriteAllText(customLog, e.ToString());
                 throw;
             }
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var customLog = Path.Combine(PluginEnv.LogDir, "last_unhandled_error.txt");
+            File.WriteAllText(customLog, e.ToString());
         }
 
         static bool ExistAndNotOlderThan(string file, string fileToCompareTo)

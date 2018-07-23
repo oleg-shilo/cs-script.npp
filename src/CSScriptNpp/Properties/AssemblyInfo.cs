@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyDescription("Notepad++ plugin for CS-Script integration. \r\n" +
-                               "It implements a real C# Intellisense solution based on CS-Script and Roslyn, ICSharpCode.NRefactory/Mono.Cecil. \r\n" +
+                               "It implements a real C# Intellisense solution based on CS-Script and Roslyn. \r\n" +
                                "It also allows loading, executing modifying and debugging C# scripts in a way very similar to the Visual Studio C# projects support.\r\n" +
                                "This includes referencing assemblies and other scripts, code formatting, adding missing namespaces and intercepting Debug and Console output.")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.7.14.0")]
-[assembly: AssemblyFileVersion("1.7.14.0")]
+[assembly: AssemblyVersion("1.7.15.0")]
+[assembly: AssemblyFileVersion("1.7.15.0")]
