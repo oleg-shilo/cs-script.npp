@@ -21,13 +21,13 @@ namespace CSScriptNpp.Deployment
 
             string tempDir = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.ManualUpdate", "temp");
 
+            var pluginDir = Path.Combine(targetDir, "CSScriptNpp");
+            var pluginBackupDir = Path.Combine(targetDir, "CSScriptNpp.bak");
+            var tempDirRoot = Path.Combine(tempDir, "Plugins");
+            var current_config = Path.Combine(pluginDir, "css_config.xml");
+
             try
             {
-                var pluginDir = Path.Combine(targetDir, "CSScriptNpp");
-                var pluginBackupDir = Path.Combine(targetDir, "CSScriptNpp.bak");
-                var tempDirRoot = Path.Combine(tempDir, "Plugins");
-                var current_config = Path.Combine(pluginDir, "css_config.xml");
-
                 byte[] current_config_data = File.Exists(current_config) ?
                                              File.ReadAllBytes(current_config) :
                                              null;
@@ -61,8 +61,18 @@ namespace CSScriptNpp.Deployment
 
                 MessageBox.Show(new Form { TopMost = true }, "Cannot update Notepad++ plugin. Most likely some files are still locked by the active Notepad++ instance.\n\n" +
                     "If you are running Updater.exe manually from the Notepad++ location then copy it somewhere else as it can be locking the plugin dir.", "CS-Script");
+
+                if (!Directory.Exists(pluginDir) && Directory.Exists(pluginBackupDir))
+                {
+                    try
+                    {
+                        Directory.Move(pluginBackupDir, pluginDir);
+                    }
+                    catch { }
+                }
             }
         }
+
 
         static public void DeployByMerging(string zipFile, string targetDir)
         {

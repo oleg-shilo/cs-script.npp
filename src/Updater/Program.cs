@@ -21,7 +21,7 @@ namespace CSScriptNpp.Deployment
         {
             try
             {
-                // Debug.Assert(false);
+                Debug.Assert(false);
 
                 if (!args.Any())
                 {

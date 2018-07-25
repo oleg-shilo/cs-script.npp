@@ -1,5 +1,6 @@
-Release v1.7.15.0
+Release v1.7.15.1
 - Disabled FormatOnSave (by default)
 - Debugger: fixed problem with re-evaluating watch values on dbg step advance
 - Fixed native `CallTip` background color disrupted by new N++ version 7.5.7
+- Changed updater.exe to restore plugin directory on update failure
 

@@ -51,16 +51,23 @@ void patch(string src, string dest, string resources)
 
     var info = FileVersionInfo.GetVersionInfo(src);
 
+    var cpu = Path.GetExtension(Path.GetFileNameWithoutExtension(dest.Replace(".new", ""))).Replace(".", "");
+    
+    var description = info.FileDescription;
+    if(!description.Contains(cpu))
+        description += " ("+cpu+")";
+    
     File.WriteAllText(rc, resources.Replace("{FILEVERSION}", info.FileVersion.Replace(".", ","))
                                    .Replace("{Comments}", info.Comments)
                                    .Replace("{CompanyName}", info.CompanyName)
-                                   .Replace("{FileDescription}", info.FileDescription)
+                                   .Replace("{FileDescription}", description)
                                    .Replace("{FileVersion}", info.FileVersion)
                                    .Replace("{InternalName}", info.InternalName)
                                    .Replace("{LegalCopyright}", info.LegalCopyright)
                                    .Replace("{LegalTrademarks}", info.LegalTrademarks)
                                    .Replace("{OriginalFilename}", info.OriginalFilename)
-                                   .Replace("{ProductName}", info.ProductName)
+                                   //.Replace("{OriginalFilename}", )
+                                   .Replace("{ProductName}", info.ProductName  + "(ttt)")
                                    .Replace("{ProductVersion}", info.ProductVersion)
                                    .Replace("{AssemblyVersion}", info.FileVersion));
 
@@ -71,6 +78,7 @@ void patch(string src, string dest, string resources)
     File.Delete(res);
 
     print("Patched:", Path.GetFileName(src));
+    print("Patched>:", dest);
 }
 
 string rc_template = @"LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL

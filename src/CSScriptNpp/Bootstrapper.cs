@@ -113,6 +113,9 @@ namespace CSScriptNpp
 
                 Environment.SetEnvironmentVariable("CSScriptNpp_dir", pluginDir);
                 Environment.SetEnvironmentVariable("NPP_HOSTING", "true");
+#if DEBUG
+                Environment.SetEnvironmentVariable("CSSCRIPT_NPP_REPO_URL", "http://csscript.net/npp/latest_version_dbg.txt");
+#endif
                 ConnectPlugins();
             }
             catch (Exception e)
