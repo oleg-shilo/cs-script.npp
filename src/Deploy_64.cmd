@@ -10,7 +10,7 @@ md "%plugin_root%\CSScriptNpp"
 md "%plugin_root%\CSScriptNpp\Mdbg"
 
 echo -------------------
-copy "output\plugins\CSScriptNpp.x64.dll" "%plugin_root%\CSScriptNpp.x64.dll"
+copy "output\plugins\CSScriptNpp.x64.dll" "%plugin_root%\CSScriptNpp.dll"
 xcopy output\plugins\CSScriptNpp\*.* "%plugin_root%\CSScriptNpp" /Y
 xcopy output\plugins\CSScriptNpp\Mdbg\*.* "%plugin_root%\CSScriptNpp\Mdbg" /Y
 

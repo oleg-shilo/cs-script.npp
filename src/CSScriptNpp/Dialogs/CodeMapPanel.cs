@@ -74,8 +74,15 @@ namespace CSScriptNpp
                         int prevLineEnd = document.PositionFromLine(currentLineNum) - Environment.NewLine.Length;
                         int topScrollOffset = currentLineNum - document.GetFirstVisibleLine();
 
-                        document.GotoLine(info.Line);
-                        document.SetFirstVisibleLine(info.Line - topScrollOffset);
+                        document.GotoLine(info.Line - 1); // document counts line as 0-based
+                        document.VerticalCentreCaret();
+
+                        //// GetLineVisible just does not work, it returns true always
+                        // var caretIsVisible = document.GetLineVisible(currentLineNum);
+                        // if (caretIsVisible)
+                        //     document.SetFirstVisibleLine(info.Line - topScrollOffset);
+                        // else
+                        //     document.EnsureVisible(info.Line - 1);
                     }
                 }
                 catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.

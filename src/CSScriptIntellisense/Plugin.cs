@@ -941,8 +941,11 @@ namespace CSScriptIntellisense
 
                 var document = Npp.GetCurrentDocument();
                 Action<ICompletionData> OnAccepted = data => OnAutocompletionAccepted(data, snippetsOnly);
-
-                autocompleteForm = new AutocompleteForm(OnAccepted, items, NppEditor.GetSuggestionHint());
+                
+                // no need to pass initial SuggestionHint as it may swallow (auto accept) the whole autocompletion window 
+                // in case of the hint to be the full match of one of the items. Just do it for a better UX 
+                
+                autocompleteForm = new AutocompleteForm(OnAccepted, items, null);
                 autocompleteForm.Left = point.X;
                 autocompleteForm.Top = point.Y + document.TextHeight(document.GetCurrentLineNumber());
                 autocompleteForm.FormClosed += (sender, e) =>
