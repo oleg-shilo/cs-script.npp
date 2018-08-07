@@ -315,7 +315,7 @@ namespace CSScriptIntellisense
             Cursor.Current = Cursors.Default;
         }
 
-        static void HandleErrors(Action action)
+        static void HandleErrors(Action action, Action finalAction = null)
         {
             try
             {
@@ -330,6 +330,10 @@ namespace CSScriptIntellisense
 #else
             catch { }
 #endif
+            finally
+            {
+                finalAction?.Invoke();
+            }
         }
 
         static SnippetContext currentSnippetContext = null;
@@ -552,8 +556,14 @@ namespace CSScriptIntellisense
         private const int MARK_BREAKPOINT = 7;
         private const int MARK_BREAKPOINT_MASK = 1 << 7;
 
+        static bool formattingInProgress = false;
         static void FormatDocument()
         {
+            if (formattingInProgress)
+                return; //aborting non critical operation
+
+            formattingInProgress = true;
+
             HandleErrors(() =>
             {
                 if (Npp.Editor.IsCurrentDocScriptFile())
@@ -582,7 +592,8 @@ namespace CSScriptIntellisense
                         doc.PlaceMarker(MARK_BREAKPOINT, line_after);
                     }
                 }
-            });
+            },
+            () => formattingInProgress = false);
         }
 
         static void GoToDefinition()
@@ -941,10 +952,10 @@ namespace CSScriptIntellisense
 
                 var document = Npp.GetCurrentDocument();
                 Action<ICompletionData> OnAccepted = data => OnAutocompletionAccepted(data, snippetsOnly);
-                
+
                 // no need to pass initial SuggestionHint as it may swallow (auto accept) the whole autocompletion window 
                 // in case of the hint to be the full match of one of the items. Just do it for a better UX 
-                
+
                 autocompleteForm = new AutocompleteForm(OnAccepted, items, null);
                 autocompleteForm.Left = point.X;
                 autocompleteForm.Top = point.Y + document.TextHeight(document.GetCurrentLineNumber());
@@ -1155,7 +1166,7 @@ namespace CSScriptIntellisense
             currentFile = null;
             EnsureCurrentFileParsedAsynch();
         }
-        
+
         static string[] mustBeAssignedWithLitterals = "var,string,String,bool,byte,sbyte,char,decimal,double,float,int,uint,long,ulong,short,ushort,Byte,SByte,Char,Decimal,Double,Single,Int32,UInt32,Int64,UInt64,Int16,UInt16,IntPtr".Split(',');
 
         static public void OnCharTyped(char c)
