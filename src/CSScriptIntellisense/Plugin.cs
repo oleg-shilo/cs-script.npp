@@ -572,8 +572,7 @@ namespace CSScriptIntellisense
                     var doc = Npp.GetCurrentDocument();
 
                     var text_before = doc.AllText();
-                    var break_points = doc.LinesOfMarker(MARK_BREAKPOINT);
-                    // .Select(x => doc.PositionFromLine(x).Value);
+                    var break_points = doc.LinesWithMarker(MARK_BREAKPOINT);
 
                     var p = doc.PositionFromLine(3).Value;
                     var l = doc.LineFromPosition(new Position(p));
@@ -584,12 +583,10 @@ namespace CSScriptIntellisense
 
                     // restore breakpoints after formatting
                     doc.DeleteAllMarkers(MARK_BREAKPOINT);
-                    foreach (var pos_before in break_points)
+                    foreach (var line_before_format in break_points)
                     {
-                        var line_after = text_after.MapLine(pos_before, text_before);
-                        // var pos_after = text_after.MapPos(pos_before, text_before);
-                        // var line_after = doc.LineFromPosition(new Position(pos_after));
-                        doc.PlaceMarker(MARK_BREAKPOINT, line_after);
+                        var line_after_format = text_after.MapLine(line_before_format, text_before);
+                        doc.PlaceMarker(MARK_BREAKPOINT, line_after_format);
                     }
                 }
             },

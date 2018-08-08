@@ -243,7 +243,7 @@ namespace CSScriptNpp
             // remove all active break point handles and read them again from the content
             var currFile = Npp.Editor.GetCurrentFilePath();
             var document = Npp.GetCurrentDocument();
-            int[] actual_markers = document.LinesOfMarker(MARK_BREAKPOINT);
+            int[] actual_markers = document.LinesWithMarker(MARK_BREAKPOINT);
 
             var currentFileKeys = breakpoints.Keys.Where(k => k.StartsWith(currFile, StringComparison.OrdinalIgnoreCase));
 

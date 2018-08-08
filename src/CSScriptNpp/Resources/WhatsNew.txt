@@ -1,6 +1,5 @@
-Release v1.7.15.1
-- Disabled FormatOnSave (by default)
-- Debugger: fixed problem with re-evaluating watch values on dbg step advance
-- Fixed native `CallTip` background color disrupted by new N++ version 7.5.7
-- Changed updater.exe to restore plugin directory on update failure
+Release v1.7.16.0
+- Implemented V-centring caret at CodeMap navigation
+- Forced showing the whole suggestion list at startup of explicitly triggered auto-completion.
+- Added aborting requested formatting operation if it is already in progress
 

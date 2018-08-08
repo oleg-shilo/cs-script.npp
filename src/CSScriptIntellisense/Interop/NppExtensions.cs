@@ -196,7 +196,7 @@ namespace CSScriptIntellisense
             return document.MarkerGet(line);
         }
 
-        static public int[] LinesOfMarker(this ScintillaGateway document, int marker)
+        static public int[] LinesWithMarker(this ScintillaGateway document, int marker)
         {
             Application.DoEvents();
 
