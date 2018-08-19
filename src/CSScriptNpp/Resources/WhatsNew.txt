@@ -1,5 +1,8 @@
-Release v1.7.16.0
+Release v1.7.16-17.
 - Implemented V-centring caret at CodeMap navigation
 - Forced showing the whole suggestion list at startup of explicitly triggered auto-completion.
 - Added aborting requested formatting operation if it is already in progress
-
+- Updated CS-Script engine (v3.28.6.0)
+    - added auto loading of the `app.config` if found
+    - switch `-sconfig` can now be passed from the code with `//css_args`.
+    - parsing `//css_args` is updated to match OS process arguments handling.
