@@ -108,7 +108,7 @@ namespace CSScriptIntellisense
 
             var refAsms = refPkAsms.Union(refPkAsms)
                                    .Union(refCodeAsms)
-                                   .Union(defaultRefAsms.SelectMany(name =>AssemblyResolver.FindAssembly(name, probingDirs)))
+                                   .Union(defaultRefAsms.SelectMany(name => AssemblyResolver.FindAssembly(name, probingDirs)))
                                    .Distinct()
                                    .ToArray();
 
@@ -145,7 +145,7 @@ namespace CSScriptIntellisense
         static public T CreateInstanceFromAndUnwrap<T>(this AppDomain domain)
         {
             Type type = typeof(T);
-            return (T) domain.CreateInstanceFromAndUnwrap(type.Assembly.Location, type.ToString());
+            return (T)domain.CreateInstanceFromAndUnwrap(type.Assembly.Location, type.ToString());
         }
 
         class RemoteResolver : MarshalByRefObject
@@ -239,7 +239,8 @@ namespace CSScriptIntellisense
 
         static public bool NeedsAutoclassWrapper(string text)
         {
-            return Regex.Matches(text, @"\s?//css_args\s+/ac(,|;|\s+)").Count != 0;
+            return Regex.Matches(text, @"\s?//css_args\s+/ac(,|;|\s+)").Count != 0
+                || Regex.Matches(text, @"\s?//css_ac\s+").Count != 0;
         }
 
         static public string GenerateAutoclassWrapper(string text, ref int position)

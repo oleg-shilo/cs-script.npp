@@ -606,7 +606,7 @@ namespace UltraSharp.Cecil
                 foreach (Intellisense.Common.CodeMapItem item in map)
                 {
                     if (item.Line >= injectedLineNumber)
-                        item.Line -= 1;
+                        item.Line -= (1+1); // new AutoClass generator injects at least 2 lines, though ideally syntaxer.AutoclassGenerator should handle it...
                 }
             }
             return map;

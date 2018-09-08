@@ -159,7 +159,6 @@ namespace CSScriptIntellisense
 
             if (Config.Instance.UsingRoslyn)
                 map = Syntaxer.GetMapOf(code, codeFile);
-            // map = RoslynEngine.GetMapOf(code, injected, codeFile);
             else
                 map = MonoEngine.GetMapOf(code, injected, codeFile);
 
