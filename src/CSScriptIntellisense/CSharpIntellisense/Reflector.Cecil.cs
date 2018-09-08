@@ -640,7 +640,7 @@ namespace UltraSharp.Cecil
 
             var syntaxTree = new CSharpParser().Parse(code, "demo.cs");
 
-            if (syntaxTree.Errors.Any())
+            if (syntaxTree.Errors.Any(x=>x.ErrorType == ErrorType.Error))
                 throw new SyntaxErrorParsingException("The document contains error(s)...");
 
             var map = new List<Intellisense.Common.CodeMapItem>();
