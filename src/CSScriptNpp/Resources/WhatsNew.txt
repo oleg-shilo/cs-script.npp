@@ -1,8 +1,15 @@
-Release v1.7.16-17.
-- Implemented V-centring caret at CodeMap navigation
-- Forced showing the whole suggestion list at startup of explicitly triggered auto-completion.
+Release v1.7.18
+- Fixed problem with settings file truncating long values
+- Removed context menu from the 'References' node in the project tree.
 - Added aborting requested formatting operation if it is already in progress
-- Updated CS-Script engine (v3.28.6.0)
-    - added auto loading of the `app.config` if found
-    - switch `-sconfig` can now be passed from the code with `//css_args`.
-    - parsing `//css_args` is updated to match OS process arguments handling.
+- Updated CS-Script engine (v3.28.8.0)
+  - Implemented seamless debugging of all auto-classes. There is no longer need to open decorated auto-classes code during debugging.
+  - added support for freestyle auto-classes:
+
+//css_ac freestyle
+using System;
+using System.Diagnostics;
+
+Console.WriteLine("Hello World!");
+Debug.WriteLine("Hello World!");	
+    

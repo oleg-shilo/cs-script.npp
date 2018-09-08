@@ -326,7 +326,7 @@ class Script
 }";
 
         const string defaultClasslessScriptCode =
-@"//css_args /ac
+@"//css_ac
 using System;
 using System.Diagnostics;
 
@@ -837,7 +837,6 @@ void main(string[] args)
                         root.ImageIndex = scriptFile.IsVbFile() ? scriptVbImage : scriptImage;
                         references.SelectedImageIndex =
                         references.ImageIndex = assemblyImage;
-                        references.ContextMenuStrip = itemContextMenu;
 
                         root.ContextMenuStrip = solutionContextMenu;
                         root.ToolTipText = "Script: " + scriptFile;
