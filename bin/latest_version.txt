@@ -1,6 +1,16 @@
-1.7.15.0
-https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.15.0
-Release v1.7.15.0
-- Disabled FormatOnSave (by default). Done to address occasional potential race condition between N++ and plugin message queue.
-- Debug: fixed problem with re-evaluating watch values on dbg step advance.
-- Fixed native CallTip background color disturbed by new N++ version 7.5.7
+1.7.18.0
+https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.18.0
+Release v1.7.18
+- Fixed problem with settings file truncating long values
+- Removed context menu from the 'References' node in the project tree.
+- Added aborting requested formatting operation if it is already in progress
+- Updated CS-Script engine (v3.28.8.0)
+  - Implemented seamless debugging of all auto-classes. There is no longer need to open decorated auto-classes code during debugging.
+  - added support for freestyle auto-classes:
+
+//css_ac freestyle
+using System;
+using System.Diagnostics;
+
+Console.WriteLine("Hello World!");
+Debug.WriteLine("Hello World!");
