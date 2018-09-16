@@ -1,4 +1,11 @@
-Release v1.7.18
+Release v1.7.18-19
+
+----
+
+v1.7.19
+- Added support for custom script (F5) launcher. The launcher path is to be set from the settings dialog.
+
+v1.7.18
 - Fixed problem with settings file truncating long values
 - Removed context menu from the 'References' node in the project tree.
 - Added aborting requested formatting operation if it is already in progress
