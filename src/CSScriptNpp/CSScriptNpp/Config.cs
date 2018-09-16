@@ -60,6 +60,7 @@ namespace CSScriptNpp
         public bool UseRoslynProvider = true;
         public bool VbSupportEnabled = true;
         public bool RestorePanelsAtStartup = true;
+        public string UseCustomLauncher = "";
         public bool StartRoslynServerAtNppStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
         public bool HideDevaultAssemblies = true;
@@ -154,6 +155,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                     SetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
                     SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
+                    SetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
                     SetValue(Section, nameof(VSProjectTemplatePath), VSProjectTemplatePath);
                     SetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
@@ -237,6 +239,7 @@ namespace CSScriptNpp
                 UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                 StartRoslynServerAtNppStartup = GetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
+                UseCustomLauncher = GetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                 HideDevaultAssemblies = GetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);

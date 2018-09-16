@@ -35,6 +35,7 @@
             this.contentControl = new System.Windows.Forms.TabControl();
             this.generalPage = new System.Windows.Forms.TabPage();
             this.restorePanels = new System.Windows.Forms.CheckBox();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
@@ -44,9 +45,9 @@
             this.installedEngineLocation = new System.Windows.Forms.TextBox();
             this.customEngine = new System.Windows.Forms.RadioButton();
             this.installedEngine = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.useCustomLauncher = new System.Windows.Forms.CheckBox();
+            this.useCustomLauncherCmd = new System.Windows.Forms.TextBox();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -113,6 +114,18 @@
             this.restorePanels.Text = "Restore panels on startup";
             this.restorePanels.UseVisualStyleBackColor = true;
             // 
+            // linkLabel2
+            // 
+            this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Location = new System.Drawing.Point(240, 242);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(167, 13);
+            this.linkLabel2.TabIndex = 5;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "Edit Visual Studio project template";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
             // linkLabel1
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -127,6 +140,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.useCustomLauncherCmd);
+            this.tabPage2.Controls.Add(this.useCustomLauncher);
             this.tabPage2.Controls.Add(this.label1);
             this.tabPage2.Controls.Add(this.scriptsDir);
             this.tabPage2.Controls.Add(this.groupBox1);
@@ -163,11 +178,10 @@
             this.groupBox1.Controls.Add(this.installedEngineLocation);
             this.groupBox1.Controls.Add(this.customEngine);
             this.groupBox1.Controls.Add(this.installedEngine);
-            this.groupBox1.Controls.Add(this.radioButton2);
             this.groupBox1.Controls.Add(this.embeddedEngine);
-            this.groupBox1.Location = new System.Drawing.Point(9, 60);
+            this.groupBox1.Location = new System.Drawing.Point(9, 56);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(398, 161);
+            this.groupBox1.Size = new System.Drawing.Size(398, 144);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Engine Location";
@@ -176,7 +190,7 @@
             // 
             this.customEngineLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.customEngineLocation.Location = new System.Drawing.Point(43, 120);
+            this.customEngineLocation.Location = new System.Drawing.Point(43, 110);
             this.customEngineLocation.Name = "customEngineLocation";
             this.customEngineLocation.Size = new System.Drawing.Size(343, 20);
             this.customEngineLocation.TabIndex = 1;
@@ -185,7 +199,7 @@
             // 
             this.installedEngineLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.installedEngineLocation.Location = new System.Drawing.Point(43, 72);
+            this.installedEngineLocation.Location = new System.Drawing.Point(43, 64);
             this.installedEngineLocation.Name = "installedEngineLocation";
             this.installedEngineLocation.ReadOnly = true;
             this.installedEngineLocation.Size = new System.Drawing.Size(343, 20);
@@ -194,7 +208,7 @@
             // customEngine
             // 
             this.customEngine.AutoSize = true;
-            this.customEngine.Location = new System.Drawing.Point(22, 97);
+            this.customEngine.Location = new System.Drawing.Point(22, 87);
             this.customEngine.Name = "customEngine";
             this.customEngine.Size = new System.Drawing.Size(104, 17);
             this.customEngine.TabIndex = 0;
@@ -205,7 +219,7 @@
             // installedEngine
             // 
             this.installedEngine.AutoSize = true;
-            this.installedEngine.Location = new System.Drawing.Point(22, 49);
+            this.installedEngine.Location = new System.Drawing.Point(22, 41);
             this.installedEngine.Name = "installedEngine";
             this.installedEngine.Size = new System.Drawing.Size(214, 17);
             this.installedEngine.TabIndex = 0;
@@ -213,20 +227,10 @@
             this.installedEngine.UseVisualStyleBackColor = true;
             this.installedEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
             // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(22, 49);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(112, 17);
-            this.radioButton2.TabIndex = 0;
-            this.radioButton2.Text = "Embedded Engine";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            // 
             // embeddedEngine
             // 
             this.embeddedEngine.AutoSize = true;
-            this.embeddedEngine.Location = new System.Drawing.Point(22, 26);
+            this.embeddedEngine.Location = new System.Drawing.Point(22, 17);
             this.embeddedEngine.Name = "embeddedEngine";
             this.embeddedEngine.Size = new System.Drawing.Size(76, 17);
             this.embeddedEngine.TabIndex = 0;
@@ -234,17 +238,25 @@
             this.embeddedEngine.UseVisualStyleBackColor = true;
             this.embeddedEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
             // 
-            // linkLabel2
+            // useCustomLauncher
             // 
-            this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Location = new System.Drawing.Point(240, 242);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(167, 13);
-            this.linkLabel2.TabIndex = 5;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Text = "Edit Visual Studio project template";
-            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            this.useCustomLauncher.AutoSize = true;
+            this.useCustomLauncher.Location = new System.Drawing.Point(9, 207);
+            this.useCustomLauncher.Name = "useCustomLauncher";
+            this.useCustomLauncher.Size = new System.Drawing.Size(126, 17);
+            this.useCustomLauncher.TabIndex = 3;
+            this.useCustomLauncher.Text = "Custom (F5) launcher";
+            this.useCustomLauncher.UseVisualStyleBackColor = true;
+            this.useCustomLauncher.CheckedChanged += new System.EventHandler(this.useCustomLauncher_CheckedChanged);
+            // 
+            // useCustomLauncherCmd
+            // 
+            this.useCustomLauncherCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.useCustomLauncherCmd.Location = new System.Drawing.Point(9, 230);
+            this.useCustomLauncherCmd.Name = "useCustomLauncherCmd";
+            this.useCustomLauncherCmd.Size = new System.Drawing.Size(386, 20);
+            this.useCustomLauncherCmd.TabIndex = 2;
             // 
             // ConfigForm
             // 
@@ -281,7 +293,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton customEngine;
         private System.Windows.Forms.RadioButton installedEngine;
-        private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton embeddedEngine;
         private System.Windows.Forms.TextBox customEngineLocation;
         private System.Windows.Forms.TextBox installedEngineLocation;
@@ -290,5 +301,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox scriptsDir;
         private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.TextBox useCustomLauncherCmd;
+        private System.Windows.Forms.CheckBox useCustomLauncher;
     }
 }

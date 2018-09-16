@@ -408,6 +408,26 @@ namespace CSScriptNpp
             {
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
+
+                if (!Config.Instance.UseCustomLauncher.IsEmpty())
+                {
+                    try
+                    {
+                        var exe = Environment.ExpandEnvironmentVariables(Config.Instance.UseCustomLauncher);
+                        if (File.Exists(exe))
+                            p.StartInfo.FileName = exe;
+                        else
+                            throw new Exception();
+                    }
+                    catch
+                    {
+                        MessageBox.Show($"The custom launcher (\"{Config.Instance.UseCustomLauncher}\") cannot be found.\n" +
+                                        $"Using default launcher instead.\n\n" +
+                                        $"Please update its location in the settings dialog",
+                                        "CS-Script");
+                    }
+                }
+
                 p.StartInfo.Arguments = "-l -d " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
@@ -948,7 +968,7 @@ namespace CSScriptNpp
             }
             else
             {
-                string srcBinary = Path.ChangeExtension(scriptFile, asDll? ".dll": ".exe");
+                string srcBinary = Path.ChangeExtension(scriptFile, asDll ? ".dll" : ".exe");
                 string destBinary = Path.Combine(dir, Path.GetFileName(srcBinary));
 
                 string script = "\"" + scriptFile + "\"";

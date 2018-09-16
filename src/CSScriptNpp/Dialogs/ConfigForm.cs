@@ -35,8 +35,12 @@ namespace CSScriptNpp
             scriptsDir.Text = data.ScriptsDir;
 
             embeddedEngine.Checked = data.UseEmbeddedEngine;
-           
+
             restorePanels.Checked = data.RestorePanelsAtStartup;
+
+            RefreshUseCustomLauncherCmd(data.UseCustomLauncher);
+            useCustomLauncher.Checked = !data.UseCustomLauncher.IsEmpty();
+
             if (!data.UseEmbeddedEngine)
             {
                 if (data.UseCustomEngine.IsEmpty())
@@ -73,6 +77,11 @@ namespace CSScriptNpp
                 data.UseCustomEngine = "";
                 CSScriptHelper.SynchAutoclssDecorationSettings(useCS6.Checked);
             }
+
+            if (this.useCustomLauncher.Checked)
+                data.UseCustomLauncher = useCustomLauncherCmd.Text;
+            else
+                data.UseCustomLauncher = "";
 
             Config.Instance.Save();
         }
@@ -130,6 +139,32 @@ namespace CSScriptNpp
             });
 
             Close();
+        }
+
+        void useCustomLauncher_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshUseCustomLauncherCmd();
+        }
+
+        static string useCustomLauncherCmdCache = null;
+        void RefreshUseCustomLauncherCmd(string launcherPath = null)
+        {
+            if (!launcherPath.IsEmpty())
+                useCustomLauncherCmd.Text = 
+                useCustomLauncherCmdCache = launcherPath;
+
+            this.useCustomLauncherCmd.Enabled = this.useCustomLauncher.Checked;
+
+            if (this.useCustomLauncher.Checked)
+            {
+                useCustomLauncherCmd.Text = launcherPath ?? useCustomLauncherCmdCache;
+            }
+            else
+            {
+                if (!useCustomLauncherCmd.Text.IsEmpty())
+                    useCustomLauncherCmdCache = useCustomLauncherCmd.Text;
+                useCustomLauncherCmd.Text = "<script engine>";
+            }
         }
     }
 }
