@@ -63,7 +63,7 @@ namespace CSScriptNpp
         public string UseCustomLauncher = "";
         public bool StartRoslynServerAtNppStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
-        public bool HideDevaultAssemblies = true;
+        public bool HideDefaultAssemblies = true;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
         public bool RunExternalInDebugMode = true;
@@ -153,7 +153,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                     SetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
-                    SetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
+                    SetValue(Section, nameof(HideDefaultAssemblies), HideDefaultAssemblies);
                     SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                     SetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
@@ -241,7 +241,7 @@ namespace CSScriptNpp
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                 UseCustomLauncher = GetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
-                HideDevaultAssemblies = GetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
+                HideDefaultAssemblies = GetValue(Section, nameof(HideDefaultAssemblies), HideDefaultAssemblies);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);
                 VSProjectTemplatePath = GetValue(Section, nameof(VSProjectTemplatePath), VSProjectTemplatePath);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);

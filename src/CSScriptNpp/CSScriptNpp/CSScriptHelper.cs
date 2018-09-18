@@ -650,11 +650,25 @@ namespace CSScriptNpp
                     oldNotificationMessage = NotifyClient("Processing NuGet packages...");
                 }
 
-                if (Config.Instance.HideDevaultAssemblies)
+                if (Config.Instance.HideDefaultAssemblies)
                     retval.Assemblies = parser.AgregateReferences(searchDirs, new string[0], new string[0]).ToArray();
                 else
                     retval.Assemblies = parser.AgregateReferences(searchDirs, defaultRefAsms, defaultNamespaces).ToArray();
 
+                // order:
+                //  - non GAC
+                //  - System.dll
+                //  - All other System.*
+                //    and then alphabetically within each group
+
+                retval.Assemblies = retval.Assemblies
+                                          .Select(x=> new { Name = Path.GetFileName(x), File = x } )
+                                          .OrderBy(x => x.Name == "System.dll" ? 1 :
+                                                        x.Name.StartsWith("System.") ? 2 :
+                                                        0)
+                                          .ThenBy(x => x.Name)
+                                          .Select(x=>x.File)
+                                          .ToArray();
                 return retval;
             }
             finally
