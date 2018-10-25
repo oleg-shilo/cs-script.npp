@@ -44,12 +44,25 @@ namespace Kbg.NppPluginNET
             plugin.beNotified(notifyCode);
         }
 
+        static string ProbeFile(params string[] paths)
+        {
+            var file = Path.Combine(paths);
+            if (File.Exists(file))
+                return file;
+            else
+                return null;
+        }
+
         public static void Init()
         {
             string thisAssembly = Assembly.GetExecutingAssembly().Location;
             string pluginName = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(thisAssembly));
 
-            string pluginPath = Path.Combine(Path.GetDirectoryName(thisAssembly), pluginName, pluginName + ".dll");
+            string baseDir = Path.GetDirectoryName(thisAssembly);
+
+            string pluginPath = ProbeFile(baseDir, pluginName + ".asm.dll") ??
+                                ProbeFile(baseDir, pluginName, pluginName + ".dll") ??
+                                ProbeFile(baseDir, pluginName, pluginName + ".asm.dll");
 
             Assembly pluginAssembly = Assembly.LoadFrom(pluginPath);
 
