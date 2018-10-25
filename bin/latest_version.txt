@@ -1,7 +1,5 @@
-1.7.12.0
-https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.12.0
-Release v1.7.12.0
+1.7.20.0
+https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.20.0
+Release v1.7.20.0
 
-* Issue #18: corrupted the code while saving
-* Resurrected option to update via msi. Triggered by NPP decision to remove plugin manager.
-* Syntaxer: optimised XML documentation generation on autocompletion request
+* Updated deployment algorithm to handle breaking changes in Notepad++ v7.5.9 hosting model.
