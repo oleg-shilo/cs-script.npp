@@ -7,7 +7,7 @@ using System;
 
 void main(string[] args)
 {
-    var version = AssemblyName.GetAssemblyName(@".\plugins\CSScriptNpp\CSScriptNpp.dll").Version.ToString();
+    var version = AssemblyName.GetAssemblyName(@".\plugins\CSScriptNpp\CSScriptNpp.asm.dll").Version.ToString();
     // var version = Directory.GetFiles(".", "CSScriptNpp.*.msi").Select(x => Path.GetFileNameWithoutExtension(x)).First().Replace("CSScriptNpp.", "");
 
     Console.WriteLine("Injecting version into file names: " + version);

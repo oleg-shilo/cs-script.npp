@@ -20,7 +20,7 @@ class Script
 
     static void BuidMSi(bool is64, string guid)
     {
-        string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp\CSScriptNpp.dll");
+        string pluginFile = IO.Path.GetFullPath(@"Plugins\CSScriptNpp\CSScriptNpp.asm.dll");
 
         var cpu = is64 ? "x64" : "x86";
 

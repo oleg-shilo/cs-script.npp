@@ -10,7 +10,7 @@ string compiler = Path.GetFullPath("ResourceHacker.exe");
 
 void main()
 {
-    var plugin_file = @"..\output\plugins\CSScriptNpp\CSScriptNpp.dll";
+    var plugin_file = @"..\output\plugins\CSScriptNpp\CSScriptNpp.asm.dll";
 
     var version = AssemblyName.GetAssemblyName(plugin_file).Version.ToString();
     var info = FileVersionInfo.GetVersionInfo(plugin_file);

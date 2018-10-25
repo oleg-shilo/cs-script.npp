@@ -1,22 +1,4 @@
-Release v1.7.18-19
-
+Release v1.7.20
 ----
-
-v1.7.19
-- Added support for custom script (F5) launcher. The launcher path is to be set from the settings dialog.
-
-v1.7.18
-- Fixed problem with settings file truncating long values
-- Removed context menu from the 'References' node in the project tree.
-- Added aborting requested formatting operation if it is already in progress
-- Updated CS-Script engine (v3.28.8.0)
-  - Implemented seamless debugging of all auto-classes. There is no longer need to open decorated auto-classes code during debugging.
-  - added support for freestyle auto-classes:
-
-//css_ac freestyle
-using System;
-using System.Diagnostics;
-
-Console.WriteLine("Hello World!");
-Debug.WriteLine("Hello World!");	
+- Updated deployment algorithm to handle breaking changes in Notepad++ v7.5.9 hosting model.
     

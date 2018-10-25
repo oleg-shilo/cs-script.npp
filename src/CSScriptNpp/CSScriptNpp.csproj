@@ -556,7 +556,7 @@ md "$(SolutionDir)output\plugins\$(TargetName)\Mdbg"
 copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x64.dll" "$(SolutionDir)output\plugins\$(TargetName).x64.dll"
 copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x86.dll" "$(SolutionDir)output\plugins\$(TargetName).x86.dll"
 
-copy "$(TargetPath)" "$(SolutionDir)output\plugins\$(TargetName)\$(TargetFileName)"
+copy "$(TargetPath)" "$(SolutionDir)output\plugins\$(TargetName)\$(TargetName).asm.dll"
 copy "$(TargetDir)\CSScriptIntellisense.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptIntellisense.dll"
 
 copy "$(ProjectDir)$(ProjectName)\CompatibilityTest.exe" "$(SolutionDir)output\plugins\$(TargetName)\CompatibilityTest.exe"
