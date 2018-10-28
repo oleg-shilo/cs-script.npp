@@ -46,10 +46,8 @@ namespace CSScriptNpp
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
 
-        public bool ShowOpenInVsAlways = false;
         //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
-        public bool ReloadActiveScriptOnRun = true;
 
         public bool UpdateAfterExit = false;
         public bool UseTogglingPanelVisibility = true;
@@ -60,10 +58,9 @@ namespace CSScriptNpp
         public bool UseRoslynProvider = true;
         public bool VbSupportEnabled = true;
         public bool RestorePanelsAtStartup = true;
-        public string UseCustomLauncher = "";
         public bool StartRoslynServerAtNppStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
-        public bool HideDefaultAssemblies = true;
+        public bool HideDevaultAssemblies = true;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
         public bool RunExternalInDebugMode = true;
@@ -140,8 +137,6 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(DebugPanelInitialTab), DebugPanelInitialTab);
                     SetValue(Section, nameof(LocalDebug), LocalDebug);
                     SetValue(Section, nameof(BreakOnException), BreakOnException);
-                    SetValue(Section, nameof(ShowOpenInVsAlways), ShowOpenInVsAlways);
-                    SetValue(Section, nameof(ReloadActiveScriptOnRun), ReloadActiveScriptOnRun);
                     SetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                     SetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
                     SetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
@@ -153,9 +148,8 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                     SetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
-                    SetValue(Section, nameof(HideDefaultAssemblies), HideDefaultAssemblies);
+                    SetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
                     SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
-                    SetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
                     SetValue(Section, nameof(VSProjectTemplatePath), VSProjectTemplatePath);
                     SetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
@@ -226,8 +220,6 @@ namespace CSScriptNpp
                 NativeAutoCompletionChecked = GetValue(Section, nameof(NativeAutoCompletionChecked), NativeAutoCompletionChecked);
                 ReleaseNotesViewedFor = GetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
                 BreakOnException = GetValue(Section, nameof(BreakOnException), BreakOnException);
-                ShowOpenInVsAlways = GetValue(Section, nameof(ShowOpenInVsAlways), ShowOpenInVsAlways);
-                ReloadActiveScriptOnRun = GetValue(Section, nameof(ReloadActiveScriptOnRun), ReloadActiveScriptOnRun);
                 UpdateAfterExit = GetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
                 CheckUpdatesOnStartup = GetValue(Section, nameof(CheckUpdatesOnStartup), CheckUpdatesOnStartup);
@@ -239,9 +231,8 @@ namespace CSScriptNpp
                 UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                 StartRoslynServerAtNppStartup = GetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
-                UseCustomLauncher = GetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
-                HideDefaultAssemblies = GetValue(Section, nameof(HideDefaultAssemblies), HideDefaultAssemblies);
+                HideDevaultAssemblies = GetValue(Section, nameof(HideDevaultAssemblies), HideDevaultAssemblies);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);
                 VSProjectTemplatePath = GetValue(Section, nameof(VSProjectTemplatePath), VSProjectTemplatePath);
                 FloatingPanelsWarningAlreadyPropted = GetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);

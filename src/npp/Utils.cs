@@ -68,7 +68,6 @@ namespace npp
                 return true;
             return false;
         }
-
         internal static bool IsSetExpression(this string text)
         {
             int bracketPos = text.IndexOf("(");

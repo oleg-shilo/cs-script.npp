@@ -289,11 +289,6 @@
             Apartment state of the script.
             </summary>
         </member>
-        <member name="P:csscript.CSharpParser.AutoClassMode">
-            <summary>
-            Gets the `auto-class` decoration mode value.
-            </summary>
-        </member>
         <member name="P:csscript.CSharpParser.Code">
             <summary>
             Script C# raw code.
@@ -5256,13 +5251,6 @@
             Gets the original location of the script that the assemble been compiled from.
             </summary>
             <param name="assembly">The assembly.</param>
-            <returns></returns>
-        </member>
-        <member name="M:CSScriptLibrary.AppDomainHelper.GetDirName(System.String)">
-            <summary>
-            Gets the name of the directory from the specified path.
-            </summary>
-            <param name="path">The path.</param>
             <returns></returns>
         </member>
         <member name="M:CSScriptLibrary.AppDomainHelper.Clone(System.AppDomain,System.String,System.Security.PermissionSet,System.Security.Policy.StrongName[])">
