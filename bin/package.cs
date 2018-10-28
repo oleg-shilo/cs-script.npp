@@ -28,6 +28,8 @@ void main(string[] args)
     rename_with_version(@".\CSScriptNpp.x64.zip", version);
     rename_with_version(@".\CSScriptNpp.x86.7z", version);
     rename_with_version(@".\CSScriptNpp.x64.7z", version);
+    rename_with_version(@".\PLuginAdmin.CSScriptNpp.x86.7z", version);
+    rename_with_version(@".\PLuginAdmin.CSScriptNpp.x64.7z", version);
 }
 
 void rename_with_version(string fileName, string version)

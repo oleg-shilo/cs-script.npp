@@ -46,6 +46,8 @@ x64e
      Pull into Projects\NppPluginManager\npp-plugins-x64 from https://github.com/bruderstein/npp-plugins-x64
          git.exe pull --progress -v --no-rebase "https://github.com/bruderstein/npp-plugins-x64" master
 
+		 !!!!! iserting 'pull -Xtheirs` ensures that local changes are not merged but overwritten by the remote master
+
    - Update npp-plugins-x64\plugins\plugins64.xml
    - Update npp-plugins-x64\plugins\validate.json
    - Commit and Push to origin
