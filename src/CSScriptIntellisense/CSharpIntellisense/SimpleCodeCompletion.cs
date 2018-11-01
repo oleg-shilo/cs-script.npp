@@ -154,25 +154,29 @@ namespace CSScriptIntellisense
         //----------------------------------
         public static CodeMapItem[] GetMapOf(string code, string codeFile)
         {
-            bool injected = CSScriptHelper.DecorateIfRequired(ref code);
             CodeMapItem[] map;
 
             if (Config.Instance.UsingRoslyn)
+            {
                 map = Syntaxer.GetMapOf(code, codeFile);
+            }
             else
+            {
+                bool injected = CSScriptHelper.DecorateIfRequired(ref code);
                 map = MonoEngine.GetMapOf(code, injected, codeFile);
 
-            if (injected)
-            {
-                int injectedLineOffset = CSScriptHelper.GetDecorationInfo(code).Item1;
-                int injectedLineNumber = code.Substring(0, injectedLineOffset).Split('\n').Count();
-
-                map = map.Where(i => i.Line != injectedLineNumber).ToArray();
-
-                foreach (CodeMapItem item in map)
+                if (injected)
                 {
-                    if (item.Line >= injectedLineNumber)
-                        item.Line -= 1;
+                    int injectedLineOffset = CSScriptHelper.GetDecorationInfo(code).Item1;
+                    int injectedLineNumber = code.Substring(0, injectedLineOffset).Split('\n').Count();
+
+                    map = map.Where(i => i.Line != injectedLineNumber).ToArray();
+
+                    foreach (CodeMapItem item in map)
+                    {
+                        if (item.Line >= injectedLineNumber)
+                            item.Line -= 1;
+                    }
                 }
             }
             return map;

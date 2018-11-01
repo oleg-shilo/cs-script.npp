@@ -240,6 +240,7 @@ namespace CSScriptIntellisense
         static public bool NeedsAutoclassWrapper(string text)
         {
             return Regex.Matches(text, @"\s?//css_args\s+/ac(,|;|\s+)").Count != 0
+                || Regex.Matches(text, @"\s?//css_autoclass\s+").Count != 0
                 || Regex.Matches(text, @"\s?//css_ac\s+").Count != 0;
         }
 

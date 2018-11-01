@@ -82,12 +82,13 @@ namespace Tests
             Assert.Equal("System.IO", items[1]);
         }
 
-        [Fact]
+        [Fact(Skip = "Reflector is no longer in use")]
+        
         public void AutoClassClass()
         {
             string code =
 @"//css_inc test.cs
-//css_args /ac
+//css_ac
 using System;
 using System.Linq;
 using System.Data;
