@@ -42,7 +42,7 @@ cd ..
 del plugins\CSScriptNpp.dll
 del plugins\CSScriptNpp\CSScriptNpp.dll
 copy plugins\CSScriptNpp.x64.dll plugins\CSScriptNpp.dll
-copy plugins\CSScriptNpp.x86.dll plugins\CSScriptNpp\CSScriptNpp.dll
+copy plugins\CSScriptNpp.x64.dll plugins\CSScriptNpp\CSScriptNpp.dll
 "C:\Program Files\7-Zip\7z.exe" a CSScriptNpp.x64.zip *.txt -x!plugins\CSScriptNpp*.dll plugins
 "C:\Program Files\7-Zip\7z.exe" a -t7z CSScriptNpp.x64.7z *.txt -x!plugins\CSScriptNpp*.dll plugins
 

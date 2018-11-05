@@ -51,8 +51,8 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.update = new System.Windows.Forms.Button();
-            this.customUpdateUrl = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.customUpdateUrl = new System.Windows.Forms.TextBox();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -279,12 +279,12 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.update);
             this.groupBox2.Controls.Add(this.customUpdateUrl);
+            this.groupBox2.Controls.Add(this.update);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Location = new System.Drawing.Point(8, 21);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(399, 83);
+            this.groupBox2.Size = new System.Drawing.Size(399, 97);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Update Source";
@@ -299,14 +299,6 @@
             this.update.UseVisualStyleBackColor = true;
             this.update.Click += new System.EventHandler(this.update_Click);
             // 
-            // customUpdateUrl
-            // 
-            this.customUpdateUrl.Location = new System.Drawing.Point(15, 43);
-            this.customUpdateUrl.Name = "customUpdateUrl";
-            this.customUpdateUrl.ShortcutsEnabled = false;
-            this.customUpdateUrl.Size = new System.Drawing.Size(297, 20);
-            this.customUpdateUrl.TabIndex = 0;
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -315,6 +307,13 @@
             this.label2.Size = new System.Drawing.Size(85, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Custom location:";
+            // 
+            // customUpdateUrl
+            // 
+            this.customUpdateUrl.Location = new System.Drawing.Point(15, 44);
+            this.customUpdateUrl.Name = "customUpdateUrl";
+            this.customUpdateUrl.Size = new System.Drawing.Size(297, 20);
+            this.customUpdateUrl.TabIndex = 4;
             // 
             // ConfigForm
             // 
@@ -367,7 +366,7 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox customUpdateUrl;
         private System.Windows.Forms.Button update;
+        private System.Windows.Forms.TextBox customUpdateUrl;
     }
 }
