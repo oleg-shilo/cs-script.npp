@@ -1354,6 +1354,7 @@ namespace CSScriptNpp
                                  .Replace("vbc : Command line (0,0): warning BC2007: unrecognized option 'warn:0'; ignored", "");
         }
 
+        
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> collection, T item)
         {
             return collection.Concat(new[] { item });
