@@ -15,6 +15,17 @@ namespace CSScriptIntellisense
 
     public static class StringExtesnions
     {
+        public static string ShrinkUrl(this string path)
+        {
+            var parts = path.Split('/');
+
+            if (path.Length > 4)
+            {
+                return $"{parts.Take(3).JoinLines("/")}.../{parts.Last()}";
+            }
+            return path;
+        }
+
         public static bool IsScriptFile(this string file)
         {
             if (string.IsNullOrWhiteSpace(file))
@@ -73,10 +84,12 @@ namespace CSScriptIntellisense
 
         public static string NormalizeNewLines(this string code, string desiredLineBreak = "\r\n")
         {
-            return code.Replace("\r\n", "${NL}")
+            return code.HasText() ?
+                   code.Replace("\r\n", "${NL}")
                        .Replace("\r", "${NL}")
                        .Replace("\n", "${NL}")
-                       .Replace("${NL}", desiredLineBreak);
+                       .Replace("${NL}", desiredLineBreak) :
+                   code;
         }
 
         public static bool IsToken(this string text, string pattern, int position)

@@ -185,10 +185,10 @@ namespace CSScriptNpp
                 {
                     PostCloseAction = //Task.Factory.StartNew(
                         () =>
-                    {
-                        using (var dialog = new UpdateOptionsPanel(distro))
-                            dialog.ShowDialog();
-                    };//);
+                        {
+                            using (var dialog = new UpdateOptionsPanel(distro))
+                                dialog.ShowDialog();
+                        };//);
 
                     Invoke((Action)delegate
                     {

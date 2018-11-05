@@ -5,10 +5,32 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 
+namespace CSScriptNpp
+{
+    static class StringExtensions
+    {
+        public static string ToUri(this string path)
+        {
+            if (path.StartsWith("http"))
+                return path;
+            else
+                return new Uri(path).AbsoluteUri;
+        }
+    }
+}
+
 namespace CSScriptNpp.Deployment
 {
-    class WebHelper
+    static class WebHelper
     {
+        public static string ToUri(this string path)
+        {
+            if (path.StartsWith("http"))
+                return path;
+            else
+                return new Uri(path).AbsoluteUri;
+        }
+
         static public string DownloadDistro(string distroUrl, Action<long, long> onProgress)
         {
             try
@@ -42,7 +64,7 @@ namespace CSScriptNpp.Deployment
                 WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
 
             var request = WebRequest.Create(url);
-            var response = (HttpWebResponse)request.GetResponse();
+            var response = request.GetResponse();
 
             if (File.Exists(destinationPath))
                 File.Delete(destinationPath);
@@ -61,8 +83,7 @@ namespace CSScriptNpp.Deployment
                     destStream.Write(buf, 0, count);
 
                     totalCount += count;
-                    if (onProgress != null)
-                        onProgress(totalCount, response.ContentLength);
+                    onProgress?.Invoke(totalCount, response.ContentLength);
                 }
             }
         }

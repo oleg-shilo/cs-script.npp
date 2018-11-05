@@ -14,6 +14,14 @@ namespace CSScriptNpp
             return (T)obj;
         }
 
+        public static string ToUri(this string path)
+        {
+            if (path.StartsWith("http"))
+                return path;
+            else
+                return new Uri(path).AbsoluteUri;
+        }
+
         public static string PathJoin(this string path, params string[] items)
         {
             return Path.Combine(new[] { path }.Concat(items).ToArray());

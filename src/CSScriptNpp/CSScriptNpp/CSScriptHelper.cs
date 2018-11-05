@@ -1154,7 +1154,8 @@ namespace CSScriptNpp
                 WebRequest.DefaultWebProxy.Credentials = new NetworkCredential(proxyUser, proxyPw);
 
             var request = WebRequest.Create(url);
-            var response = (HttpWebResponse)request.GetResponse();
+            var response = (WebResponse)request.GetResponse();
+            // var response = (HttpWebResponse)request.GetResponse();
 
             if (File.Exists(destinationPath))
                 File.Delete(destinationPath);

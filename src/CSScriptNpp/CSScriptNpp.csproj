@@ -176,6 +176,7 @@
     <Compile Include="Dialogs\ScriptNameInput.designer.cs">
       <DependentUpon>ScriptNameInput.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interop\Intellisense.cs" />
     <Compile Include="Interop\IniFile.cs" />
     <Compile Include="Interop\KnownFolders.cs" />

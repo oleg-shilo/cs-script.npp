@@ -612,7 +612,7 @@ void main(string[] args)
 
                         npp.SaveDocuments(GetProjectDocuments());
 
-                        CSScriptHelper.Build(currentScript, 
+                        CSScriptHelper.Build(currentScript,
                                              line => outputPanel.BuildOutput.WriteLine(line));
 
                         outputPanel.BuildOutput.WriteLine(null)

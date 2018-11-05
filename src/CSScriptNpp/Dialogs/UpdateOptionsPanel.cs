@@ -20,7 +20,7 @@ namespace CSScriptNpp.Dialogs
             DoLayout();
 
             this.distro = distro;
-            versionLbl.Text = distro.Version;
+            versionLbl.Text = distro.Version ?? distro.ZipUrl.ShrinkUrl();
 
             updateAfterExit.Checked = Config.Instance.UpdateAfterExit;
             customDeployment.Checked = (Config.Instance.UpdateMode == (string)customDeployment.Tag);
@@ -169,8 +169,6 @@ namespace CSScriptNpp.Dialogs
             Action<string> deploy = file => File.Copy(Path.Combine(pluginDir, file), Path.Combine(deploymentDir, file), true);
 
             deploy("updater.exe");
-            // deploy("7z.exe"); // 7Zip is deployed by the updater itself
-            // deploy("7z.dll");
             deploy("launcher.exe");
 
             return Path.Combine(deploymentDir, "updater.exe");
@@ -183,7 +181,11 @@ namespace CSScriptNpp.Dialogs
 
         void releaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(distro.ReleasePageUrl);
+            try
+            {
+                Process.Start(distro.ReleasePageUrl);
+            }
+            catch { }
         }
 
         void showOptions_CheckedChanged(object sender, EventArgs e)
@@ -220,14 +222,6 @@ namespace CSScriptNpp.Dialogs
             Config.Instance.SkipUpdateVersion = distro.Version;
             Config.Instance.Save();
             Close();
-        }
-
-        private void progressLbl_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void progressBar_Click(object sender, EventArgs e)
-        {
         }
     }
 }

@@ -16,8 +16,16 @@ namespace CSScriptNpp
     {
         public string Version;
         public string URL_root;
+        public string fullUrl;
         public string ReleaseNotesText;
 
+        public static Distro FromFixedLocation(string path)
+        {
+            return new Distro
+            {
+                fullUrl = path,
+            };
+        }
         public static Distro FromVersionInfo(string info)
         {
             var lines = info.Trim().Replace("\r\n", "\n").Split(new[] { '\n' }, 3);
@@ -37,7 +45,10 @@ namespace CSScriptNpp
 
         public string ZipUrl
         {
-            get { return URL_root + "/" + FileNameWithoutExtension + ".zip"; }
+
+            get => URL_root != null ?
+                   URL_root + "/" + FileNameWithoutExtension + ".zip" :
+                   fullUrl.ToUri();
         }
 
         public string ReleasePageUrl

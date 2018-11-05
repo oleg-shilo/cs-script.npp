@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense.Interop;
+using CSScriptNpp.Dialogs;
 
 namespace CSScriptNpp
 {
@@ -150,7 +152,7 @@ namespace CSScriptNpp
         void RefreshUseCustomLauncherCmd(string launcherPath = null)
         {
             if (!launcherPath.IsEmpty())
-                useCustomLauncherCmd.Text = 
+                useCustomLauncherCmd.Text =
                 useCustomLauncherCmdCache = launcherPath;
 
             this.useCustomLauncherCmd.Enabled = this.useCustomLauncher.Checked;
@@ -165,6 +167,18 @@ namespace CSScriptNpp
                     useCustomLauncherCmdCache = useCustomLauncherCmd.Text;
                 useCustomLauncherCmd.Text = "<script engine>";
             }
+        }
+
+        private void update_Click(object sender, EventArgs e)
+        {
+
+            Dispatcher.Schedule(300, () =>
+            {
+                using (var dialog = new UpdateOptionsPanel(Distro.FromFixedLocation(customUpdateUrl.Text)))
+                    dialog.ShowDialog();
+            });
+
+            Close();
         }
     }
 }

@@ -38,6 +38,8 @@
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.useCustomLauncherCmd = new System.Windows.Forms.TextBox();
+            this.useCustomLauncher = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.scriptsDir = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -46,12 +48,17 @@
             this.customEngine = new System.Windows.Forms.RadioButton();
             this.installedEngine = new System.Windows.Forms.RadioButton();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
-            this.useCustomLauncher = new System.Windows.Forms.CheckBox();
-            this.useCustomLauncherCmd = new System.Windows.Forms.TextBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.update = new System.Windows.Forms.Button();
+            this.customUpdateUrl = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // checkUpdates
@@ -81,6 +88,7 @@
             // 
             this.contentControl.Controls.Add(this.generalPage);
             this.contentControl.Controls.Add(this.tabPage2);
+            this.contentControl.Controls.Add(this.tabPage1);
             this.contentControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.contentControl.Location = new System.Drawing.Point(0, 0);
             this.contentControl.Name = "contentControl";
@@ -152,6 +160,26 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "CS-Script";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // useCustomLauncherCmd
+            // 
+            this.useCustomLauncherCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.useCustomLauncherCmd.Location = new System.Drawing.Point(9, 230);
+            this.useCustomLauncherCmd.Name = "useCustomLauncherCmd";
+            this.useCustomLauncherCmd.Size = new System.Drawing.Size(386, 20);
+            this.useCustomLauncherCmd.TabIndex = 2;
+            // 
+            // useCustomLauncher
+            // 
+            this.useCustomLauncher.AutoSize = true;
+            this.useCustomLauncher.Location = new System.Drawing.Point(9, 207);
+            this.useCustomLauncher.Name = "useCustomLauncher";
+            this.useCustomLauncher.Size = new System.Drawing.Size(126, 17);
+            this.useCustomLauncher.TabIndex = 3;
+            this.useCustomLauncher.Text = "Custom (F5) launcher";
+            this.useCustomLauncher.UseVisualStyleBackColor = true;
+            this.useCustomLauncher.CheckedChanged += new System.EventHandler(this.useCustomLauncher_CheckedChanged);
             // 
             // label1
             // 
@@ -238,25 +266,55 @@
             this.embeddedEngine.UseVisualStyleBackColor = true;
             this.embeddedEngine.CheckedChanged += new System.EventHandler(this.engine_CheckedChanged);
             // 
-            // useCustomLauncher
+            // tabPage1
             // 
-            this.useCustomLauncher.AutoSize = true;
-            this.useCustomLauncher.Location = new System.Drawing.Point(9, 207);
-            this.useCustomLauncher.Name = "useCustomLauncher";
-            this.useCustomLauncher.Size = new System.Drawing.Size(126, 17);
-            this.useCustomLauncher.TabIndex = 3;
-            this.useCustomLauncher.Text = "Custom (F5) launcher";
-            this.useCustomLauncher.UseVisualStyleBackColor = true;
-            this.useCustomLauncher.CheckedChanged += new System.EventHandler(this.useCustomLauncher_CheckedChanged);
+            this.tabPage1.Controls.Add(this.groupBox2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(415, 262);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "Update";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // useCustomLauncherCmd
+            // groupBox2
             // 
-            this.useCustomLauncherCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.useCustomLauncherCmd.Location = new System.Drawing.Point(9, 230);
-            this.useCustomLauncherCmd.Name = "useCustomLauncherCmd";
-            this.useCustomLauncherCmd.Size = new System.Drawing.Size(386, 20);
-            this.useCustomLauncherCmd.TabIndex = 2;
+            this.groupBox2.Controls.Add(this.update);
+            this.groupBox2.Controls.Add(this.customUpdateUrl);
+            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Location = new System.Drawing.Point(8, 21);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(399, 83);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Update Source";
+            // 
+            // update
+            // 
+            this.update.Location = new System.Drawing.Point(318, 43);
+            this.update.Name = "update";
+            this.update.Size = new System.Drawing.Size(75, 23);
+            this.update.TabIndex = 3;
+            this.update.Text = "Update";
+            this.update.UseVisualStyleBackColor = true;
+            this.update.Click += new System.EventHandler(this.update_Click);
+            // 
+            // customUpdateUrl
+            // 
+            this.customUpdateUrl.Location = new System.Drawing.Point(15, 43);
+            this.customUpdateUrl.Name = "customUpdateUrl";
+            this.customUpdateUrl.ShortcutsEnabled = false;
+            this.customUpdateUrl.Size = new System.Drawing.Size(297, 20);
+            this.customUpdateUrl.TabIndex = 0;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 26);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(85, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Custom location:";
             // 
             // ConfigForm
             // 
@@ -278,6 +336,9 @@
             this.tabPage2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -303,5 +364,10 @@
         private System.Windows.Forms.LinkLabel linkLabel2;
         private System.Windows.Forms.TextBox useCustomLauncherCmd;
         private System.Windows.Forms.CheckBox useCustomLauncher;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.TextBox customUpdateUrl;
+        private System.Windows.Forms.Button update;
     }
 }
