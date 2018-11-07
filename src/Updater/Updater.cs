@@ -10,20 +10,33 @@ namespace CSScriptNpp.Deployment
 {
     class Updater
     {
-        static public void Deploy(string zipFile, string targetDir)
+        public static void Deploy(string zipFile, string targetDir)
         {
-            DeployByReplacing(zipFile, targetDir);
+            DeployByReplacingFromZip(zipFile, targetDir);
         }
 
-        static public void DeployByReplacing(string zipFile, string targetDir)
+        public static void DeployByReplacingFromZip(string zipFile, string targetDir)
+        {
+            try
+            {
+                string tempDir = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.ManualUpdate", "temp");
+                Exract(zipFile, tempDir);
+                DeployByReplacingFromFolder(tempDir, targetDir);
+                DeleteDir(tempDir);
+            }
+            catch (Exception e)
+            {
+                Debug.Assert(false, e.Message);
+            }
+        }
+
+        public static void  DeployByReplacingFromFolder(string distroFolder, string targetDir)
         {
             //Debug.Assert(false);
 
-            string tempDir = Path.Combine(KnownFolders.UserDownloads, "CSScriptNpp.ManualUpdate", "temp");
-
             var pluginDir = Path.Combine(targetDir, "CSScriptNpp");
             var pluginBackupDir = Path.Combine(targetDir, "CSScriptNpp.bak");
-            var tempDirRoot = Path.Combine(tempDir, "Plugins");
+            var tempDirRoot = Path.Combine(distroFolder, "Plugins");
             var current_config = Path.Combine(pluginDir, "css_config.xml");
 
             try
@@ -42,18 +55,14 @@ namespace CSScriptNpp.Deployment
                 }
 
                 // delete old version of plugin host
-                var host_old_dll = Directory.GetFiles(targetDir, "CSCSriptNpp*.dll").FirstOrDefault();
+                var host_old_dll = Directory.GetFiles(targetDir, "CSScriptNpp*.dll").FirstOrDefault();
                 if (File.Exists(host_old_dll))
                     DeleteFile(host_old_dll);
-
-                Exract(zipFile, tempDir);
 
                 CopyDir(tempDirRoot, targetDir);
 
                 if (current_config_data != null)
                     File.WriteAllBytes(current_config, current_config_data);
-
-                DeleteDir(tempDir);
             }
             catch (Exception e)
             {
@@ -74,7 +83,7 @@ namespace CSScriptNpp.Deployment
         }
 
 
-        static public void DeployByMerging(string zipFile, string targetDir)
+        public static void DeployByMerging(string zipFile, string targetDir)
         {
             string tempDir = Path.Combine(targetDir, "CSScriptNpp.Update");
 

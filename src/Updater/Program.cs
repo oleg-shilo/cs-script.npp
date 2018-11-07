@@ -15,6 +15,7 @@ namespace CSScriptNpp.Deployment
     class Program
     {
         const string asynchUpdateArg = "/asynch_update";
+        static string[] uiArgs = "-ui;/ui".Split(';');
         static Mutex appSingleInstanceMutex;
 
         static void Main(string[] args)
@@ -23,7 +24,22 @@ namespace CSScriptNpp.Deployment
             {
                 // Debug.Assert(false);
 
+                // "C:\Users\osh\Downloads\CSScriptNpp.1.7.7.3.x64 (7).zip" "C:\Program Files\Notepad++\plugins\CSScriptNpp"
+
+
                 if (!args.Any())
+                {
+                    if (!IsAdmin())
+                    {
+                        var p = new Process();
+                        p.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+                        p.StartInfo.Verb = "runas";
+                        p.StartInfo.UseShellExecute = true;
+                        p.Start();
+                        return;
+                    }
+                }
+                else if (args.Intersect(uiArgs).Any())
                 {
                     string distroFile = UserInputForm.GetDistro();
                     if (!string.IsNullOrEmpty(distroFile))
@@ -52,6 +68,17 @@ namespace CSScriptNpp.Deployment
                     MessageBox.Show($"Another Notepad++ plugin update in progress. Either wait or stop {Path.GetFileName(Assembly.GetExecutingAssembly().Location)}", "CS-Script");
                     return;
                 }
+
+                // Implement processing the folder here
+                // if (IsAdmin())
+                // {
+                //     // var p = new Process();
+                //     // p.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+                //     // p.StartInfo.Verb = "runas";
+                //     // p.StartInfo.UseShellExecute = true;
+                //     // p.Start();
+                //     // return;
+                // }
 
                 // <zipFile> [<pluginDir>] [/asynchUpdateArg]
                 string zipFile = args[0];

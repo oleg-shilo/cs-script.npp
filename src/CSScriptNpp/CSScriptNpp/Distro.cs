@@ -45,10 +45,12 @@ namespace CSScriptNpp
 
         public string ZipUrl
         {
-
-            get => URL_root != null ?
+            get
+            {
+                return URL_root != null ?
                    URL_root + "/" + FileNameWithoutExtension + ".zip" :
                    fullUrl.ToUri();
+            }
         }
 
         public string ReleasePageUrl
