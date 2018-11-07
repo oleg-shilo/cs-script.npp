@@ -56,8 +56,8 @@ x64e
 x86
 ---------------------------------
 6. Upload (FTP):
-    CSScriptNpp.<version>.7z
-    CSScriptNpp.<version>.msi
+    // CSScriptNpp.<version>.7z
+    // CSScriptNpp.<version>.msi
     CSScriptNpp.<version>.zip
     CSScriptNpp.<version>.Releaseinfo.txt
     CSScriptNpp.<version>.ReleaseNotes.txt

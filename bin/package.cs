@@ -26,10 +26,10 @@ void main(string[] args)
 
     rename_with_version(@".\CSScriptNpp.x86.zip", version);
     rename_with_version(@".\CSScriptNpp.x64.zip", version);
-    rename_with_version(@".\CSScriptNpp.x86.7z", version);
-    rename_with_version(@".\CSScriptNpp.x64.7z", version);
-    rename_with_version(@".\PLuginAdmin.CSScriptNpp.x86.7z", version);
-    rename_with_version(@".\PLuginAdmin.CSScriptNpp.x64.7z", version);
+    // rename_with_version(@".\CSScriptNpp.x86.7z", version);
+    // rename_with_version(@".\CSScriptNpp.x64.7z", version);
+    rename_with_version(@".\PluginAdmin.CSScriptNpp.x86.zip", version);
+    rename_with_version(@".\PluginAdmin.CSScriptNpp.x64.zip", version);
 }
 
 void rename_with_version(string fileName, string version)
@@ -37,7 +37,7 @@ void rename_with_version(string fileName, string version)
     if (File.Exists(fileName))
     {
         var name_parts = Path.GetFileName(fileName).Split('.').ToList();
-        name_parts.Insert(1, version);
+        name_parts.Insert(name_parts.Count - 2, version);
 
         string distro = Path.Combine(Path.GetDirectoryName(fileName), string.Join(".", name_parts.ToArray()));
 

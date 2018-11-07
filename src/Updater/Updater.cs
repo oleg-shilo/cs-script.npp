@@ -34,10 +34,18 @@ namespace CSScriptNpp.Deployment
         {
             //Debug.Assert(false);
 
+            bool singleFolderDeployment = false;
+
             var pluginDir = Path.Combine(targetDir, "CSScriptNpp");
             var pluginBackupDir = Path.Combine(targetDir, "CSScriptNpp.bak");
-            var tempDirRoot = Path.Combine(distroFolder, "Plugins");
+            var tempDirRoot = Path.Combine(distroFolder, "plugins");
             var current_config = Path.Combine(pluginDir, "css_config.xml");
+
+            if (File.Exists(Path.Combine(distroFolder, "CSScriptNpp.dll")))
+            {
+                tempDirRoot = distroFolder;
+                singleFolderDeployment = true;
+            }
 
             try
             {
@@ -59,7 +67,10 @@ namespace CSScriptNpp.Deployment
                 if (File.Exists(host_old_dll))
                     DeleteFile(host_old_dll);
 
-                CopyDir(tempDirRoot, targetDir);
+                if (singleFolderDeployment)
+                    CopyDir(tempDirRoot, Path.Combine(targetDir, "CSScriptNpp"));
+                else
+                    CopyDir(tempDirRoot, targetDir);
 
                 if (current_config_data != null)
                     File.WriteAllBytes(current_config, current_config_data);

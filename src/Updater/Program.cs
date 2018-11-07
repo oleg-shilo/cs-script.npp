@@ -2,10 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Security.Principal;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Updater;
@@ -15,8 +13,20 @@ namespace CSScriptNpp.Deployment
     class Program
     {
         const string asynchUpdateArg = "/asynch_update";
-        static string[] uiArgs = "-ui;/ui".Split(';');
         static Mutex appSingleInstanceMutex;
+
+        static bool EnsureNoUpdateInProgress()
+        {
+            bool createdNew;
+            appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
+
+            if (!createdNew)
+            {
+                MessageBox.Show($"Another Notepad++ plugin update in progress. Either wait or stop {Path.GetFileName(Assembly.GetExecutingAssembly().Location)}", "CS-Script");
+                return false;
+            }
+            return true;
+        }
 
         static void Main(string[] args)
         {
@@ -29,18 +39,38 @@ namespace CSScriptNpp.Deployment
 
                 if (!args.Any())
                 {
-                    if (!IsAdmin())
+                    if (IsRunningDistroFolder())
                     {
-                        var p = new Process();
-                        p.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
-                        p.StartInfo.Verb = "runas";
-                        p.StartInfo.UseShellExecute = true;
-                        p.Start();
+                        if (!IsAdmin())
+                        {
+                            var p = new Process();
+                            p.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+                            p.StartInfo.Verb = "runas";
+                            p.StartInfo.UseShellExecute = true;
+                            p.Start();
+                        }
+                        else
+                        {
+                            var distroDir = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+                            var targetDir = GetTargerDirForDistro(distroDir);
+                            if (DialogResult.OK != MessageBox.Show("The plugin will be installed in the \"" + targetDir + "\" folder.", "CS-Script Update", MessageBoxButtons.OKCancel))
+                                return;
+
+                            if (EnsureNoUpdateInProgress())
+
+                            {
+
+                                StopVBCSCompilers();
+                                if (EnsureNppNotRunning(false) && EnsureVBCSCompilerNotLocked(false))
+                                {
+                                    DeployFromCurrentFolder();
+                                    MessageBox.Show("The update process has been completed.", "CS-Script Update");
+                                }
+                            }
+                        }
                         return;
                     }
-                }
-                else if (args.Intersect(uiArgs).Any())
-                {
+
                     string distroFile = UserInputForm.GetDistro();
                     if (!string.IsNullOrEmpty(distroFile))
                     {
@@ -60,25 +90,8 @@ namespace CSScriptNpp.Deployment
                     return;
                 }
 
-                bool createdNew;
-                appSingleInstanceMutex = new Mutex(true, "Npp.CSScript.PluginUpdater", out createdNew);
-
-                if (!createdNew)
-                {
-                    MessageBox.Show($"Another Notepad++ plugin update in progress. Either wait or stop {Path.GetFileName(Assembly.GetExecutingAssembly().Location)}", "CS-Script");
+                if (!EnsureNoUpdateInProgress())
                     return;
-                }
-
-                // Implement processing the folder here
-                // if (IsAdmin())
-                // {
-                //     // var p = new Process();
-                //     // p.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
-                //     // p.StartInfo.Verb = "runas";
-                //     // p.StartInfo.UseShellExecute = true;
-                //     // p.Start();
-                //     // return;
-                // }
 
                 // <zipFile> [<pluginDir>] [/asynchUpdateArg]
                 string zipFile = args[0];
@@ -174,6 +187,44 @@ namespace CSScriptNpp.Deployment
             WindowsIdentity id = WindowsIdentity.GetCurrent();
             WindowsPrincipal p = new WindowsPrincipal(id);
             return p.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        static bool IsRunningDistroFolder()
+        {
+            var dir = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+            return (File.Exists(Path.Combine(dir, "CSScriptNpp.dll")));
+        }
+
+        static string GetTargerDirForDistro(string distroDir)
+        {
+            string pluginHostFile = Path.Combine(distroDir, "CSScriptNpp.dll");
+
+            if (File.Exists(pluginHostFile))
+            {
+                // file description: NppPlugin.Host (x64)
+                bool is64 = FileVersionInfo.GetVersionInfo(pluginHostFile)
+                                           .FileDescription.Contains("(x64)");
+
+                string targetDir = is64 ?
+                    findPluginDir(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)) :
+                    findPluginDir(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86));
+
+                return targetDir;
+            }
+            return null;
+        }
+
+        static void DeployFromCurrentFolder()
+        {
+            var distroDir = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+
+            string pluginHostFile = Path.Combine(distroDir, "CSScriptNpp.dll");
+
+            string targetDir = GetTargerDirForDistro(distroDir);
+            if (targetDir != null)
+            {
+                Updater.DeployByReplacingFromFolder(distroDir, targetDir);
+            }
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
-Release v1.7.21
+Release v1.7.21-22
 ----
 - Updated deployment algorithm to handle breaking changes in Notepad++ v7.5.9 hosting model (PluginAdmin compatible).
+- Updater.exe is extended to support deployment by double-clicking it from the uncompressed distro folder.
