@@ -4,7 +4,7 @@ image: Visual Studio 2017
 
 environment:
   matrix:
-    - PlatformToolset: VS15
+    # - PlatformToolset: VS15
     - PlatformToolset: VS17
 
 platform:
