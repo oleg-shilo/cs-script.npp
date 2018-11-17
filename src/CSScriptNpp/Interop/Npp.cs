@@ -1,16 +1,26 @@
-﻿using System;
-using System.Drawing;
+﻿using CSScriptIntellisense;
+using Kbg.NppPluginNET.PluginInfrastructure;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSScriptIntellisense;
-using Kbg.NppPluginNET.PluginInfrastructure;
+using System.Windows.Forms;
 
 namespace CSScriptNpp
 {
     public static class npp
     {
+        static int modalDialogs = 0;
+        public static bool ShowingModalDialog => modalDialogs != 0;
+
+        public static DialogResult ShowModal(this Form dialog)
+        {
+            dialog.Load += (s, e) => modalDialogs++;
+            dialog.FormClosed += (s, e) => modalDialogs--;
+            return dialog.ShowDialog();
+        }
+
         /***********************************/
 
         static public void CancelCalltip()
@@ -29,6 +39,7 @@ namespace CSScriptNpp
 
         static public void OnCalltipRequest(int position)
         {
+
             if (position == -2)
             {
                 Calltip.LastEval =
@@ -118,7 +129,7 @@ namespace CSScriptNpp
 
             //Color: 0xBBGGRR
 
-            document.CallTipSetFore(new Colour(0,0,0));
+            document.CallTipSetFore(new Colour(0, 0, 0));
             document.CallTipSetBack(new Colour(0xE3, 0xE3, 0xE3));
 
             document.SetMouseDwellTime(milliseconds);

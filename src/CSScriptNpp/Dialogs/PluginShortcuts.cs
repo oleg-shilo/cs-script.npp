@@ -103,7 +103,7 @@ namespace CSScriptNpp
                 {
                     dlg.Name = info.DisplayName;
                     dlg.Shortcut = info.Shortcut;
-                    if (dlg.ShowDialog() == DialogResult.OK)
+                    if (dlg.ShowModal() == DialogResult.OK)
                     {
                         info.Shortcut = dlg.Shortcut;
 

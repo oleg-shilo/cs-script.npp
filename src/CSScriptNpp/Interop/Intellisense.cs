@@ -17,7 +17,7 @@ namespace CSScriptNpp
             CSScriptIntellisense.Config.Location = PluginEnv.ConfigDir;
             CSScriptNpp.Config.InitData(); //will also exchange required data between configs
 
-            CSScriptIntellisense.Plugin.SuppressCodeTolltips = () => Debugger.IsInBreak;
+            CSScriptIntellisense.Plugin.SuppressCodeTolltips = () => Debugger.IsInBreak || npp.ShowingModalDialog;
             CSScriptIntellisense.Plugin.DisplayInOutputPanel = message =>
             {
                 Plugin.EnsureOutputPanelVisible();

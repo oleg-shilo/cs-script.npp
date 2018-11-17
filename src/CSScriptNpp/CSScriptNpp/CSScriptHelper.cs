@@ -408,27 +408,51 @@ namespace CSScriptNpp
             {
                 var p = new Process();
                 p.StartInfo.FileName = cscs_exe;
+                p.StartInfo.Arguments = "-l -d " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 if (!Config.Instance.UseCustomLauncher.IsEmpty())
                 {
                     try
                     {
-                        var exe = Environment.ExpandEnvironmentVariables(Config.Instance.UseCustomLauncher);
+                        var parts = Environment.ExpandEnvironmentVariables(Config.Instance.UseCustomLauncher).SplitCommandLine();
+
+                        var exe = parts.First();
+
                         if (File.Exists(exe))
                             p.StartInfo.FileName = exe;
                         else
-                            throw new Exception();
+                            throw new FileNotFoundException();
+
+                        if (parts.Count() == 1)
+                        {
+                            if (exe.EndsWith("cscs.exe", StringComparison.OrdinalIgnoreCase) ||
+                                exe.EndsWith("csws.exe", StringComparison.OrdinalIgnoreCase) ||
+                                exe.EndsWith("css.exe", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // do nothing, the default args spec is just fine
+                            }
+                        }
+                        else
+                        {
+                            p.StartInfo.Arguments = $"\"{parts.Skip(1).JoinLines("\" \"")}\"";
+
+                            if (p.StartInfo.Arguments.Contains("%1"))
+                                p.StartInfo.Arguments = p.StartInfo.Arguments.Replace("%1", scriptFile);
+                            else
+                                p.StartInfo.Arguments += " \"" + scriptFile + "\"";
+
+                        }
                     }
                     catch
                     {
-                        MessageBox.Show($"The custom launcher (\"{Config.Instance.UseCustomLauncher}\") cannot be found.\n" +
+                        MessageBox.Show($"The custom launcher (\"{Config.Instance.UseCustomLauncher}\") cannot be found or the execution command is invalid.\n" +
                                         $"Using default launcher instead.\n\n" +
-                                        $"Please update its location in the settings dialog",
+                                        $"Please update its execution command in the settings dialog.\n" +
+                                        $"Don't forget to enclose the path items with the spaces in the pair of quotation characters.",
                                         "CS-Script");
                     }
                 }
 
-                p.StartInfo.Arguments = "-l -d " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"";
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
                 bool useFileRedirection = false;
@@ -662,12 +686,12 @@ namespace CSScriptNpp
                 //    and then alphabetically within each group
 
                 retval.Assemblies = retval.Assemblies
-                                          .Select(x=> new { Name = Path.GetFileName(x), File = x } )
+                                          .Select(x => new { Name = Path.GetFileName(x), File = x })
                                           .OrderBy(x => x.Name == "System.dll" ? 1 :
                                                         x.Name.StartsWith("System.") ? 2 :
                                                         0)
                                           .ThenBy(x => x.Name)
-                                          .Select(x=>x.File)
+                                          .Select(x => x.File)
                                           .ToArray();
                 return retval;
             }

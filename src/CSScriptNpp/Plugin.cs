@@ -291,7 +291,7 @@ namespace CSScriptNpp
             using (var form = new ConfigForm(Config.Instance))
             {
                 bool oldUseContextMenu = CSScriptIntellisense.Config.Instance.UseCmdContextMenu;
-                form.ShowDialog();
+                form.ShowModal();
 
                 ReflectorExtensions.IgnoreDocumentationExceptions = CSScriptIntellisense.Config.Instance.IgnoreDocExceptions;
 
@@ -308,7 +308,7 @@ namespace CSScriptNpp
         {
             using (var dialog = new AboutBox())
             {
-                dialog.ShowDialog();
+                dialog.ShowModal();
                 dialog.PostCloseAction();
             }
         }
@@ -705,7 +705,7 @@ namespace CSScriptNpp
                 if (nppVersion < latestVersion)
                 {
                     using (var dialog = new UpdateOptionsPanel(distro))
-                        dialog.ShowDialog();
+                        dialog.ShowModal();
                 }
             }
         }

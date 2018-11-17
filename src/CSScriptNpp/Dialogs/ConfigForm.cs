@@ -175,7 +175,7 @@ namespace CSScriptNpp
             Dispatcher.Schedule(300, () =>
             {
                 using (var dialog = new UpdateOptionsPanel(Distro.FromFixedLocation(customUpdateUrl.Text)))
-                    dialog.ShowDialog();
+                    dialog.ShowModal();
             });
 
             Close();

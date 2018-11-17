@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.useCustomLauncherCmd = new System.Windows.Forms.TextBox();
+            this.useCustomLauncher = new System.Windows.Forms.CheckBox();
             this.checkUpdates = new System.Windows.Forms.CheckBox();
             this.useCS6 = new System.Windows.Forms.CheckBox();
             this.contentControl = new System.Windows.Forms.TabControl();
@@ -38,8 +40,6 @@
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.useCustomLauncherCmd = new System.Windows.Forms.TextBox();
-            this.useCustomLauncher = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.scriptsDir = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -50,9 +50,9 @@
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.customUpdateUrl = new System.Windows.Forms.TextBox();
             this.update = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.customUpdateUrl = new System.Windows.Forms.TextBox();
             this.contentControl.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -60,6 +60,30 @@
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // useCustomLauncherCmd
+            // 
+            this.useCustomLauncherCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.useCustomLauncherCmd.Location = new System.Drawing.Point(9, 230);
+            this.useCustomLauncherCmd.Name = "useCustomLauncherCmd";
+            this.useCustomLauncherCmd.Size = new System.Drawing.Size(386, 20);
+            this.useCustomLauncherCmd.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.useCustomLauncherCmd, "Custom launcher path with the arguments.\r\n(e.g. \r\n    \'\"my launcher.exe\" -run \"%1" +
+        "\" -debug\'\r\n    \'my_launcher.exe -run\'\r\n    \'%CSSCRIPT_DIR%/cscs.exe\'\r\n)");
+            // 
+            // useCustomLauncher
+            // 
+            this.useCustomLauncher.AutoSize = true;
+            this.useCustomLauncher.Location = new System.Drawing.Point(9, 207);
+            this.useCustomLauncher.Name = "useCustomLauncher";
+            this.useCustomLauncher.Size = new System.Drawing.Size(126, 17);
+            this.useCustomLauncher.TabIndex = 3;
+            this.useCustomLauncher.Text = "Custom (F5) launcher";
+            this.toolTip1.SetToolTip(this.useCustomLauncher, "Custom launcher path with the arguments.\r\n(e.g. \r\n    \"my launcher.exe\" -run \"%1\" " +
+        "-debug\r\n    \"my launcher.exe\" -run\r\n    \"%CSSCRIPT_DIR%/cscs.exe\"\r\n    css.exe\r\n)");
+            this.useCustomLauncher.UseVisualStyleBackColor = true;
+            this.useCustomLauncher.CheckedChanged += new System.EventHandler(this.useCustomLauncher_CheckedChanged);
             // 
             // checkUpdates
             // 
@@ -160,26 +184,6 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "CS-Script";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // useCustomLauncherCmd
-            // 
-            this.useCustomLauncherCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.useCustomLauncherCmd.Location = new System.Drawing.Point(9, 230);
-            this.useCustomLauncherCmd.Name = "useCustomLauncherCmd";
-            this.useCustomLauncherCmd.Size = new System.Drawing.Size(386, 20);
-            this.useCustomLauncherCmd.TabIndex = 2;
-            // 
-            // useCustomLauncher
-            // 
-            this.useCustomLauncher.AutoSize = true;
-            this.useCustomLauncher.Location = new System.Drawing.Point(9, 207);
-            this.useCustomLauncher.Name = "useCustomLauncher";
-            this.useCustomLauncher.Size = new System.Drawing.Size(126, 17);
-            this.useCustomLauncher.TabIndex = 3;
-            this.useCustomLauncher.Text = "Custom (F5) launcher";
-            this.useCustomLauncher.UseVisualStyleBackColor = true;
-            this.useCustomLauncher.CheckedChanged += new System.EventHandler(this.useCustomLauncher_CheckedChanged);
             // 
             // label1
             // 
@@ -289,6 +293,13 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Update Source";
             // 
+            // customUpdateUrl
+            // 
+            this.customUpdateUrl.Location = new System.Drawing.Point(15, 44);
+            this.customUpdateUrl.Name = "customUpdateUrl";
+            this.customUpdateUrl.Size = new System.Drawing.Size(297, 20);
+            this.customUpdateUrl.TabIndex = 4;
+            // 
             // update
             // 
             this.update.Location = new System.Drawing.Point(318, 43);
@@ -307,13 +318,6 @@
             this.label2.Size = new System.Drawing.Size(85, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Custom location:";
-            // 
-            // customUpdateUrl
-            // 
-            this.customUpdateUrl.Location = new System.Drawing.Point(15, 44);
-            this.customUpdateUrl.Name = "customUpdateUrl";
-            this.customUpdateUrl.Size = new System.Drawing.Size(297, 20);
-            this.customUpdateUrl.TabIndex = 4;
             // 
             // ConfigForm
             // 

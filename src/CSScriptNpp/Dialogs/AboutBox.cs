@@ -187,7 +187,7 @@ namespace CSScriptNpp
                         () =>
                         {
                             using (var dialog = new UpdateOptionsPanel(distro))
-                                dialog.ShowDialog();
+                                dialog.ShowModal();
                         };//);
 
                     Invoke((Action)delegate

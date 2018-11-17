@@ -1016,7 +1016,7 @@ void main(string[] args)
                 if (currentScript != null) //may not necessarily be loaded successfully
 
                     using (var dialog = new DeploymentInput())
-                        if (DialogResult.OK == dialog.ShowDialog())
+                        if (DialogResult.OK == dialog.ShowModal())
                         {
                             EditItem(currentScript);
 
@@ -1045,7 +1045,7 @@ void main(string[] args)
         void shortcutsBtn_Click(object sender, EventArgs e)
         {
             using (var dialog = new PluginShortcuts())
-                dialog.ShowDialog();
+                dialog.ShowModal();
         }
 
         void pictureBox1_Click(object sender, EventArgs e)

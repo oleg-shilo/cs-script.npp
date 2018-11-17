@@ -60,7 +60,7 @@ namespace CSScriptNpp.Dialogs
 
                                         dialog.SetExpression(expression);
 
-                                        dialog.ShowDialog();
+                                        dialog.ShowModal();
                                     }
                                     Instance = null;
                                 });
