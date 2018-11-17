@@ -2,7 +2,6 @@ using Intellisense.Common;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace CSScriptIntellisense
@@ -61,33 +60,15 @@ namespace CSScriptIntellisense
                 if (string.IsNullOrEmpty(editorText))
                     return new ICompletionData[0];
 
-                var effectiveOffset = offset;
 
-                // VS experience
-                // if (offset > 0)
-                // {
-                //     for (int i = offset - 1; i >= 0; i--)
-                //     {
-                //         if (char.IsWhiteSpace(editorText[i]))
-                //         {
-                //             break;
-                //         }
-                //         else if (editorText[i] == '.')
-                //         {
-                //             effectiveOffset = i + 1;
-                //         }
-                //     }
-                // }
+                var includeSpec = $"//css_inc {Config.Instance.DefaultIncludeFile}" + Environment.NewLine;
+
+                var effectiveCode = includeSpec + editorText;
+                var effectiveOffset = offset + includeSpec.Length;
 
                 var data = Config.Instance.UsingRoslyn ?
-                            Syntaxer.GetCompletions(editorText, fileName, effectiveOffset).ToList() :
-                            MonoEngine.GetCompletionData(editorText, effectiveOffset, fileName, isControlSpace).ToList();
-
-                // var data = (GetCSharpScriptCompletionData(editorText, offset) ??
-                //             (Config.Instance.UsingRoslyn ?
-                //             RoslynEngine.GetCompletionData(editorText, offset, fileName, isControlSpace) :
-                //             MonoEngine.GetCompletionData(editorText, offset, fileName, isControlSpace))
-                //             ).ToList();
+                            Syntaxer.GetCompletions(effectiveCode, fileName, effectiveOffset).ToList() :
+                            MonoEngine.GetCompletionData(effectiveCode, effectiveOffset, fileName, isControlSpace).ToList();
 
                 //suggest default CS-Script usings as well
                 var extraItems = new List<ICompletionData>();
@@ -202,36 +183,53 @@ namespace CSScriptIntellisense
         public static string[] test_GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads)
         {
             // Only used in tests
-            int methodStartPos;
-            return GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+            return GetMemberInfo(editorText, offset, fileName, collapseOverloads, out int methodStartPos);
         }
 
         public static string[] GetMemberInfo(string editorText, int offset, string fileName, bool collapseOverloads, out int methodStartPos)
         {
+            var includeSpec = Config.Instance.DefaultInclude;
+
+            var effectiveCode = includeSpec + editorText;
+            var effectiveOffset = offset + includeSpec.Length;
+
             if (Config.Instance.UsingRoslyn)
             {
-                return Syntaxer.GetMemberInfo(editorText, fileName, offset, collapseOverloads, out methodStartPos);
-                // return RoslynEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+                return Syntaxer.GetMemberInfo(effectiveCode, fileName, effectiveOffset, collapseOverloads, out methodStartPos);
             }
             else
-                return MonoEngine.GetMemberInfo(editorText, offset, fileName, collapseOverloads, out methodStartPos);
+                return MonoEngine.GetMemberInfo(effectiveCode, effectiveOffset, fileName, collapseOverloads, out methodStartPos);
         }
 
         //----------------------------------
         static public string[] FindReferences(string editorText, int offset, string fileName)
         {
+            var includeSpec = Config.Instance.DefaultInclude;
+
+            var effectiveCode = includeSpec + editorText;
+            var effectiveOffset = offset + includeSpec.Length;
+
+            string[] result;
             if (Config.Instance.UsingRoslyn)
-                return Syntaxer.FindReferences(editorText, fileName, offset);
-            // return RoslynEngine.FindReferences(editorText, offset, fileName);
+                result = Syntaxer.FindReferences(effectiveCode, fileName, effectiveOffset);
             else
-                return MonoEngine.FindReferences(editorText, offset, fileName);
+                result = MonoEngine.FindReferences(effectiveCode, effectiveOffset, fileName);
+
+            return result.Select(x => (x.StartsWith(fileName + "(")) ?
+                                       x.ChangeLineNumberInLocation(-1) :
+                                       x)
+                         .ToArray();
         }
 
         //----------------------------------
         static public DomRegion ResolveMember(string editorText, int offset, string fileName)
         {
-            // return ResolveCSharpScriptMember(editorText, offset) ?? ResolveCSharpMember(editorText, offset, fileName);
-            return ResolveCSharpMember(editorText, offset, fileName);
+            var includeSpec = Config.Instance.DefaultInclude;
+
+            var effectiveCode = includeSpec + editorText;
+            var effectiveOffset = offset + includeSpec.Length;
+
+            return ResolveCSharpMember(effectiveCode, effectiveOffset, fileName);
         }
 
         static DomRegion? ResolveCSharpScriptMember(string editorText, int offset)

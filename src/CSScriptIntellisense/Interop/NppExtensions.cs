@@ -1,13 +1,11 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using CSScriptIntellisense;
 using Kbg.NppPluginNET.PluginInfrastructure;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace CSScriptIntellisense
@@ -242,28 +240,25 @@ namespace CSScriptIntellisense
 
         static public void ReplaceWordAtCaret(this ScintillaGateway document, string text)
         {
-            Point p;
-            string word = document.GetWordAtCursor(out p, SimpleCodeCompletion.Delimiters);
+            string word = document.GetWordAtCursor(out Point p, SimpleCodeCompletion.Delimiters);
 
             document.SetSel(p.X, p.Y);
             document.ReplaceSelection(text);
         }
 
-        static char[] statementDelimiters = " ,:;'\"=[]{}()".ToCharArray();
+        private static char[] statementDelimiters = " ,:;'\"=[]{}()".ToCharArray();
 
         static public string GetStatementAtPosition(this ScintillaGateway document, int position = -1)
         {
-            Point point;
             if (position == -1)
                 position = document.GetCurrentPos();
 
-            return document.GetWordAtPosition(position, out point, statementDelimiters);
+            return document.GetWordAtPosition(position, out Point point, statementDelimiters);
         }
 
         static public string GetWordAtCursor(this ScintillaGateway document, char[] wordDelimiters = null)
         {
-            Point point;
-            return document.GetWordAtCursor(out point, wordDelimiters);
+            return document.GetWordAtCursor(out Point point, wordDelimiters);
         }
 
         static public string GetWordAtCursor(this ScintillaGateway document, out Point point, char[] wordDelimiters = null)
@@ -274,8 +269,37 @@ namespace CSScriptIntellisense
 
         static public string GetWordAtPosition(this ScintillaGateway document, int position, char[] wordDelimiters = null)
         {
-            Point point;
-            return document.GetWordAtPosition(position, out point, wordDelimiters);
+            return document.GetWordAtPosition(position, out Point point, wordDelimiters);
+        }
+
+        private static Regex rx = new Regex(@".*\(\d+\,\d+\)\:");
+
+        static public string ChangeLineNumberInLocation(this string fileLocation, int lineNumberChange)
+        {
+            try
+            {
+                // C:\Users\user\Documents\C# Scripts\New Script7.cs(8,11): Main(string[] args)"
+                var match = rx.Match(fileLocation, 0);
+
+                var location_items = match.Value.Substring(0, match.Length - 2) // C:\...Script7.cs(8,11
+                                                .Split(separator: '(');
+
+                var filePath = location_items.Take(location_items.Count() - 1)
+                                             .JoinLines("("); // file path may contain '('
+
+                var line_and_char = location_items.Last() // 8,11
+                                                   .Split(',');
+
+                var description = fileLocation.Substring(match.Value.Length);
+
+                if (int.TryParse(line_and_char.First(), out var line))
+                    line += lineNumberChange;
+
+                var newfileLocation = $"{filePath}({line},{line_and_char.Last()}):{description}";
+                return newfileLocation;
+            }
+            catch { }
+            return fileLocation;
         }
 
         static public string GetWordAtPosition(this ScintillaGateway document, int position, out Point point, char[] wordDelimiters = null)
@@ -530,7 +554,7 @@ namespace CSScriptIntellisense
                         sb.Insert(colorsIndex, ",\"" + c + " c " + col + "\"");
                         colorsIndex += 14;
                     }
-                    else c = (char)chars[index];
+                    else c = chars[index];
                     sb.Append(c);
                 }
                 sb.Append("\"");

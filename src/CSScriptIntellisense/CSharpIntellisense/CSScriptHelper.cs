@@ -59,7 +59,7 @@ namespace CSScriptIntellisense
             var asms = new List<string>();
             var namespaces = new List<string>();
 
-            Func<string, string[]> splitPathItems = text => text.Split(';', ',')
+            Func<string, string[]> splitPathItems = text => text.Split('|')
                                                                 .Where(x => !string.IsNullOrWhiteSpace(x))
                                                                 .Select(x => Environment.ExpandEnvironmentVariables(x.Trim()))
                                                                 .ToArray();

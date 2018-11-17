@@ -57,6 +57,8 @@ namespace CSScriptNpp
             }
         }
 
+        bool skipSavingConfig = false;
+
         private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             panel.OnClosing();
@@ -85,7 +87,8 @@ namespace CSScriptNpp
             else
                 data.UseCustomLauncher = "";
 
-            Config.Instance.Save();
+            if(!skipSavingConfig)
+                Config.Instance.Save();
         }
 
         private void ConfigForm_KeyDown(object sender, KeyEventArgs e)
@@ -98,6 +101,7 @@ namespace CSScriptNpp
         {
             string file = Config.Instance.GetFileName();
             Config.Instance.Save();
+            skipSavingConfig = true;
 
             Task.Factory.StartNew(() =>
             {

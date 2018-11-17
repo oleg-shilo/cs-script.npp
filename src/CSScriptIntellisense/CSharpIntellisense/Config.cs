@@ -71,7 +71,8 @@ namespace CSScriptIntellisense
         public bool FormatAsYouType = true;
 
         public string DefaultNamespaces = "System.Collections.Generic, System.Collections, System.Linq, System.Xml.Linq, System.Windows.Forms, System.Xml, Microsoft.CSharp, System.Drawing";
-        public string DefaultRefAsms = "System.Linq, System.Xml, System.Xml.Linq, System.Windows.Forms, System.Drawing, System.Core, Microsoft.CSharp";
+        // use '|' as DefaultRefAsms can contain path
+        public string DefaultRefAsms = "System.Linq|System.Xml|System.Xml.Linq|System.Windows.Forms|System.Drawing|System.Core|Microsoft.CSharp";
         public string DefaultSearchDirs = "";
         public int MemberInfoMaxCharWidth = 100;
         public int MemberInfoMaxLines = 15;
@@ -112,8 +113,23 @@ namespace CSScriptIntellisense
                 SetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 SetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
                 SetValue(Section, "FormatAsYouType", FormatAsYouType);
+                UpdateDefaultIncludeFile();
             }
         }
+
+        void UpdateDefaultIncludeFile()
+        {
+            var defaultRefAssemblies = Config.Instance.DefaultRefAsms
+                                                      .Split('|')
+                                                      .Where(x => x.HasText())
+                                                      .Select(x => $"//css_ref {x.Trim()};")
+                                                      .ToArray();
+
+            File.WriteAllLines(DefaultIncludeFile, defaultRefAssemblies);
+        }
+
+        internal string DefaultIncludeFile => Path.GetDirectoryName(base.file).PathJoin("include.cs");
+        internal string DefaultInclude => $"//css_inc {Config.Instance.DefaultIncludeFile}" + Environment.NewLine;
 
         public void Open()
         {
@@ -134,6 +150,8 @@ namespace CSScriptIntellisense
                 MemberInfoMaxCharWidth = GetValue(Section, "MemberInfoMaxCharWidth", MemberInfoMaxCharWidth);
                 DefaultSearchDirs = GetValue(Section, "DefaultSearchDirs", DefaultSearchDirs);
                 DefaultRefAsms = GetValue(Section, "DefaultRefAsms", DefaultRefAsms);
+                if (DefaultRefAsms.Contains(',') && !DefaultRefAsms.Contains('|')) // old items separators 
+                    DefaultRefAsms = DefaultRefAsms.Replace(",", "|"); 
                 VbSupportEnabled = GetValue(Section, "VbSupportEnabled", VbSupportEnabled);
                 DefaultNamespaces = GetValue(Section, "DefaultNamespaces", DefaultNamespaces);
                 MemberInfoMaxLines = GetValue(Section, "MemberInfoMaxLines", MemberInfoMaxLines);
@@ -155,6 +173,8 @@ namespace CSScriptIntellisense
             }
 
             ProcessContextMenuVisibility();
+
+            UpdateDefaultIncludeFile();
         }
 
         bool contextMenuCommandsJustConfigured = false;
