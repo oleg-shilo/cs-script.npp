@@ -1,16 +1,11 @@
 using System;
-using System.Linq;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Net.Sockets;
-using System.Net;
-using System.Threading.Tasks;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
-using System.Drawing;
-using CSScriptIntellisense;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace CSScriptNpp
 {

@@ -32,10 +32,11 @@ namespace CSScriptNpp.Deployment
         {
             try
             {
-                // Debug.Assert(false);
+                Debug.Assert(false);
+
+                MessageBox.Show("ttttt");
 
                 // "C:\Users\osh\Downloads\CSScriptNpp.1.7.7.3.x64 (7).zip" "C:\Program Files\Notepad++\plugins\CSScriptNpp"
-
 
                 if (!args.Any())
                 {
@@ -57,9 +58,7 @@ namespace CSScriptNpp.Deployment
                                 return;
 
                             if (EnsureNoUpdateInProgress())
-
                             {
-
                                 StopVBCSCompilers();
                                 if (EnsureNppNotRunning(false) && EnsureVBCSCompilerNotLocked(false))
                                 {
@@ -74,7 +73,7 @@ namespace CSScriptNpp.Deployment
                     string distroFile = UserInputForm.GetDistro();
                     if (!string.IsNullOrEmpty(distroFile))
                     {
-                        // Debug.Assert(false);
+                        Debug.Assert(false);
                         StopVBCSCompilers();
                         if (EnsureNppNotRunning(false) && EnsureVBCSCompilerNotLocked(false))
                         {

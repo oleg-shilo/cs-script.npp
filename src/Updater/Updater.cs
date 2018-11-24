@@ -30,22 +30,24 @@ namespace CSScriptNpp.Deployment
             }
         }
 
-        public static void  DeployByReplacingFromFolder(string distroFolder, string targetDir)
+        public static void DeployByReplacingFromFolder(string distroFolder, string targetDir)
         {
-            //Debug.Assert(false);
+            // Debug.Assert(false);
 
             bool singleFolderDeployment = false;
 
             var pluginDir = Path.Combine(targetDir, "CSScriptNpp");
             var pluginBackupDir = Path.Combine(targetDir, "CSScriptNpp.bak");
-            var tempDirRoot = Path.Combine(distroFolder, "plugins");
+            // var tempDirRoot = Path.Combine(distroFolder, "plugins");
+            var tempDirRoot = distroFolder;
+
             var current_config = Path.Combine(pluginDir, "css_config.xml");
 
-            if (File.Exists(Path.Combine(distroFolder, "CSScriptNpp.dll")))
-            {
-                tempDirRoot = distroFolder;
-                singleFolderDeployment = true;
-            }
+            //if (File.Exists(Path.Combine(distroFolder, "CSScriptNpp.dll")))
+            //{
+            //    tempDirRoot = distroFolder;
+            //    singleFolderDeployment = true;
+            //}
 
             try
             {
@@ -92,7 +94,6 @@ namespace CSScriptNpp.Deployment
                 }
             }
         }
-
 
         public static void DeployByMerging(string zipFile, string targetDir)
         {

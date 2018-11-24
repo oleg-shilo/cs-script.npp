@@ -288,7 +288,7 @@ namespace CSScriptIntellisense
                                              .JoinLines("("); // file path may contain '('
 
                 var line_and_char = location_items.Last() // 8,11
-                                                   .Split(',');
+                                                  .Split(',');
 
                 var description = fileLocation.Substring(match.Value.Length);
 
