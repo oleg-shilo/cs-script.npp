@@ -32,9 +32,7 @@ namespace CSScriptNpp.Deployment
         {
             try
             {
-                Debug.Assert(false);
-
-                MessageBox.Show("ttttt");
+                // Debug.Assert(false);
 
                 // "C:\Users\osh\Downloads\CSScriptNpp.1.7.7.3.x64 (7).zip" "C:\Program Files\Notepad++\plugins\CSScriptNpp"
 
