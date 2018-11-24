@@ -1,3 +1,4 @@
-Release v1.7.23
+Release v1.7.24
 ----
 - Updated deployment algorithm to handle another set of breaking changes in Notepad++ v7.6 hosting model (PluginAdmin compatible).
+- Fixed script startup problem with '|' character in the `DefaultRefAssemblies` value.

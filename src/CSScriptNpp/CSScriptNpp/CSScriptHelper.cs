@@ -440,7 +440,6 @@ namespace CSScriptNpp
                                 p.StartInfo.Arguments = p.StartInfo.Arguments.Replace("%1", scriptFile);
                             else
                                 p.StartInfo.Arguments += " \"" + scriptFile + "\"";
-
                         }
                     }
                     catch
@@ -452,7 +451,6 @@ namespace CSScriptNpp
                                         "CS-Script");
                     }
                 }
-
 
                 bool needsElevation = !RunningAsAdmin && IsAsAdminScriptFile(scriptFile);
                 bool useFileRedirection = false;
@@ -1300,7 +1298,7 @@ namespace CSScriptNpp
                 try
                 {
                     string[] asms = CSScriptIntellisense.Config.Instance
-                                                               .DefaultRefAsms.Split(';', ',')
+                                                               .DefaultRefAsms.Split('|')
                                                                .Where(x => !string.IsNullOrWhiteSpace(x))
                                                                .Select(x => Environment.ExpandEnvironmentVariables(x.Trim()))
                                                                .ToArray();
@@ -1377,7 +1375,6 @@ namespace CSScriptNpp
                                  .Replace("vbc : Command line (0,0): warning BC2007: unrecognized option 'warn:0'; ignored\r\n", "")
                                  .Replace("vbc : Command line (0,0): warning BC2007: unrecognized option 'warn:0'; ignored", "");
         }
-
 
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> collection, T item)
         {

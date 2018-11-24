@@ -31,7 +31,7 @@ namespace CSScriptIntellisense
             get
             {
                 return Config.Instance.DefaultRefAsms
-                                      .Split(';', ',')
+                                      .Split('|')
                                       .Where(x => !string.IsNullOrWhiteSpace(x))
                                       .Select(x => x.Trim())
                                       .Distinct()
@@ -39,12 +39,13 @@ namespace CSScriptIntellisense
                                       .ToArray();
             }
         }
+
         public static ICompletionData[] DefaultNamespaces
         {
             get
             {
                 return Config.Instance.DefaultNamespaces
-                                      .Split(';', ',')
+                                      .Split(';', ',', '|')
                                       .Where(x => !string.IsNullOrWhiteSpace(x))
                                       .Select(x => x.Trim())
                                       .Distinct()
