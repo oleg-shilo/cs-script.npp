@@ -65,7 +65,6 @@ namespace CSScriptIntellisense
                                                                 .ToArray();
             try
             {
-
                 dirs.AddRange(splitPathItems(Config.Instance.DefaultSearchDirs ?? ""));
                 asms.AddRange(splitPathItems(Config.Instance.DefaultRefAsms ?? ""));
                 namespaces.AddRange(splitPathItems(Config.Instance.DefaultNamespaces ?? ""));
@@ -73,7 +72,6 @@ namespace CSScriptIntellisense
                 var configFile = GetGlobalCSSConfig();
                 if (configFile != null && File.Exists(configFile))
                 {
-
                     var doc = new XmlDocument();
                     doc.Load(configFile);
 
@@ -112,7 +110,6 @@ namespace CSScriptIntellisense
                                    .Distinct()
                                    .ToArray();
 
-
             //some assemblies are referenced from code and some will need to be resolved from the namespaces
             bool disableNamespaceResolving = (parser.IgnoreNamespaces.Count() == 1 && parser.IgnoreNamespaces[0] == "*");
 
@@ -135,7 +132,6 @@ namespace CSScriptIntellisense
 
                 refAsms = refAsms.Union(refNsAsms).ToArray();
             }
-
 
             refAsms = FilterDuplicatedAssembliesByFileName(refAsms);
             //refAsms = FilterDuplicatedAssembliesWithReflection(refAsms); //for possible more comprehensive filtering in future
