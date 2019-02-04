@@ -132,8 +132,8 @@ namespace CSScriptIntellisense
         string NormalizePathDelimiters(string text)
         {
             if (text.Contains(',') && !text.Contains('|')) // old items separators
-                return text.Replace(",", "|");
-            return text;
+                return text.Replace(",", "|").Trim('|');
+            return text.Trim('|');
         }
 
         public void Open()
