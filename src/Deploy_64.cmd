@@ -2,7 +2,9 @@ echo off
 
 set config=Debug
 set cpu=x64
+
 set dest_root=C:\Users\master\AppData\Local\Notepad++\plugins\CSScriptNpp
+set dest_root=C:\Program Files\Notepad++\plugins\CSScriptNpp
 
 set plugin_root=%dest_root%
 
