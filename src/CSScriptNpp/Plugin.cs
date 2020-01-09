@@ -1,6 +1,3 @@
-using CSScriptIntellisense;
-using CSScriptNpp.Dialogs;
-using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +10,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using CSScriptIntellisense;
+using CSScriptNpp.Dialogs;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -77,7 +77,7 @@ namespace CSScriptNpp
 
             PluginBase.SetCommand(index++, "About", ShowAbout);
 
-            IEnumerable<Keys> keysToIntercept = BindInteranalShortcuts();
+            IEnumerable<Keys> keysToIntercept = BindInternalShortcuts();
 
             KeyInterceptor.Instance.Install();
 
@@ -122,8 +122,8 @@ namespace CSScriptNpp
                 try
                 {
                     var config = XDocument.Load(CSScriptIntellisense.npp.GetNppConfigFile())
-                                                        .Root
-                                                        .Descendants("GUIConfig")
+                                                .Root
+                                                    .Descendants("GUIConfig")
                                                         .Where(x => x.Attribute("name")?.Value == "auto-completion")
                                                         .FirstOrDefault();
                     if (config != null)
@@ -161,7 +161,7 @@ namespace CSScriptNpp
             Task.Factory.StartNew(CheckNativeAutocompletionConflict);
 
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
-                 (index, name, handler, shortcut) =>
+                (index, name, handler, shortcut) =>
                  {
                      if (name == "Settings")
                          Plugin.SetCommand(index, name, ShowConfig, shortcut);
@@ -181,36 +181,36 @@ namespace CSScriptNpp
                 uniqueKeys.Add(key, 0);
         }
 
-        static IEnumerable<Keys> BindInteranalShortcuts()
+        static IEnumerable<Keys> BindInternalShortcuts()
         {
             var uniqueKeys = new Dictionary<Keys, int>();
 
             AddInternalShortcuts("Build:F7",
                                  "Build (validate)",
-                                  Build, uniqueKeys);
+                                 Build, uniqueKeys);
 
             AddInternalShortcuts("LoadCurrentDocument:Ctrl+F7",
                                  "Load Current Document", () =>
-                                  {
-                                      InitProjectPanel();
-                                      ShowProjectPanel();
-                                      ProjectPanel.LoadCurrentDoc();
-                                  }, uniqueKeys);
+                                 {
+                                     InitProjectPanel();
+                                     ShowProjectPanel();
+                                     ProjectPanel.LoadCurrentDoc();
+                                 }, uniqueKeys);
 
             AddInternalShortcuts("Stop:Shift+F5",
-                                  "Stop running script",
-                                  Stop, uniqueKeys);
+                                 "Stop running script",
+                                 Stop, uniqueKeys);
 
             AddInternalShortcuts("_Run:F5",
                                  "Run",
-                                  Run, uniqueKeys);
+                                 Run, uniqueKeys);
 
             AddInternalShortcuts("_Debug:Alt+F5",
                                  "Debug", () =>
-                                  {
-                                      if (!Debugger.IsRunning && Npp.Editor.IsCurrentDocScriptFile())
-                                          DebugScript();
-                                  }, uniqueKeys);
+                                 {
+                                     if (!Debugger.IsRunning && Npp.Editor.IsCurrentDocScriptFile())
+                                         DebugScript();
+                                 }, uniqueKeys);
 
             AddInternalShortcuts("ToggleBreakpoint:F9",
                                  "Toggle Breakpoint",
@@ -218,46 +218,46 @@ namespace CSScriptNpp
 
             AddInternalShortcuts("QuickWatch:Shift+F9",
                                  "Show QuickWatch...",
-                                  QuickWatchPanel.PopupDialog, uniqueKeys);
+                                 QuickWatchPanel.PopupDialog, uniqueKeys);
 
             AddInternalShortcuts("StepInto:F11",
                                  "Step Into",
-                                  Debugger.StepIn, uniqueKeys);
+                                 Debugger.StepIn, uniqueKeys);
 
             AddInternalShortcuts("StepOut:Shift+F11",
                                  "Step Out",
-                                  Debugger.StepOut, uniqueKeys);
+                                 Debugger.StepOut, uniqueKeys);
 
             AddInternalShortcuts("StepOver:F10",
                                  "Step Over",
-                                  StepOver, uniqueKeys);
+                                 StepOver, uniqueKeys);
 
             AddInternalShortcuts("SetNextIP:Ctrl+Shift+F10",
                                  "Set Next Statement",
-                                  Debugger.SetInstructionPointer, uniqueKeys);
+                                 Debugger.SetInstructionPointer, uniqueKeys);
 
             AddInternalShortcuts("RunToCursor:Ctrl+F10",
                                  "Run To Cursor",
-                                  Debugger.RunToCursor, uniqueKeys);
+                                 Debugger.RunToCursor, uniqueKeys);
 
             AddInternalShortcuts("RunAsExternal:Ctrl+F5",
-                                  "Run As External Process", () =>
-                                  {
-                                      if (Npp.Editor.IsCurrentDocScriptFile())
-                                          RunAsExternal();
-                                  }, uniqueKeys);
+                                 "Run As External Process", () =>
+                                 {
+                                     if (Npp.Editor.IsCurrentDocScriptFile())
+                                         RunAsExternal();
+                                 }, uniqueKeys);
 
             AddInternalShortcuts("ShowNextFileLocationFromOutput:F4",
                                  "Next File Location in Output", () =>
-                                  {
-                                      OutputPanel.TryNavigateToFileReference(toNext: true);
-                                  }, uniqueKeys);
+                                 {
+                                     OutputPanel.TryNavigateToFileReference(toNext: true);
+                                 }, uniqueKeys);
 
             AddInternalShortcuts("ShowPrevFileLocationFromOutput:Shift+F4",
                                  "Previous File Location in Output", () =>
-                                  {
-                                      OutputPanel.TryNavigateToFileReference(toNext: false);
-                                  }, uniqueKeys);
+                                 {
+                                     OutputPanel.TryNavigateToFileReference(toNext: false);
+                                 }, uniqueKeys);
 
             return uniqueKeys.Keys;
         }

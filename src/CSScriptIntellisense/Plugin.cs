@@ -4,15 +4,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSScriptIntellisense.Interop;
 using Intellisense.Common;
-using UltraSharp.Cecil;
 using Kbg.NppPluginNET.PluginInfrastructure;
-using System.Reflection;
+using UltraSharp.Cecil;
 using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
 
 namespace CSScriptIntellisense
@@ -92,7 +92,7 @@ namespace CSScriptIntellisense
                 memberInfoPopup = new MemberInfoPopupManager(ShowQuickInfo);
 
                 //NPP already intercepts these shortcuts so we need to hook keyboard messages
-                IEnumerable<Keys> keysToIntercept = BindInteranalShortcuts();
+                IEnumerable<Keys> keysToIntercept = BindInternalShortcuts();
 
                 foreach (var key in keysToIntercept)
                     KeyInterceptor.Instance.Add(key);
@@ -126,7 +126,7 @@ namespace CSScriptIntellisense
             if (Snippets.Contains(token))
             {
                 Dispatcher.Schedule(10, () =>
-                     InsertCodeSnippet(token, point));
+                    InsertCodeSnippet(token, point));
                 return true;
             }
             return false;
@@ -275,25 +275,25 @@ namespace CSScriptIntellisense
                 uniqueKeys.Add(key, 0);
         }
 
-        static IEnumerable<Keys> BindInteranalShortcuts()
+        static IEnumerable<Keys> BindInternalShortcuts()
         {
             var uniqueKeys = new Dictionary<Keys, int>();
 
             AddInternalShortcuts("_ShowAutoComplete:Ctrl+Space",
                                  "Show auto-complete list",
-                                  ShowSuggestionList, uniqueKeys);
+                                 ShowSuggestionList, uniqueKeys);
 
             AddInternalShortcuts("_InsertCodeSnippet:Ctrl+Shift+Space",
                                  "Insert Code Snippet",
-                                  ShowSnippetsList, uniqueKeys);
+                                 ShowSnippetsList, uniqueKeys);
 
             AddInternalShortcuts("_FindAllReferences:Shift+F12",
                                  "Find All References",
-                                  FindAllReferences, uniqueKeys);
+                                 FindAllReferences, uniqueKeys);
 
             AddInternalShortcuts("_GoToDefinition:F12",
                                  "Go To Definition",
-                                  GoToDefinition, uniqueKeys);
+                                 GoToDefinition, uniqueKeys);
 
             return uniqueKeys.Keys;
         }
@@ -557,6 +557,7 @@ namespace CSScriptIntellisense
         private const int MARK_BREAKPOINT_MASK = 1 << 7;
 
         static bool formattingInProgress = false;
+
         static void FormatDocument()
         {
             if (formattingInProgress)
@@ -762,7 +763,7 @@ namespace CSScriptIntellisense
                                 {
                                     int errorPosition = document.PositionFromLine(item.Line - 1) + item.Column - 1;
                                     IEnumerable<Intellisense.Common.TypeInfo> items = ResolveNamespacesAtPosition(errorPosition)
-                                                                    .Where(x => !presentUsings.Contains(x.Namespace));
+                                                                   .Where(x => !presentUsings.Contains(x.Namespace));
 
                                     if (items.Count() == 1) //do only if there is no ambiguity about what namespace it is
                                     {
@@ -950,8 +951,8 @@ namespace CSScriptIntellisense
                 var document = Npp.GetCurrentDocument();
                 Action<ICompletionData> OnAccepted = data => OnAutocompletionAccepted(data, snippetsOnly);
 
-                // no need to pass initial SuggestionHint as it may swallow (auto accept) the whole autocompletion window 
-                // in case of the hint to be the full match of one of the items. Just do it for a better UX 
+                // no need to pass initial SuggestionHint as it may swallow (auto accept) the whole autocompletion window
+                // in case of the hint to be the full match of one of the items. Just do it for a better UX
 
                 autocompleteForm = new AutocompleteForm(OnAccepted, items, null);
                 autocompleteForm.Left = point.X;
@@ -1117,7 +1118,8 @@ namespace CSScriptIntellisense
                 int pos = text.LastIndexOfAny(delimiters);
                 if (pos != -1)
                 {
-                    hint = text.Substring(pos + 1).Trim();
+                    // hint = text.Substring(pos + 1).Trim();
+                    hint = word;
                 }
                 else if (text.Length == currentPos) //start of the doc
                     hint = text;
@@ -1188,7 +1190,7 @@ namespace CSScriptIntellisense
 
                 if (c == '.' || c == '_' || c == '=')
                 {
-                    // works well but because of auto-accept single suggestion it inserts 
+                    // works well but because of auto-accept single suggestion it inserts
                     if (c == '=')
                     {
                         string lineLeftPart = document.GetTextBetween(Math.Max(0, caret - 200), caret).GetLines().LastOrDefault();
@@ -1321,9 +1323,9 @@ namespace CSScriptIntellisense
                         // - new file which is not a part of the 'current' project
                         // - the current file changed and saved with the new set of CS-Script instructions (for multi-file mode only)
                         if (currentFile == null ||
-                           (currentFile != file && !parsedFiles.Contains(file)) ||
-                           (!SingleFileMode && CurrentSourcesChanged()) ||
-                           (!SingleFileMode && currentFileTimestamp != File.GetLastWriteTime(file) && currentFileCssHash != (newCssHash = NppEditor.GetCssHash(file))))
+                            (currentFile != file && !parsedFiles.Contains(file)) ||
+                            (!SingleFileMode && CurrentSourcesChanged()) ||
+                            (!SingleFileMode && currentFileTimestamp != File.GetLastWriteTime(file) && currentFileCssHash != (newCssHash = NppEditor.GetCssHash(file))))
                         {
                             currentFile = file;
                             currentFileCssHash = (newCssHash != -1) ? newCssHash : NppEditor.GetCssHash(file);
@@ -1385,8 +1387,8 @@ namespace CSScriptIntellisense
             IEnumerable<ICompletionData> retval = null;
 
             WithTextAtCaret((text, currentPos, file) =>
-                    retval = SimpleCodeCompletion.GetCompletionData(text, currentPos, file)
-                                                 .Where(item => item != null));
+                retval = SimpleCodeCompletion.GetCompletionData(text, currentPos, file)
+                                             .Where(item => item != null));
             return retval;
         }
 
