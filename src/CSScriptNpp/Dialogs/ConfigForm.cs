@@ -11,6 +11,7 @@ namespace CSScriptNpp
 {
     public partial class ConfigForm : Form
     {
+        private const string defaultLauncher = "<script engine>";
         Config data;
 
         CSScriptIntellisense.ConfigForm panel;
@@ -41,7 +42,7 @@ namespace CSScriptNpp
             restorePanels.Checked = data.RestorePanelsAtStartup;
 
             RefreshUseCustomLauncherCmd(data.UseCustomLauncher);
-            useCustomLauncher.Checked = !data.UseCustomLauncher.IsEmpty();
+            useCustomLauncher.Checked = !data.UseCustomLauncher.IsEmpty() && data.UseCustomLauncher != defaultLauncher;
 
             if (!data.UseEmbeddedEngine)
             {
@@ -55,6 +56,10 @@ namespace CSScriptNpp
                     customEngineLocation.Text = data.UseCustomEngine;
                 }
             }
+            customSyntaxer.Checked = data.CustomSyntaxer;
+            customSyntaxerExe.Text = data.CustomSyntaxerExe;
+            syntaxerPort.Text = data.SyntaxerPort.ToString();
+            customSyntaxerExe.ReadOnly = !customSyntaxer.Checked;
         }
 
         bool skipSavingConfig = false;
@@ -82,12 +87,22 @@ namespace CSScriptNpp
                 CSScriptHelper.SynchAutoclssDecorationSettings(useCS6.Checked);
             }
 
+            data.CustomSyntaxer = customSyntaxer.Checked;
+            data.CustomSyntaxerExe = customSyntaxerExe.Text;
+            if (int.TryParse(syntaxerPort.Text, out int port))
+            {
+                data.SyntaxerPort = port;
+            }
+
+            Bootstrapper.DeploySyntaxer();
+            CSScriptIntellisense.Syntaxer.RestartServer();
+
             if (this.useCustomLauncher.Checked)
                 data.UseCustomLauncher = useCustomLauncherCmd.Text;
             else
                 data.UseCustomLauncher = "";
 
-            if(!skipSavingConfig)
+            if (!skipSavingConfig)
                 Config.Instance.Save();
         }
 
@@ -153,6 +168,7 @@ namespace CSScriptNpp
         }
 
         static string useCustomLauncherCmdCache = null;
+
         void RefreshUseCustomLauncherCmd(string launcherPath = null)
         {
             if (!launcherPath.IsEmpty())
@@ -169,13 +185,12 @@ namespace CSScriptNpp
             {
                 if (!useCustomLauncherCmd.Text.IsEmpty())
                     useCustomLauncherCmdCache = useCustomLauncherCmd.Text;
-                useCustomLauncherCmd.Text = "<script engine>";
+                useCustomLauncherCmd.Text = defaultLauncher;
             }
         }
 
         private void update_Click(object sender, EventArgs e)
         {
-
             Dispatcher.Schedule(300, () =>
             {
                 using (var dialog = new UpdateOptionsPanel(Distro.FromFixedLocation(customUpdateUrl.Text)))
@@ -183,6 +198,11 @@ namespace CSScriptNpp
             });
 
             Close();
+        }
+
+        private void customSyntaxer_CheckedChanged(object sender, EventArgs e)
+        {
+            customSyntaxerExe.ReadOnly = !customSyntaxer.Checked;
         }
     }
 }

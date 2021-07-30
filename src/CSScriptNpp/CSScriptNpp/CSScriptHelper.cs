@@ -62,7 +62,7 @@ namespace CSScriptNpp
         {
             get
             {
-                return Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
+                return Environment.GetEnvironmentVariable("CSSCRIPT_ROOT");
             }
         }
 

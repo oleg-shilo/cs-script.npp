@@ -47,8 +47,10 @@ namespace CSScriptNpp
         public bool NavigateToRawCodeOnDblClickInOutput = false;
 
         public bool ShowOpenInVsAlways = false;
+
         //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
+
         public bool ReloadActiveScriptOnRun = true;
 
         public bool UpdateAfterExit = false;
@@ -61,6 +63,9 @@ namespace CSScriptNpp
         public bool VbSupportEnabled = true;
         public bool RestorePanelsAtStartup = true;
         public string UseCustomLauncher = "";
+        public bool CustomSyntaxer = false;
+        public string CustomSyntaxerExe = "";
+        public int SyntaxerPort = 18001;
         public bool StartRoslynServerAtNppStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
         public bool HideDefaultAssemblies = true;
@@ -148,14 +153,17 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(UseTogglingPanelVisibility), UseTogglingPanelVisibility);
                     SetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
-                    SetValue(Section, nameof(VbCodeProvider), VbCodeProvider);
+                    SetValue(Section, nameof(VbCodeProvider), VbCodeProvider, true);
                     SetValue(Section, nameof(ScriptsDir), ScriptsDir);
-                    SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
+                    SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider, true);
                     SetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                     SetValue(Section, nameof(HideDefaultAssemblies), HideDefaultAssemblies);
                     SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
-                    SetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
+                    SetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher, true);
+                    SetValue(Section, nameof(CustomSyntaxer), CustomSyntaxer);
+                    SetValue(Section, nameof(CustomSyntaxerExe), CustomSyntaxerExe);
+                    SetValue(Section, nameof(SyntaxerPort), SyntaxerPort);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
                     SetValue(Section, nameof(VSProjectTemplatePath), VSProjectTemplatePath);
                     SetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
@@ -240,6 +248,9 @@ namespace CSScriptNpp
                 StartRoslynServerAtNppStartup = GetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                 UseCustomLauncher = GetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
+                CustomSyntaxer = GetValue(Section, nameof(CustomSyntaxer), CustomSyntaxer);
+                CustomSyntaxerExe = GetValue(Section, nameof(CustomSyntaxerExe), CustomSyntaxerExe);
+                SyntaxerPort = GetValue(Section, nameof(SyntaxerPort), SyntaxerPort);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                 HideDefaultAssemblies = GetValue(Section, nameof(HideDefaultAssemblies), HideDefaultAssemblies);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);

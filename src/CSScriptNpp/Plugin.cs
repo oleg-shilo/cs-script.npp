@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using CSScriptIntellisense;
+using CSScriptIntellisense.Interop;
 using CSScriptNpp.Dialogs;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using UltraSharp.Cecil;
@@ -374,15 +375,21 @@ namespace CSScriptNpp
 
         static public void InitOutputPanel()
         {
-            // create or unhide the panel
-            Plugin.outputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            if (Plugin.outputPanel == null)
+                Plugin.outputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            else
+                SetDockedPanelVisible(dockedManagedPanels[outputPanelId], outputPanelId, !Plugin.outputPanel.Visible);
+
             Application.DoEvents();
         }
 
         static public void InitDebugPanel()
         {
-            // create or unhide the panel
-            Plugin.debugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            if (Plugin.debugPanel == null)
+                Plugin.debugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            else
+                SetDockedPanelVisible(dockedManagedPanels[debugPanelId], debugPanelId, !Plugin.debugPanel.Visible);
+
             Application.DoEvents();
         }
 

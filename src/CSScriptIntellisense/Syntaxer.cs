@@ -22,10 +22,28 @@ namespace CSScriptIntellisense
     public class Syntaxer
     {
         public static string syntaxerDir;
-        public static string cscsFile;
-        static int port = 18001;
+        public static string defaultCscsFile;
+        public static string activeCscsFile;
+        public static string defaultSyntaxerFile => syntaxerDir.PathJoin("syntaxer.exe");
+        public static string customSyntaxerFile;
+
+        public static string CscsFile => customSyntaxerFile.HasText() ? "" : defaultCscsFile;
+        public static string SyntaxerFile => customSyntaxerFile.HasText() ? customSyntaxerFile : defaultSyntaxerFile;
+
+        // public static string cscsFile;
+        public static int port = 18001;
+
         static int timeout = 60000;
         static int procId = Process.GetCurrentProcess().Id;
+
+        public static void RestartServer()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Exit();
+                StartServer(onlyIfNotRunning: false);
+            });
+        }
 
         public static void StartServer(bool onlyIfNotRunning)
         {
@@ -48,14 +66,18 @@ namespace CSScriptIntellisense
                         p.StartInfo.CreateNoWindow = true;
                         p.StartInfo.RedirectStandardOutput = true;
                         p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                        p.StartInfo.FileName = syntaxerDir.PathJoin("syntaxer.exe");
-                        p.StartInfo.Arguments = $"-listen -port:{port} -timeout:{timeout} \"-cscs_path:{cscsFile}\"";
+                        p.StartInfo.FileName = SyntaxerFile;
+                        p.StartInfo.Arguments = $"-listen -port:{port} -timeout:{timeout}";
+
+                        if (CscsFile.HasText())
+                            p.StartInfo.Arguments += $" \"-cscs_path:{CscsFile}\"";
+
                         p.Start();
                     }
                     else
                     {
-                        Process.Start(syntaxerDir.PathJoin("syntaxer.exe"),
-                                      $"-listen -port:{port} -timeout:{timeout} \"-cscs_path:{cscsFile}\"");
+                        var args = $"-listen -port:{port} -timeout:{timeout}" + (CscsFile.HasText() ? "" : $" \"-cscs_path:{CscsFile}\"");
+                        Process.Start(SyntaxerFile, args);
                     }
                 });
 
@@ -216,7 +238,6 @@ namespace CSScriptIntellisense
     {
         public static string WithTempCopy(this string editorText, string originalFile, Func<string, string> action)
         {
-
             Func<string, string> fixTempFileInsertions = null;
 
             string tempFile;

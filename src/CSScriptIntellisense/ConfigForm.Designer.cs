@@ -84,13 +84,14 @@
             // vbSupport
             // 
             this.vbSupport.AutoSize = true;
-            this.vbSupport.Location = new System.Drawing.Point(0, 167);
+            this.vbSupport.Location = new System.Drawing.Point(119, 99);
             this.vbSupport.Name = "vbSupport";
             this.vbSupport.Size = new System.Drawing.Size(120, 17);
             this.vbSupport.TabIndex = 8;
             this.vbSupport.Text = "Support for VB.NET";
             this.toolTip1.SetToolTip(this.vbSupport, resources.GetString("vbSupport.ToolTip"));
             this.vbSupport.UseVisualStyleBackColor = true;
+            this.vbSupport.Visible = false;
             // 
             // useMethodBrackets
             // 
@@ -127,7 +128,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(13, 192);
+            this.linkLabel1.Location = new System.Drawing.Point(12, 164);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 4;
@@ -151,7 +152,7 @@
             this.ContentPanel.Controls.Add(this.formatAsYouType);
             this.ContentPanel.Location = new System.Drawing.Point(13, 3);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 186);
+            this.ContentPanel.Size = new System.Drawing.Size(290, 142);
             this.ContentPanel.TabIndex = 5;
             // 
             // formatOnSave
@@ -187,12 +188,13 @@
             // roslynIntellisense
             // 
             this.roslynIntellisense.AutoSize = true;
-            this.roslynIntellisense.Location = new System.Drawing.Point(0, 145);
+            this.roslynIntellisense.Location = new System.Drawing.Point(119, 77);
             this.roslynIntellisense.Name = "roslynIntellisense";
             this.roslynIntellisense.Size = new System.Drawing.Size(225, 17);
             this.roslynIntellisense.TabIndex = 2;
             this.roslynIntellisense.Text = "C# 7 support (Roslyn) - Requires .NET 4.6";
             this.roslynIntellisense.UseVisualStyleBackColor = true;
+            this.roslynIntellisense.Visible = false;
             // 
             // roslynFormatter
             // 
@@ -209,7 +211,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 214);
+            this.ClientSize = new System.Drawing.Size(315, 192);
             this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;

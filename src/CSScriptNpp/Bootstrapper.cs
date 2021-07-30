@@ -38,15 +38,21 @@ namespace CSScriptNpp
         public static void InitSyntaxer(string sourceDir)
         {
             // needs to be a separate routine to avoid premature assembly loading
-            DeploySyntaxer(sourceDir);
+            DeploySyntaxer();
             CSScriptIntellisense.Syntaxer.StartServer(onlyIfNotRunning: true);
         }
 
-        public static void DeploySyntaxer(string sourceDir)
+        public static void DeploySyntaxer()
         {
-            syntaxerDir =
-            CSScriptIntellisense.Syntaxer.syntaxerDir = DependenciesDir.PathJoin("Roslyn");
-            CSScriptIntellisense.Syntaxer.cscsFile = pluginDir.PathJoin("cscs.exe");
+            syntaxerDir = CSScriptIntellisense.Syntaxer.syntaxerDir = DependenciesDir.PathJoin("Roslyn");
+
+            CSScriptIntellisense.Syntaxer.defaultCscsFile = pluginDir.PathJoin("cscs.exe");
+            CSScriptIntellisense.Syntaxer.port = Config.Instance.SyntaxerPort;
+
+            if (Config.Instance.CustomSyntaxer)
+                CSScriptIntellisense.Syntaxer.customSyntaxerFile = Config.Instance.CustomSyntaxerExe;
+            else
+                CSScriptIntellisense.Syntaxer.customSyntaxerFile = "";
 
             //#if !DEBUG
             if (!Directory.Exists(syntaxerDir) || !File.Exists(syntaxerDir.PathJoin("syntaxer.exe")))
@@ -54,10 +60,10 @@ namespace CSScriptNpp
             {
                 Directory.CreateDirectory(syntaxerDir);
 
-                SafeCopy("CSSRoslynProvider.dll", sourceDir, DependenciesDir);
+                SafeCopy("CSSRoslynProvider.dll", CSScriptIntellisense.Syntaxer.syntaxerDir, DependenciesDir);
 
                 CSScriptIntellisense.Syntaxer.Exit();
-                SafeCopy("syntaxer.exe", sourceDir, syntaxerDir);
+                SafeCopy("syntaxer.exe", CSScriptIntellisense.Syntaxer.syntaxerDir, syntaxerDir);
 
                 var oldSyntaxerVersions = Directory.GetDirectories(Path.GetDirectoryName(DependenciesDir)).Where(x => x != DependenciesDir);
                 foreach (var dir in oldSyntaxerVersions)
