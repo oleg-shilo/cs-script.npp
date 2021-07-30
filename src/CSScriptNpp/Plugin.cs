@@ -59,6 +59,8 @@ namespace CSScriptNpp
 
         static internal void CommandMenuInit()
         {
+            // System.Diagnostics.Debugger.Break();
+
             Environment.SetEnvironmentVariable("CSSCRIPT_CONSOLE_ENCODING_OVERWRITE", Config.Instance.CsSConsoleEncoding);
 
             int index = 0;
@@ -372,20 +374,16 @@ namespace CSScriptNpp
 
         static public void InitOutputPanel()
         {
-            if (Plugin.outputPanel == null)
-            {
-                Plugin.outputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-                Application.DoEvents();
-            }
+            // create or unhide the panel
+            Plugin.outputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            Application.DoEvents();
         }
 
         static public void InitDebugPanel()
         {
-            if (Plugin.debugPanel == null)
-            {
-                Plugin.debugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-                Application.DoEvents();
-            }
+            // create or unhide the panel
+            Plugin.debugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
+            Application.DoEvents();
         }
 
         static public void Repaint()
