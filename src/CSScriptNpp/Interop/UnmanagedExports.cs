@@ -1,4 +1,5 @@
-﻿using CSScriptNpp;
+﻿using CSScriptIntellisense;
+using CSScriptNpp;
 using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using NppPlugin.DllExport;
@@ -199,7 +200,8 @@ namespace CSScriptNpp
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
                     {
-                        SaveBreakpoints(contentFile);
+                        if (contentFile.IsScriptFile())
+                            SaveBreakpoints(contentFile);
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
                     {
