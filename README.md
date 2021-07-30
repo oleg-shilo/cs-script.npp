@@ -12,6 +12,7 @@ Total downloads via Notepad++ Plugin Manager: Total Downloads Count: ![](http://
 
 Starting from v1.3 plugin delivers full support for VB.NET syntax. [More reading...](https://github.com/oleg-shilo/cs-script.npp/wiki/VB.NET-Support)  
 
+You can also run scripts targeting [.NET 5/Core runtime](https://github.com/oleg-shilo/cs-script.npp/wiki/.NET-Core).
 ____
 This plugin allows convenient editing and execution of the C# code (scripts).  It also allows the usual C# intellisense and project management tasks to be performed in a way very similar to the MS Visual Studio.
 
