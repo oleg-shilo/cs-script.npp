@@ -85,13 +85,17 @@ namespace CSScriptIntellisense
             document.PlaceIndicator(SnippetContext.indicatorId, indicatorRange.X, indicatorRange.X + text.Length);
         }
 
-        static public bool ScintillaIndicatorDiscoveryIsBroken = true;
+        // Navigating and replacing parameters of the snippet is very unreliable as it is subject of the complicated
+        // keyboard,focus and native NPP popups management.
+        // Thus it is more practical just to resort to a simple snippet insertion.
+        static public bool SimpleSnippetInsertion = true;
 
         static public void FinalizeCurrent()
         {
             var document = Npp.GetCurrentDocument();
             var indicators = document.FindIndicatorRanges(SnippetContext.indicatorId);
-            if (ScintillaIndicatorDiscoveryIsBroken && !indicators.Any())
+
+            if (SimpleSnippetInsertion && !indicators.Any())
                 indicators = CurrentContext.Parameters.ToArray();
 
             foreach (var range in indicators)
@@ -308,9 +312,7 @@ namespace CSScriptIntellisense
                     //'$item$' -> 'item'
                     int newEndPos = endPos - 2;
 
-                    // Scintilla indicator discovery is broken so we cannot navigate replaceable params
-                    // so only add the final cursor param position
-                    if (!ScintillaIndicatorDiscoveryIsBroken || retval.ReplacementString.Substring(startPos, 3) == "$|$")
+                    if (!SimpleSnippetInsertion || retval.ReplacementString.Substring(startPos, 3) == "$|$")
                         retval.Parameters.Add(new Point(startPos + documentOffset, newEndPos + 1 + documentOffset));
 
                     string leftText = retval.ReplacementString.Substring(0, startPos);

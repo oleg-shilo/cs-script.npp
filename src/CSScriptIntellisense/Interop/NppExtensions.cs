@@ -232,7 +232,8 @@ namespace CSScriptIntellisense
             // !!!
             // The implementation is identical to "ClearIndicator". Looks like intentional.
             document.SetIndicatorCurrent(indicator);
-            document.IndicatorClearRange(startPos, endPos - startPos);
+            // document.IndicatorClearRange(startPos, endPos - startPos);
+            document.IndicatorFillRange(startPos, endPos - startPos);
         }
 
         static public int GetPositionFromLineColumn(this ScintillaGateway document, int line, int column)

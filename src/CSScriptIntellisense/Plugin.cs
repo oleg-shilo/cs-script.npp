@@ -192,12 +192,17 @@ namespace CSScriptIntellisense
                                     }
                                     else if (key == Keys.Escape || key == Keys.Return)
                                     {
-                                        Snippets.FinalizeCurrent();
+                                        if (Snippets.SimpleSnippetInsertion)
+                                            Snippets.FinalizeCurrent();
+
                                         if (key == Keys.Return)
                                             handled = true;
 
                                         if (initialSnippetInProgress)
+                                        {
+                                            Snippets.FinalizeCurrent();
                                             Snippets.CurrentContext = null;
+                                        }
                                     }
                                 }
                             }
@@ -361,7 +366,7 @@ namespace CSScriptIntellisense
 
                 foreach (var point in Snippets.CurrentContext.Parameters)
                 {
-                    if (Snippets.ScintillaIndicatorDiscoveryIsBroken)
+                    if (Snippets.SimpleSnippetInsertion)
                         break;
                     document.PlaceIndicator(SnippetContext.indicatorId, point.X, point.Y);
                 }
