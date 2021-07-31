@@ -125,8 +125,10 @@ namespace CSScriptIntellisense
 
             if (Snippets.Contains(token))
             {
-                Dispatcher.Schedule(10, () =>
-                    InsertCodeSnippet(token, point));
+                // NppUI.Marshal(1000, () =>
+                // InsertCodeSnippet(token, point));
+                InsertCodeSnippet(token, point);
+
                 return true;
             }
             return false;
@@ -141,6 +143,8 @@ namespace CSScriptIntellisense
             {
                 if (key == Keys.Up || key == Keys.Down || key == Keys.Right || key == Keys.Left || key == Keys.Tab || key == Keys.Return || key == Keys.Escape)
                 {
+                    bool initialSnippetInProgress = (Snippets.CurrentContext != null);
+
                     if (autocompleteForm != null && autocompleteForm.Visible)
                     {
                         handled = autocompleteForm.OnKeyDown(key);
@@ -158,43 +162,44 @@ namespace CSScriptIntellisense
                             handled = true;
                     }
 
-                    return;
-                }
-            }
-
-            if (Config.Instance.CodeSnippetsEnabled && !IsShowingInteractivePopup)
-            {
-                if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && isScriptDoc)
-                {
-                    Modifiers modifiers = KeyInterceptor.GetModifiers();
-
-                    if (!modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
+                    //return;
+                    if (Config.Instance.CodeSnippetsEnabled && !IsShowingInteractivePopup)
                     {
-                        if (currentSnippetContext == null)
+                        if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && isScriptDoc)
                         {
-                            //no snippet insertion in progress
-                            if (key == Keys.Tab)
+                            Modifiers modifiers = KeyInterceptor.GetModifiers();
+
+                            if (!modifiers.IsCtrl && !modifiers.IsAlt && !modifiers.IsShift)
                             {
-                                if (TriggerCodeSnippetInsertion())
-                                    handled = true;
-                            }
-                        }
-                        else
-                        {
-                            //there is a snippet insertion in progress
-                            if (key == Keys.Tab)
-                            {
-                                if (!Snippets.NavigateToNextParam(currentSnippetContext))
-                                    currentSnippetContext = null;
+                                if (Snippets.CurrentContext == null)
+                                {
+                                    //no snippet insertion in progress
+                                    if (key == Keys.Tab)
+                                    {
+                                        if (TriggerCodeSnippetInsertion())
+                                            handled = true;
+                                    }
+                                }
                                 else
-                                    handled = true;
-                            }
-                            else if (key == Keys.Escape || key == Keys.Return)
-                            {
-                                Snippets.FinalizeCurrent();
-                                if (key == Keys.Return)
-                                    handled = true;
-                                currentSnippetContext = null;
+                                {
+                                    //there is a snippet insertion in progress
+                                    if (key == Keys.Tab)
+                                    {
+                                        if (!Snippets.NavigateToNextParam(Snippets.CurrentContext))
+                                            Snippets.CurrentContext = null;
+                                        else
+                                            handled = true;
+                                    }
+                                    else if (key == Keys.Escape || key == Keys.Return)
+                                    {
+                                        Snippets.FinalizeCurrent();
+                                        if (key == Keys.Return)
+                                            handled = true;
+
+                                        if (initialSnippetInProgress)
+                                            Snippets.CurrentContext = null;
+                                    }
+                                }
                             }
                         }
                     }
@@ -336,8 +341,6 @@ namespace CSScriptIntellisense
             }
         }
 
-        static SnippetContext currentSnippetContext = null;
-
         static void InsertCodeSnippet(string token, Point tokenPoints)
         {
             string replacement = Snippets.GetTemplate(token);
@@ -350,21 +353,23 @@ namespace CSScriptIntellisense
                 int horizontalOffset = tokenPoints.X - lineStartPos;
 
                 //relative selection in the replacement text
-                currentSnippetContext = Snippets.PrepareForIncertion(replacement, horizontalOffset, tokenPoints.X);
+                Snippets.CurrentContext = Snippets.PrepareForIncertion(replacement, horizontalOffset, tokenPoints.X);
 
-                document.ReplaceWordAtCaret(currentSnippetContext.ReplacementString);
+                document.ReplaceWordAtCaret(Snippets.CurrentContext.ReplacementString);
 
                 document.SetIndicatorStyle(SnippetContext.indicatorId, SciMsg.INDIC_BOX, Color.Blue);
 
-                foreach (var point in currentSnippetContext.Parameters)
+                foreach (var point in Snippets.CurrentContext.Parameters)
                 {
+                    if (Snippets.ScintillaIndicatorDiscoveryIsBroken)
+                        break;
                     document.PlaceIndicator(SnippetContext.indicatorId, point.X, point.Y);
                 }
 
-                if (currentSnippetContext.CurrentParameter.HasValue)
+                if (Snippets.CurrentContext.CurrentParameter.HasValue)
                 {
-                    document.SetSelection(currentSnippetContext.CurrentParameter.Value.X, currentSnippetContext.CurrentParameter.Value.Y);
-                    currentSnippetContext.CurrentParameterValue = document.GetTextBetween(currentSnippetContext.CurrentParameter.Value);
+                    document.SetSelection(Snippets.CurrentContext.CurrentParameter.Value.X, Snippets.CurrentContext.CurrentParameter.Value.Y);
+                    Snippets.CurrentContext.CurrentParameterValue = document.GetTextBetween(Snippets.CurrentContext.CurrentParameter.Value);
                 }
 
                 if (autocompleteForm != null)
@@ -1065,7 +1070,7 @@ namespace CSScriptIntellisense
                     catch { }
                 }
 
-                if (snippetsOnlyMode)
+                if (snippetsOnlyMode || data.CompletionType == CompletionType.snippet)
                     TriggerCodeSnippetInsertion();
             }
 

@@ -201,6 +201,8 @@ namespace CSScriptIntellisense
             int mask = 1 << marker;
             var result = new List<int>();
 
+            // ideal solution but for unknown reason MarkerNext does not work reliably.
+            // So resorting to line by line inefficient iterations.
             // int line = -1;
             // while (-1 != (line = document.MarkerNext(++line, mask)))
             //     result.Add(line);

@@ -73,8 +73,8 @@ namespace CSScriptNpp
             SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
             PluginBase.SetCommand(index++, "---", null);
             PluginBase.SetCommand(projectPanelId = index++, "Project Panel", InitProjectPanel);
-            PluginBase.SetCommand(outputPanelId = index++, "Output Panel", InitOutputPanel);
-            PluginBase.SetCommand(debugPanelId = index++, "Debug Panel", InitDebugPanel);
+            PluginBase.SetCommand(outputPanelId = index++, "Output Panel", ToggleOutputPanel);
+            PluginBase.SetCommand(debugPanelId = index++, "Debug Panel", ToggleDebugPanel);
             PluginBase.SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
 
@@ -377,18 +377,30 @@ namespace CSScriptNpp
         {
             if (Plugin.outputPanel == null)
                 Plugin.outputPanel = ShowDockablePanel<OutputPanel>("Output", outputPanelId, NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-            else
-                SetDockedPanelVisible(dockedManagedPanels[outputPanelId], outputPanelId, !Plugin.outputPanel.Visible);
 
             Application.DoEvents();
+        }
+
+        static public void ToggleOutputPanel()
+        {
+            var currentlyVisible = (Plugin.outputPanel?.Visible == true);
+            InitOutputPanel();
+            SetDockedPanelVisible(dockedManagedPanels[outputPanelId], outputPanelId, !currentlyVisible);
         }
 
         static public void InitDebugPanel()
         {
             if (Plugin.debugPanel == null)
                 Plugin.debugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-            else
-                SetDockedPanelVisible(dockedManagedPanels[debugPanelId], debugPanelId, !Plugin.debugPanel.Visible);
+
+            Application.DoEvents();
+        }
+
+        static public void ToggleDebugPanel()
+        {
+            var currentlyVisible = (Plugin.debugPanel?.Visible == true);
+            InitDebugPanel();
+            SetDockedPanelVisible(dockedManagedPanels[debugPanelId], debugPanelId, !currentlyVisible);
 
             Application.DoEvents();
         }

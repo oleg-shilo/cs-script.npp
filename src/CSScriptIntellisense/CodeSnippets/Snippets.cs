@@ -63,6 +63,8 @@ namespace CSScriptIntellisense
 
     public class Snippets
     {
+        public static SnippetContext CurrentContext = null;
+
         static public Dictionary<string, string> Map = new Dictionary<string, string>();
 
         static public IEnumerable<string> Keys
@@ -83,10 +85,14 @@ namespace CSScriptIntellisense
             document.PlaceIndicator(SnippetContext.indicatorId, indicatorRange.X, indicatorRange.X + text.Length);
         }
 
+        static public bool ScintillaIndicatorDiscoveryIsBroken = true;
+
         static public void FinalizeCurrent()
         {
             var document = Npp.GetCurrentDocument();
             var indicators = document.FindIndicatorRanges(SnippetContext.indicatorId);
+            if (ScintillaIndicatorDiscoveryIsBroken && !indicators.Any())
+                indicators = CurrentContext.Parameters.ToArray();
 
             foreach (var range in indicators)
                 document.ClearIndicator(SnippetContext.indicatorId, range.X, range.Y);
@@ -302,7 +308,10 @@ namespace CSScriptIntellisense
                     //'$item$' -> 'item'
                     int newEndPos = endPos - 2;
 
-                    retval.Parameters.Add(new Point(startPos + documentOffset, newEndPos + 1 + documentOffset));
+                    // Scintilla indicator discovery is broken so we cannot navigate replaceable params
+                    // so only add the final cursor param position
+                    if (!ScintillaIndicatorDiscoveryIsBroken || retval.ReplacementString.Substring(startPos, 3) == "$|$")
+                        retval.Parameters.Add(new Point(startPos + documentOffset, newEndPos + 1 + documentOffset));
 
                     string leftText = retval.ReplacementString.Substring(0, startPos);
                     string rightText = retval.ReplacementString.Substring(endPos + 1);
