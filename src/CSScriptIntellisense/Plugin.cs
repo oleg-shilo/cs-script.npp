@@ -325,7 +325,7 @@ namespace CSScriptIntellisense
             Cursor.Current = Cursors.Default;
         }
 
-        static void HandleErrors(Action action, Action finalAction = null)
+        static public void HandleErrors(Action action, Action finalAction = null)
         {
             try
             {

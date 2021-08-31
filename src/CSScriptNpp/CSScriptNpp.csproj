@@ -90,6 +90,12 @@
     <Compile Include="Dialogs\FavoritesPanel.Designer.cs">
       <DependentUpon>FavoritesPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\InstallDependenciesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\InstallDependenciesDialog.Designer.cs">
+      <DependentUpon>InstallDependenciesDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ModulesPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -251,6 +257,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FavoritesPanel.resx">
       <DependentUpon>FavoritesPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\InstallDependenciesDialog.resx">
+      <DependentUpon>InstallDependenciesDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\LocalsPanel.resx">
       <DependentUpon>LocalsPanel.cs</DependentUpon>

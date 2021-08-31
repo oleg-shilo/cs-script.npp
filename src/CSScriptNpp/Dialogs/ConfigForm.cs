@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -60,6 +63,9 @@ namespace CSScriptNpp
             customSyntaxerExe.Text = data.CustomSyntaxerExe;
             syntaxerPort.Text = data.SyntaxerPort.ToString();
             customSyntaxerExe.ReadOnly = !customSyntaxer.Checked;
+
+            cssInstallCmd.Text = CSScriptHelper.InstallCssCmd;
+            cssyntaxerInstallCmd.Text = CSScriptHelper.InstallCsSyntaxerCmd;
         }
 
         bool skipSavingConfig = false;
@@ -203,6 +209,87 @@ namespace CSScriptNpp
         private void customSyntaxer_CheckedChanged(object sender, EventArgs e)
         {
             customSyntaxerExe.ReadOnly = !customSyntaxer.Checked;
+        }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                Process.Start("https://github.com/oleg-shilo/cs-script.npp/wiki/Deploy-CS-Script");
+            }
+            catch { }
+        }
+
+        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                Process.Start("https://github.com/oleg-shilo/cs-script.npp/wiki/Deploy-Syntaxer");
+            }
+            catch { }
+        }
+
+        static void InstallDependencies(bool engineOnly = false)
+        {
+            var batchFileContent = new List<string>();
+            if (!CSScriptHelper.IsChocoInstalled)
+            {
+                batchFileContent.Add("powershell Set-ExecutionPolicy Bypass -Scope Process -Force;");
+                batchFileContent.Add("powershell iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))");
+            }
+
+            if (engineOnly)
+                batchFileContent.Add($"powershell {CSScriptHelper.InstallCssCmd}");
+            else
+                // installing syntaxer will auto-install cs-script as a dependency
+                batchFileContent.Add($"powershell {CSScriptHelper.InstallCsSyntaxerCmd}");
+
+            if (batchFileContent.Count == 1)
+                InstallDependenciesDialog.Execute(batchFileContent.First());
+            else
+                InstallDependenciesDialog.ShowDialog(string.Join(Environment.NewLine, batchFileContent));
+        }
+
+        public void deployCSScript_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: true);
+
+        private void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: false);
+
+        private void enableNetCore_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (CSScriptHelper.IsCSScriptInstalled && CSScriptHelper.IsCSSyntaxerInstalled)
+            {
+                // use installed CS-Script for script execution
+                installedEngine.Checked = true;
+
+                // use installed syntaxer for Intellisense
+                data.UseRoslynProvider = true;
+                customSyntaxer.Checked = true;
+                customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.exe");
+
+                MessageBox.Show("The changes will take the full effect after restarting Notepad++", "CS-Script");
+            }
+            else
+            {
+                var message = "The required services are not fully available or require update:\n";
+
+                if (CSScriptHelper.SystemCSScriptDir.IsEmpty())
+                    message += "  CS-Script: not installed\n";
+                else
+                    message += "  CS-Script: installed\n";
+
+                if (CSScriptHelper.SystemCSSyntaxerDir.IsEmpty())
+                    message += "  Syntaxer: not installed\n";
+                else
+                    message += "  Syntaxer: installed\n";
+
+                message +=
+                    "\nDeploy/Update the services from the Update tab and then " +
+                    "try to enable .NET Core integration again.";
+
+                MessageBox.Show(message, "CS-Script");
+
+                contentControl.SelectedIndex = 2;
+            }
         }
     }
 }

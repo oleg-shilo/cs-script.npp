@@ -58,11 +58,27 @@ namespace CSScriptNpp
             }
         }
 
-        public static string SystemCSScriptDir
+        public static string SystemCSScriptDir => Environment.GetEnvironmentVariable("CSSCRIPT_ROOT");
+        public static string SystemCSSyntaxerDir => Environment.GetEnvironmentVariable("CSSYNTAXER_ROOT");
+        public static bool IsCSSyntaxerInstalled => !SystemCSSyntaxerDir.IsEmpty();
+        public static bool IsCSScriptInstalled => !SystemCSScriptDir.IsEmpty();
+
+        public static string InstallCssCmd = $"choco {(CSScriptHelper.IsCSScriptInstalled ? "upgrade" : "install")} cs-script --y";
+        public static string InstallCsSyntaxerCmd = $"choco {(CSScriptHelper.IsCSSyntaxerInstalled ? "upgrade" : "install")} cs-syntaxer --y";
+
+        public static bool IsChocoInstalled
         {
             get
             {
-                return Environment.GetEnvironmentVariable("CSSCRIPT_ROOT");
+                try
+                {
+                    Run("choco", "");
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 

@@ -40,6 +40,7 @@
             this.generalPage = new System.Windows.Forms.TabPage();
             this.restorePanels = new System.Windows.Forms.CheckBox();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.enableNetCore = new System.Windows.Forms.LinkLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -54,6 +55,15 @@
             this.installedEngine = new System.Windows.Forms.RadioButton();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.cssyntaxerInstallCmd = new System.Windows.Forms.TextBox();
+            this.cssInstallCmd = new System.Windows.Forms.TextBox();
+            this.linkLabel4 = new System.Windows.Forms.LinkLabel();
+            this.linkLabel3 = new System.Windows.Forms.LinkLabel();
+            this.deploySyntaxer = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.deployCSScript = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.customUpdateUrl = new System.Windows.Forms.TextBox();
             this.update = new System.Windows.Forms.Button();
@@ -64,6 +74,7 @@
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -102,17 +113,15 @@
             this.customSyntaxerExe.Name = "customSyntaxerExe";
             this.customSyntaxerExe.Size = new System.Drawing.Size(392, 20);
             this.customSyntaxerExe.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.customSyntaxerExe, "Custom launcher path with the arguments.\r\n(e.g. \r\n    \'\"my launcher.exe\" -run \"%1" +
-        "\" -debug\'\r\n    \'my_launcher.exe -run\'\r\n    \'%CSSCRIPT_DIR%/cscs.exe\'\r\n)");
+            this.toolTip1.SetToolTip(this.customSyntaxerExe, "Path to the custom syntaxer\r\n");
             // 
             // customSyntaxer
             // 
             this.customSyntaxer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.customSyntaxer.AutoSize = true;
-            this.customSyntaxer.Location = new System.Drawing.Point(6, 18);
+            this.customSyntaxer.Location = new System.Drawing.Point(6, 20);
             this.customSyntaxer.Name = "customSyntaxer";
-            this.customSyntaxer.Size = new System.Drawing.Size(105, 17);
+            this.customSyntaxer.Size = new System.Drawing.Size(147, 21);
             this.customSyntaxer.TabIndex = 5;
             this.customSyntaxer.Text = "Custom Location";
             this.toolTip1.SetToolTip(this.customSyntaxer, "Custom launcher path with the arguments.\r\n(e.g. \r\n    \"my launcher.exe\" -run \"%1\"" +
@@ -136,7 +145,7 @@
             // 
             this.useCS6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.useCS6.AutoSize = true;
-            this.useCS6.Location = new System.Drawing.Point(209, -45);
+            this.useCS6.Location = new System.Drawing.Point(209, -44);
             this.useCS6.Name = "useCS6";
             this.useCS6.Size = new System.Drawing.Size(222, 17);
             this.useCS6.TabIndex = 7;
@@ -164,10 +173,11 @@
             this.generalPage.Controls.Add(this.checkUpdates);
             this.generalPage.Controls.Add(this.useCS6);
             this.generalPage.Controls.Add(this.linkLabel2);
+            this.generalPage.Controls.Add(this.enableNetCore);
             this.generalPage.Controls.Add(this.linkLabel1);
             this.generalPage.Location = new System.Drawing.Point(4, 22);
             this.generalPage.Name = "generalPage";
-            this.generalPage.Padding = new System.Windows.Forms.Padding(3);
+            this.generalPage.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.generalPage.Size = new System.Drawing.Size(421, 273);
             this.generalPage.TabIndex = 0;
             this.generalPage.Text = "General";
@@ -196,6 +206,18 @@
             this.linkLabel2.Text = "Edit Visual Studio project template";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
+            // enableNetCore
+            // 
+            this.enableNetCore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.enableNetCore.AutoSize = true;
+            this.enableNetCore.Location = new System.Drawing.Point(10, 208);
+            this.enableNetCore.Name = "enableNetCore";
+            this.enableNetCore.Size = new System.Drawing.Size(156, 13);
+            this.enableNetCore.TabIndex = 5;
+            this.enableNetCore.TabStop = true;
+            this.enableNetCore.Text = "Enable .NET 5/Core integration";
+            this.enableNetCore.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.enableNetCore_LinkClicked);
+            // 
             // linkLabel1
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -216,7 +238,7 @@
             this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tabPage2.Size = new System.Drawing.Size(421, 273);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "CS-Script";
@@ -344,14 +366,112 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.groupBox4);
             this.tabPage1.Controls.Add(this.groupBox2);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tabPage1.Size = new System.Drawing.Size(421, 273);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Update";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.cssyntaxerInstallCmd);
+            this.groupBox4.Controls.Add(this.cssInstallCmd);
+            this.groupBox4.Controls.Add(this.linkLabel4);
+            this.groupBox4.Controls.Add(this.linkLabel3);
+            this.groupBox4.Controls.Add(this.deploySyntaxer);
+            this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.deployCSScript);
+            this.groupBox4.Controls.Add(this.label4);
+            this.groupBox4.Location = new System.Drawing.Point(8, 127);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(399, 141);
+            this.groupBox4.TabIndex = 5;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Services Update";
+            // 
+            // cssyntaxerInstallCmd
+            // 
+            this.cssyntaxerInstallCmd.Location = new System.Drawing.Point(15, 111);
+            this.cssyntaxerInstallCmd.Name = "cssyntaxerInstallCmd";
+            this.cssyntaxerInstallCmd.ReadOnly = true;
+            this.cssyntaxerInstallCmd.Size = new System.Drawing.Size(274, 20);
+            this.cssyntaxerInstallCmd.TabIndex = 8;
+            this.cssyntaxerInstallCmd.Text = "choco install cs-syntaxer --y";
+            // 
+            // cssInstallCmd
+            // 
+            this.cssInstallCmd.Location = new System.Drawing.Point(15, 49);
+            this.cssInstallCmd.Name = "cssInstallCmd";
+            this.cssInstallCmd.ReadOnly = true;
+            this.cssInstallCmd.Size = new System.Drawing.Size(274, 20);
+            this.cssInstallCmd.TabIndex = 7;
+            this.cssInstallCmd.Text = "choco install cs-script --y";
+            // 
+            // linkLabel4
+            // 
+            this.linkLabel4.AutoSize = true;
+            this.linkLabel4.Location = new System.Drawing.Point(293, 91);
+            this.linkLabel4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.linkLabel4.Name = "linkLabel4";
+            this.linkLabel4.Size = new System.Drawing.Size(59, 13);
+            this.linkLabel4.TabIndex = 6;
+            this.linkLabel4.TabStop = true;
+            this.linkLabel4.Text = "Read more";
+            this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
+            // 
+            // linkLabel3
+            // 
+            this.linkLabel3.AutoSize = true;
+            this.linkLabel3.Location = new System.Drawing.Point(293, 26);
+            this.linkLabel3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.linkLabel3.Name = "linkLabel3";
+            this.linkLabel3.Size = new System.Drawing.Size(59, 13);
+            this.linkLabel3.TabIndex = 6;
+            this.linkLabel3.TabStop = true;
+            this.linkLabel3.Text = "Read more";
+            this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
+            // 
+            // deploySyntaxer
+            // 
+            this.deploySyntaxer.Location = new System.Drawing.Point(295, 109);
+            this.deploySyntaxer.Name = "deploySyntaxer";
+            this.deploySyntaxer.Size = new System.Drawing.Size(98, 23);
+            this.deploySyntaxer.TabIndex = 5;
+            this.deploySyntaxer.Text = "Deploy/Update";
+            this.deploySyntaxer.UseVisualStyleBackColor = true;
+            this.deploySyntaxer.Click += new System.EventHandler(this.deploySyntaxer_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 91);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(144, 13);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Latest Syntaxer (Intellisense):";
+            // 
+            // deployCSScript
+            // 
+            this.deployCSScript.Location = new System.Drawing.Point(295, 47);
+            this.deployCSScript.Name = "deployCSScript";
+            this.deployCSScript.Size = new System.Drawing.Size(98, 23);
+            this.deployCSScript.TabIndex = 3;
+            this.deployCSScript.Text = "Deploy/Update";
+            this.deployCSScript.UseVisualStyleBackColor = true;
+            this.deployCSScript.Click += new System.EventHandler(this.deployCSScript_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 26);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(155, 13);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Latest CS-Script (script engine):";
             // 
             // groupBox2
             // 
@@ -360,10 +480,10 @@
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Location = new System.Drawing.Point(8, 21);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(399, 97);
+            this.groupBox2.Size = new System.Drawing.Size(399, 80);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Update Source";
+            this.groupBox2.Text = "Plugin Update";
             // 
             // customUpdateUrl
             // 
@@ -387,9 +507,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 26);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(85, 13);
+            this.label2.Size = new System.Drawing.Size(116, 13);
             this.label2.TabIndex = 0;
-            this.label2.Text = "Custom location:";
+            this.label2.Text = "Custom update source:";
             // 
             // ConfigForm
             // 
@@ -414,6 +534,8 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabPage1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
@@ -451,5 +573,15 @@
         private System.Windows.Forms.CheckBox customSyntaxer;
         private System.Windows.Forms.TextBox syntaxerPort;
         private System.Windows.Forms.TextBox customSyntaxerExe;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Button deployCSScript;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.LinkLabel linkLabel4;
+        private System.Windows.Forms.LinkLabel linkLabel3;
+        private System.Windows.Forms.Button deploySyntaxer;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox cssyntaxerInstallCmd;
+        private System.Windows.Forms.TextBox cssInstallCmd;
+        private System.Windows.Forms.LinkLabel enableNetCore;
     }
 }
