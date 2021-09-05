@@ -4,9 +4,27 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace CSScriptNpp
 {
+    public static class MiscExtensions
+    {
+        public static string Run(this string app, params string[] args)
+        {
+            var p = new Process();
+            p.StartInfo.FileName = app;
+            p.StartInfo.Arguments = string.Join(" ", args.Select(x => $"\"{x}\"").ToArray());
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+
+            p.Start();
+            return p.StandardOutput.ReadToEnd();
+        }
+    }
+
     public static class ReflectionExtensions
     {
         public static T To<T>(this object obj)

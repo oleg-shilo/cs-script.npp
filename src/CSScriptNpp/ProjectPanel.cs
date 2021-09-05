@@ -367,7 +367,7 @@ void main(string[] args)
 
         void Run(bool asExternal)
         {
-            if (currentScript == null || (Config.Instance.ReloadActiveScriptOnRun && currentScript != Npp.Editor.GetCurrentFilePath() ))
+            if (currentScript == null || (Config.Instance.ReloadActiveScriptOnRun && currentScript != Npp.Editor.GetCurrentFilePath()))
                 loadBtn.PerformClick();
 
             if (currentScript == null)
@@ -1027,11 +1027,13 @@ void main(string[] args)
 
                             if (path != null)
                             {
-                                string pluginClrVersion = "v" + Environment.Version.ToString();
+                                if (!CSScriptHelper.IsUsingCSScriptCore)
+                                {
+                                    string pluginClrVersion = "v" + Environment.Version.ToString();
 
-                                if (dialog.AsScript && !pluginClrVersion.StartsWith(selectedTargetVersion)) //selectedTargetVersion may not include the build number
-                                    MessageBox.Show("Distribution package targets CLR version, which is different from the default version.\r\nPlease verify that the script is compatible with the selected CLR version.", "CS-Script");
-
+                                    if (dialog.AsScript && !pluginClrVersion.StartsWith(selectedTargetVersion)) //selectedTargetVersion may not include the build number
+                                        MessageBox.Show("Distribution package targets CLR version, which is different from the default version.\r\nPlease verify that the script is compatible with the selected CLR version.", "CS-Script");
+                                }
                                 Process.Start("explorer.exe", path);
                             }
                         }

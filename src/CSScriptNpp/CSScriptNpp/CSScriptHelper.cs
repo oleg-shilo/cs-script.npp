@@ -9,6 +9,8 @@ using System.Net;
 using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
+
+// using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -62,6 +64,7 @@ namespace CSScriptNpp
         public static string SystemCSSyntaxerDir => Environment.GetEnvironmentVariable("CSSYNTAXER_ROOT");
         public static bool IsCSSyntaxerInstalled => !SystemCSSyntaxerDir.IsEmpty();
         public static bool IsCSScriptInstalled => !SystemCSScriptDir.IsEmpty();
+        public static bool IsUsingCSScriptCore => ScriptEngineLocation.Contains(@"\chocolatey\"); // choco install only supports .NET 5/Core
 
         public static string InstallCssCmd = $"choco {(CSScriptHelper.IsCSScriptInstalled ? "upgrade" : "install")} cs-script --y";
         public static string InstallCsSyntaxerCmd = $"choco {(CSScriptHelper.IsCSSyntaxerInstalled ? "upgrade" : "install")} cs-syntaxer --y";
@@ -940,119 +943,158 @@ namespace CSScriptNpp
             var executionArg = GenerateNppExecutionArg(scriptFile);
 
             var warning = new StringBuilder();
-            if (scriptFile.IsVbFile())
+            if (IsUsingCSScriptCore)
             {
-                warning.AppendLine("Your script requires a custom code compiler (Code Provider) for handling VB.NET syntax.");
-                warning.AppendLine("It means that you will need to distribute the provider file(s) along with the script.");
+                warning.AppendLine("Notepad++ CS-Script plugin is configured to use stand alone CS-Script.");
+                warning.AppendLine("This means that you will need to install the script engine on the target system.");
             }
-            else if (Config.Instance.UseRoslynProvider)
+            else
             {
-                warning.AppendLine("Notepad++ CS-Script plugin is configured to use Roslyn as a compiler. This usually indicates that " +
-                                   "your script execution requires Roslyn code provider (e.g. to handle C#6 syntax).");
-                warning.AppendLine("If indeed it is case then you will need to distribute the provider file(s) along with the script.");
+                if (scriptFile.IsVbFile())
+                {
+                    warning.AppendLine("Your script requires a custom code compiler (Code Provider) for handling VB.NET syntax.");
+                    warning.AppendLine("It means that you will need to distribute the provider file(s) along with the script.");
+                }
+                else if (Config.Instance.UseRoslynProvider)
+                {
+                    warning.AppendLine("Notepad++ CS-Script plugin is configured to use Roslyn as a compiler. This usually indicates that " +
+                                       "your script execution requires Roslyn code provider (e.g. to handle C#6 syntax).");
+                    warning.AppendLine("If indeed it is case then you will need to distribute the provider file(s) along with the script.");
+                }
+
+                if (warning.Length > 0)
+                {
+                    warning.AppendLine("You will also need to modify run.cmd as follows:");
+                    warning.AppendLine();
+                    warning.AppendLine($"cscs.exe {executionArg} \"{Path.GetFileName(scriptFile)}\"");
+                    warning.AppendLine();
+                    warning.AppendLine("Also make sure the provider's TargetRuntime is compatible with the runtime of the target system.");
+                }
             }
 
-            if (warning.Length > 0)
-            {
-                warning.AppendLine("You will also need to modify run.cmd as follows:");
-                warning.AppendLine();
-                warning.AppendLine($"cscs.exe {executionArg} \"{Path.GetFileName(scriptFile)}\"");
-                warning.AppendLine();
-                warning.AppendLine("Also make sure the provider's TargetRuntime is compatible with the runtime of the target system.");
-                File.WriteAllText(Path.Combine(destDir, "warning.txt"), warning.ToString());
-            }
+            File.WriteAllText(Path.Combine(destDir, "warning.txt"), warning.ToString());
         }
 
         static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion, bool windowApp, bool asDll)
         {
-            string dir = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile));
+            Cursor.Current = Cursors.WaitCursor;
 
-            EnsureCleanDirectory(dir);
-
-            bool net4 = (targerRuntimeVersion == "v4.0.30319");
-            bool net2 = (targerRuntimeVersion == "v2.0.50727");
-
-            string engineFile;
-            if (net4)
-                engineFile = cscs_exe;
-            else if (net2)
-                engineFile = cscs_v35_exe;
-            else
-                throw new Exception("The requested Target Runtime version (" + targerRuntimeVersion + ") is not supported.");
-
-            Project proj = GenerateProjectFor(scriptFile);
-            var assemblies = proj.Assemblies.Where(a => !a.Contains("GAC_MSIL")).ToArray();
-            Action<string, string> copy = (file, directory) => File.Copy(file, Path.Combine(directory, Path.GetFileName(file)), true);
-
-            if (asScript)
+            var done = false;
+            Task.Run(() =>
             {
-                proj.SourceFiles.Concat(assemblies)
-                                .Concat(engineFile)
-                                .ForEach(file => copy(file, dir));
-
-                string batchFile = Path.Combine(dir, "run.cmd");
-                string engineName = Path.GetFileName(engineFile);
-
-                if (scriptFile.IsVbFile())
+                var tick = 1;
+                while (!done)
                 {
-                    if (net4 && Config.Instance.VbCodeProvider.EndsWith("CSSCodeProvider.v4.0.dll"))
+                    NotifyClient("Building deployment package" + new string('.', tick++));
+                    System.Threading.Thread.Sleep(200);
+                    if (tick > 5)
+                        tick = 1;
+                }
+                NotifyClient("");
+            });
+
+            try
+            {
+                string dir = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile));
+
+                EnsureCleanDirectory(dir);
+
+                bool net4 = (targerRuntimeVersion == "v4.0.30319");
+                bool net2 = (targerRuntimeVersion == "v2.0.50727");
+                bool net_core = IsUsingCSScriptCore;
+
+                string engineFile;
+                if (net4 || net_core)
+                    engineFile = cscs_exe;
+                else if (net2)
+                    engineFile = cscs_v35_exe;
+                else
+                    throw new Exception("The requested Target Runtime version (" + targerRuntimeVersion + ") is not supported.");
+
+                Project proj = GenerateProjectFor(scriptFile);
+                var assemblies = proj.Assemblies.Where(a => !a.Contains("GAC_MSIL")).ToArray();
+                Action<string, string> copy = (file, directory) => File.Copy(file, Path.Combine(directory, Path.GetFileName(file)), true);
+
+                if (asScript)
+                {
+                    string batchFile = Path.Combine(dir, "run.cmd");
+                    string engineName = Path.GetFileName(engineFile);
+
+                    var files = proj.SourceFiles.Concat(assemblies);
+                    if (!IsUsingCSScriptCore)
+                        files.Concat(engineFile);
+                    else
+                        engineName = "css";
+
+                    files.ForEach(file => copy(file, dir));
+
+                    if (scriptFile.IsVbFile())
                     {
-                        //single file code provider
-                        var providerSrc = Path.Combine(PluginEnv.PluginDir, Config.Instance.VbCodeProvider);
-                        var providerDest = providerSrc.PathChangeDir(dir);
-                        File.Copy(providerSrc, providerDest);
+                        if (net4 && Config.Instance.VbCodeProvider.EndsWith("CSSCodeProvider.v4.0.dll"))
+                        {
+                            //single file code provider
+                            var providerSrc = Path.Combine(PluginEnv.PluginDir, Config.Instance.VbCodeProvider);
+                            var providerDest = providerSrc.PathChangeDir(dir);
+                            File.Copy(providerSrc, providerDest);
+                        }
+                        else
+                        {
+                            //code provider potentially is a set of many files of a substantial size (e.g. Roslyn)
+                            CreateProviderWarningFileIfNeeded(dir, scriptFile);
+                        }
+
+                        File.WriteAllText(batchFile, $"echo off\r\n{engineName} {GenerateNppExecutionArg(scriptFile)} \"{Path.GetFileName(scriptFile)}\"\r\npause");
                     }
                     else
                     {
-                        //code provider potentially is a set of many files of a substantial size (e.g. Roslyn)
                         CreateProviderWarningFileIfNeeded(dir, scriptFile);
+                        File.WriteAllText(batchFile, $"echo off\r\n{engineName} \"{Path.GetFileName(scriptFile)}\"\r\npause");
                     }
 
-                    File.WriteAllText(batchFile, $"echo off\r\n{engineName} {GenerateNppExecutionArg(scriptFile)} \"{Path.GetFileName(scriptFile)}\"\r\npause");
-                }
-                else
-                {
-                    CreateProviderWarningFileIfNeeded(dir, scriptFile);
-                    File.WriteAllText(batchFile, $"echo off\r\n{engineName} \"{Path.GetFileName(scriptFile)}\"\r\npause");
-                }
-
-                return dir;
-            }
-            else
-            {
-                string srcBinary = Path.ChangeExtension(scriptFile, asDll ? ".dll" : ".exe");
-                string destBinary = Path.Combine(dir, Path.GetFileName(srcBinary));
-
-                string script = "\"" + scriptFile + "\"";
-
-                string build_arg = asDll ? "-cd" : "-e" + (windowApp ? "w" : "");
-                string cscs = engineFile;
-                string args = string.Format("{2} {0} {1}", GenerateDefaultArgs(scriptFile), script, build_arg);
-
-                var p = new Process();
-                p.StartInfo.FileName = cscs;
-                p.StartInfo.Arguments = args;
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.CreateNoWindow = true;
-                p.Start();
-                p.WaitForExit();
-
-                if (File.Exists(srcBinary))
-                {
-                    assemblies.Concat(srcBinary)
-                              .ForEach(file => copy(file, dir));
-
-                    File.Delete(srcBinary);
                     return dir;
                 }
                 else
                 {
-                    //just show why building has failed
-                    cscs = "\"" + cscs + "\"";
-                    args = string.Format("{0} {3} {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script, build_arg);
-                    Process.Start(ConsoleHostPath, args);
-                    return null;
+                    string srcBinary = Path.ChangeExtension(scriptFile, asDll ? ".dll" : ".exe");
+                    string destBinary = Path.Combine(dir, Path.GetFileName(srcBinary));
+
+                    string script = "\"" + scriptFile + "\"";
+
+                    string build_arg = asDll ? "-cd" : "-e" + (windowApp ? "w" : "");
+                    string cscs = engineFile;
+                    string args = string.Format("{2} {0} {1}", GenerateDefaultArgs(scriptFile), script, build_arg);
+
+                    var p = new Process();
+                    p.StartInfo.FileName = cscs;
+                    p.StartInfo.Arguments = args;
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.CreateNoWindow = true;
+                    p.Start();
+                    p.WaitForExit();
+
+                    if (File.Exists(srcBinary))
+                    {
+                        assemblies.Concat(srcBinary)
+                                  .Concat(Directory.GetFiles(Path.GetDirectoryName(scriptFile), $"{Path.GetFileNameWithoutExtension(scriptFile)}.*"))
+                                  .ForEach(file => copy(file, dir));
+
+                        File.Delete(srcBinary);
+                        return dir;
+                    }
+                    else
+                    {
+                        //just show why building has failed
+                        cscs = "\"" + cscs + "\"";
+                        args = string.Format("{0} {3} {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script, build_arg);
+                        Process.Start(ConsoleHostPath, args);
+                        return null;
+                    }
                 }
+            }
+            finally
+            {
+                done = true;
+                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -1275,16 +1317,19 @@ namespace CSScriptNpp
 
             var language = Path.GetExtension(scriptFile).Replace(".", "").ToUpper();
 
-            if (language == "VB" && CSScriptIntellisense.Config.Instance.VbSupportEnabled)
+            if (!IsUsingCSScriptCore)
             {
-                //only CSSCodeProvider.v4.0.dll can support VB
-                var provider = PluginEnv.PluginDir.PathJoin(Config.Instance.VbCodeProvider);
-                // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll");
-                result = " \"-provider:" + provider + "\"";
-            }
-            else
-            {
-                result = GenerateRoslynProviderArg();
+                if (language == "VB" && CSScriptIntellisense.Config.Instance.VbSupportEnabled)
+                {
+                    //only CSSCodeProvider.v4.0.dll can support VB
+                    var provider = PluginEnv.PluginDir.PathJoin(Config.Instance.VbCodeProvider);
+                    // var provider = Plugin.PluginDir.PathJoin("CSSRoslynProvider.dll");
+                    result = " \"-provider:" + provider + "\"";
+                }
+                else
+                {
+                    result = GenerateRoslynProviderArg();
+                }
             }
 
             return result;

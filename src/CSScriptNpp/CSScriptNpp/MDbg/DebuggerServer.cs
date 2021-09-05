@@ -348,6 +348,9 @@ namespace CSScriptNpp
             MessageQueue.AddNotification(NppCategory.Diagnostics + debugger.Id + ":STARTED");
             debuggerProcessId = debugger.Id;
 
+            if (CSScriptHelper.IsUsingCSScriptCore)
+                OnDebuggeeProcessNotification?.Invoke("======= Debugging .NET 5/Core is not supported =======");
+
             Task.Factory.StartNew(() => WaitForExit(debugger));
 
             channel = new RemoteChannelServer(debuggerProcessId);
