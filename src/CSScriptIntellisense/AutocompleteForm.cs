@@ -53,7 +53,7 @@ namespace CSScriptIntellisense
             listBox1.Items.AddRange(items.ToArray());
             if (Config.Instance.AutoSelectFirstSuggestion)
                 listBox1.SelectedItem = items.FirstOrDefault(); //inconvenient and inconsistent with VS UX
-            
+
             //extras are for the better appearance and they are discovered via experiment
             int extraHeight = 10;
             int extraWidth = 20;
@@ -169,7 +169,7 @@ namespace CSScriptIntellisense
             get { return true; }
         }
 
-        private void AutocompleteForm_KeyDown(object sender, KeyEventArgs e)
+        void AutocompleteForm_KeyDown(object sender, KeyEventArgs e)
         {
             OnKeyDown(e.KeyCode);
         }
@@ -235,18 +235,18 @@ namespace CSScriptIntellisense
             return handled;
         }
 
-        private void AutocompleteForm_Deactivate(object sender, EventArgs e)
+        void AutocompleteForm_Deactivate(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void listBox1_DoubleClick(object sender, EventArgs e)
+        void listBox1_DoubleClick(object sender, EventArgs e)
         {
             OnAutocompletionAccepted(listBox1.SelectedItem as ICompletionData);
             Close();
         }
 
-        private void AutocompleteForm_Load(object sender, EventArgs e)
+        void AutocompleteForm_Load(object sender, EventArgs e)
         {
             try
             {
@@ -291,7 +291,7 @@ namespace CSScriptIntellisense
                 Close();
         }
 
-        private void AutocompleteForm_FormClosed(object sender, FormClosedEventArgs e)
+        void AutocompleteForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             Capture = false;
         }

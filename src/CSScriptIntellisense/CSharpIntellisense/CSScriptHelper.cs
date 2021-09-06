@@ -59,7 +59,7 @@ namespace CSScriptIntellisense
             var asms = new List<string>();
             var namespaces = new List<string>();
 
-            Func<string, string[]> splitPathItems = text => text.Split('|')
+            Func<string, string[]> splitPathItems = text => text.Split('|', ';')
                                                                 .Where(x => !string.IsNullOrWhiteSpace(x))
                                                                 .Select(x => Environment.ExpandEnvironmentVariables(x.Trim()))
                                                                 .ToArray();
@@ -75,10 +75,13 @@ namespace CSScriptIntellisense
                     var doc = new XmlDocument();
                     doc.Load(configFile);
 
-                    dirs.AddRange(splitPathItems(doc.FirstChild.SelectSingleNode("searchDirs").InnerText));
+                    dirs.AddRange(splitPathItems((doc.FirstChild.SelectSingleNode("searchDirs") ??
+                                                  doc.FirstChild.SelectSingleNode("SearchDirs")).InnerText));
                     dirs.Add(Path.Combine(Path.GetDirectoryName(configFile), "Lib"));
 
-                    asms.AddRange(splitPathItems(doc.FirstChild.SelectSingleNode("defaultRefAssemblies").InnerText));
+                    asms.AddRange(splitPathItems((doc.FirstChild.SelectSingleNode("defaultRefAssemblies") ??
+                                                  doc.FirstChild.SelectSingleNode("DefaultRefAssemblies"))
+                                                  .InnerText));
                 }
             }
             catch { }

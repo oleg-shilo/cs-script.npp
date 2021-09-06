@@ -1076,6 +1076,7 @@ namespace CSScriptNpp
                     {
                         assemblies.Concat(srcBinary)
                                   .Concat(Directory.GetFiles(Path.GetDirectoryName(scriptFile), $"{Path.GetFileNameWithoutExtension(scriptFile)}.*"))
+                                  .Where(x => x != scriptFile)
                                   .ForEach(file => copy(file, dir));
 
                         File.Delete(srcBinary);

@@ -34,6 +34,7 @@ namespace CSScriptIntellisense
         }
 
         bool? nextItemIsSeparator;
+
         public void AddSeparator()
         {
             nextItemIsSeparator = true;
@@ -142,12 +143,12 @@ namespace CSScriptIntellisense
                 info.Handler(info.Text);
         }
 
-        private void AutocompleteForm_Deactivate(object sender, EventArgs e)
+        void AutocompleteForm_Deactivate(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void listBox1_DoubleClick(object sender, EventArgs e)
+        void listBox1_DoubleClick(object sender, EventArgs e)
         {
             Close();
             InvokeHandler();
@@ -159,7 +160,7 @@ namespace CSScriptIntellisense
             get { return true; }
         }
 
-        private void AutocompleteForm_Load(object sender, EventArgs e)
+        void AutocompleteForm_Load(object sender, EventArgs e)
         {
             var g = listBox1.CreateGraphics();
             itemHeight = (int)g.MeasureString("T", listBox1.Font).Height;

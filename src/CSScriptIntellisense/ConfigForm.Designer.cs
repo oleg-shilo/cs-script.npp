@@ -51,9 +51,10 @@
             // useArrow
             // 
             this.useArrow.AutoSize = true;
-            this.useArrow.Location = new System.Drawing.Point(0, 9);
+            this.useArrow.Location = new System.Drawing.Point(0, 11);
+            this.useArrow.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.useArrow.Name = "useArrow";
-            this.useArrow.Size = new System.Drawing.Size(248, 17);
+            this.useArrow.Size = new System.Drawing.Size(305, 20);
             this.useArrow.TabIndex = 0;
             this.useArrow.Text = "Use Right Arrow to accept selected suggestion";
             this.useArrow.UseVisualStyleBackColor = true;
@@ -61,9 +62,10 @@
             // intercept
             // 
             this.intercept.AutoSize = true;
-            this.intercept.Location = new System.Drawing.Point(155, 21);
+            this.intercept.Location = new System.Drawing.Point(207, 26);
+            this.intercept.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.intercept.Name = "intercept";
-            this.intercept.Size = new System.Drawing.Size(155, 17);
+            this.intercept.Size = new System.Drawing.Size(189, 20);
             this.intercept.TabIndex = 0;
             this.intercept.Text = "Use Visual Studio shortcuts";
             this.intercept.UseVisualStyleBackColor = true;
@@ -72,9 +74,10 @@
             // autoInsertSingle
             // 
             this.autoInsertSingle.AutoSize = true;
-            this.autoInsertSingle.Location = new System.Drawing.Point(0, 32);
+            this.autoInsertSingle.Location = new System.Drawing.Point(0, 39);
+            this.autoInsertSingle.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.autoInsertSingle.Name = "autoInsertSingle";
-            this.autoInsertSingle.Size = new System.Drawing.Size(155, 17);
+            this.autoInsertSingle.Size = new System.Drawing.Size(190, 20);
             this.autoInsertSingle.TabIndex = 2;
             this.autoInsertSingle.Text = "Auto insert single suggetion";
             this.toolTip1.SetToolTip(this.autoInsertSingle, "Auto inster suggested autocompletion item \r\nif it is the only item in the suggest" +
@@ -84,9 +87,10 @@
             // vbSupport
             // 
             this.vbSupport.AutoSize = true;
-            this.vbSupport.Location = new System.Drawing.Point(119, 99);
+            this.vbSupport.Location = new System.Drawing.Point(159, 122);
+            this.vbSupport.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.vbSupport.Name = "vbSupport";
-            this.vbSupport.Size = new System.Drawing.Size(120, 17);
+            this.vbSupport.Size = new System.Drawing.Size(144, 20);
             this.vbSupport.TabIndex = 8;
             this.vbSupport.Text = "Support for VB.NET";
             this.toolTip1.SetToolTip(this.vbSupport, resources.GetString("vbSupport.ToolTip"));
@@ -96,9 +100,10 @@
             // useMethodBrackets
             // 
             this.useMethodBrackets.AutoSize = true;
-            this.useMethodBrackets.Location = new System.Drawing.Point(145, 56);
+            this.useMethodBrackets.Location = new System.Drawing.Point(193, 69);
+            this.useMethodBrackets.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.useMethodBrackets.Name = "useMethodBrackets";
-            this.useMethodBrackets.Size = new System.Drawing.Size(191, 17);
+            this.useMethodBrackets.Size = new System.Drawing.Size(231, 20);
             this.useMethodBrackets.TabIndex = 2;
             this.useMethodBrackets.Text = "End methods with an open bracket";
             this.useMethodBrackets.UseVisualStyleBackColor = true;
@@ -107,9 +112,10 @@
             // ignoreDocExceptions
             // 
             this.ignoreDocExceptions.AutoSize = true;
-            this.ignoreDocExceptions.Location = new System.Drawing.Point(145, 44);
+            this.ignoreDocExceptions.Location = new System.Drawing.Point(193, 54);
+            this.ignoreDocExceptions.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ignoreDocExceptions.Name = "ignoreDocExceptions";
-            this.ignoreDocExceptions.Size = new System.Drawing.Size(278, 17);
+            this.ignoreDocExceptions.Size = new System.Drawing.Size(339, 20);
             this.ignoreDocExceptions.TabIndex = 2;
             this.ignoreDocExceptions.Text = "Skip Exceptions section from the XML documentation";
             this.ignoreDocExceptions.UseVisualStyleBackColor = true;
@@ -118,9 +124,10 @@
             // formatAsYouType
             // 
             this.formatAsYouType.AutoSize = true;
-            this.formatAsYouType.Location = new System.Drawing.Point(0, 54);
+            this.formatAsYouType.Location = new System.Drawing.Point(0, 66);
+            this.formatAsYouType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.formatAsYouType.Name = "formatAsYouType";
-            this.formatAsYouType.Size = new System.Drawing.Size(142, 17);
+            this.formatAsYouType.Size = new System.Drawing.Size(175, 20);
             this.formatAsYouType.TabIndex = 2;
             this.formatAsYouType.Text = "Format code as you type";
             this.formatAsYouType.UseVisualStyleBackColor = true;
@@ -128,9 +135,10 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(12, 164);
+            this.linkLabel1.Location = new System.Drawing.Point(16, 202);
+            this.linkLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(120, 13);
+            this.linkLabel1.Size = new System.Drawing.Size(150, 16);
             this.linkLabel1.TabIndex = 4;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Edit settings file  instead";
@@ -150,17 +158,19 @@
             this.ContentPanel.Controls.Add(this.ignoreDocExceptions);
             this.ContentPanel.Controls.Add(this.intercept);
             this.ContentPanel.Controls.Add(this.formatAsYouType);
-            this.ContentPanel.Location = new System.Drawing.Point(13, 3);
+            this.ContentPanel.Location = new System.Drawing.Point(17, 4);
+            this.ContentPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ContentPanel.Name = "ContentPanel";
-            this.ContentPanel.Size = new System.Drawing.Size(290, 142);
+            this.ContentPanel.Size = new System.Drawing.Size(387, 194);
             this.ContentPanel.TabIndex = 5;
             // 
             // formatOnSave
             // 
             this.formatOnSave.AutoSize = true;
-            this.formatOnSave.Location = new System.Drawing.Point(0, 77);
+            this.formatOnSave.Location = new System.Drawing.Point(0, 95);
+            this.formatOnSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.formatOnSave.Name = "formatOnSave";
-            this.formatOnSave.Size = new System.Drawing.Size(99, 17);
+            this.formatOnSave.Size = new System.Drawing.Size(120, 20);
             this.formatOnSave.TabIndex = 3;
             this.formatOnSave.Text = "Format on save";
             this.formatOnSave.UseVisualStyleBackColor = true;
@@ -168,9 +178,10 @@
             // F12OnCtrlClick
             // 
             this.F12OnCtrlClick.AutoSize = true;
-            this.F12OnCtrlClick.Location = new System.Drawing.Point(0, 122);
+            this.F12OnCtrlClick.Location = new System.Drawing.Point(0, 150);
+            this.F12OnCtrlClick.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.F12OnCtrlClick.Name = "F12OnCtrlClick";
-            this.F12OnCtrlClick.Size = new System.Drawing.Size(227, 17);
+            this.F12OnCtrlClick.Size = new System.Drawing.Size(274, 20);
             this.F12OnCtrlClick.TabIndex = 2;
             this.F12OnCtrlClick.Text = "\"Go To Definition\" on mouse Ctrl+LeftClick";
             this.F12OnCtrlClick.UseVisualStyleBackColor = true;
@@ -178,9 +189,10 @@
             // useContextMenu
             // 
             this.useContextMenu.AutoSize = true;
-            this.useContextMenu.Location = new System.Drawing.Point(0, 99);
+            this.useContextMenu.Location = new System.Drawing.Point(0, 122);
+            this.useContextMenu.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.useContextMenu.Name = "useContextMenu";
-            this.useContextMenu.Size = new System.Drawing.Size(183, 17);
+            this.useContextMenu.Size = new System.Drawing.Size(223, 20);
             this.useContextMenu.TabIndex = 2;
             this.useContextMenu.Text = "Use Context Menu for commands";
             this.useContextMenu.UseVisualStyleBackColor = true;
@@ -188,9 +200,10 @@
             // roslynIntellisense
             // 
             this.roslynIntellisense.AutoSize = true;
-            this.roslynIntellisense.Location = new System.Drawing.Point(119, 77);
+            this.roslynIntellisense.Location = new System.Drawing.Point(159, 95);
+            this.roslynIntellisense.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.roslynIntellisense.Name = "roslynIntellisense";
-            this.roslynIntellisense.Size = new System.Drawing.Size(225, 17);
+            this.roslynIntellisense.Size = new System.Drawing.Size(273, 20);
             this.roslynIntellisense.TabIndex = 2;
             this.roslynIntellisense.Text = "C# 7 support (Roslyn) - Requires .NET 4.6";
             this.roslynIntellisense.UseVisualStyleBackColor = true;
@@ -199,9 +212,10 @@
             // roslynFormatter
             // 
             this.roslynFormatter.AutoSize = true;
-            this.roslynFormatter.Location = new System.Drawing.Point(163, 79);
+            this.roslynFormatter.Location = new System.Drawing.Point(217, 97);
+            this.roslynFormatter.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.roslynFormatter.Name = "roslynFormatter";
-            this.roslynFormatter.Size = new System.Drawing.Size(127, 17);
+            this.roslynFormatter.Size = new System.Drawing.Size(157, 20);
             this.roslynFormatter.TabIndex = 2;
             this.roslynFormatter.Text = "Use Roslyn Formatter";
             this.roslynFormatter.UseVisualStyleBackColor = true;
@@ -209,13 +223,14 @@
             // 
             // ConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 192);
+            this.ClientSize = new System.Drawing.Size(420, 236);
             this.Controls.Add(this.ContentPanel);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.KeyPreview = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "ConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "C# Intellisense Settings";

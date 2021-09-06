@@ -45,7 +45,7 @@ namespace CompatibilityTest
             Console.ReadLine();
         }
 
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             Console.WriteLine("Trying to resolve " + args.Name);
             return null;
