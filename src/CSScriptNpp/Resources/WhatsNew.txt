@@ -1,4 +1,4 @@
-Release v1.7.24
+Release v1.7.25.0
 ----
-- Updated deployment algorithm to handle another set of breaking changes in Notepad++ v7.6 hosting model (PluginAdmin compatible).
-- Fixed script startup problem with '|' character in the `DefaultRefAssemblies` value.
+- Added integration with .NET 5 edition of CS-Script.
+The script engine needs to be enabled from settings dialog (see "Enable .NET 5/Core integration") 
