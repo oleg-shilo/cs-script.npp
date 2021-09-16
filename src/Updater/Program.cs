@@ -32,7 +32,8 @@ namespace CSScriptNpp.Deployment
         {
             try
             {
-                // Debug.Assert(false);
+                if (Environment.GetEnvironmentVariable("CSS_NPP_UPDATE_DEBUG") != null)
+                     Debug.Assert(false);
 
                 // "C:\Users\osh\Downloads\CSScriptNpp.1.7.7.3.x64 (7).zip" "C:\Program Files\Notepad++\plugins\CSScriptNpp"
 
