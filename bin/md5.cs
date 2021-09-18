@@ -1,7 +1,7 @@
 //css_args /ac
-//css_inc cmd.cs
+////css_inc cmd.cs
 using System.Reflection;
-using System.Windows.Forms;
+// using System.Windows.Forms; 
 using System.IO;
 using System.Linq;
 using System;
@@ -15,7 +15,7 @@ void main(string[] args)
     // raw:       "\7825e05d694088b227db29fb9425669b *plugins\\CSScriptNpp.x64.dll"
     // processed: "7825e05d694088b227db29fb9425669b": "CSScriptNpp.x64.dll",
 
-    File.Copy(@"plugins\CSScriptNpp.x64.dll", @"plugins\CSScriptNpp\CSScriptNpp.dll", true);		
+    File.Copy(@"plugins\CSScriptNpp.x64.dll", @"plugins\CSScriptNpp\CSScriptNpp.dll", true);
     var result = run(md5_exe, @"plugins\CSScriptNpp\*.dll") +
                  run(md5_exe, @"plugins\CSScriptNpp\*.pdb") +
                  run(md5_exe, @"plugins\CSScriptNpp\*.exe") +

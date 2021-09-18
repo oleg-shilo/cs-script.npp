@@ -1,4 +1,7 @@
-Release v1.7.25.0
+Release v1.7.25.1
 ----
+v1.7.25
 - Added integration with .NET 5 edition of CS-Script.
 The script engine needs to be enabled from settings dialog (see "Enable .NET 5/Core integration") 
+v1.7.25.1
+- The process's TLS protocol is set to v1.2 to address "Check for updates" failures

@@ -32,7 +32,7 @@ namespace CSScriptNpp
 
             return new Distro
             {
-                Version = lines[0],
+                Version = lines[0].Replace("v", ""), // v1.1.1 vs 1.1.1
                 URL_root = lines[1],
                 ReleaseNotesText = lines.Skip(2).FirstOrDefault()
             };

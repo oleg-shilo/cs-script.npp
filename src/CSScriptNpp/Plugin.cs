@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -62,6 +63,7 @@ namespace CSScriptNpp
         {
             // System.Diagnostics.Debugger.Break();
 
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Environment.SetEnvironmentVariable("CSSCRIPT_CONSOLE_ENCODING_OVERWRITE", Config.Instance.CsSConsoleEncoding);
 
             int index = 0;

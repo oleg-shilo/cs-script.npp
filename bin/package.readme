@@ -1,7 +1,7 @@
 1.a Update Resources\WhatsNew.txt
 1.b Build Release
 
-2. Run package.cmd
+2. Run ..\src\package.cmd
 
 3. Commit the code but exclude (latest_version.txt)
 
@@ -10,6 +10,9 @@
 
 !!! IMPORTANT as it is used in "check for update" !!!
 5. Update and commit latest_version.txt
+
+Last release stats:
+https://tooomm.github.io/github-release-stats/?username=oleg-shilo&repository=cs-script.npp
 
 x64e
 ---------------------------------
