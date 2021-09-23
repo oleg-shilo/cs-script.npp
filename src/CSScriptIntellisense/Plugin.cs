@@ -97,15 +97,19 @@ namespace CSScriptIntellisense
                 foreach (var key in keysToIntercept)
                     KeyInterceptor.Instance.Add(key);
 
-                KeyInterceptor.Instance.Add(Keys.Up);
-                KeyInterceptor.Instance.Add(Keys.Down);
-                KeyInterceptor.Instance.Add(Keys.Right);
-                KeyInterceptor.Instance.Add(Keys.Left);
-                KeyInterceptor.Instance.Add(Keys.Tab);
-                KeyInterceptor.Instance.Add(Keys.R);
-                KeyInterceptor.Instance.Add(Keys.Return);
-                KeyInterceptor.Instance.Add(Keys.Escape);
-                KeyInterceptor.Instance.Add(Keys.Z);
+                KeyInterceptor.Instance
+                    .Add(Keys.Up,
+                         Keys.Down,
+                         Keys.Right,
+                         Keys.Left,
+                         Keys.Tab,
+                         Keys.R,
+                         Keys.Return,
+                         Keys.Escape,
+                         Keys.Z,
+                         Keys.Back,
+                         Keys.Delete);
+
                 KeyInterceptor.Instance.KeyDown += Instance_KeyDown;
             }
             else
@@ -248,6 +252,13 @@ namespace CSScriptIntellisense
                             break;
                         }
                     }
+            }
+
+            if (key == Keys.Back || key == Keys.Delete)
+            {
+                // a character on the left has been erased so the suggestion can be different now
+                if (autocompleteForm != null && autocompleteForm.Visible)
+                    Dispatcher.Schedule(100, ShowSuggestionList);
             }
 
             if (key == Keys.R && isScriptDoc)
@@ -1148,7 +1159,7 @@ namespace CSScriptIntellisense
                     {
                         if (hint != null)
                         {
-                            //Debug.WriteLine("Autocomplete hint: " + hint);
+                            // Debug.WriteLine("Autocomplete hint: " + hint);
                             autocompleteForm.FilterFor(hint);
                         }
                         else
@@ -1235,8 +1246,7 @@ namespace CSScriptIntellisense
                 }
                 else if (autocompleteForm != null && autocompleteForm.Visible)
                 {
-                    if (c >= ' ' || c == 8) //8 is backspace
-                        OnAutocompleteKeyPress(c);
+                    OnAutocompleteKeyPress(c);
                 }
                 else
                     SourceCodeFormatter.OnCharTyped(c);
