@@ -1,7 +1,7 @@
-Release v1.7.25.1
+Release v1.7.26.0
 ----
-v1.7.25
+v1.7.25-26
+- Fixed problem (inflicted by Scintilla update) with suggestion list not being updated on character removing
 - Added integration with .NET 5 edition of CS-Script.
 The script engine needs to be enabled from settings dialog (see "Enable .NET 5/Core integration") 
-v1.7.25.1
 - The process's TLS protocol is set to v1.2 to address "Check for updates" failures
