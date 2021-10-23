@@ -1,6 +1,8 @@
 # CS-Script Plugin (CSScript.Npp)   
 <img align="right" src="wiki/css_npp_logo_clear.png" alt="" style="float:right">
 
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://oleg-shilo.github.io/cs-script/Donation.html)
+
 [![Github All Releases](https://img.shields.io/github/downloads/oleg-shilo/cs-script.npp/total.svg)]()
 
 [Download latest release](https://github.com/oleg-shilo/cs-script.npp/releases)
