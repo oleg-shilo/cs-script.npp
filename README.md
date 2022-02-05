@@ -9,6 +9,20 @@
 
 *This Notepad++ plugin requires .NET v4.0 or higher.* 
 
+----
+
+### .NET Framework -> .NET  transition 
+
+_The current release of CS-Script targets .NET Core family runtime (.NET 6).<br> 
+CS-Script started targeting .NET 5+ about a year ago as .NET Framework further development has been efectively cancelled by teh .NET team._ 
+
+_Though Notepad++ CS-Script plugin is still shipped with the engine targeting by default .NET Framework. This is done as a reflection of the fact that many users of this plugin are still relying on .NET Framework.<br>_
+_However the plugin can be configured to use the .NET Core version of the script engine (you can install it from [here](https://github.com/oleg-shilo/cs-script/releases)). <br>_
+_The next version of the pluging will still maintain .NET Framework engine but by default will trry to auto integrate with .NET Core.
+And the next release after that will have the .NET Framework option only availabe as a manual configuration/deployment step._
+
+----
+
 Total downloads via Notepad++ Plugin Manager: Total Downloads Count: ![](http://www.csscript.net/statistics/css.npp.count.jpeg)            
 [Downloads Statistics](http://www.csscript.net/statistics/css.npp.stats.html)
 
