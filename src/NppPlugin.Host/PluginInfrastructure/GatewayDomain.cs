@@ -214,13 +214,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     [StructLayout(LayoutKind.Sequential)]
     public struct CharacterRange
     {
-        public CharacterRange(int cpmin, int cpmax)
+        public CharacterRange(IntPtr cpmin, IntPtr cpmax)
         {
             cpMin = cpmin; cpMax = cpmax;
         }
 
-        public int cpMin;
-        public int cpMax;
+        public IntPtr cpMin;
+        public IntPtr cpMax;
     }
 
     public class Cells
@@ -247,7 +247,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             _sciTextRange.lpstrText = Marshal.AllocHGlobal(stringCapacity);
         }
 
-        public TextRange(int cpmin, int cpmax, int stringCapacity)
+        public TextRange(IntPtr cpmin, IntPtr cpmax, int stringCapacity)
         {
             _sciTextRange.chrg.cpMin = cpmin;
             _sciTextRange.chrg.cpMax = cpmax;
