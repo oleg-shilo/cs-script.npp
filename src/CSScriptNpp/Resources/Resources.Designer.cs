@@ -19,7 +19,7 @@ namespace CSScriptNpp.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -642,15 +642,13 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Release v1.7.9.0
-        ///
-        ///* Updated CS-Script engine to v3.28.2  
-        ///* Issue #16: Impossible to hide CS-Script&apos;s main panel
-        ///* Added option to (config value `UseTogglingPanelVisibility`) to allow toggling mode for
-        /// &quot;Show Project Panel&quot; button. Toggling is the default mode. 
-        ///* Added killing Npp specific instances of VBCSCompiler.exe on editor shutdown.
-        ///* Fixed problem with breakpoints correct location being lost upon document formatting.
-        ///* Fixed packaging problem with css_dbg.pdb not being included in the distro [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Release v1.7.26.0
+        ///----
+        ///v1.7.25-26
+        ///- Fixed problem (inflicted by Scintilla update) with suggestion list not being updated on character removing
+        ///- Added integration with .NET 5 edition of CS-Script.
+        ///The script engine needs to be enabled from settings dialog (see &quot;Enable .NET 5/Core integration&quot;) 
+        ///- The process&apos;s TLS protocol is set to v1.2 to address &quot;Check for updates&quot; failures.
         /// </summary>
         internal static string WhatsNew {
             get {

@@ -12,7 +12,7 @@
     <AssemblyName>CSScriptNpp</AssemblyName>
     <StartupObject>
     </StartupObject>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
