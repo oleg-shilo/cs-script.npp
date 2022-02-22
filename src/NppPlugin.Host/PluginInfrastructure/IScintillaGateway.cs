@@ -806,6 +806,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         int GetTextRange(TextRange tr);
 
+        int GetTextRangeLegacy(TextRangeLegacy tr);
+
         /// <summary>Draw the selection in normal style or with selection highlighted. (Scintilla feature 2163)</summary>
         void HideSelection(bool normal);
 

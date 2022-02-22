@@ -1652,6 +1652,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             return (int)res;
         }
 
+        public int GetTextRangeLegacy(TextRangeLegacy tr)
+        {
+            IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTEXTRANGE, Unused, tr.NativePointer);
+            return (int)res;
+        }
+
         /// <summary>Draw the selection in normal style or with selection highlighted. (Scintilla feature 2163)</summary>
         public void HideSelection(bool normal)
         {

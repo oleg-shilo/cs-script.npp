@@ -223,6 +223,18 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public IntPtr cpMax;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CharacterRangeLegacy
+    {
+        public CharacterRangeLegacy(int cpmin, int cpmax)
+        {
+            cpMin = cpmin; cpMax = cpmax;
+        }
+
+        public int cpMin;
+        public int cpMax;
+    }
+
     public class Cells
     {
         char[] charactersAndStyles;
@@ -233,6 +245,67 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         }
 
         public char[] Value { get { return charactersAndStyles; } }
+    }
+
+    public class TextRangeLegacy : IDisposable
+    {
+        Sci_TextRange _sciTextRange;
+        IntPtr _ptrSciTextRange;
+        bool _disposed = false;
+
+        public TextRangeLegacy(CharacterRangeLegacy chrRange, int stringCapacity)
+        {
+            _sciTextRange.chrg = chrRange;
+            _sciTextRange.lpstrText = Marshal.AllocHGlobal(stringCapacity);
+        }
+
+        public TextRangeLegacy(int cpmin, int cpmax, int stringCapacity)
+        {
+            _sciTextRange.chrg.cpMin = cpmin;
+            _sciTextRange.chrg.cpMax = cpmax;
+            _sciTextRange.lpstrText = Marshal.AllocHGlobal(stringCapacity);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct Sci_TextRange
+        {
+            public CharacterRangeLegacy chrg;
+            public IntPtr lpstrText;
+        }
+
+        public IntPtr NativePointer { get { _initNativeStruct(); return _ptrSciTextRange; } }
+
+        public string lpstrText { get { _readNativeStruct(); return Marshal.PtrToStringAnsi(_sciTextRange.lpstrText); } }
+
+        public CharacterRangeLegacy chrg { get { _readNativeStruct(); return _sciTextRange.chrg; } set { _sciTextRange.chrg = value; _initNativeStruct(); } }
+
+        void _initNativeStruct()
+        {
+            if (_ptrSciTextRange == IntPtr.Zero)
+                _ptrSciTextRange = Marshal.AllocHGlobal(Marshal.SizeOf(_sciTextRange));
+            Marshal.StructureToPtr(_sciTextRange, _ptrSciTextRange, false);
+        }
+
+        void _readNativeStruct()
+        {
+            if (_ptrSciTextRange != IntPtr.Zero)
+                _sciTextRange = (Sci_TextRange)Marshal.PtrToStructure(_ptrSciTextRange, typeof(Sci_TextRange));
+        }
+
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                if (_sciTextRange.lpstrText != IntPtr.Zero) Marshal.FreeHGlobal(_sciTextRange.lpstrText);
+                if (_ptrSciTextRange != IntPtr.Zero) Marshal.FreeHGlobal(_ptrSciTextRange);
+                _disposed = true;
+            }
+        }
+
+        ~TextRangeLegacy()
+        {
+            Dispose();
+        }
     }
 
     public class TextRange : IDisposable

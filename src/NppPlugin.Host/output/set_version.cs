@@ -12,19 +12,20 @@ void main(string[] args)
 {
     if (args.Length < 2)
     {
-        Console.WriteLine("Usage: cscs set_version <product> <version>");
+        Console.WriteLine("Usage: cscs set_version <product> <version> <original_version>");
     }
     else
     {
         var product = args[0];
         var version = args[1];
+        var originalVersion = args[2];
 
-        patch("NppPlugin.x86.dll", product + ".x86.dll", version);
-        patch("NppPlugin.x64.dll", product + ".x64.dll", version);
+        patch("NppPlugin.x86.dll", product + ".x86.dll", version, originalVersion);
+        patch("NppPlugin.x64.dll", product + ".x64.dll", version, originalVersion);
     }
 }
 
-void patch(string src, string dest, string version)
+void patch(string src, string dest, string version, string originalVersion)
 {
     src = Path.GetFullPath(src);
     dest = Path.GetFullPath(dest);
@@ -44,7 +45,7 @@ void patch(string src, string dest, string version)
                         .Replace("{LegalCopyright}", info.LegalCopyright)
                         .Replace("{LegalTrademarks}", info.LegalTrademarks)
                         // .Replace("{OriginalFilename}", info.OriginalFilename)
-                        .Replace("{OriginalFilename}", Path.GetFileName(dest))
+                        .Replace("{OriginalFilename}", Path.GetFileName(dest)+"-v"+originalVersion)
                         .Replace("{ProductName}", info.ProductName)
                         .Replace("{ProductVersion}", version)
                         .Replace("{AssemblyVersion}", version);

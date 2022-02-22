@@ -31,6 +31,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public static NppData nppData;
         public static FuncItems _funcItems = new FuncItems();
 
+        static public int[] GetNppVersion()
+        {
+            IntPtr version = Win32.SendMessage(Editor.Handle, (uint)NppMsg.NPPM_GETNPPVERSION, 0, 0);
+
+            int major = unchecked((short)((long)version >> 16));
+            int minor = unchecked((short)(long)version);
+
+            return new[] { major, minor };
+        }
+
         public static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer)
         {
             SetCommand(index, commandName, functionPointer, new ShortcutKey(), false);
