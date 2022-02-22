@@ -1,9 +1,9 @@
-using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptIntellisense
 {

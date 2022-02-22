@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using CSScriptIntellisense;
+using CSScriptIntellisense.Interop;
 using CSScriptLibrary;
 using CSScriptNpp.Dialogs;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using CSScriptIntellisense.Interop;
 using Kbg.NppPluginNET.PluginInfrastructure;
-using System.Runtime.InteropServices;
 
 namespace CSScriptNpp
 {
@@ -166,9 +166,9 @@ namespace CSScriptNpp
                                 this.historyBtn.DropDownItems.Remove(item);
 
                                 var scripts = Config.Instance.ScriptHistory.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
-                                                                          .Distinct()
-                                                                          .Where(x => x != script)
-                                                                          .ToArray();
+                                                                           .Distinct()
+                                                                           .Where(x => x != script)
+                                                                           .ToArray();
 
                                 Config.Instance.ScriptHistory = string.Join("|", scripts);
                                 Config.Instance.Save();
@@ -234,8 +234,13 @@ namespace CSScriptNpp
                 if (!File.Exists(newScript))
                 {
                     File.WriteAllText(newScript, scriptCode);
-
-                    PluginBase.Editor.Open(newScript);
+                    try
+                    {
+                        PluginBase.Editor.Open(newScript);
+                    }
+                    catch
+                    {
+                    }
                     PluginBase.GetCurrentDocument().GrabFocus();
 
                     loadBtn.PerformClick();

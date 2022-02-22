@@ -1,14 +1,14 @@
-﻿using Intellisense.Common;
-using CSScriptIntellisense.Interop;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Res = CSScriptIntellisense.Images;
+using CSScriptIntellisense.Interop;
+using Intellisense.Common;
 using Kbg.NppPluginNET.PluginInfrastructure;
+using Res = CSScriptIntellisense.Images;
 
 namespace CSScriptIntellisense
 {
@@ -221,8 +221,8 @@ namespace CSScriptIntellisense
                 else
                 {
                     if (key == Keys.Enter ||
-                       (key == Keys.Right && Config.Instance.UseArrowToAccept) ||
-                       (key == Keys.Tab && Config.Instance.UseTabToAccept))
+                        (key == Keys.Right && Config.Instance.UseArrowToAccept) ||
+                        (key == Keys.Tab && Config.Instance.UseTabToAccept))
                     {
                         OnAutocompletionAccepted(selectedSuggestion as ICompletionData);
                         Dispatcher.Schedule(10, Close);

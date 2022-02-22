@@ -4,7 +4,7 @@ echo(
 echo Patching host assemblies with the version info...
 
 rem  properly rename x86 and x64 host DLLs
-cscs -l ..\src\tools\set_host_version.cs
+cscs -l -dbg ..\src\tools\set_host_version.cs 
 
 echo(
 echo Clearing old files...
@@ -27,13 +27,13 @@ xcopy "..\src\output\plugins" ".\plugins" /s /Y
 del ".\plugins\original_*"
 del ".\plugins\*.zip"
 
+
 move latest_version.txt latest_version.txt_                         >nul 2>&1
 move latest_version.pre.txt latest_version.pre.txt_                 >nul 2>&1
 move latest_version_dbg.txt latest_version_dbg.txt_                 >nul 2>&1
 
+rem goto exit
 cd plugins
-
-del CSScriptNpp\CSScriptNpp.dll
 
 copy CSScriptNpp.x86.dll CSScriptNpp.dll
 "C:\Program Files\7-Zip\7z.exe" a ..\CSScriptNpp.x86.zip  *.dll -x!CSScriptNpp.*.dll CSScriptNpp
@@ -57,3 +57,4 @@ move latest_version.pre.txt_ latest_version.pre.txt                 >nul 2>&1
 move latest_version_dbg.txt_ latest_version_dbg.txt                 >nul 2>&1
 
 pause
+:exit

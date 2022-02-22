@@ -1,7 +1,8 @@
-Release v1.7.26.0
+Release v1.7.27.0
 ----
-v1.7.25-26
-- Fixed problem (inflicted by Scintilla update) with suggestion list not being updated on character removing
-- Added integration with .NET 5 edition of CS-Script.
-The script engine needs to be enabled from settings dialog (see "Enable .NET 5/Core integration") 
-- The process's TLS protocol is set to v1.2 to address "Check for updates" failures
+v1.7.27
+- Patched NppPluginNet: `CharacterRange.cpMin` and `CharacterRange.cpMax` changed from `int` to `IntPtr`
+  This addresses the problems triggered by this the third-party component (NppPluginNet):
+  - Issue #64: Creating a new script crashes latest 64-bit Notepad++ release
+  - Issue #65: Intermittent crashes (and the culprit is CS-Script)
+- Added logging syntaxer internal errors to the plugin log dir.

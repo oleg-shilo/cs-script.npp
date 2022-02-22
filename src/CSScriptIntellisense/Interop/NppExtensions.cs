@@ -1,4 +1,3 @@
-using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptIntellisense
 {
@@ -74,11 +74,7 @@ namespace CSScriptIntellisense
             if (end == -1)
                 end = document.GetLength();
 
-            using (var tr = new TextRange(start, end, end - start + 1)) //+1 for null termination
-            {
-                document.GetTextRange(tr);
-                return tr.lpstrText;
-            }
+            return document.get_text_range(start, end, end - start + 1); //+1 for null termination
         }
 
         static public string TextBeforePosition(this IScintillaGateway document, int position, int maxLength)
@@ -91,13 +87,7 @@ namespace CSScriptIntellisense
             int size = currentPos - startPos;
 
             if (size > 0)
-            {
-                using (var tr = new TextRange(startPos, currentPos, bufCapacity))
-                {
-                    document.GetTextRange(tr);
-                    return tr.lpstrText;
-                }
-            }
+                return document.get_text_range(startPos, currentPos, bufCapacity);
             else
                 return null;
         }
@@ -459,15 +449,41 @@ namespace CSScriptIntellisense
             int size = endPos - startPos;
 
             if (size > 0)
-            {
-                using (var tr = new TextRange(startPos, endPos, bufCapacity))
+                return document.get_text_range(startPos, endPos, bufCapacity);
+            else
+                return null;
+        }
+
+        static string get_text_range(this IScintillaGateway document, int startPos, int endPos, int bufCapacity)
+        {
+            var version = PluginBase.GetNppVersion();
+
+            // starting from v8.31 N++ uses Scintilla interface with TextRange min and max members as `IntPtr`
+            // while previously they were `int`. If a wrong type passed N++ just crashes.
+
+            bool newNppVersion;
+            if (version[0] > 8) // major version
+                newNppVersion = true;
+            else if (version[0] == 8)
+                newNppVersion = version[1] >= 31; // minor version
+            else
+                newNppVersion = false;
+
+            if (Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API") != null)
+                newNppVersion = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API").ToLower() == "true";
+
+            if (newNppVersion)
+                using (var tr = new TextRange((IntPtr)startPos, (IntPtr)endPos, bufCapacity))
                 {
                     document.GetTextRange(tr);
                     return tr.lpstrText;
                 }
-            }
             else
-                return null;
+                using (var tr = new TextRangeLegacy(startPos, endPos, bufCapacity))
+                {
+                    document.GetTextRangeLegacy(tr);
+                    return tr.lpstrText;
+                }
         }
 
         /// <summary>

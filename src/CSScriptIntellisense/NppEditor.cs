@@ -1,8 +1,8 @@
-using Kbg.NppPluginNET.PluginInfrastructure;
-using Mono.CSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Kbg.NppPluginNET.PluginInfrastructure;
+using Mono.CSharp;
 
 namespace CSScriptIntellisense
 {

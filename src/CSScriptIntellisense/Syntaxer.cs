@@ -1,4 +1,3 @@
-using Intellisense.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Intellisense.Common;
 using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
@@ -277,6 +277,8 @@ namespace CSScriptIntellisense
 
                 string response = action(tempFile);
 
+                LogAnyErrors(response);
+
                 if (fixTempFileInsertions != null)
                     response = fixTempFileInsertions(response);
 
@@ -326,7 +328,17 @@ namespace CSScriptIntellisense
                                .ToArray();
                 }
                 catch { }
+
             return new Intellisense.Common.MemberInfoData[0];
+        }
+
+        public static void LogAnyErrors(string data)
+        {
+            if (data?.StartsWith("<error>") == true)
+            {
+                string logFile = Path.Combine(PluginEnv.LogDir, "last_syntaxer_error.txt");
+                File.WriteAllText(logFile, data);
+            }
         }
 
         public static Intellisense.Common.TypeInfo[] ToTypeInfos(this string data)
