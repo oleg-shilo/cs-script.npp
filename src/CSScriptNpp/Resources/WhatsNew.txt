@@ -1,8 +1,9 @@
-Release v1.7.27.0
+Release v1.7.28.0
 ----
-v1.7.27
+v1.7.28
 - Patched NppPluginNet: `CharacterRange.cpMin` and `CharacterRange.cpMax` changed from `int` to `IntPtr`
   This addresses the problems triggered by this the third-party component (NppPluginNet):
   - Issue #64: Creating a new script crashes latest 64-bit Notepad++ release
   - Issue #65: Intermittent crashes (and the culprit is CS-Script)
+- Added transparent switching to the new NPP API depending on the version: v8.2.1<->v8.3.1 (triggered by #64 and #65)
 - Added logging syntaxer internal errors to the plugin log dir.
