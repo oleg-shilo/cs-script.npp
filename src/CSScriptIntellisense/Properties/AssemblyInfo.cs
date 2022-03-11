@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyDescription("'CS-Script Intellisense' is a real C# intellisense solution based on CS-Script and ICSharpCode.NRefactory/Mono.Cecil. \r\n" +
-                                "It is a part of the complete CS-Script Notepad++ plugin 'CSScriptNpp'")]
+                               "It is a part of the complete CS-Script Notepad++ plugin 'CSScriptNpp'")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.7.8.0")]
-[assembly: AssemblyFileVersion("1.7.8.0")]
+[assembly: AssemblyVersion("1.7.29.0")]
+[assembly: AssemblyFileVersion("1.7.29.0")]

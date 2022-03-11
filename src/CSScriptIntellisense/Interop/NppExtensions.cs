@@ -458,14 +458,14 @@ namespace CSScriptIntellisense
         {
             var version = PluginBase.GetNppVersion();
 
-            // starting from v8.31 N++ uses Scintilla interface with TextRange min and max members as `IntPtr`
+            // starting from v8.30 N++ uses Scintilla interface with TextRange min and max members as `IntPtr`
             // while previously they were `int`. If a wrong type passed N++ just crashes.
 
             bool newNppVersion;
             if (version[0] > 8) // major version
                 newNppVersion = true;
             else if (version[0] == 8)
-                newNppVersion = version[1] >= 31; // minor version
+                newNppVersion = version[1] >= 30; // minor version
             else
                 newNppVersion = false;
 
