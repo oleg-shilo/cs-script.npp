@@ -1,8 +1,4 @@
-﻿using CSScriptIntellisense;
-using CSScriptIntellisense.Interop;
-using CSScriptNpp.Dialogs;
-using Kbg.NppPluginNET.PluginInfrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -12,6 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using CSScriptIntellisense;
+using CSScriptIntellisense.Interop;
+using CSScriptNpp.Dialogs;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 // ToDo
 // - osh-ubook (work) does not debug
@@ -272,10 +272,10 @@ namespace CSScriptNpp
             }
 
             Dispatcher.Schedule(10, () =>
-             {
-                 if (OnBreakpointChanged != null)
-                     OnBreakpointChanged();
-             });
+            {
+                if (OnBreakpointChanged != null)
+                    OnBreakpointChanged();
+            });
         }
 
         public static void OnCurrentFileChanged()
@@ -630,19 +630,19 @@ namespace CSScriptNpp
                 }
                 else if (message.StartsWith(NppCategory.CallStack))
                 {
-                    Plugin.GetDebugPanel().UpdateCallstack(message.Substring(NppCategory.CallStack.Length));
+                    // Plugin.GetDebugPanel().UpdateCallstack(message.Substring(NppCategory.CallStack.Length));
                 }
                 else if (message.StartsWith(NppCategory.Threads))
                 {
-                    Plugin.GetDebugPanel().UpdateThreads(message.Substring(NppCategory.Threads.Length));
+                    // Plugin.GetDebugPanel().UpdateThreads(message.Substring(NppCategory.Threads.Length));
                 }
                 else if (message.StartsWith(NppCategory.Modules))
                 {
-                    Plugin.GetDebugPanel().UpdateModules(message.Substring(NppCategory.Modules.Length));
+                    // Plugin.GetDebugPanel().UpdateModules(message.Substring(NppCategory.Modules.Length));
                 }
                 else if (message.StartsWith(NppCategory.Locals))
                 {
-                    Plugin.GetDebugPanel().UpdateLocals(message.Substring(NppCategory.Locals.Length));
+                    // Plugin.GetDebugPanel().UpdateLocals(message.Substring(NppCategory.Locals.Length));
                     NotifyOnDebugStepChanges(); // !!! remove
                 }
                 else if (message.StartsWith(NppCategory.SourceCode))

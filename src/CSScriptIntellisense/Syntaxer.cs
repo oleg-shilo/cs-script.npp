@@ -22,16 +22,14 @@ namespace CSScriptIntellisense
     public class Syntaxer
     {
         public static string syntaxerDir;
-        public static string defaultCscsFile;
-        public static string activeCscsFile;
-        public static string defaultSyntaxerFile => syntaxerDir.PathJoin("syntaxer.exe");
-        public static string customSyntaxerFile;
 
-        public static string CscsFile => customSyntaxerFile.HasText() ? "" : defaultCscsFile;
-        public static string SyntaxerFile => customSyntaxerFile.HasText() ? customSyntaxerFile : defaultSyntaxerFile;
+        public static Func<string> cscs_asm;
+        public static Func<string> syntaxer_asm;
+        public static Func<int> syntaxer_port;
 
-        // public static string cscsFile;
-        public static int port = 18001;
+        internal static string CscsFile => cscs_asm();
+        internal static string SyntaxerFile => syntaxer_asm();
+        internal static int SyntaxerPort => syntaxer_port();
 
         static int timeout = 60000;
         static int procId = Process.GetCurrentProcess().Id;
@@ -66,8 +64,8 @@ namespace CSScriptIntellisense
                         p.StartInfo.CreateNoWindow = true;
                         p.StartInfo.RedirectStandardOutput = true;
                         p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                        p.StartInfo.FileName = SyntaxerFile;
-                        p.StartInfo.Arguments = $"-listen -port:{port} -timeout:{timeout}";
+                        p.StartInfo.FileName = "dotnet";
+                        p.StartInfo.Arguments = $"\"{SyntaxerFile}\" -listen -port:{SyntaxerPort} -timeout:{timeout}";
 
                         if (CscsFile.HasText())
                             p.StartInfo.Arguments += $" \"-cscs_path:{CscsFile}\"";
@@ -76,7 +74,7 @@ namespace CSScriptIntellisense
                     }
                     else
                     {
-                        var args = $"-listen -port:{port} -timeout:{timeout}" + (CscsFile.HasText() ? "" : $" \"-cscs_path:{CscsFile}\"");
+                        var args = $"-listen -port:{SyntaxerPort} -timeout:{timeout}" + (CscsFile.HasText() ? "" : $" \"-cscs_path:{CscsFile}\"");
                         Process.Start(SyntaxerFile, args);
                     }
                 });
@@ -211,7 +209,7 @@ namespace CSScriptIntellisense
             {
                 using (var clientSocket = new TcpClient())
                 {
-                    clientSocket.Connect(IPAddress.Loopback, port);
+                    clientSocket.Connect(IPAddress.Loopback, SyntaxerPort);
                     clientSocket.WriteAllText(command);
                     return clientSocket.ReadAllText();
                 };

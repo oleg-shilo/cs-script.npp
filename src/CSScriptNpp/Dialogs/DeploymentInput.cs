@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace CSScriptNpp
@@ -38,20 +38,14 @@ namespace CSScriptNpp
         {
             InitializeComponent();
 
-            if (CSScriptHelper.IsUsingCSScriptCore)
-                try
-                {
-                    versionsList.Items.Add(new RuntimeVersionItem { Version = $"v5.0", DispalyTitle = ".NET 5/Core" });
-                    versionsList.SelectedIndex = 0;
-                    windowApp.Enabled = false;
-                    windowApp.Checked = false;
-                }
-                catch { }
-            else
+            try
             {
-                versionsList.Items.Add(new RuntimeVersionItem { Version = "v4.0.30319", DispalyTitle = "CLR v4.0 (.NET v4.0, v4.5)" });
-                versionsList.Items.Add(new RuntimeVersionItem { Version = "v2.0.50727", DispalyTitle = "CLR v2.0 (.NET v2.0, v3.0, v3.5)" });
+                versionsList.Items.Add(new RuntimeVersionItem { Version = $"v5.0", DispalyTitle = ".NET 5/Core" });
+                versionsList.SelectedIndex = 0;
+                windowApp.Enabled = false;
+                windowApp.Checked = false;
             }
+            catch { }
 
             versionsList.SelectedItem = Versions.Where(x => x.Version == Config.Instance.TargetVersion)
                                                 .FirstOrDefault();
@@ -91,10 +85,7 @@ namespace CSScriptNpp
 
         private void asExe_CheckedChanged(object sender, EventArgs e)
         {
-            if(CSScriptHelper.IsUsingCSScriptCore)
             windowApp.Enabled = false;
-            else
-            windowApp.Enabled = asExe.Checked;
         }
     }
 }

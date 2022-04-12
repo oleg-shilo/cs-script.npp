@@ -201,7 +201,7 @@
     <Compile Include="Intellisense.Tests\Snippets.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Intellisense.Tests\ReferenceResolving.cs" />
-    <Compile Include="Intellisense.Tests\Mono.Tests\MonoReflector.cs" />
+    <None Include="Intellisense.Tests\Mono.Tests\MonoReflector.cs" />
     <Compile Include="TestData\Script.cs" />
     <Compile Include="Intellisense.Tests\StringManipulation.cs" />
     <Compile Include="TestData\TestClasses.cs" />

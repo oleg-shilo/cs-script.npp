@@ -71,12 +71,12 @@ namespace CSScriptNpp
             //'_' prefix in the shortcutName means "plugin action shortcut" as opposite to "plugin key interceptor action"
             SetCommand(projectPanelId = index++, "Build (validate)", Build, "_BuildFromMenu:Ctrl+Shift+B");
             SetCommand(projectPanelId = index++, "Run", Run, "_Run:F5");
-            SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
-            SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
+            // SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
+            // SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
             PluginBase.SetCommand(index++, "---", null);
             PluginBase.SetCommand(projectPanelId = index++, "Project Panel", InitProjectPanel);
             PluginBase.SetCommand(outputPanelId = index++, "Output Panel", ToggleOutputPanel);
-            PluginBase.SetCommand(debugPanelId = index++, "Debug Panel", ToggleDebugPanel);
+            // PluginBase.SetCommand(debugPanelId = index++, "Debug Panel", ToggleDebugPanel);
             PluginBase.SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
 
@@ -366,15 +366,6 @@ namespace CSScriptNpp
             }
         }
 
-        static public DebugPanel DebugPanel
-        {
-            get
-            {
-                InitDebugPanel();
-                return debugPanel;
-            }
-        }
-
         static public void InitOutputPanel()
         {
             if (Plugin.outputPanel == null)
@@ -390,23 +381,6 @@ namespace CSScriptNpp
             SetDockedPanelVisible(dockedManagedPanels[outputPanelId], outputPanelId, !currentlyVisible);
         }
 
-        static public void InitDebugPanel()
-        {
-            if (Plugin.debugPanel == null)
-                Plugin.debugPanel = ShowDockablePanel<DebugPanel>("Debug", debugPanelId, NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR);
-
-            Application.DoEvents();
-        }
-
-        static public void ToggleDebugPanel()
-        {
-            var currentlyVisible = (Plugin.debugPanel?.Visible == true);
-            InitDebugPanel();
-            SetDockedPanelVisible(dockedManagedPanels[debugPanelId], debugPanelId, !currentlyVisible);
-
-            Application.DoEvents();
-        }
-
         static public void Repaint()
         {
             if (CSScriptNpp.Plugin.ProjectPanel != null)
@@ -419,11 +393,6 @@ namespace CSScriptNpp
                 CSScriptNpp.Plugin.outputPanel.Refresh();
         }
 
-        static public DebugPanel GetDebugPanel()
-        {
-            return Plugin.DebugPanel;
-        }
-
         static public ProjectPanel GetProjectPanel()
         {
             if (Plugin.ProjectPanel == null)
@@ -434,7 +403,6 @@ namespace CSScriptNpp
         static public void ShowSecondaryPanels()
         {
             Plugin.SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
-            Plugin.SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
         }
 
         static public void EnsureOutputPanelVisible()
@@ -489,23 +457,15 @@ namespace CSScriptNpp
                     InitOutputPanel();
                     SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
                 }
-                else if (OutputPanelVisible && !DebugPanelVisible)
-                {
-                    InitDebugPanel();
-                    SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
-                }
                 else if (OutputPanelVisible && DebugPanelVisible)
                 {
                     SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, false);
-                    SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, false);
                 }
                 else
                 {
                     //Config.Instance.ShowOutputPanel
                     InitOutputPanel();
                     SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
-                    InitDebugPanel();
-                    SetDockedPanelVisible(Plugin.DebugPanel, debugPanelId, true);
                 }
             }
         }
@@ -637,15 +597,9 @@ namespace CSScriptNpp
         {
             try
             {
-                if (Config.Instance.UseRoslynProvider)
+                using (var m = new Mutex(true, "cs-script.build.stop"))
                 {
-                    var roslyn_compiler_patern = Bootstrapper.dependenciesDirRoot.PathJoin("*", "VBCSCompiler.exe");
-
-                    var plugin_dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                    string restarter = plugin_dir.PathJoin("launcher.exe");
-
-                    try { Process.Start(restarter, "-kill_process:" + roslyn_compiler_patern); }
-                    catch { }
+                    Thread.Sleep(200);
                 }
             }
             catch { }
@@ -661,9 +615,6 @@ namespace CSScriptNpp
 
                 if (Config.Instance.ShowOutputPanel)
                     InitOutputPanel();
-
-                if (Config.Instance.ShowDebugPanel)
-                    InitDebugPanel();
             }
 
             Task.Factory.StartNew(() =>
@@ -738,7 +689,7 @@ namespace CSScriptNpp
             if (CodeMapPanel != null)
                 CodeMapPanel.RefreshContent();
 
-            if (Npp.Editor.IsCurrentDocScriptFile() && Config.Instance.UseRoslynProvider && Config.Instance.StartRoslynServerAtNppStartup)
+            if (Npp.Editor.IsCurrentDocScriptFile() && Config.Instance.StartRoslynServerAtNppStartup)
             {
                 CSScriptHelper.InitRoslyn();
             }

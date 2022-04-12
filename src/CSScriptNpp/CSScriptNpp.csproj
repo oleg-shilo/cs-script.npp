@@ -229,9 +229,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CSScriptLibrary">
-      <HintPath>CSScriptNpp\CSScriptLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="NppPlugin.host">
       <HintPath>..\NppPlugin.Host\output\NppPlugin.host.dll</HintPath>
     </Reference>
@@ -602,7 +599,8 @@ copy "$(ProjectDir)$(ProjectName)\MDbg\NativeDebugWrappers.dll" "$(SolutionDir)o
 copy "$(ProjectDir)$(ProjectName)\MDbg\npp.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\npp.dll"
 copy "$(ProjectDir)$(ProjectName)\MDbg\raw.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\raw.dll"
 
-</PostBuildEvent>
+copy "$(TargetPath)" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptNpp.dll"
+copy "$(TargetDir)\CSScriptIntellisense.dll" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptIntellisense.dll"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

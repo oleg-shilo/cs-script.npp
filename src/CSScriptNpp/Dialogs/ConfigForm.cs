@@ -34,7 +34,6 @@ namespace CSScriptNpp
             generalPage.Controls.Add(panel.ContentPanel);
 
             checkUpdates.Checked = data.CheckUpdatesOnStartup;
-            useCS6.Checked = data.UseRoslynProvider;
 
             installedEngineLocation.Text = CSScriptHelper.SystemCSScriptDir ?? "<not detected>";
             installedEngineLocation.SelectionStart = installedEngineLocation.Text.Length - 1;
@@ -45,27 +44,21 @@ namespace CSScriptNpp
             restorePanels.Checked = data.RestorePanelsAtStartup;
 
             RefreshUseCustomLauncherCmd(data.UseCustomLauncher);
-            useCustomLauncher.Checked = !data.UseCustomLauncher.IsEmpty() && data.UseCustomLauncher != defaultLauncher;
 
-            if (!data.UseEmbeddedEngine)
-            {
-                if (data.UseCustomEngine.IsEmpty())
-                {
-                    installedEngine.Checked = true;
-                }
-                else
-                {
-                    customEngine.Checked = true;
-                    customEngineLocation.Text = data.UseCustomEngine;
-                }
-            }
-            customSyntaxer.Checked = data.CustomSyntaxer;
-            customSyntaxerExe.Text = data.CustomSyntaxerExe;
-            syntaxerPort.Text = data.SyntaxerPort.ToString();
-            customSyntaxerExe.ReadOnly = !customSyntaxer.Checked;
+            customEngineLocation.Text = data.CustomEngineAsm;
+            customSyntaxerExe.Text = data.CustomSyntaxerAsm;
+            syntaxerPort.Text = data.CustomSyntaxerPort.ToString();
+
+            if (customEngineLocation.Text.IsEmpty() && CSScriptHelper.IsCSScriptInstalled)
+                customEngineLocation.Text = CSScriptHelper.SystemCSScriptDir.PathJoin("cscs.dll");
+
+            if (customSyntaxerExe.Text.IsEmpty() && CSScriptHelper.IsCSSyntaxerInstalled)
+                customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.dll");
 
             cssInstallCmd.Text = CSScriptHelper.InstallCssCmd;
             cssyntaxerInstallCmd.Text = CSScriptHelper.InstallCsSyntaxerCmd;
+
+            customLocationBtn_CheckedChanged(null, null);
         }
 
         bool skipSavingConfig = false;
@@ -80,28 +73,17 @@ namespace CSScriptNpp
             data.ScriptsDir = scriptsDir.Text;
             //data.UseRoslynProvider = useCS6.Checked;
             //all Roslyn individual config values are merged into RoslynIntellisense;
-            data.UseRoslynProvider = CSScriptIntellisense.Config.Instance.RoslynIntellisense;
             data.VbSupportEnabled = CSScriptIntellisense.Config.Instance.VbSupportEnabled;
 
-            if (customEngine.Checked)
-            {
-                data.UseCustomEngine = customEngineLocation.Text;
-            }
-            else
-            {
-                data.UseCustomEngine = "";
-                CSScriptHelper.SynchAutoclssDecorationSettings(useCS6.Checked);
-            }
+            data.CustomEngineAsm = customEngineLocation.Text;
+            data.CustomSyntaxerAsm = customSyntaxerExe.Text;
 
-            data.CustomSyntaxer = customSyntaxer.Checked;
-            data.CustomSyntaxerExe = customSyntaxerExe.Text;
             if (int.TryParse(syntaxerPort.Text, out int port))
             {
-                data.SyntaxerPort = port;
+                data.CustomSyntaxerPort = port;
             }
 
-            Bootstrapper.DeploySyntaxer();
-            CSScriptIntellisense.Syntaxer.RestartServer();
+            Runtime.Init();
 
             if (this.useCustomLauncher.Checked)
                 data.UseCustomLauncher = useCustomLauncherCmd.Text;
@@ -141,11 +123,6 @@ namespace CSScriptNpp
             });
 
             Close();
-        }
-
-        void engine_CheckedChanged(object sender, EventArgs e)
-        {
-            customEngineLocation.ReadOnly = !customEngine.Checked;
         }
 
         void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -206,11 +183,6 @@ namespace CSScriptNpp
             Close();
         }
 
-        private void customSyntaxer_CheckedChanged(object sender, EventArgs e)
-        {
-            customSyntaxerExe.ReadOnly = !customSyntaxer.Checked;
-        }
-
         private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
@@ -254,42 +226,33 @@ namespace CSScriptNpp
 
         private void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: false);
 
-        private void enableNetCore_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void autodetect_Click(object sender, EventArgs e)
         {
             if (CSScriptHelper.IsCSScriptInstalled && CSScriptHelper.IsCSSyntaxerInstalled)
             {
-                // use installed CS-Script for script execution
-                installedEngine.Checked = true;
-
-                // use installed syntaxer for Intellisense
-                data.UseRoslynProvider = true;
-                customSyntaxer.Checked = true;
-                customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.exe");
-
-                MessageBox.Show("The changes will take the full effect after restarting Notepad++", "CS-Script");
+                customEngineLocation.Text = CSScriptHelper.SystemCSScriptDir.PathJoin("cscs.dll");
+                customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.dll");
             }
             else
             {
-                var message = "The required services are not fully available or require update:\n";
+                string error = "The following dependencies could not be found:\n\n";
+                if (!CSScriptHelper.IsCSScriptInstalled)
+                    error += "CS-Script\n";
+                if (!CSScriptHelper.IsCSSyntaxerInstalled)
+                    error += "Syntaxer\n";
 
-                if (CSScriptHelper.SystemCSScriptDir.IsEmpty())
-                    message += "  CS-Script: not installed\n";
-                else
-                    message += "  CS-Script: installed\n";
-
-                if (CSScriptHelper.SystemCSSyntaxerDir.IsEmpty())
-                    message += "  Syntaxer: not installed\n";
-                else
-                    message += "  Syntaxer: installed\n";
-
-                message +=
-                    "\nDeploy/Update the services from the Update tab and then " +
-                    "try to enable .NET Core integration again.";
-
-                MessageBox.Show(message, "CS-Script");
-
-                contentControl.SelectedIndex = 2;
+                error += "\nYou can try to install them from the `Update` tab of this dialog";
+                MessageBox.Show(error, "CS-Script");
             }
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void customLocationBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            customLocationsGroup.Enabled = customLocationBtn.Checked;
         }
     }
 }

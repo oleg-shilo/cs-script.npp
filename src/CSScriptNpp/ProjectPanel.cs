@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSScriptIntellisense;
 using CSScriptIntellisense.Interop;
-using CSScriptLibrary;
 using CSScriptNpp.Dialogs;
 using Kbg.NppPluginNET.PluginInfrastructure;
 
@@ -420,11 +419,11 @@ void main(string[] args)
 
                                 if (Config.Instance.InterceptConsole)
                                 {
-                                    CSScriptHelper.Execute(currentScript, OnRunStart, OnConsoleObjectOut);
+                                    CSScriptHelper.ExecuteScript(currentScript, OnRunStart, OnConsoleObjectOut);
                                 }
                                 else
                                 {
-                                    CSScriptHelper.Execute(currentScript, OnRunStart);
+                                    CSScriptHelper.ExecuteScript(currentScript, OnRunStart);
                                 }
                             }
                             catch (Exception e)
@@ -460,65 +459,66 @@ void main(string[] args)
 
         public void Debug(bool breakOnFirstStep)
         {
-            Plugin.InitDebugPanel();
+            return;
+            // Plugin.InitDebugPanel();
 
-            if (currentScript == null)
-                loadBtn.PerformClick();
+            // if (currentScript == null)
+            //     loadBtn.PerformClick();
 
-            if (currentScript == null)
-            {
-                MessageBox.Show("Please load some script file first.", "CS-Script");
-            }
-            else
-            {
-                PluginBase.Editor.SaveCurrentFile();
+            // if (currentScript == null)
+            // {
+            //     MessageBox.Show("Please load some script file first.", "CS-Script");
+            // }
+            // else
+            // {
+            //     PluginBase.Editor.SaveCurrentFile();
 
-                bool canCompile = CSScriptHelper.Verify(currentScript);
+            //     bool canCompile = CSScriptHelper.Verify(currentScript);
 
-                if (!canCompile)
-                {
-                    Build();
-                }
-                else
-                {
-                    Plugin.ShowOutputPanel().ShowDebugOutput().Clear();
+            //     if (!canCompile)
+            //     {
+            //         Build();
+            //     }
+            //     else
+            //     {
+            //         Plugin.ShowOutputPanel().ShowDebugOutput().Clear();
 
-                    Task.Factory.StartNew(() =>
-                    {
-                        try
-                        {
-                            string entryFile = CSScriptHelper.GetEntryFileName(currentScript);
-                            Debugger.ScriptFile = currentScript;
+            //         Task.Factory.StartNew(() =>
+            //         {
+            //             try
+            //             {
+            //                 string entryFile = CSScriptHelper.GetEntryFileName(currentScript);
+            //                 Debugger.ScriptFile = currentScript;
 
-                            bool isX86 = false;
-                            bool isSurrogateHost = CSScriptHelper.IsSurrogateHosted(currentScript, ref isX86);
-                            if (isSurrogateHost)
-                            {
-                                var scriptAsm = CSScript.GetCachedScriptPath(currentScript);
-                                var debuggingHost = scriptAsm + ".host.exe";
-                                Debugger.Start(debuggingHost, scriptAsm, isX86 ? Debugger.CpuType.x86 : Debugger.CpuType.x64);
-                            }
-                            else
-                            {
-                                string targetType = Debugger.DebugAsConsole ? CSScriptHelper.cscs_exe : CSScriptHelper.csws_exe;
-                                string debuggingHost = Path.Combine(PluginEnv.PluginDir, "css_dbg.exe");
-                                Debugger.Start(debuggingHost, string.Format("\"{0}\" /d /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs(currentScript)), Debugger.CpuType.Any);
-                            }
+            //                 bool isX86 = false;
+            //                 bool isSurrogateHost = CSScriptHelper.IsSurrogateHosted(currentScript, ref isX86);
+            //                 if (isSurrogateHost)
+            //                 {
+            //                     var scriptAsm = CSScript.GetCachedScriptPath(currentScript);
+            //                     var debuggingHost = scriptAsm + ".host.exe";
+            //                     Debugger.Start(debuggingHost, scriptAsm, isX86 ? Debugger.CpuType.x86 : Debugger.CpuType.x64);
+            //                 }
+            //                 else
+            //                 {
+            //                     string targetType = Debugger.DebugAsConsole ? CSScriptHelper.cscs_dll : CSScriptHelper.csws_exe;
+            //                     string debuggingHost = Path.Combine(PluginEnv.PluginDir, "css_dbg.exe");
+            //                     Debugger.Start(debuggingHost, string.Format("\"{0}\" /d /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs(currentScript)), Debugger.CpuType.Any);
+            //                 }
 
-                            if (breakOnFirstStep)
-                            {
-                                Debugger.EntryBreakpointFile = entryFile ?? currentScript;
-                            }
+            //                 if (breakOnFirstStep)
+            //                 {
+            //                     Debugger.EntryBreakpointFile = entryFile ?? currentScript;
+            //                 }
 
-                            RefreshControls();
-                        }
-                        catch (Exception e)
-                        {
-                            Plugin.OutputPanel.DebugOutput.WriteLine(e.Message);
-                        }
-                    });
-                }
-            }
+            //                 RefreshControls();
+            //             }
+            //             catch (Exception e)
+            //             {
+            //                 Plugin.OutputPanel.DebugOutput.WriteLine(e.Message);
+            //             }
+            //         });
+            //     }
+            // }
         }
 
         public void OpenInVS()
@@ -577,18 +577,6 @@ void main(string[] args)
 
             foreach (char c in buf)
                 Plugin.OutputPanel.ConsoleOutput.WriteConsoleChar(c);
-        }
-
-        void Job()
-        {
-            try
-            {
-                CSScript.CompileFile(currentScript, null, false);
-            }
-            catch (Exception ex)
-            {
-                Environment.SetEnvironmentVariable("CSS_COMPILE_ERROR", ex.Message);
-            }
         }
 
         public void Build()
@@ -868,7 +856,95 @@ void main(string[] args)
                         treeView1.EndUpdate();
 
                         currentScript = scriptFile;
-                        CSScriptIntellisense.Plugin.EnsureCurrentFileParsed();
+                        // CSScriptIntellisense.Plugin.EnsureCurrentFileParsed();
+
+                        var history = Config.Instance.ScriptHistory.Split('|').ToList();
+                        history.Remove(scriptFile);
+                        history.Insert(0, scriptFile);
+
+                        Config.Instance.ScriptHistory = string.Join("|", history.Take(Config.Instance.SciptHistoryMaxCount).ToArray());
+                        Config.Instance.Save();
+                        ReloadScriptHistory();
+                    }
+                    catch (Exception e)
+                    {
+                        //it is not a major use-case so doesn't matter why we failed
+                        MessageBox.Show("Cannot load script.\nError: " + e.Message, "CS-Script");
+                        e.LogAsError();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Script '" + scriptFile + "' does not exist.", "CS-Script");
+            }
+            RefreshControls();
+        }
+
+        public void LoadScript_Old(string scriptFile)
+        {
+            if (!string.IsNullOrWhiteSpace(scriptFile) && File.Exists(scriptFile))
+            {
+                if (!scriptFile.IsScriptFile())
+                {
+                    MessageBox.Show("The file type '" + Path.GetExtension(scriptFile) + "' is not supported.", "CS-Script");
+                }
+                else
+                {
+                    try
+                    {
+                        Npp.Editor.OpenFile(scriptFile, true);
+
+                        Project project = CSScriptHelper.GenerateProjectFor(scriptFile);
+
+                        /*
+                        root
+                        references
+                           assembly_1
+                           assembly_2
+                           assembly_n
+                        script_1
+                        script_2
+                        script_N
+                        */
+
+                        treeView1.BeginUpdate();
+                        treeView1.Nodes.Clear();
+
+                        TreeNode root = treeView1.Nodes.Add("Script '" + Path.GetFileNameWithoutExtension(scriptFile) + "'");
+                        TreeNode references = root.Nodes.Add("References");
+
+                        root.SelectedImageIndex =
+                        root.ImageIndex = scriptFile.IsVbFile() ? scriptVbImage : scriptImage;
+                        references.SelectedImageIndex =
+                        references.ImageIndex = assemblyImage;
+
+                        root.ContextMenuStrip = solutionContextMenu;
+                        root.ToolTipText = "Script: " + scriptFile;
+
+                        Action<TreeNode, string[]> populateNode =
+                            (node, files) =>
+                            {
+                                foreach (var file in files)
+                                {
+                                    int imageIndex = includeImage;
+                                    var info = new ProjectItem(file) { IsPrimary = (file == project.PrimaryScript) };
+                                    if (info.IsPrimary)
+                                        imageIndex = file.IsVbFile() ? scriptVbImage : scriptImage;
+                                    if (info.IsAssembly)
+                                        imageIndex = assemblyImage;
+                                    node.Nodes.Add(new TreeNode(info.Name) { ImageIndex = imageIndex, SelectedImageIndex = imageIndex, Tag = info, ToolTipText = file, ContextMenuStrip = itemContextMenu });
+                                };
+                            };
+
+                        populateNode(references, project.Assemblies);
+                        populateNode(root, project.SourceFiles);
+                        root.Expand();
+
+                        treeView1.EndUpdate();
+
+                        currentScript = scriptFile;
+                        // CSScriptIntellisense.Plugin.EnsureCurrentFileParsed();
 
                         var history = Config.Instance.ScriptHistory.Split('|').ToList();
                         history.Remove(scriptFile);
@@ -1028,19 +1104,7 @@ void main(string[] args)
                             npp.SaveDocuments(GetProjectDocuments());
 
                             string selectedTargetVersion = dialog.SelectedVersion.Version;
-                            string path = CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp, dialog.AsDll);
-
-                            if (path != null)
-                            {
-                                if (!CSScriptHelper.IsUsingCSScriptCore)
-                                {
-                                    string pluginClrVersion = "v" + Environment.Version.ToString();
-
-                                    if (dialog.AsScript && !pluginClrVersion.StartsWith(selectedTargetVersion)) //selectedTargetVersion may not include the build number
-                                        MessageBox.Show("Distribution package targets CLR version, which is different from the default version.\r\nPlease verify that the script is compatible with the selected CLR version.", "CS-Script");
-                                }
-                                Process.Start("explorer.exe", path);
-                            }
+                            CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp, dialog.AsDll);
                         }
             }
             catch (Exception ex)

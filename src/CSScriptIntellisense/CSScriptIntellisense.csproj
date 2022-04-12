@@ -66,7 +66,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="CSharpIntellisense\MonoCompletionEngine.cs" />
+    <None Include="CSharpIntellisense\MonoCompletionEngine.cs" />
     <Compile Include="CSharpIntellisense\CssCompletionData.cs" />
     <Compile Include="CSharpIntellisense\NRefactoryExtensions.cs" />
     <Compile Include="CSharpIntellisense\RoslynCompletionEngine.cs" />
@@ -149,10 +149,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CSScriptLibrary, Version=3.8.13.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.NRefactory, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\LineMan\LineMan\CSharpIntellisence\ICSharpCode.NRefactory.dll</HintPath>
@@ -160,10 +156,6 @@
     <Reference Include="ICSharpCode.NRefactory.CSharp, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\LineMan\LineMan\CSharpIntellisence\ICSharpCode.NRefactory.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\gittest\csscriptnpp\src\CSScriptIntellisense\CSharpIntellisense\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="NppPlugin.host">
       <HintPath>..\NppPlugin.Host\output\NppPlugin.host.dll</HintPath>

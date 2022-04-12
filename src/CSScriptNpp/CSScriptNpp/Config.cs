@@ -1,7 +1,7 @@
-using CSScriptIntellisense;
 using System;
 using System.Diagnostics;
 using System.IO;
+using CSScriptIntellisense;
 
 namespace CSScriptNpp
 {
@@ -42,7 +42,7 @@ namespace CSScriptNpp
         public bool InterceptConsole = true;
         public bool InterceptConsoleByCharacter = false;
         public bool UseEmbeddedEngine = true;
-        public string UseCustomEngine = "";
+        public string CustomEngineAsm = "";
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
 
@@ -59,22 +59,18 @@ namespace CSScriptNpp
         public string VSProjectTemplatePath = "";
         public bool CheckUpdatesOnStartup = true;
         public bool CheckPrereleaseUpdates = false;
-        public bool UseRoslynProvider = true;
         public bool VbSupportEnabled = true;
         public bool RestorePanelsAtStartup = true;
         public string UseCustomLauncher = "";
-        public bool CustomSyntaxer = false;
-        public string CustomSyntaxerExe = "";
-        public int SyntaxerPort = 18001;
+        public string CustomSyntaxerAsm = "";
+        public int CustomSyntaxerPort = 18001;
         public bool StartRoslynServerAtNppStartup = true;
         public bool ImproveWin10ListVeiwRendering = true;
         public bool HideDefaultAssemblies = true;
         public bool WordWrapInVisualizer = true;
         public bool ListManagedProcessesOnly = true;
-        public bool RunExternalInDebugMode = true;
         public bool StartDebugMonitorOnScriptExecution = false;
         public string BlockLocalDebugOutputContaining = @"onecoreuap\inetcore\{NL}mincore\com\{NL}SHIMVIEW: ShimInfo(Complete)";
-        public string CustomAsyncHost = "";
         public bool SyncSecondaryPanelsWithProjectPanel = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
         public string TargetVersion = "v4.0.30319";
@@ -122,10 +118,8 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(ShowDebugPanel), ShowDebugPanel);
                     SetValue(Section, nameof(WordWrapInVisualizer), WordWrapInVisualizer);
                     SetValue(Section, nameof(ListManagedProcessesOnly), ListManagedProcessesOnly);
-                    SetValue(Section, nameof(RunExternalInDebugMode), RunExternalInDebugMode);
                     SetValue(Section, nameof(StartDebugMonitorOnScriptExecution), StartDebugMonitorOnScriptExecution);
                     SetValue(Section, nameof(BlockLocalDebugOutputContaining), BlockLocalDebugOutputContaining);
-                    SetValue(Section, nameof(CustomAsyncHost), CustomAsyncHost, forceWriting: true);
                     SetValue(Section, nameof(SyncSecondaryPanelsWithProjectPanel), SyncSecondaryPanelsWithProjectPanel);
                     SetValue(Section, nameof(OutputPanelCapacity), OutputPanelCapacity);
                     SetValue(Section, nameof(HotkeyDocumentsExclusions), HotkeyDocumentsExclusions);
@@ -134,7 +128,7 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(InterceptConsole), InterceptConsole);
                     SetValue(Section, nameof(InterceptConsoleByCharacter), InterceptConsoleByCharacter);
                     SetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
-                    SetValue(Section, nameof(UseCustomEngine), UseCustomEngine);
+                    SetValue(Section, nameof(CustomEngineAsm), CustomEngineAsm);
                     SetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
                     SetValue(Section, nameof(ScriptHistory), ScriptHistory);
                     SetValue(Section, nameof(DebugStepPointColor), DebugStepPointColor);
@@ -155,15 +149,13 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                     SetValue(Section, nameof(VbCodeProvider), VbCodeProvider, true);
                     SetValue(Section, nameof(ScriptsDir), ScriptsDir);
-                    SetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider, true);
                     SetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                     SetValue(Section, nameof(HideDefaultAssemblies), HideDefaultAssemblies);
                     SetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                     SetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher, true);
-                    SetValue(Section, nameof(CustomSyntaxer), CustomSyntaxer);
-                    SetValue(Section, nameof(CustomSyntaxerExe), CustomSyntaxerExe);
-                    SetValue(Section, nameof(SyntaxerPort), SyntaxerPort);
+                    SetValue(Section, nameof(CustomSyntaxerAsm), CustomSyntaxerAsm);
+                    SetValue(Section, nameof(CustomSyntaxerPort), CustomSyntaxerPort);
                     SetValue(Section, nameof(UpdateMode), UpdateMode);
                     SetValue(Section, nameof(VSProjectTemplatePath), VSProjectTemplatePath);
                     SetValue(Section, nameof(FloatingPanelsWarningAlreadyPropted), FloatingPanelsWarningAlreadyPropted);
@@ -203,10 +195,8 @@ namespace CSScriptNpp
                 HandleSaveAs = GetValue(Section, nameof(HandleSaveAs), HandleSaveAs);
                 WordWrapInVisualizer = GetValue(Section, nameof(WordWrapInVisualizer), WordWrapInVisualizer);
                 ListManagedProcessesOnly = GetValue(Section, nameof(ListManagedProcessesOnly), ListManagedProcessesOnly);
-                RunExternalInDebugMode = GetValue(Section, nameof(RunExternalInDebugMode), RunExternalInDebugMode);
                 StartDebugMonitorOnScriptExecution = GetValue(Section, nameof(StartDebugMonitorOnScriptExecution), StartDebugMonitorOnScriptExecution);
                 BlockLocalDebugOutputContaining = GetValue(Section, nameof(BlockLocalDebugOutputContaining), BlockLocalDebugOutputContaining);
-                CustomAsyncHost = GetValue(Section, nameof(CustomAsyncHost), CustomAsyncHost);
                 SyncSecondaryPanelsWithProjectPanel = GetValue(Section, nameof(SyncSecondaryPanelsWithProjectPanel), SyncSecondaryPanelsWithProjectPanel);
                 ShowDebugPanel = GetValue(Section, nameof(ShowDebugPanel), ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
                 //ShowDebugPanel = GetValue(Section, nameof(ShowDebugPanel), ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
@@ -223,7 +213,7 @@ namespace CSScriptNpp
                 InterceptConsole = GetValue(Section, nameof(InterceptConsole), InterceptConsole);
                 InterceptConsoleByCharacter = GetValue(Section, nameof(InterceptConsoleByCharacter), InterceptConsoleByCharacter);
                 UseEmbeddedEngine = GetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
-                UseCustomEngine = GetValue(Section, nameof(UseCustomEngine), UseCustomEngine);
+                CustomEngineAsm = GetValue(Section, nameof(CustomEngineAsm), CustomEngineAsm);
                 //QuickViewAutoRefreshAvailable = GetValue(Section, nameof(QuickViewAutoRefreshAvailable), QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
                 LocalDebug = GetValue(Section, nameof(LocalDebug), LocalDebug);
                 TargetVersion = GetValue(Section, nameof(TargetVersion), TargetVersion);
@@ -244,13 +234,10 @@ namespace CSScriptNpp
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                 ScriptsDir = GetValue(Section, nameof(ScriptsDir), ScriptsDir);
                 VbCodeProvider = GetValue(Section, nameof(VbCodeProvider), VbCodeProvider);
-                UseRoslynProvider = GetValue(Section, nameof(UseRoslynProvider), UseRoslynProvider);
                 StartRoslynServerAtNppStartup = GetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
-                UseCustomLauncher = GetValue(Section, nameof(UseCustomLauncher), UseCustomLauncher);
-                CustomSyntaxer = GetValue(Section, nameof(CustomSyntaxer), CustomSyntaxer);
-                CustomSyntaxerExe = GetValue(Section, nameof(CustomSyntaxerExe), CustomSyntaxerExe);
-                SyntaxerPort = GetValue(Section, nameof(SyntaxerPort), SyntaxerPort);
+                CustomSyntaxerAsm = GetValue(Section, nameof(CustomSyntaxerAsm), CustomSyntaxerAsm);
+                CustomSyntaxerPort = GetValue(Section, nameof(CustomSyntaxerPort), CustomSyntaxerPort);
                 ImproveWin10ListVeiwRendering = GetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
                 HideDefaultAssemblies = GetValue(Section, nameof(HideDefaultAssemblies), HideDefaultAssemblies);
                 UpdateMode = GetValue(Section, nameof(UpdateMode), UpdateMode);

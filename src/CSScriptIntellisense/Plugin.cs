@@ -12,8 +12,8 @@ using System.Windows.Forms;
 using CSScriptIntellisense.Interop;
 using Intellisense.Common;
 using Kbg.NppPluginNET.PluginInfrastructure;
-using UltraSharp.Cecil;
 using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
+using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
@@ -412,7 +412,7 @@ namespace CSScriptIntellisense
                         //Somehow timing matters. Most likely it's be fixed in the Roslyn production release.
                         Thread.Sleep(100);
                         Npp.Editor.SaveCurrentFile();
-                        EnsureCurrentFileParsed();
+                        // EnsureCurrentFileParsed();
                         references = FindAllReferencesAtCaret();
                     }
 
@@ -727,7 +727,7 @@ namespace CSScriptIntellisense
 
                     CSScriptHelper.DecorateIfRequired(ref text, ref pos);
 
-                    EnsureCurrentFileParsed();
+                    // EnsureCurrentFileParsed();
 
                     int methodStartPosTemp;
 
@@ -1184,7 +1184,6 @@ namespace CSScriptIntellisense
         {
             parsedFiles.Clear();
             currentFile = null;
-            EnsureCurrentFileParsedAsynch();
         }
 
         static string[] mustBeAssignedWithLitterals = "var,string,String,bool,byte,sbyte,char,decimal,double,float,int,uint,long,ulong,short,ushort,Byte,SByte,Char,Decimal,Double,Single,Int32,UInt32,Int64,UInt64,Int16,UInt16,IntPtr".Split(',');
@@ -1259,8 +1258,6 @@ namespace CSScriptIntellisense
         {
             if (Plugin.Enabled)
             {
-                Plugin.EnsureCurrentFileParsedAsynch();
-
                 if (!Config.Instance.DisableMethodInfo)
                 {
                     memberInfoPopup.Enabled = Npp.Editor.IsCurrentDocScriptFile();
@@ -1275,7 +1272,6 @@ namespace CSScriptIntellisense
             mouseHook.MouseLClick += MouseHook_MouseLClick;
             mouseHook.Install();
 
-            Plugin.EnsureCurrentFileParsedAsynch();
             Snippets.Init();
         }
 
@@ -1298,11 +1294,11 @@ namespace CSScriptIntellisense
             }
         }
 
-        static public void EnsureCurrentFileParsedAsynch()
-        {
-            if (Plugin.Enabled)
-                Task.Factory.StartNew(EnsureCurrentFileParsed);
-        }
+        // static public void EnsureCurrentFileParsedAsynch()
+        // {
+        //     if (Plugin.Enabled)
+        //         Task.Factory.StartNew(EnsureCurrentFileParsed);
+        // }
 
         static public Func<string> ResolveCurrentFile = Npp.Editor.GetCurrentFilePath; //the implementation can be injected by the host or other plugins. To be used in the future.
         static public Action<string> DisplayInOutputPanel = Npp.Editor.DisplayInNewDocument; //the implementation can be injected by the host or other plugins. To be used in the future.
@@ -1325,64 +1321,64 @@ namespace CSScriptIntellisense
                 currentSourcesStates.Add(file, File.GetLastWriteTimeUtc(file));
         }
 
-        static public void EnsureCurrentFileParsed()
-        {
-            if (Plugin.Enabled)
-                lock (typeof(Plugin))
-                {
-                    try
-                    {
-                        string file = ResolveCurrentFile();
+        // static public void EnsureCurrentFileParsed()
+        // {
+        //     if (Plugin.Enabled)
+        //         lock (typeof(Plugin))
+        //         {
+        //             try
+        //             {
+        //                 string file = ResolveCurrentFile();
 
-                        if (string.IsNullOrWhiteSpace(file) || !file.IsScriptFile())
-                            return;
+        //                 if (string.IsNullOrWhiteSpace(file) || !file.IsScriptFile())
+        //                     return;
 
-                        int newCssHash = -1;
-                        //when to regenerate the project:
-                        // - not initialized yet
-                        // - new file which is not a part of the 'current' project
-                        // - the current file changed and saved with the new set of CS-Script instructions (for multi-file mode only)
-                        if (currentFile == null ||
-                            (currentFile != file && !parsedFiles.Contains(file)) ||
-                            (!SingleFileMode && CurrentSourcesChanged()) ||
-                            (!SingleFileMode && currentFileTimestamp != File.GetLastWriteTime(file) && currentFileCssHash != (newCssHash = NppEditor.GetCssHash(file))))
-                        {
-                            currentFile = file;
-                            currentFileCssHash = (newCssHash != -1) ? newCssHash : NppEditor.GetCssHash(file);
-                            currentFileTimestamp = File.GetLastWriteTime(file);
+        //                 int newCssHash = -1;
+        //                 //when to regenerate the project:
+        //                 // - not initialized yet
+        //                 // - new file which is not a part of the 'current' project
+        //                 // - the current file changed and saved with the new set of CS-Script instructions (for multi-file mode only)
+        //                 if (currentFile == null ||
+        //                     (currentFile != file && !parsedFiles.Contains(file)) ||
+        //                     (!SingleFileMode && CurrentSourcesChanged()) ||
+        //                     (!SingleFileMode && currentFileTimestamp != File.GetLastWriteTime(file) && currentFileCssHash != (newCssHash = NppEditor.GetCssHash(file))))
+        //                 {
+        //                     currentFile = file;
+        //                     currentFileCssHash = (newCssHash != -1) ? newCssHash : NppEditor.GetCssHash(file);
+        //                     currentFileTimestamp = File.GetLastWriteTime(file);
 
-                            Tuple<string[], string[]> project = CSScriptHelper.GetProjectFiles(file);
+        //                     Tuple<string[], string[]> project = CSScriptHelper.GetProjectFiles(file);
 
-                            string[] sourceFiles = project.Item1;
-                            string[] assemblyFiles = project.Item2;
+        //                     string[] sourceFiles = project.Item1;
+        //                     string[] assemblyFiles = project.Item2;
 
-                            NoteCurrentSourcesStates(sourceFiles);
+        //                     NoteCurrentSourcesStates(sourceFiles);
 
-                            var sourcesInfos = new List<Tuple<string, string>>();
+        //                     var sourcesInfos = new List<Tuple<string, string>>();
 
-                            if (SingleFileMode)
-                            {
-                                string code = Npp.GetCurrentDocument().GetTextBetween(0, npp.DocEnd);
-                                CSScriptHelper.DecorateIfRequired(ref code);
-                                sourcesInfos.Add(new Tuple<string, string>(code, file));
-                            }
-                            else
-                            {
-                                foreach (string srcFile in sourceFiles)
-                                {
-                                    string code = File.ReadAllText(srcFile);
-                                    if (srcFile == currentFile)
-                                        CSScriptHelper.DecorateIfRequired(ref code);
-                                    sourcesInfos.Add(new Tuple<string, string>(code, srcFile));
-                                }
-                            }
+        //                     if (SingleFileMode)
+        //                     {
+        //                         string code = Npp.GetCurrentDocument().GetTextBetween(0, npp.DocEnd);
+        //                         CSScriptHelper.DecorateIfRequired(ref code);
+        //                         sourcesInfos.Add(new Tuple<string, string>(code, file));
+        //                     }
+        //                     else
+        //                     {
+        //                         foreach (string srcFile in sourceFiles)
+        //                         {
+        //                             string code = File.ReadAllText(srcFile);
+        //                             if (srcFile == currentFile)
+        //                                 CSScriptHelper.DecorateIfRequired(ref code);
+        //                             sourcesInfos.Add(new Tuple<string, string>(code, srcFile));
+        //                         }
+        //                     }
 
-                            SimpleCodeCompletion.ResetProject(sourcesInfos.ToArray(), assemblyFiles);
-                        }
-                    }
-                    catch { }
-                }
-        }
+        //                     SimpleCodeCompletion.ResetProject(sourcesInfos.ToArray(), assemblyFiles);
+        //                 }
+        //             }
+        //             catch { }
+        //         }
+        // }
 
         static void WithTextAtCaret(Action<string, int, string> action)
         {
@@ -1390,9 +1386,6 @@ namespace CSScriptIntellisense
             string file = Npp.Editor.GetCurrentFilePath();
             string text = document.GetTextBetween(0, npp.DocEnd);
             int currentPos = document.GetCurrentPos();
-
-            CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
-            EnsureCurrentFileParsed();
 
             action(text, currentPos, file);
         }
@@ -1466,7 +1459,7 @@ namespace CSScriptIntellisense
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
-            EnsureCurrentFileParsed();
+            // EnsureCurrentFileParsed();
 
             var actualStart = currentPos - currentPosOffset; //after the decoration currentPos is changed so the line start
 
@@ -1492,8 +1485,6 @@ namespace CSScriptIntellisense
 
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
-            EnsureCurrentFileParsed();
-
             return SimpleCodeCompletion.GetMissingUsings(text, currentPos, file);
         }
 
@@ -1515,7 +1506,6 @@ namespace CSScriptIntellisense
 
             var decorated = CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
 
-            EnsureCurrentFileParsed();
             DomRegion result = SimpleCodeCompletion.ResolveMember(text, currentPos, file);
 
             if (decorated && result.FileName == file)

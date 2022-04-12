@@ -37,10 +37,10 @@ namespace CSScriptNpp
             try
             {
                 //It is extremely important to ensure that at this point DebugPanel is created.
-                //If not it will be created automatically on debugger message handling from the non-GUI thread 
-                //of the Debugger message. And in result N++ and one of its docked panes will belong to different 
+                //If not it will be created automatically on debugger message handling from the non-GUI thread
+                //of the Debugger message. And in result N++ and one of its docked panes will belong to different
                 //threads and N++ will hang.
-                Plugin.GetDebugPanel();
+                // Plugin.GetDebugPanel();
                 Plugin.ShowOutputPanel()
                       .ClearAllDefaultOutputs()
                       .ShowDebugOutput();
@@ -88,10 +88,10 @@ namespace CSScriptNpp
             try
             {
                 //It is extremely important to ensure that at this point DebugPanel is created.
-                //If not it will be created automatically on debugger message handling from the non-GUI thread 
-                //of the Debugger message. And in result N++ and one of its docked panes will belong to different 
+                //If not it will be created automatically on debugger message handling from the non-GUI thread
+                //of the Debugger message. And in result N++ and one of its docked panes will belong to different
                 //threads and N++ will hang.
-                Plugin.GetDebugPanel();
+                // Plugin.GetDebugPanel();
                 Plugin.ShowOutputPanel()
                       .ClearAllDefaultOutputs()
                       .ShowDebugOutput();
@@ -146,7 +146,7 @@ namespace CSScriptNpp
                         {
                             var li = new ListViewItem(values[0]);//name
                             li.SubItems.Add(values[1]); //id
-                            li.SubItems.Add(values[2]); //cpu   
+                            li.SubItems.Add(values[2]); //cpu
                             li.SubItems.Add(values[3]); //runtime
                             li.SubItems.Add(values[4]); //title
                             li.Tag = int.Parse(values[1]);

@@ -1,6 +1,4 @@
-﻿using CSScriptLibrary;
-using Kbg.NppPluginNET.PluginInfrastructure;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -9,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
@@ -117,13 +116,13 @@ namespace CSScriptNpp
             Output retval = null;
 
             this.InUiThread(() =>
-               {
-                   foreach (OutputInfo item in outputType.Items)
-                       if (item.Name == name)
-                       {
-                           retval = item.Output;
-                       }
-               });
+                {
+                    foreach (OutputInfo item in outputType.Items)
+                        if (item.Name == name)
+                        {
+                            retval = item.Output;
+                        }
+                });
 
             return retval;
         }
@@ -321,7 +320,7 @@ namespace CSScriptNpp
                 //if (dbMonPath == null || !File.Exists(dbMonPath) || !Utils.IsSameTimestamp(Assembly.GetExecutingAssembly().Location, dbMonPath))
                 if (dbMonPath == null || !File.Exists(dbMonPath))
                 {
-                    dbMonPath = Path.Combine(CSScript.GetScriptTempDir(), "CSScriptNpp\\DbMon.exe");
+                    dbMonPath = Path.Combine(CSScriptHelper.GetScriptTempDir(), "CSScriptNpp\\DbMon.exe");
                     try
                     {
                         var dir = Path.GetDirectoryName(dbMonPath);
@@ -693,23 +692,23 @@ namespace CSScriptNpp
         public void ScrollToView()
         {
             control.InUiThread(() =>
-               {
-                   if (control.Text != null && control.Text.Length > 0)
-                   {
-                       control.SelectionStart = control.Text.Length - 1;
-                       control.SelectionLength = 0;
-                       control.ScrollToCaret();
-                   }
-               }, true);
+                {
+                    if (control.Text != null && control.Text.Length > 0)
+                    {
+                        control.SelectionStart = control.Text.Length - 1;
+                        control.SelectionLength = 0;
+                        control.ScrollToCaret();
+                    }
+                }, true);
         }
 
         public Output Clear()
         {
             control.InUiThread(() =>
-               {
-                   control.Text = null;
-                   caretPos = 0;
-               }, true);
+                {
+                    control.Text = null;
+                    caretPos = 0;
+                }, true);
             return this;
         }
 

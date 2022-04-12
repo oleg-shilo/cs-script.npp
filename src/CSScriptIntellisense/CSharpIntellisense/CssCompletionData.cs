@@ -1,8 +1,8 @@
-using Intellisense.Common;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Intellisense.Common;
 
 namespace CSScriptIntellisense
 {
@@ -119,7 +119,8 @@ Examples:
     //css_dir packages\\**"
             },
 
-            new CssCompletionData {
+            new CssCompletionData
+            {
                 CompletionText = "css_nuget", DisplayText="//css_nuget",
                 Description =
 @"'Reference NuGet package' CS-Script directive
@@ -142,7 +143,7 @@ Examples:
             if (CSScriptHelper.GetEngineExe() == null)
                 return null;
 
-            string file = Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes", "cs-script." + typeof(CSScriptLibrary.CSScript).Assembly.GetName().Version + ".help.txt");
+            string file = Path.Combine(Path.GetTempPath(), "CSScriptNpp\\ReflctedTypes", "cs-script.help.txt");
 
             if (!File.Exists(file))
             {

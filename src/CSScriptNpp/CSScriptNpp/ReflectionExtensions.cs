@@ -40,6 +40,11 @@ namespace CSScriptNpp
                 return new Uri(path).AbsoluteUri;
         }
 
+        public static string PathJoin(this Environment.SpecialFolder folder, params object[] items)
+        {
+            return Path.Combine(new[] { Environment.GetFolderPath(folder) }.Concat(items.Select(x => x?.ToString())).ToArray());
+        }
+
         public static string PathJoin(this string path, params string[] items)
         {
             return Path.Combine(new[] { path }.Concat(items).ToArray());

@@ -1,10 +1,10 @@
-﻿using CSScriptIntellisense.Interop;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using CSScriptIntellisense.Interop;
 
 namespace CSScriptNpp
 {
@@ -284,7 +284,7 @@ namespace CSScriptNpp
                             IsInBreak = false;
 
                             //NppUI.Marshal(() => Dispatcher.Shedule(100, ShowMethodInfo));
-                            NppUI.Marshal(() => Plugin.GetDebugPanel().Clear());
+                            // NppUI.Marshal(() => Plugin.GetDebugPanel().Clear());
                         });
                 }
             }
@@ -348,8 +348,7 @@ namespace CSScriptNpp
             MessageQueue.AddNotification(NppCategory.Diagnostics + debugger.Id + ":STARTED");
             debuggerProcessId = debugger.Id;
 
-            if (CSScriptHelper.IsUsingCSScriptCore)
-                OnDebuggeeProcessNotification?.Invoke("======= Debugging .NET 5/Core is not supported =======");
+            OnDebuggeeProcessNotification?.Invoke("======= Debugging .NET 5/Core is not supported =======");
 
             Task.Factory.StartNew(() => WaitForExit(debugger));
 
