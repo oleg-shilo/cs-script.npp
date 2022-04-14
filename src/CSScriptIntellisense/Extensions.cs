@@ -1,8 +1,8 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -161,7 +161,7 @@ namespace CSScriptIntellisense
         {
             var bytes = new byte[client.ReceiveBufferSize];
             var len = client.GetStream()
-                            .Read(bytes, 0, bytes.Length);
+                          .Read(bytes, 0, bytes.Length);
             var result = new byte[len];
             Array.Copy(bytes, result, len);
             return result;

@@ -28,7 +28,7 @@ namespace CSScriptNpp
         {
             DebuggerServer.OnNotificationReceived = HandleNotification;
             DebuggerServer.OnDebuggerStateChanged += HandleDebuggerStateChanged;
-            DebuggerServer.OnDebuggeeProcessNotification = message => Plugin.OutputPanel.DebugOutput.WriteLine(message);
+            // DebuggerServer.OnDebuggeeProcessNotification = message => Plugin.OutputPanel.DebugOutput.WriteLine(message);
 
             var debugStepPointColor = ColorFromConfig(Config.Instance.DebugStepPointColor, Color.Yellow);
 
@@ -451,40 +451,40 @@ namespace CSScriptNpp
 
         public static void OnException(string message)
         {
-            //user+:<description>{$NL}Location: <file|line,column|line,column>{$NL}<exceptionName>{$NL}<info>
-            string exceptionData = message.Replace("{$NL}", "\n");
+            // //user+:<description>{$NL}Location: <file|line,column|line,column>{$NL}<exceptionName>{$NL}<info>
+            // string exceptionData = message.Replace("{$NL}", "\n");
 
-            if (exceptionData.StartsWith("user+"))
-            {
-                string[] lines = exceptionData.Substring("user+".Length + 1).Split(nlDelimiter, 4);
+            // if (exceptionData.StartsWith("user+"))
+            // {
+            //     string[] lines = exceptionData.Substring("user+".Length + 1).Split(nlDelimiter, 4);
 
-                string description = lines[0];
-                string location = lines[1];
-                string excName = lines[2];
-                string info = lines[3];
+            //     string description = lines[0];
+            //     string location = lines[1];
+            //     string excName = lines[2];
+            //     string info = lines[3];
 
-                string[] locationParts = location.Split('|');
+            //     string[] locationParts = location.Split('|');
 
-                string exceptionMessageShort = string.Format("{0}\r\n  {1}\r\n  {2} ({3})", description, excName, locationParts[0], locationParts[1].Replace(":", ", "));
-                Plugin.OutputPanel.ShowDebugOutput().WriteLine(exceptionMessageShort);
+            //     string exceptionMessageShort = string.Format("{0}\r\n  {1}\r\n  {2} ({3})", description, excName, locationParts[0], locationParts[1].Replace(":", ", "));
+            //     Plugin.OutputPanel.ShowDebugOutput().WriteLine(exceptionMessageShort);
 
-                string exceptionMessageFull = string.Format("{0}\n{1} ({2})\n{3}\n{4}",
-                                                  description,
-                                                  locationParts[0], locationParts[1].Replace(":", ", "),
-                                                  excName,
-                                                  info);
+            //     string exceptionMessageFull = string.Format("{0}\n{1} ({2})\n{3}\n{4}",
+            //                                       description,
+            //                                       locationParts[0], locationParts[1].Replace(":", ", "),
+            //                                       excName,
+            //                                       info);
 
-                var nativeWindow = new NativeWindow();
-                nativeWindow.AssignHandle(PluginBase.nppData._nppHandle);
-                MessageBox.Show(nativeWindow, exceptionMessageFull, "CS-Script");
-            }
-            else
-            {
-                //user-:<description>{$NL}<exceptionName>{$NL}<info>
-                string[] lines = exceptionData.Substring("user+".Length + 1).Split(nlDelimiter, 2);
-                Plugin.OutputPanel.ShowDebugOutput().WriteLine(lines[0] + "\r\n  " + lines[1]);
-                Go();
-            }
+            //     var nativeWindow = new NativeWindow();
+            //     nativeWindow.AssignHandle(PluginBase.nppData._nppHandle);
+            //     MessageBox.Show(nativeWindow, exceptionMessageFull, "CS-Script");
+            // }
+            // else
+            // {
+            //     //user-:<description>{$NL}<exceptionName>{$NL}<info>
+            //     string[] lines = exceptionData.Substring("user+".Length + 1).Split(nlDelimiter, 2);
+            //     Plugin.OutputPanel.ShowDebugOutput().WriteLine(lines[0] + "\r\n  " + lines[1]);
+            //     Go();
+            // }
         }
 
         private static void OnWatchData(string notification)
@@ -611,7 +611,7 @@ namespace CSScriptNpp
                 }
                 else if (message.StartsWith(NppCategory.Trace))
                 {
-                    Plugin.OutputPanel.DebugOutput.Write(message.Substring(NppCategory.Trace.Length));
+                    // Plugin.OutputPanel.DebugOutput.Write(message.Substring(NppCategory.Trace.Length));
                 }
                 else if (message.StartsWith(NppCategory.State))
                 {

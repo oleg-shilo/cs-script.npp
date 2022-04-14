@@ -1,8 +1,8 @@
-﻿using CSScriptNpp.Dialogs;
-using Kbg.NppPluginNET.PluginInfrastructure;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using CSScriptNpp.Dialogs;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
@@ -94,14 +94,14 @@ namespace CSScriptNpp
         {
             this.InUiThread(() =>
             {
-                breakBtn.Enabled = Debugger.IsRunning && !Debugger.IsInBreak;
-                stopBtn.Enabled = Debugger.IsRunning;
-                goBtn.Enabled = !Debugger.IsRunning || (Debugger.IsRunning && Debugger.IsInBreak);
+                // breakBtn.Enabled = Debugger.IsRunning && !Debugger.IsInBreak;
+                // stopBtn.Enabled = Debugger.IsRunning;
+                // goBtn.Enabled = !Debugger.IsRunning || (Debugger.IsRunning && Debugger.IsInBreak);
 
-                runToCursorBtn.Enabled =
-                stepIntoBtn.Enabled =
-                stepOutBtn.Enabled =
-                setNextBtn.Enabled = Debugger.IsRunning && Debugger.IsInBreak;
+                // runToCursorBtn.Enabled =
+                // stepIntoBtn.Enabled =
+                // stepOutBtn.Enabled =
+                // setNextBtn.Enabled = Debugger.IsRunning && Debugger.IsInBreak;
             });
         }
 
@@ -156,42 +156,42 @@ namespace CSScriptNpp
 
         private void breakBtn_Click(object sender, EventArgs e)
         {
-            Debugger.Break();
+            // Debugger.Break();
         }
 
         private void stopBtn_Click(object sender, EventArgs e)
         {
-            Debugger.Stop();
+            // Debugger.Stop();
         }
 
         private void stepIntoBtn_Click(object sender, EventArgs e)
         {
-            Debugger.StepIn();
+            // Debugger.StepIn();
         }
 
         private void stepOutBtn_Click(object sender, EventArgs e)
         {
-            Debugger.StepOut();
+            // Debugger.StepOut();
         }
 
         private void setNextBtn_Click(object sender, EventArgs e)
         {
-            Debugger.SetInstructionPointer();
+            // Debugger.SetInstructionPointer();
         }
 
         private void toggleBpBtn_Click(object sender, EventArgs e)
         {
-            Debugger.ToggleBreakpoint();
+            // Debugger.ToggleBreakpoint();
         }
 
         private void appTypeCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Debugger.DebugAsConsole = (appTypeCombo.SelectedIndex == 0);
+            // Debugger.DebugAsConsole = (appTypeCombo.SelectedIndex == 0);
         }
 
         private void runToCursorBtn_Click(object sender, EventArgs e)
         {
-            Debugger.RunToCursor();
+            // Debugger.RunToCursor();
         }
 
         private void quickWatch_Click(object sender, EventArgs e)
@@ -201,22 +201,22 @@ namespace CSScriptNpp
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            Debugger.BreakOnException = !Debugger.BreakOnException;
+            // Debugger.BreakOnException = !Debugger.BreakOnException;
             RefreshBreakOnException();
         }
 
         void RefreshBreakOnException()
         {
-            if (Debugger.BreakOnException)
-            {
-                this.breakOnExceptionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_remove_stoponexc;
-                this.breakOnExceptionBtn.ToolTipText = "Disable 'Break On Exception'";
-            }
-            else
-            {
-                this.breakOnExceptionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_set_stoponexc;
-                this.breakOnExceptionBtn.ToolTipText = "Enable 'Break On Exception'";
-            }
+            // if (Debugger.BreakOnException)
+            // {
+            //     this.breakOnExceptionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_remove_stoponexc;
+            //     this.breakOnExceptionBtn.ToolTipText = "Disable 'Break On Exception'";
+            // }
+            // else
+            // {
+            //     this.breakOnExceptionBtn.Image = global::CSScriptNpp.Resources.Resources.dbg_set_stoponexc;
+            //     this.breakOnExceptionBtn.ToolTipText = "Enable 'Break On Exception'";
+            // }
         }
     }
 }

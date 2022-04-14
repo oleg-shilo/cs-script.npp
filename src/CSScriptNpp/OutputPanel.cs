@@ -34,7 +34,6 @@ namespace CSScriptNpp
         {
             ConsoleOutput.Clear();
             BuildOutput.Clear();
-            DebugOutput.Clear();
             return this;
         }
 
@@ -89,7 +88,7 @@ namespace CSScriptNpp
             toolStrip1.Items.Insert(3, new ToolStripControlHost(cb) { ToolTipText = "Check to redirect the console output to the output panel" });
 
             AddOutputType(BuildOutputName);
-            AddOutputType(DebugOutputName);
+            // AddOutputType(DebugOutputName);
             AddOutputType(ConsoleOutputName);
             AddOutputType(GeneralOutputName);
 #if DEBUG
@@ -163,10 +162,10 @@ namespace CSScriptNpp
             return Show(BuildOutput);
         }
 
-        public Output ShowDebugOutput()
-        {
-            return Show(DebugOutput);
-        }
+        // public Output ShowDebugOutput()
+        // {
+        //     return Show(DebugOutput);
+        // }
 
         public Output ShowConsoleOutput()
         {
@@ -247,7 +246,7 @@ namespace CSScriptNpp
 
         public Output BuildOutput { get { return GetOutputType(BuildOutputName); } }
 
-        public Output DebugOutput { get { return GetOutputType(DebugOutputName); } }
+        // public Output DebugOutput { get { return GetOutputType(DebugOutputName); } }
 
         public Output PluginLogOutput { get { return GetOutputType(PluginLogOutputName); } }
 
@@ -352,80 +351,80 @@ namespace CSScriptNpp
             }
             else
             {
-                var output = this.DebugOutput;
+                // var output = this.DebugOutput;
 
                 // if (!Config.Instance.AllowDebugMonitor)
                 //     return;
 
-                ShowOutput(DebugOutputName);
+                // ShowOutput(DebugOutputName);
 
-                Task.Factory.StartNew(() =>
-                    {
-                        foreach (var proc in Process.GetProcessesByName("DbMon"))
-                        {
-                            try
-                            {
-                                proc.Kill();
-                            }
-                            catch { }
-                        }
+                // Task.Factory.StartNew(() =>
+                //     {
+                //         foreach (var proc in Process.GetProcessesByName("DbMon"))
+                //         {
+                //             try
+                //             {
+                //                 proc.Kill();
+                //             }
+                //             catch { }
+                //         }
 
-                        var p = new Process();
-                        dbgMonitor = p;
-                        this.InUiThread(RefreshControls);
+                //         var p = new Process();
+                //         dbgMonitor = p;
+                //         this.InUiThread(RefreshControls);
 
-                        p.StartInfo.FileName = DbMonPath;
-                        p.StartInfo.CreateNoWindow = true;
-                        p.StartInfo.UseShellExecute = false;
-                        p.StartInfo.RedirectStandardOutput = true;
-                        p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                //         p.StartInfo.FileName = DbMonPath;
+                //         p.StartInfo.CreateNoWindow = true;
+                //         p.StartInfo.UseShellExecute = false;
+                //         p.StartInfo.RedirectStandardOutput = true;
+                //         p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
 
-                        //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
+                //         //p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
 
-                        p.Start();
+                //         p.Start();
 
-                        string[] ignoreLocalDebug = Config.Instance.BlockLocalDebugOutputContaining.Split(new string[] { "{NL}" }, StringSplitOptions.None);
+                //         string[] ignoreLocalDebug = Config.Instance.BlockLocalDebugOutputContaining.Split(new string[] { "{NL}" }, StringSplitOptions.None);
 
-                        string line = null;
-                        while (null != (line = p.StandardOutput.ReadLine()))
-                        {
-                            if (Config.Instance.LocalDebug)
-                            {
-                                if (localDebugPrefix != null && line.StartsWith(localDebugPrefix))
-                                {
-                                    bool ignore = false;
-                                    foreach (var item in ignoreLocalDebug)
-                                        if (line.Contains(item))
-                                        {
-                                            ignore = true;
-                                            break;
-                                        }
+                //         string line = null;
+                //         while (null != (line = p.StandardOutput.ReadLine()))
+                //         {
+                //             if (Config.Instance.LocalDebug)
+                //             {
+                //                 if (localDebugPrefix != null && line.StartsWith(localDebugPrefix))
+                //                 {
+                //                     bool ignore = false;
+                //                     foreach (var item in ignoreLocalDebug)
+                //                         if (line.Contains(item))
+                //                         {
+                //                             ignore = true;
+                //                             break;
+                //                         }
 
-                                    if (!ignore)
-                                        output.WriteLine(line.Substring(localDebugPrefix.Length));
-                                }
-                            }
-                            else
-                            {
-                                output.WriteLine(line);
-                            }
-                        }
+                //                     if (!ignore)
+                //                         output.WriteLine(line.Substring(localDebugPrefix.Length));
+                //                 }
+                //             }
+                //             else
+                //             {
+                //                 output.WriteLine(line);
+                //             }
+                //         }
 
-                        p.WaitForExit();
+                //         p.WaitForExit();
 
-                        if (p.ExitCode == 3)
-                        {
-                            output.Clear();
-                            output.WriteLine("===== Error: There is already another attached instance of the Debug Listener =====");
-                        }
-                        else if (p.ExitCode != 0)
-                        {
-                            output.WriteLine("===== Error: Debug Listener has been detached =====");
-                        }
+                //         if (p.ExitCode == 3)
+                //         {
+                //             output.Clear();
+                //             output.WriteLine("===== Error: There is already another attached instance of the Debug Listener =====");
+                //         }
+                //         else if (p.ExitCode != 0)
+                //         {
+                //             output.WriteLine("===== Error: Debug Listener has been detached =====");
+                //         }
 
-                        dbgMonitor = null;
-                        this.InUiThread(RefreshControls);
-                    });
+                //         dbgMonitor = null;
+                //         this.InUiThread(RefreshControls);
+                //     });
             }
         }
 

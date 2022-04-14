@@ -111,6 +111,7 @@
             this.DebugViewBtn.Name = "DebugViewBtn";
             this.DebugViewBtn.Size = new System.Drawing.Size(23, 22);
             this.DebugViewBtn.Text = "DebugView";
+            this.DebugViewBtn.Visible = false;
             this.DebugViewBtn.Click += new System.EventHandler(this.DebugViewBtn_Click);
             // 
             // debugFilterBtn
@@ -121,6 +122,7 @@
             this.debugFilterBtn.Name = "debugFilterBtn";
             this.debugFilterBtn.Size = new System.Drawing.Size(23, 22);
             this.debugFilterBtn.Text = "debugFilter";
+            this.debugFilterBtn.Visible = false;
             this.debugFilterBtn.Click += new System.EventHandler(this.debugFilterBtn_Click);
             // 
             // designTimeTextBox

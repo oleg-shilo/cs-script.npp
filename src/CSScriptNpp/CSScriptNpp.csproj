@@ -58,32 +58,32 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="CSScriptNpp\Distro.cs" />
     <Compile Include="CSScriptNpp\Shortcuts.cs" />
-    <Compile Include="DebugPanel.cs">
+    <None Include="DebugPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DebugPanel.Designer.cs">
+    </None>
+    <None Include="DebugPanel.Designer.cs">
       <DependentUpon>DebugPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CSScriptNpp\MDbg\Debugger.cs" />
+    </None>
+    <None Include="CSScriptNpp\MDbg\Debugger.cs" />
     <Compile Include="Dialogs\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\AboutBox.designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\BreakpointsPanel.cs">
+    <None Include="Dialogs\BreakpointsPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\BreakpointsPanel.Designer.cs">
+    </None>
+    <None Include="Dialogs\BreakpointsPanel.Designer.cs">
       <DependentUpon>BreakpointsPanel.cs</DependentUpon>
-    </Compile>
+    </None>
     <Compile Include="Dialogs\DbgObject.cs" />
-    <Compile Include="Dialogs\DebugExternal.cs">
+    <None Include="Dialogs\DebugExternal.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\DebugExternal.Designer.cs">
+    </None>
+    <None Include="Dialogs\DebugExternal.Designer.cs">
       <DependentUpon>DebugExternal.cs</DependentUpon>
-    </Compile>
+    </None>
     <Compile Include="Dialogs\FavoritesPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,66 +96,66 @@
     <Compile Include="Dialogs\InstallDependenciesDialog.Designer.cs">
       <DependentUpon>InstallDependenciesDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ModulesPanel.cs">
+    <None Include="Dialogs\ModulesPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ModulesPanel.Designer.cs">
+    </None>
+    <None Include="Dialogs\ModulesPanel.Designer.cs">
       <DependentUpon>ModulesPanel.cs</DependentUpon>
-    </Compile>
+    </None>
     <Compile Include="Dialogs\ShortcutBuilder.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\ShortcutBuilder.Designer.cs">
       <DependentUpon>ShortcutBuilder.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ThreadsPanel.cs">
+    <None Include="Dialogs\ThreadsPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ThreadsPanel.Designer.cs">
+    </None>
+    <None Include="Dialogs\ThreadsPanel.Designer.cs">
       <DependentUpon>ThreadsPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\LocalsPanel.cs">
+    </None>
+    <None Include="Dialogs\LocalsPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\LocalsPanel.designer.cs">
+    </None>
+    <None Include="Dialogs\LocalsPanel.designer.cs">
       <DependentUpon>LocalsPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\QuickWatchPanel.cs">
+    </None>
+    <None Include="Dialogs\QuickWatchPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\QuickWatchPanel.Designer.cs">
+    </None>
+    <None Include="Dialogs\QuickWatchPanel.Designer.cs">
       <DependentUpon>QuickWatchPanel.cs</DependentUpon>
-    </Compile>
+    </None>
     <Compile Include="Dialogs\UpdateOptionsPanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\UpdateOptionsPanel.Designer.cs">
       <DependentUpon>UpdateOptionsPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\TextVisualizer.cs">
+    <None Include="Dialogs\TextVisualizer.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\TextVisualizer.Designer.cs">
+    </None>
+    <None Include="Dialogs\TextVisualizer.Designer.cs">
       <DependentUpon>TextVisualizer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\WatchPanel.cs">
+    </None>
+    <None Include="Dialogs\WatchPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\WatchPanel.Designer.cs">
+    </None>
+    <None Include="Dialogs\WatchPanel.Designer.cs">
       <DependentUpon>WatchPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\DebugObjectsPanel.cs">
+    </None>
+    <None Include="Dialogs\DebugObjectsPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\DebugObjectsPanel.Designer.cs">
+    </None>
+    <None Include="Dialogs\DebugObjectsPanel.Designer.cs">
       <DependentUpon>DebugObjectsPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\CallStackPanel.cs">
+    </None>
+    <None Include="Dialogs\CallStackPanel.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\CallStackPanel.Designer.cs">
+    </None>
+    <None Include="Dialogs\CallStackPanel.Designer.cs">
       <DependentUpon>CallStackPanel.cs</DependentUpon>
-    </Compile>
+    </None>
     <Compile Include="Dialogs\CodeMapPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -189,7 +189,7 @@
     <Compile Include="Interop\LocalWindowsHook.cs" />
     <Compile Include="Interop\Npp.cs" />
     <Compile Include="Interop\WinHook.cs" />
-    <Compile Include="CSScriptNpp\MDbg\DebuggerServer.cs" />
+    <None Include="CSScriptNpp\MDbg\DebuggerServer.cs" />
     <Compile Include="CSScriptNpp\MDbg\RemoteChannelServer.cs" />
     <Compile Include="OutputPanel.cs">
       <SubType>Form</SubType>
@@ -240,42 +240,42 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DebugPanel.resx">
+    <None Include="DebugPanel.resx">
       <DependentUpon>DebugPanel.cs</DependentUpon>
-    </EmbeddedResource>
+    </None>
     <EmbeddedResource Include="Dialogs\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\BreakpointsPanel.resx">
+    <None Include="Dialogs\BreakpointsPanel.resx">
       <DependentUpon>BreakpointsPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\DebugExternal.resx">
+    </None>
+    <None Include="Dialogs\DebugExternal.resx">
       <DependentUpon>DebugExternal.cs</DependentUpon>
-    </EmbeddedResource>
+    </None>
     <EmbeddedResource Include="Dialogs\FavoritesPanel.resx">
       <DependentUpon>FavoritesPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\InstallDependenciesDialog.resx">
       <DependentUpon>InstallDependenciesDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\LocalsPanel.resx">
+    <None Include="Dialogs\LocalsPanel.resx">
       <DependentUpon>LocalsPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\ModulesPanel.resx">
+    </None>
+    <None Include="Dialogs\ModulesPanel.resx">
       <DependentUpon>ModulesPanel.cs</DependentUpon>
-    </EmbeddedResource>
+    </None>
     <EmbeddedResource Include="Dialogs\ShortcutBuilder.resx">
       <DependentUpon>ShortcutBuilder.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\ThreadsPanel.resx">
+    <None Include="Dialogs\ThreadsPanel.resx">
       <DependentUpon>ThreadsPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\DebugObjectsPanel.resx">
+    </None>
+    <None Include="Dialogs\DebugObjectsPanel.resx">
       <DependentUpon>DebugObjectsPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\CallStackPanel.resx">
+    </None>
+    <None Include="Dialogs\CallStackPanel.resx">
       <DependentUpon>CallStackPanel.cs</DependentUpon>
-    </EmbeddedResource>
+    </None>
     <EmbeddedResource Include="Dialogs\CodeMapPanel.resx">
       <DependentUpon>CodeMapPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -291,18 +291,18 @@
     <EmbeddedResource Include="Dialogs\ScriptNameInput.resx">
       <DependentUpon>ScriptNameInput.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\QuickWatchPanel.resx">
+    <None Include="Dialogs\QuickWatchPanel.resx">
       <DependentUpon>QuickWatchPanel.cs</DependentUpon>
-    </EmbeddedResource>
+    </None>
     <EmbeddedResource Include="Dialogs\UpdateOptionsPanel.resx">
       <DependentUpon>UpdateOptionsPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\TextVisualizer.resx">
+    <None Include="Dialogs\TextVisualizer.resx">
       <DependentUpon>TextVisualizer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\WatchPanel.resx">
+    </None>
+    <None Include="Dialogs\WatchPanel.resx">
       <DependentUpon>WatchPanel.cs</DependentUpon>
-    </EmbeddedResource>
+    </None>
     <EmbeddedResource Include="OutputPanel.resx">
       <DependentUpon>OutputPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -599,8 +599,11 @@ copy "$(ProjectDir)$(ProjectName)\MDbg\NativeDebugWrappers.dll" "$(SolutionDir)o
 copy "$(ProjectDir)$(ProjectName)\MDbg\npp.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\npp.dll"
 copy "$(ProjectDir)$(ProjectName)\MDbg\raw.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\raw.dll"
 
+
+rem IF EXIST "C:\Program Files\Notepad++\plugins\CSScriptNpp\NUL" (
 copy "$(TargetPath)" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptNpp.dll"
-copy "$(TargetDir)\CSScriptIntellisense.dll" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptIntellisense.dll"</PostBuildEvent>
+copy "$(TargetDir)\CSScriptIntellisense.dll" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptIntellisense.dll"
+rem )</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

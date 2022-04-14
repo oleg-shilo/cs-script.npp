@@ -90,7 +90,7 @@ namespace CSScriptNpp.Dialogs
             return this;
         }
 
-        DebugObjectsPanel content;
+        // DebugObjectsPanel content;
 
         public QuickWatchPanel()
         {

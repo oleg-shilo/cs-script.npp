@@ -1,5 +1,5 @@
-using Kbg.NppPluginNET.PluginInfrastructure;
 using System.Diagnostics;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
@@ -17,7 +17,7 @@ namespace CSScriptNpp
             CSScriptIntellisense.Config.Location = PluginEnv.ConfigDir;
             CSScriptNpp.Config.InitData(); //will also exchange required data between configs
 
-            CSScriptIntellisense.Plugin.SuppressCodeTolltips = () => Debugger.IsInBreak || npp.ShowingModalDialog;
+            // CSScriptIntellisense.Plugin.SuppressCodeTolltips = () => Debugger.IsInBreak || npp.ShowingModalDialog;
             CSScriptIntellisense.Plugin.DisplayInOutputPanel = message =>
             {
                 Plugin.EnsureOutputPanelVisible();

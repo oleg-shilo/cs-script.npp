@@ -33,21 +33,24 @@
             this.useCustomLauncherCmd = new System.Windows.Forms.TextBox();
             this.useCustomLauncher = new System.Windows.Forms.CheckBox();
             this.customSyntaxerExe = new System.Windows.Forms.TextBox();
+            this.customUpdateUrl = new System.Windows.Forms.TextBox();
             this.checkUpdates = new System.Windows.Forms.CheckBox();
             this.contentControl = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
             this.scriptsDir = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.embeddedEngine = new System.Windows.Forms.RadioButton();
             this.customLocationsGroup = new System.Windows.Forms.GroupBox();
+            this.customLocationBtn = new System.Windows.Forms.RadioButton();
             this.customEngineLocation = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.autoDetectBtn = new System.Windows.Forms.Button();
             this.syntaxerPort = new System.Windows.Forms.TextBox();
-            this.installedEngineLocation = new System.Windows.Forms.TextBox();
-            this.embeddedEngine = new System.Windows.Forms.RadioButton();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.cssyntaxerInstallCmd = new System.Windows.Forms.TextBox();
@@ -59,7 +62,6 @@
             this.deployCSScript = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.customUpdateUrl = new System.Windows.Forms.TextBox();
             this.update = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.generalPage = new System.Windows.Forms.TabPage();
@@ -67,10 +69,10 @@
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.enableNetCore = new System.Windows.Forms.LinkLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.customLocationBtn = new System.Windows.Forms.RadioButton();
             this.contentControl.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.customLocationsGroup.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -107,11 +109,19 @@
             // 
             // customSyntaxerExe
             // 
-            this.customSyntaxerExe.Location = new System.Drawing.Point(6, 90);
+            this.customSyntaxerExe.Location = new System.Drawing.Point(6, 111);
             this.customSyntaxerExe.Name = "customSyntaxerExe";
-            this.customSyntaxerExe.Size = new System.Drawing.Size(329, 20);
+            this.customSyntaxerExe.Size = new System.Drawing.Size(345, 20);
             this.customSyntaxerExe.TabIndex = 4;
             this.toolTip1.SetToolTip(this.customSyntaxerExe, "Path to the custom syntaxer\r\n");
+            // 
+            // customUpdateUrl
+            // 
+            this.customUpdateUrl.Location = new System.Drawing.Point(15, 44);
+            this.customUpdateUrl.Name = "customUpdateUrl";
+            this.customUpdateUrl.Size = new System.Drawing.Size(349, 20);
+            this.customUpdateUrl.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.customUpdateUrl, "Path/URL to the plugin package.");
             // 
             // checkUpdates
             // 
@@ -171,10 +181,8 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.customLocationBtn);
+            this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.customLocationsGroup);
-            this.groupBox1.Controls.Add(this.installedEngineLocation);
-            this.groupBox1.Controls.Add(this.embeddedEngine);
             this.groupBox1.Location = new System.Drawing.Point(9, 35);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(450, 238);
@@ -182,8 +190,40 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Services Location";
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.button1);
+            this.groupBox3.Controls.Add(this.embeddedEngine);
+            this.groupBox3.Location = new System.Drawing.Point(6, 32);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(438, 46);
+            this.groupBox3.TabIndex = 11;
+            this.groupBox3.TabStop = false;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(357, 13);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Explore";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Explore_Click);
+            // 
+            // embeddedEngine
+            // 
+            this.embeddedEngine.AutoSize = true;
+            this.embeddedEngine.Location = new System.Drawing.Point(6, 19);
+            this.embeddedEngine.Name = "embeddedEngine";
+            this.embeddedEngine.Size = new System.Drawing.Size(76, 17);
+            this.embeddedEngine.TabIndex = 0;
+            this.embeddedEngine.Text = "Embedded";
+            this.embeddedEngine.UseVisualStyleBackColor = true;
+            this.embeddedEngine.CheckedChanged += new System.EventHandler(this.embeddedEngine_CheckedChanged);
+            // 
             // customLocationsGroup
             // 
+            this.customLocationsGroup.Controls.Add(this.customLocationBtn);
             this.customLocationsGroup.Controls.Add(this.customEngineLocation);
             this.customLocationsGroup.Controls.Add(this.label7);
             this.customLocationsGroup.Controls.Add(this.label6);
@@ -191,25 +231,36 @@
             this.customLocationsGroup.Controls.Add(this.autoDetectBtn);
             this.customLocationsGroup.Controls.Add(this.syntaxerPort);
             this.customLocationsGroup.Controls.Add(this.customSyntaxerExe);
-            this.customLocationsGroup.Location = new System.Drawing.Point(22, 102);
+            this.customLocationsGroup.Location = new System.Drawing.Point(6, 84);
             this.customLocationsGroup.Name = "customLocationsGroup";
-            this.customLocationsGroup.Size = new System.Drawing.Size(422, 128);
+            this.customLocationsGroup.Size = new System.Drawing.Size(438, 146);
             this.customLocationsGroup.TabIndex = 10;
             this.customLocationsGroup.TabStop = false;
+            // 
+            // customLocationBtn
+            // 
+            this.customLocationBtn.AutoSize = true;
+            this.customLocationBtn.Location = new System.Drawing.Point(6, 10);
+            this.customLocationBtn.Name = "customLocationBtn";
+            this.customLocationBtn.Size = new System.Drawing.Size(104, 17);
+            this.customLocationBtn.TabIndex = 11;
+            this.customLocationBtn.Text = "Custom Location";
+            this.customLocationBtn.UseVisualStyleBackColor = true;
+            this.customLocationBtn.CheckedChanged += new System.EventHandler(this.customLocationBtn_CheckedChanged);
             // 
             // customEngineLocation
             // 
             this.customEngineLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.customEngineLocation.Location = new System.Drawing.Point(6, 37);
+            this.customEngineLocation.Location = new System.Drawing.Point(6, 58);
             this.customEngineLocation.Name = "customEngineLocation";
-            this.customEngineLocation.Size = new System.Drawing.Size(329, 20);
+            this.customEngineLocation.Size = new System.Drawing.Size(345, 20);
             this.customEngineLocation.TabIndex = 1;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 72);
+            this.label7.Location = new System.Drawing.Point(3, 91);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(51, 13);
             this.label7.TabIndex = 9;
@@ -218,7 +269,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 18);
+            this.label6.Location = new System.Drawing.Point(3, 39);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(70, 13);
             this.label6.TabIndex = 7;
@@ -227,7 +278,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(336, 93);
+            this.label3.Location = new System.Drawing.Point(352, 114);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 13);
             this.label3.TabIndex = 7;
@@ -235,7 +286,7 @@
             // 
             // autoDetectBtn
             // 
-            this.autoDetectBtn.Location = new System.Drawing.Point(341, 35);
+            this.autoDetectBtn.Location = new System.Drawing.Point(357, 56);
             this.autoDetectBtn.Name = "autoDetectBtn";
             this.autoDetectBtn.Size = new System.Drawing.Size(75, 23);
             this.autoDetectBtn.TabIndex = 8;
@@ -245,32 +296,11 @@
             // 
             // syntaxerPort
             // 
-            this.syntaxerPort.Location = new System.Drawing.Point(368, 90);
+            this.syntaxerPort.Location = new System.Drawing.Point(384, 111);
             this.syntaxerPort.Name = "syntaxerPort";
             this.syntaxerPort.Size = new System.Drawing.Size(48, 20);
             this.syntaxerPort.TabIndex = 6;
             this.syntaxerPort.Text = "18001";
-            // 
-            // installedEngineLocation
-            // 
-            this.installedEngineLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.installedEngineLocation.Location = new System.Drawing.Point(187, 40);
-            this.installedEngineLocation.Name = "installedEngineLocation";
-            this.installedEngineLocation.ReadOnly = true;
-            this.installedEngineLocation.Size = new System.Drawing.Size(395, 20);
-            this.installedEngineLocation.TabIndex = 1;
-            this.installedEngineLocation.Visible = false;
-            // 
-            // embeddedEngine
-            // 
-            this.embeddedEngine.AutoSize = true;
-            this.embeddedEngine.Location = new System.Drawing.Point(22, 40);
-            this.embeddedEngine.Name = "embeddedEngine";
-            this.embeddedEngine.Size = new System.Drawing.Size(76, 17);
-            this.embeddedEngine.TabIndex = 0;
-            this.embeddedEngine.Text = "Embedded";
-            this.embeddedEngine.UseVisualStyleBackColor = true;
             // 
             // tabPage1
             // 
@@ -393,13 +423,6 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Plugin Update";
             // 
-            // customUpdateUrl
-            // 
-            this.customUpdateUrl.Location = new System.Drawing.Point(15, 44);
-            this.customUpdateUrl.Name = "customUpdateUrl";
-            this.customUpdateUrl.Size = new System.Drawing.Size(349, 20);
-            this.customUpdateUrl.TabIndex = 4;
-            // 
             // update
             // 
             this.update.Location = new System.Drawing.Point(370, 42);
@@ -458,7 +481,6 @@
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "Edit Visual Studio project template";
             this.linkLabel2.Visible = false;
-            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
             // enableNetCore
             // 
@@ -484,17 +506,6 @@
             this.linkLabel1.Text = "Edit settings file  instead";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // customLocationBtn
-            // 
-            this.customLocationBtn.AutoSize = true;
-            this.customLocationBtn.Location = new System.Drawing.Point(22, 79);
-            this.customLocationBtn.Name = "customLocationBtn";
-            this.customLocationBtn.Size = new System.Drawing.Size(104, 17);
-            this.customLocationBtn.TabIndex = 11;
-            this.customLocationBtn.Text = "Custom Location";
-            this.customLocationBtn.UseVisualStyleBackColor = true;
-            this.customLocationBtn.CheckedChanged += new System.EventHandler(this.customLocationBtn_CheckedChanged);
-            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -512,7 +523,8 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.customLocationsGroup.ResumeLayout(false);
             this.customLocationsGroup.PerformLayout();
             this.tabPage1.ResumeLayout(false);
@@ -536,7 +548,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton embeddedEngine;
         private System.Windows.Forms.TextBox customEngineLocation;
-        private System.Windows.Forms.TextBox installedEngineLocation;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.CheckBox restorePanels;
         private System.Windows.Forms.Label label1;
@@ -567,5 +578,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.GroupBox customLocationsGroup;
         private System.Windows.Forms.RadioButton customLocationBtn;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button button1;
     }
 }

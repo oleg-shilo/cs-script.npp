@@ -1,11 +1,11 @@
-﻿using CSScriptIntellisense;
-using Kbg.NppPluginNET.PluginInfrastructure;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
@@ -39,7 +39,6 @@ namespace CSScriptNpp
 
         static public void OnCalltipRequest(int position)
         {
-
             if (position == -2)
             {
                 Calltip.LastEval =
@@ -65,8 +64,8 @@ namespace CSScriptNpp
                             //NOTE: if DBG frame is changed the LastExpression is cleared
                             if (underMouseExpression == Calltip.LastExpression && Calltip.LastDocument == document)
                             {
-                                if (Debugger.IsInBreak)
-                                    tooltip = Calltip.LastEval;
+                                // if (Debugger.IsInBreak)
+                                //     tooltip = Calltip.LastEval;
                             }
 
                             //if (underMouseExpression != Calltip.LastExpression)
@@ -81,11 +80,12 @@ namespace CSScriptNpp
 
                             if (tooltip == null)
                             {
-                                if (Debugger.IsInBreak)
-                                {
-                                    tooltip = Debugger.GetDebugTooltipValue(underMouseExpression);
-                                }
-                                else if (CSScriptIntellisense.Config.Instance.ShowQuickInfoAsNativeNppTooltip)
+                                // if (Debugger.IsInBreak)
+                                // {
+                                //     tooltip = Debugger.GetDebugTooltipValue(underMouseExpression);
+                                // }
+                                // else
+                                if (CSScriptIntellisense.Config.Instance.ShowQuickInfoAsNativeNppTooltip)
                                 {
                                     tooltip = CSScriptIntellisense.Plugin.GetMemberUnderCursorInfo().FirstOrDefault();
                                 }

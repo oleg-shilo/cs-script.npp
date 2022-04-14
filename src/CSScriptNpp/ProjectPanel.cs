@@ -28,8 +28,6 @@ namespace CSScriptNpp
 
             UpdateButtonsTooltips();
 
-            Debugger.OnDebuggerStateChanged += RefreshControls;
-
             //tabControl1.Bac
             tabControl1.AddTab("Code Map", mapPanel = new CodeMapPanel());
             tabControl1.AddTab("Favorites", favPanel = new FavoritesPanel());
@@ -363,10 +361,7 @@ void main(string[] args)
 
         public void Run()
         {
-            if (Debugger.IsRunning)
-                Debugger.Go();
-            else
-                Run(false);
+            Run(false);
         }
 
         void Run(bool asExternal)
@@ -414,9 +409,6 @@ void main(string[] args)
                         {
                             try
                             {
-                                if (Config.Instance.StartDebugMonitorOnScriptExecution)
-                                    outputPanel.ShowDebugOutput();
-
                                 if (Config.Instance.InterceptConsole)
                                 {
                                     CSScriptHelper.ExecuteScript(currentScript, OnRunStart, OnConsoleObjectOut);
@@ -714,8 +706,8 @@ void main(string[] args)
                 runBtn.Enabled = (treeView1.Nodes.Count > 0);
 
                 bool running = (Plugin.RunningScript != null);
-                runBtn.Enabled = !running || Debugger.IsRunning;
-                stopBtn.Enabled = running || Debugger.IsRunning;
+                runBtn.Enabled = !running;
+                stopBtn.Enabled = running;
 
                 if (running)
                 {
@@ -991,6 +983,7 @@ void main(string[] args)
         void stopBtn_Click(object sender, EventArgs e)
         {
             Plugin.Stop();
+            RefreshControls();
         }
 
         void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
@@ -1153,6 +1146,45 @@ void main(string[] args)
         {
             tabControl1.SelectTabWith(favPanel);
             favPanel.Add(Npp.Editor.GetCurrentFilePath());
+        }
+    }
+
+    static class FormExtensions
+    {
+        public static TabControl AddTab(this TabControl control, string tabName, Form content)
+        {
+            var page = new TabPage
+            {
+                Padding = new System.Windows.Forms.Padding(3),
+                TabIndex = control.TabPages.Count,
+                Text = tabName,
+                BackColor = System.Drawing.Color.White,
+                UseVisualStyleBackColor = true
+            };
+
+            control.Controls.Add(page);
+
+            content.TopLevel = false;
+            content.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            content.Parent = page;
+            page.Controls.Add(content);
+            content.Dock = DockStyle.Fill;
+            content.Visible = true;
+
+            return control;
+        }
+
+        public static TabControl SelectTabWith(this TabControl control, Form content)
+        {
+            var tab = control.Controls
+                             .Cast<Control>()
+                             .Where(c => c is TabPage)
+                             .Cast<TabPage>()
+                             .Where(page => page.Controls.Contains(content))
+                             .FirstOrDefault();
+            if (tab != null)
+                control.SelectedTab = tab;
+            return control;
         }
     }
 }

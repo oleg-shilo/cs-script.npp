@@ -18,6 +18,9 @@ namespace CSScriptIntellisense
     // 18000 - Sublime Text 3
     // 18001 - Notepad++
     // 18002 - VSCode CodeMap
+    class ttt
+    {
+    }
 
     public class Syntaxer
     {
@@ -79,7 +82,7 @@ namespace CSScriptIntellisense
                     }
                 });
 
-                for (int i = 0; i < 25; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     var response = Send($"-client:{procId}");
                     if (response != null)

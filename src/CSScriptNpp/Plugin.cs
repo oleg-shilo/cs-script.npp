@@ -71,12 +71,10 @@ namespace CSScriptNpp
             //'_' prefix in the shortcutName means "plugin action shortcut" as opposite to "plugin key interceptor action"
             SetCommand(projectPanelId = index++, "Build (validate)", Build, "_BuildFromMenu:Ctrl+Shift+B");
             SetCommand(projectPanelId = index++, "Run", Run, "_Run:F5");
-            // SetCommand(projectPanelId = index++, "Debug", Debug, "_Debug:Alt+F5");
-            // SetCommand(projectPanelId = index++, "Debug External Process", DebugEx, "_DebugExternal:Ctrl+Shift+F5");
+            SetCommand(projectPanelId = index++, "Run External", RunAsExternal, "_RunExternal:Ctrl+F5");
             PluginBase.SetCommand(index++, "---", null);
             PluginBase.SetCommand(projectPanelId = index++, "Project Panel", InitProjectPanel);
             PluginBase.SetCommand(outputPanelId = index++, "Output Panel", ToggleOutputPanel);
-            // PluginBase.SetCommand(debugPanelId = index++, "Debug Panel", ToggleDebugPanel);
             PluginBase.SetCommand(index++, "---", null);
             LoadIntellisenseCommands(ref index);
 
@@ -210,40 +208,40 @@ namespace CSScriptNpp
                                  "Run",
                                  Run, uniqueKeys);
 
-            AddInternalShortcuts("_Debug:Alt+F5",
-                                 "Debug", () =>
-                                 {
-                                     if (!Debugger.IsRunning && Npp.Editor.IsCurrentDocScriptFile())
-                                         DebugScript();
-                                 }, uniqueKeys);
+            // AddInternalShortcuts("_Debug:Alt+F5",
+            //                      "Debug", () =>
+            //                      {
+            //                          if (!Debugger.IsRunning && Npp.Editor.IsCurrentDocScriptFile())
+            //                              DebugScript();
+            //                      }, uniqueKeys);
 
-            AddInternalShortcuts("ToggleBreakpoint:F9",
-                                 "Toggle Breakpoint",
-                                 () => Debugger.ToggleBreakpoint(), uniqueKeys);
+            // AddInternalShortcuts("ToggleBreakpoint:F9",
+            //                      "Toggle Breakpoint",
+            //                      () => Debugger.ToggleBreakpoint(), uniqueKeys);
 
-            AddInternalShortcuts("QuickWatch:Shift+F9",
-                                 "Show QuickWatch...",
-                                 QuickWatchPanel.PopupDialog, uniqueKeys);
+            // AddInternalShortcuts("QuickWatch:Shift+F9",
+            //                      "Show QuickWatch...",
+            //                      QuickWatchPanel.PopupDialog, uniqueKeys);
 
-            AddInternalShortcuts("StepInto:F11",
-                                 "Step Into",
-                                 Debugger.StepIn, uniqueKeys);
+            // AddInternalShortcuts("StepInto:F11",
+            //                      "Step Into",
+            //                      Debugger.StepIn, uniqueKeys);
 
-            AddInternalShortcuts("StepOut:Shift+F11",
-                                 "Step Out",
-                                 Debugger.StepOut, uniqueKeys);
+            // AddInternalShortcuts("StepOut:Shift+F11",
+            //                      "Step Out",
+            //                      Debugger.StepOut, uniqueKeys);
 
-            AddInternalShortcuts("StepOver:F10",
-                                 "Step Over",
-                                 StepOver, uniqueKeys);
+            // AddInternalShortcuts("StepOver:F10",
+            //                      "Step Over",
+            //                      StepOver, uniqueKeys);
 
-            AddInternalShortcuts("SetNextIP:Ctrl+Shift+F10",
-                                 "Set Next Statement",
-                                 Debugger.SetInstructionPointer, uniqueKeys);
+            // AddInternalShortcuts("SetNextIP:Ctrl+Shift+F10",
+            //                      "Set Next Statement",
+            //                      Debugger.SetInstructionPointer, uniqueKeys);
 
-            AddInternalShortcuts("RunToCursor:Ctrl+F10",
-                                 "Run To Cursor",
-                                 Debugger.RunToCursor, uniqueKeys);
+            // AddInternalShortcuts("RunToCursor:Ctrl+F10",
+            //                      "Run To Cursor",
+            //                      Debugger.RunToCursor, uniqueKeys);
 
             AddInternalShortcuts("RunAsExternal:Ctrl+F5",
                                  "Run As External Process", () =>
@@ -348,15 +346,15 @@ namespace CSScriptNpp
             get { return ProjectPanel?.mapPanel; }
         }
 
-        static DebugPanel debugPanel;
+        // static DebugPanel debugPanel;
 
-        static public bool DebugPanelVisible
-        {
-            get
-            {
-                return debugPanel != null && debugPanel.Visible;
-            }
-        }
+        // static public bool DebugPanelVisible
+        // {
+        //     get
+        //     {
+        //         return debugPanel != null && debugPanel.Visible;
+        //     }
+        // }
 
         static public bool OutputPanelVisible
         {
@@ -387,8 +385,8 @@ namespace CSScriptNpp
                 CSScriptNpp.Plugin.ProjectPanel.Refresh();
             if (CSScriptNpp.Plugin.CodeMapPanel != null)
                 CSScriptNpp.Plugin.CodeMapPanel.Refresh();
-            if (CSScriptNpp.Plugin.debugPanel != null)
-                CSScriptNpp.Plugin.debugPanel.Refresh();
+            // if (CSScriptNpp.Plugin.debugPanel != null)
+            //     CSScriptNpp.Plugin.debugPanel.Refresh();
             if (CSScriptNpp.Plugin.outputPanel != null)
                 CSScriptNpp.Plugin.outputPanel.Refresh();
         }
@@ -415,8 +413,8 @@ namespace CSScriptNpp
             if (Plugin.outputPanel != null)
                 Plugin.SetDockedPanelVisible(Plugin.outputPanel, outputPanelId, false);
 
-            if (Plugin.debugPanel != null)
-                Plugin.SetDockedPanelVisible(Plugin.debugPanel, debugPanelId, false);
+            // if (Plugin.debugPanel != null)
+            //     Plugin.SetDockedPanelVisible(Plugin.debugPanel, debugPanelId, false);
         }
 
         static public void InitProjectPanel()
@@ -452,20 +450,14 @@ namespace CSScriptNpp
             }
             else
             {
-                if (!OutputPanelVisible && !DebugPanelVisible)
+                if (!OutputPanelVisible)
                 {
                     InitOutputPanel();
                     SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
                 }
-                else if (OutputPanelVisible && DebugPanelVisible)
+                else if (OutputPanelVisible)
                 {
                     SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, false);
-                }
-                else
-                {
-                    //Config.Instance.ShowOutputPanel
-                    InitOutputPanel();
-                    SetDockedPanelVisible(Plugin.OutputPanel, outputPanelId, true);
                 }
             }
         }
@@ -480,72 +472,35 @@ namespace CSScriptNpp
             }
         }
 
-        static public void StepOver()
-        {
-            if (Debugger.IsRunning)
-                Debugger.StepOver();
-            else
-                GetProjectPanel().Debug(breakOnFirstStep: true);
-        }
+        // static public void StepOver()
+        // {
+        //     if (Debugger.IsRunning)
+        //         Debugger.StepOver();
+        //     else
+        //         GetProjectPanel().Debug(breakOnFirstStep: true);
+        // }
 
         static public void Run()
         {
-            if (Debugger.IsRunning)
+            if (Npp.Editor.IsCurrentDocScriptFile() && runningScript == null)
             {
-                Debugger.Go();
-            }
-            else if (Npp.Editor.IsCurrentDocScriptFile() && runningScript == null)
-            {
-                // if (Config.Instance.ReloadActiveScriptOnRun)
-                // {
-                //     if (ProjectPanel.currentScript != Npp.Editor.GetCurrentFilePath())
-                //         ProjectPanel.LoadCurrentDoc();
-                // }
-
                 if (Plugin.ProjectPanel == null)
                     InitProjectPanel();
                 Plugin.RunScript();
             }
         }
 
-        static public void DebugEx()
-        {
-            if (!Debugger.IsRunning)
-            {
-                if (Plugin.ProjectPanel == null)
-                    InitProjectPanel();
-                DebugExternal.ShowModal();
-            }
-        }
-
-        static public void Debug()
-        {
-            if (!Debugger.IsRunning)
-            {
-                if (Plugin.ProjectPanel == null)
-                    InitProjectPanel();
-                Plugin.DebugScript();
-            }
-        }
-
         static public void Stop()
         {
-            if (Debugger.IsRunning)
+            try
             {
-                Debugger.Exit();
+                if (Plugin.RunningScript != null && !Plugin.RunningScript.HasExited)
+                    Plugin.RunningScript.Kill();
+
+                Plugin.RunningScript = null;
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    if (Plugin.RunningScript != null)
-                        Plugin.RunningScript.Kill();
-                }
-                catch (Exception ex)
-                {
-                    Plugin.OutputPanel.DebugOutput.WriteLine(null)
-                                                  .WriteLine(ex.Message);
-                }
             }
         }
 
@@ -734,15 +689,15 @@ namespace CSScriptNpp
         static public void ProcessCommandArgs(string args)
         {
             //System.Diagnostics.Debug.Assert(false);
-            if (args.StartsWith("/css.attach:")) //attach to external process
-            {
-                try
-                {
-                    var id = int.Parse(args.Substring("/css.attach:".Length));
-                    DebugExternal.AttachTo(id);
-                }
-                catch { }
-            }
+            // if (args.StartsWith("/css.attach:")) //attach to external process
+            // {
+            //     try
+            //     {
+            //         var id = int.Parse(args.Substring("/css.attach:".Length));
+            //         DebugExternal.AttachTo(id);
+            //     }
+            //     catch { }
+            // }
         }
 
         static T ShowDockablePanel<T>(string name, int panelId, NppTbMsg tbMsg) where T : Form, new()

@@ -24,11 +24,11 @@ namespace CSScriptNpp
         public static string syntaxer_asm { get; set; }
         public static int syntaxer_port { get; set; }
 
+        public static string dependenciesDirRoot => Environment.SpecialFolder.CommonApplicationData
+                                                    .PathJoin("CSScriptNpp", Assembly.GetExecutingAssembly().GetName().Version);
+
         public static void Init()
         {
-            var dependenciesDirRoot = Environment.SpecialFolder.CommonApplicationData
-                                                 .PathJoin("CSScriptNpp", Assembly.GetExecutingAssembly().GetName().Version);
-
             if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomSyntaxerAsm.HasText())
             {
                 syntaxer_asm = Config.Instance.CustomSyntaxerAsm;
@@ -39,9 +39,11 @@ namespace CSScriptNpp
                 syntaxer_asm = dependenciesDirRoot.PathJoin("cs-syntaxer", "syntaxer.dll");
                 syntaxer_port = 18001;
 
+#if !DEBUG
                 if (!Directory.Exists(syntaxer_asm.GetDirName()))
-                    DeployDir(Bootstrapper.pluginDir.PathJoin("cs-syntaxer"),
-                              syntaxer_asm.GetDirName());
+#endif
+                DeployDir(Bootstrapper.pluginDir.PathJoin("cs-syntaxer"),
+                    syntaxer_asm.GetDirName());
             }
 
             if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomEngineAsm.HasText())
@@ -51,14 +53,15 @@ namespace CSScriptNpp
             else
             {
                 cscs_asm = dependenciesDirRoot.PathJoin("cs-script", "cscs.dll");
-
+#if !DEBUG
                 if (!Directory.Exists(cscs_asm.GetDirName()))
-                    DeployDir(Bootstrapper.pluginDir.PathJoin("cs-script"),
-                              cscs_asm.GetDirName());
+#endif
+                DeployDir(Bootstrapper.pluginDir.PathJoin("cs-script"),
+                          cscs_asm.GetDirName());
 
-                var oldSyntaxerVersions = Directory.GetDirectories(Path.GetDirectoryName(dependenciesDirRoot))
+                var oldServicesVersions = Directory.GetDirectories(Path.GetDirectoryName(dependenciesDirRoot))
                                                    .Where(x => x != dependenciesDirRoot);
-                foreach (var dir in oldSyntaxerVersions)
+                foreach (var dir in oldServicesVersions)
                     DeleteDir(dir);
             }
 

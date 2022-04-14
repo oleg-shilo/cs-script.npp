@@ -35,8 +35,6 @@ namespace CSScriptNpp
 
             checkUpdates.Checked = data.CheckUpdatesOnStartup;
 
-            installedEngineLocation.Text = CSScriptHelper.SystemCSScriptDir ?? "<not detected>";
-            installedEngineLocation.SelectionStart = installedEngineLocation.Text.Length - 1;
             scriptsDir.Text = data.ScriptsDir;
 
             embeddedEngine.Checked = data.UseEmbeddedEngine;
@@ -115,26 +113,6 @@ namespace CSScriptNpp
                     Process.Start("notepad.exe", file).WaitForExit();
                     if (File.GetLastWriteTimeUtc(file) != timestamp)
                         Config.Instance.Open();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: \n" + ex.ToString(), "Notepad++");
-                }
-            });
-
-            Close();
-        }
-
-        void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            string file = CSScriptHelper.GetProjectTemplate();
-
-            Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    Thread.Sleep(500);
-                    Process.Start(file);
                 }
                 catch (Exception ex)
                 {
@@ -252,7 +230,28 @@ namespace CSScriptNpp
 
         private void customLocationBtn_CheckedChanged(object sender, EventArgs e)
         {
-            customLocationsGroup.Enabled = customLocationBtn.Checked;
+            if (embeddedEngine.Checked == customLocationBtn.Checked)
+                embeddedEngine.Checked = !customLocationBtn.Checked;
+
+            syntaxerPort.Enabled =
+            autoDetectBtn.Enabled =
+            customSyntaxerExe.Enabled =
+            customEngineLocation.Enabled = customLocationBtn.Checked;
+        }
+
+        private void Explore_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start("explorer.exe", Runtime.dependenciesDirRoot);
+            }
+            catch { }
+        }
+
+        private void embeddedEngine_CheckedChanged(object sender, EventArgs e)
+        {
+            if (customLocationBtn.Checked == embeddedEngine.Checked)
+                customLocationBtn.Checked = !embeddedEngine.Checked;
         }
     }
 }
