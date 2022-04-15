@@ -757,6 +757,12 @@ namespace CSScriptNpp
                 ProcessStart("dotnet", args);
         }
 
+        static public void Debug(string scriptFile)
+        {
+            var args = string.Format($"\"{Runtime.cscs_asm}\" -wait /nl /l {GenerateDefaultArgs(scriptFile)} \"{scriptFile}\" //x");
+            ProcessStart("dotnet", args);
+        }
+
         static public Func<string, string> NotifyClient;
 
         static public Project GenerateProjectFor(string script)

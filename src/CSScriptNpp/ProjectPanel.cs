@@ -351,7 +351,10 @@ void main(string[] args)
 
         void debugBtn_Click(object sender, EventArgs e)
         {
-            Plugin.DebugScript();  //important not to call Debug directly but run the injected Plugin.DebugScript
+            if (currentScript == null || (Config.Instance.ReloadActiveScriptOnRun && currentScript != Npp.Editor.GetCurrentFilePath()))
+                loadBtn.PerformClick();
+
+            Plugin.DebugScript();
         }
 
         public void RunAsExternal()
@@ -451,66 +454,42 @@ void main(string[] args)
 
         public void Debug(bool breakOnFirstStep)
         {
-            return;
-            // Plugin.InitDebugPanel();
+            if (currentScript == null || (Config.Instance.ReloadActiveScriptOnRun && currentScript != Npp.Editor.GetCurrentFilePath()))
+                loadBtn.PerformClick();
 
-            // if (currentScript == null)
-            //     loadBtn.PerformClick();
+            if (currentScript == null)
+            {
+                MessageBox.Show("Please load some script file first.", "CS-Script");
+            }
+            else
+            {
+                try
+                {
+                    if (!CurrentDocumentBelongsToProject())
+                        EditItem(currentScript);
 
-            // if (currentScript == null)
-            // {
-            //     MessageBox.Show("Please load some script file first.", "CS-Script");
-            // }
-            // else
-            // {
-            //     PluginBase.Editor.SaveCurrentFile();
+                    npp.SaveDocuments(GetProjectDocuments());
 
-            //     bool canCompile = CSScriptHelper.Verify(currentScript);
-
-            //     if (!canCompile)
-            //     {
-            //         Build();
-            //     }
-            //     else
-            //     {
-            //         Plugin.ShowOutputPanel().ShowDebugOutput().Clear();
-
-            //         Task.Factory.StartNew(() =>
-            //         {
-            //             try
-            //             {
-            //                 string entryFile = CSScriptHelper.GetEntryFileName(currentScript);
-            //                 Debugger.ScriptFile = currentScript;
-
-            //                 bool isX86 = false;
-            //                 bool isSurrogateHost = CSScriptHelper.IsSurrogateHosted(currentScript, ref isX86);
-            //                 if (isSurrogateHost)
-            //                 {
-            //                     var scriptAsm = CSScript.GetCachedScriptPath(currentScript);
-            //                     var debuggingHost = scriptAsm + ".host.exe";
-            //                     Debugger.Start(debuggingHost, scriptAsm, isX86 ? Debugger.CpuType.x86 : Debugger.CpuType.x64);
-            //                 }
-            //                 else
-            //                 {
-            //                     string targetType = Debugger.DebugAsConsole ? CSScriptHelper.cscs_dll : CSScriptHelper.csws_exe;
-            //                     string debuggingHost = Path.Combine(PluginEnv.PluginDir, "css_dbg.exe");
-            //                     Debugger.Start(debuggingHost, string.Format("\"{0}\" /d /l {2} \"{1}\"", targetType, currentScript, CSScriptHelper.GenerateDefaultArgs(currentScript)), Debugger.CpuType.Any);
-            //                 }
-
-            //                 if (breakOnFirstStep)
-            //                 {
-            //                     Debugger.EntryBreakpointFile = entryFile ?? currentScript;
-            //                 }
-
-            //                 RefreshControls();
-            //             }
-            //             catch (Exception e)
-            //             {
-            //                 Plugin.OutputPanel.DebugOutput.WriteLine(e.Message);
-            //             }
-            //         });
-            //     }
-            // }
+                    try
+                    {
+                        CSScriptHelper.Debug(currentScript);
+                    }
+                    catch (Exception e)
+                    {
+                        Plugin.ShowOutputPanel()
+                              .ShowBuildOutput()
+                              .WriteLine(e.Message)
+                              .SetCaretAtStart();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Plugin.ShowOutputPanel()
+                          .ShowBuildOutput()
+                          .WriteLine(ex.Message)
+                          .SetCaretAtStart();
+                }
+            }
         }
 
         public void OpenInVS()
@@ -700,7 +679,6 @@ void main(string[] args)
 
                 validateBtn.Enabled =
                 reloadBtn.Enabled =
-                debugBtn.Enabled =
                 openInVsBtn.Enabled =
                 synchBtn.Enabled =
                 runBtn.Enabled = (treeView1.Nodes.Count > 0);

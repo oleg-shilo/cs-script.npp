@@ -84,7 +84,8 @@ namespace CSScriptIntellisense
 
                 for (int i = 0; i < 10; i++)
                 {
-                    var response = Send($"-client:{procId}");
+                    // var response = Send($"-client:{procId}");
+                    var response = Send($"-op:ping");
                     if (response != null)
                         break;
                     else

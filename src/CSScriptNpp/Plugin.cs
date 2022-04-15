@@ -243,12 +243,12 @@ namespace CSScriptNpp
             //                      "Run To Cursor",
             //                      Debugger.RunToCursor, uniqueKeys);
 
-            AddInternalShortcuts("RunAsExternal:Ctrl+F5",
-                                 "Run As External Process", () =>
-                                 {
-                                     if (Npp.Editor.IsCurrentDocScriptFile())
-                                         RunAsExternal();
-                                 }, uniqueKeys);
+            // AddInternalShortcuts("RunAsExternal:Ctrl+F5",
+            //                      "Run As External Process", () =>
+            //                      {
+            //                          if (Npp.Editor.IsCurrentDocScriptFile())
+            //                              RunAsExternal();
+            //                      }, uniqueKeys);
 
             AddInternalShortcuts("ShowNextFileLocationFromOutput:F4",
                                  "Next File Location in Output", () =>
