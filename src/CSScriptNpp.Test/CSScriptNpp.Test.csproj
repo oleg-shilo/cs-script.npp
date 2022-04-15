@@ -46,17 +46,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CSScriptLibrary">
-      <HintPath>..\CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="Esent.Interop, Version=1.9.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ManagedEsent.1.9.4\lib\net40\Esent.Interop.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.NRefactory">
-      <HintPath>..\CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.NRefactory.CSharp">
-      <HintPath>..\CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis, Version=2.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Common.2.6.1\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
@@ -194,7 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Editor.Tests\CodeMap.cs" />
-    <Compile Include="Editor.Tests\DbgAgent.cs" />
     <Compile Include="Editor.Tests\Formatting.cs" />
     <Compile Include="Intellisense.Tests\Misc.cs" />
     <Compile Include="Intellisense.Tests\MethodInfo.cs" />
@@ -214,10 +204,6 @@
     <ProjectReference Include="..\CSScriptNpp\CSScriptNpp.csproj">
       <Project>{23b08b10-8297-4a90-9b6d-43dac7416004}</Project>
       <Name>CSScriptNpp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DbgAgent\DbgAgent.csproj">
-      <Project>{339f59db-c481-4cbb-90a5-eb1b97e807cd}</Project>
-      <Name>DbgAgent</Name>
     </ProjectReference>
     <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
       <Project>{c67d7ed7-f350-4fd4-81b5-5e635fb08765}</Project>

@@ -32,7 +32,7 @@ namespace Testpad
         [STAThread]
         static void Main()
         {
-            new CSScriptNpp.ConfigForm().deployCSScript_Click(null, null); return;
+            // new CSScriptNpp.ConfigForm().deployCSScript_Click(null, null); return;
             // CSScriptNpp.Bootstrapper.DeploySyntaxer(@"E:\Galos\Projects\cs-script.npp\src\CSScriptNpp\CSScriptNpp"); return;
 
             var arr = new[] { 1, 2, 3, 5, 5, 5, 6, 6 };

@@ -1,10 +1,9 @@
-using CSScriptIntellisense;
-using ICSharpCode.NRefactory.CSharp;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CSScriptIntellisense;
 using UltraSharp.Cecil;
 using Xunit;
 
@@ -333,7 +332,7 @@ public class Test
         Print(text);
     }
 }",
-                    newCode);
+                       newCode);
         }
 
         [Fact]
@@ -727,10 +726,10 @@ return Path.Combine(comShellEtxDir, @""ShellExt64.cs.{25D84CB0-7345-11D3-A4A1-00
         public void ShouldNormalizeMizedNewLines()
         {
             var before = "ab\r\n" +
-                         "ab\r" +
-                         "ab\r\n" +
-                         "ab\n" +
-                         "ab\r\n";
+                    "ab\r" +
+                        "ab\r\n" +
+                        "ab\n" +
+                        "ab\r\n";
             int offset = 8;
 
             var after = SourceCodeFormatter.NormalizeNewLines(before, ref offset);
@@ -818,19 +817,19 @@ class Script
         public void ShouldTrackPositionAfterFormatting2()
         {
             var code_before = "a\r\n" +  // 0
-                              "\r\n" +   // 1
-                              "\r\n" +   // 2
-                              "\r\n" +   // 3
-                              "b\r\n" +   // 4
-                              "\r\n" +   // 5
-                              "\r\n" +   // 6
-                              "c";       // 7
+                                      "\r\n" +   // 1
+                                      "\r\n" +   // 2
+                                      "\r\n" +   // 3
+                                      "b\r\n" +   // 4
+                                      "\r\n" +   // 5
+                                      "\r\n" +   // 6
+                                      "c";       // 7
 
             var code_after = "a\r\n" +  // 0
-                             "\r\n" +   // 1
-                             "b\r\n" +  // 2
-                             "\r\n" +   // 3
-                             "c";       // 4
+                                     "\r\n" +   // 1
+                                     "b\r\n" +  // 2
+                                     "\r\n" +   // 3
+                                     "c";       // 4
 
             var line_after = 0;
 

@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using CSScriptIntellisense;
@@ -344,5 +345,90 @@ namespace CSScriptNpp
                 }
             }
         }
+    }
+
+    class WaitableQueue<T> : Queue<T>
+    {
+        public string Name { get; set; }
+
+        AutoResetEvent itemAvailable = new AutoResetEvent(true);
+
+        public new void Enqueue(T item)
+        {
+            lock (this)
+            {
+                base.Enqueue(item);
+                itemAvailable.Set();
+            }
+        }
+
+        public T WaitItem()
+        {
+            while (true)
+            {
+                lock (this)
+                {
+                    if (base.Count > 0)
+                    {
+                        return base.Dequeue();
+                    }
+                }
+
+                itemAvailable.WaitOne();
+            }
+        }
+    }
+
+    class MessageQueue
+    {
+        static WaitableQueue<string> commands = new WaitableQueue<string>();
+        static WaitableQueue<string> notifications = new WaitableQueue<string>();
+        static WaitableQueue<string> automationCommans = new WaitableQueue<string>();
+
+        static public void AddCommand(string data)
+        {
+            if (data == "")
+                Debug.Assert(false);
+
+            if (data == "npp.exit")
+                Debug.WriteLine("");
+            commands.Enqueue(data);
+        }
+
+        static public void AddNotification(string data)
+        {
+            notifications.Enqueue(data);
+        }
+
+        static public void AddAutomationCommand(string data)
+        {
+            automationCommans.Enqueue(data);
+        }
+
+        static public void Clear()
+        {
+            notifications.Clear();
+            commands.Clear();
+        }
+
+        static public string WaitForNotification()
+        {
+            return notifications.WaitItem();
+        }
+
+        static public string WaitForCommand()
+        {
+            return commands.WaitItem();
+        }
+
+        static public string WaitForAutomationCommand()
+        {
+            return automationCommans.WaitItem();
+        }
+    }
+
+    class NppCommand
+    {
+        public static string Exit = "npp.exit";
     }
 }

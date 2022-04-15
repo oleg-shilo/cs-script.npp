@@ -38,6 +38,7 @@ namespace CSScriptNpp
             scriptsDir.Text = data.ScriptsDir;
 
             embeddedEngine.Checked = data.UseEmbeddedEngine;
+            customLocationBtn.Checked = !embeddedEngine.Checked;
 
             restorePanels.Checked = data.RestorePanelsAtStartup;
 

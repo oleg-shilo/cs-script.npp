@@ -9,10 +9,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CS-Script")]
 [assembly: AssemblyProduct("CS-Script Intellisense for Notepad++")]
-[assembly: AssemblyCopyright("Copyright © Oleg Shilo 2014-2017")]
+[assembly: AssemblyCopyright("Copyright © Oleg Shilo 2014-2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyDescription("'CS-Script Intellisense' is a real C# intellisense solution based on CS-Script and ICSharpCode.NRefactory/Mono.Cecil. \r\n" +
+[assembly: AssemblyDescription("'CS-Script Intellisense' is a real C# intellisense solution based on CS-Script and .NET. \r\n" +
                                "It is a part of the complete CS-Script Notepad++ plugin 'CSScriptNpp'")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.7.29.0")]
-[assembly: AssemblyFileVersion("1.7.29.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]

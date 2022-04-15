@@ -121,10 +121,6 @@
       <Project>{EB8FC3A3-93E8-457B-B281-FAFA5119611A}</Project>
       <Name>CSScriptIntellisense</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CSScriptNpp\CSScriptNpp.csproj">
-      <Project>{23b08b10-8297-4a90-9b6d-43dac7416004}</Project>
-      <Name>CSScriptNpp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Intellisense.Interface\Intellisense.Common.csproj">
       <Project>{c67d7ed7-f350-4fd4-81b5-5e635fb08765}</Project>
       <Name>Intellisense.Common</Name>
@@ -132,9 +128,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>md "$(TargetDir)CSScriptNpp\MDbg"
-copy "$(ProjectDir)..\CSScriptNpp\CSScriptNpp\MDbg\mdbghost_32.exe" "$(TargetDir)CSScriptNpp\MDbg\mdbghost_32.exe"
-copy "$(ProjectDir)..\CSScriptNpp\CSScriptNpp\MDbg\mdbghost_64.exe" "$(TargetDir)CSScriptNpp\MDbg\mdbghost_64.exe"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

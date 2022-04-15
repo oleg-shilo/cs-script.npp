@@ -1,4 +1,3 @@
-using ICSharpCode.NRefactory.CSharp;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -83,7 +82,6 @@ namespace Tests
         }
 
         [Fact(Skip = "Reflector is no longer in use")]
-        
         public void AutoClassClass()
         {
             string code =

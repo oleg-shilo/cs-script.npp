@@ -1,10 +1,10 @@
-using CSScriptIntellisense.Interop;
-using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense.Interop;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptIntellisense
 {
@@ -120,7 +120,8 @@ namespace CSScriptIntellisense
             try
             {
                 popupForm.kbdHook_KeyDown(key, repeatCount);
-                CheckIfNeedsClosing();
+                if (key != Keys.Down && key != Keys.Up)
+                    CheckIfNeedsClosing();
             }
             catch { }
         }
@@ -229,10 +230,10 @@ namespace CSScriptIntellisense
 
             popupForm = new T();
             popupForm.FormClosed += (sender, e) =>
-                                    {
-                                        end(popupForm);
-                                        popupForm = null;
-                                    };
+                                     {
+                                         end(popupForm);
+                                         popupForm = null;
+                                     };
             init(popupForm);
 
             //popupForm.Show(owner: Npp.NppHandle);//better but still crashes NPP;

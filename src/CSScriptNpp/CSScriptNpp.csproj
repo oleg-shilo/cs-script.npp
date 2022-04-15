@@ -121,7 +121,6 @@
     <Compile Include="Interop\LocalWindowsHook.cs" />
     <Compile Include="Interop\Npp.cs" />
     <Compile Include="Interop\WinHook.cs" />
-    <Compile Include="CSScriptNpp\MDbg\RemoteChannelServer.cs" />
     <Compile Include="OutputPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -260,11 +259,6 @@
     <None Include="Resources\vs.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSScriptNpp\cscs.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\clean.png" />
   </ItemGroup>
   <ItemGroup>
@@ -298,9 +292,6 @@
     <None Include="Resources\ConsoleHost.exe" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSScriptNpp\cscs.v3.5.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Resources\WhatsNew.txt" />
     <None Include="Resources\close.png" />
     <None Include="Resources\history.png" />
@@ -315,34 +306,6 @@
       <Project>{C67D7ED7-F350-4FD4-81B5-5E635FB08765}</Project>
       <Name>Intellisense.Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CSScriptNpp\MDbg\enc.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\MDbg\mdbg.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\MDbg\mdbgeng.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\MDbg\mdbgext.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\MDbg\NativeDebugWrappers.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\MDbg\npp.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\MDbg\raw.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CSScriptNpp\MDbg\corapi.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\breakpoint.png" />
@@ -385,19 +348,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dbg_break.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CSScriptNpp\csws.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CSScriptNpp\css_dbg.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="CSScriptNpp\css_dbg.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dbg_runtocusrsor.png" />
@@ -445,12 +395,6 @@
     <None Include="Resources\css_logo_vb_16x16_tb.png" />
     <None Include="Resources\DebugScript .csproj.user" />
     <None Include="Resources\dbg_refresh.png" />
-    <None Include="CSScriptNpp\MDbg\DbgAgent.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="CSScriptNpp\nuget.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Resources\favorites.png" />
   </ItemGroup>
   <ItemGroup />
@@ -465,38 +409,11 @@ copy "$(TargetPath)" "$(SolutionDir)output\plugins\$(TargetName)\$(TargetName).a
 copy "$(TargetDir)\CSScriptIntellisense.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptIntellisense.dll"
 
 copy "$(ProjectDir)$(ProjectName)\CompatibilityTest.exe" "$(SolutionDir)output\plugins\$(TargetName)\CompatibilityTest.exe"
-copy "$(ProjectDir)$(ProjectName)\cscs.exe" "$(SolutionDir)output\plugins\$(TargetName)\cscs.exe"
-copy "$(ProjectDir)$(ProjectName)\cscs.v3.5.exe" "$(SolutionDir)output\plugins\$(TargetName)\cscs.v3.5.exe"
-copy "$(ProjectDir)$(ProjectName)\csws.exe" "$(SolutionDir)output\plugins\$(TargetName)\csws.exe"
-copy "$(ProjectDir)$(ProjectName)\css_dbg.exe" "$(SolutionDir)output\plugins\$(TargetName)\css_dbg.exe"
-copy "$(ProjectDir)$(ProjectName)\css_dbg.pdb" "$(SolutionDir)output\plugins\$(TargetName)\css_dbg.pdb"
 copy "$(ProjectDir)$(ProjectName)\launcher.exe" "$(SolutionDir)output\plugins\$(TargetName)\launcher.exe"
-copy "$(ProjectDir)$(ProjectName)\npp_jit.exe" "$(SolutionDir)output\plugins\$(TargetName)\npp_jit.exe"
-copy "$(ProjectDir)$(ProjectName)\nuget.exe" "$(SolutionDir)output\plugins\$(TargetName)\nuget.exe"
-copy "$(ProjectDir)$(ProjectName)\syntaxer.exe" "$(SolutionDir)output\plugins\$(TargetName)\syntaxer.exe"
 copy "$(ProjectDir)$(ProjectName)\Updater.exe" "$(SolutionDir)output\plugins\$(TargetName)\Updater.exe"
 copy "$(ProjectDir)$(ProjectName)\CSScriptLibrary.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptLibrary.dll"
-copy "$(ProjectDir)$(ProjectName)\CSSRoslynProvider.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSSRoslynProvider.dll"
-copy "$(ProjectDir)$(ProjectName)\CSScriptLibrary.xml" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptLibrary.xml"
 
-copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.CSharp.dll" "$(SolutionDir)output\plugins\$(TargetName)\ICSharpCode.NRefactory.CSharp.dll"
-copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\ICSharpCode.NRefactory.dll" "$(SolutionDir)output\plugins\$(TargetName)\ICSharpCode.NRefactory.dll"
 copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Intellisense.Common.dll" "$(SolutionDir)output\plugins\$(TargetName)\Intellisense.Common.dll"
-copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Mono.Cecil.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mono.Cecil.dll"
-
-copy "$(ProjectDir)$(ProjectName)\MDbg\corapi.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\corapi.dll"
-
-copy "$(ProjectDir)$(ProjectName)\MDbg\DbgAgent.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\DbgAgent.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\enc.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\enc.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbg.exe" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbg.exe"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbgeng.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbgeng.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbgext.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbgext.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_32.exe" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbghost_32.exe"
-copy "$(ProjectDir)$(ProjectName)\MDbg\mdbghost_64.exe" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\mdbghost_64.exe"
-copy "$(ProjectDir)$(ProjectName)\MDbg\NativeDebugWrappers.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\NativeDebugWrappers.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\npp.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\npp.dll"
-copy "$(ProjectDir)$(ProjectName)\MDbg\raw.dll" "$(SolutionDir)output\plugins\$(TargetName)\Mdbg\raw.dll"
-
 
 rem IF EXIST "C:\Program Files\Notepad++\plugins\CSScriptNpp\NUL" (
 copy "$(TargetPath)" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptNpp.dll"
