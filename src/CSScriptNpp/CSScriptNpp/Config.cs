@@ -46,8 +46,6 @@ namespace CSScriptNpp
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
 
-        public bool ShowOpenInVsAlways = false;
-
         //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
 
@@ -73,10 +71,8 @@ namespace CSScriptNpp
         public string BlockLocalDebugOutputContaining = @"onecoreuap\inetcore\{NL}mincore\com\{NL}SHIMVIEW: ShimInfo(Complete)";
         public bool SyncSecondaryPanelsWithProjectPanel = true;
         public bool FloatingPanelsWarningAlreadyPropted = false;
-        public string TargetVersion = "v4.0.30319";
         public string ScriptsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "C# Scripts");
         public string SkipUpdateVersion = "";
-        public string VbCodeProvider = "CSSCodeProvider.v4.0.dll";
         public string CsSConsoleEncoding = "utf-8";
         public string HotkeyDocumentsExclusions = ".cmd;.bat;.test";
         public string LastExternalProcess = "";
@@ -86,8 +82,6 @@ namespace CSScriptNpp
         public string ReleaseNotesViewedFor = "";
         public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
         public string ScriptHistory = "";
-        public string DebugStepPointColor = "Yellow";
-        public string DebugStepPointForeColor = "Black";
         public int SciptHistoryMaxCount = 10;
         public int CollectionItemsInTooltipsMaxCount = 15;
         public int CollectionItemsInVisualizersMaxCount = 1000;
@@ -131,15 +125,12 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(CustomEngineAsm), CustomEngineAsm);
                     SetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
                     SetValue(Section, nameof(ScriptHistory), ScriptHistory);
-                    SetValue(Section, nameof(DebugStepPointColor), DebugStepPointColor);
-                    SetValue(Section, nameof(DebugStepPointForeColor), DebugStepPointForeColor);
                     SetValue(Section, nameof(SciptHistoryMaxCount), SciptHistoryMaxCount);
                     SetValue(Section, nameof(CollectionItemsInTooltipsMaxCount), CollectionItemsInTooltipsMaxCount);
                     SetValue(Section, nameof(CollectionItemsInVisualizersMaxCount), CollectionItemsInVisualizersMaxCount);
                     SetValue(Section, nameof(DebugPanelInitialTab), DebugPanelInitialTab);
                     SetValue(Section, nameof(LocalDebug), LocalDebug);
                     SetValue(Section, nameof(BreakOnException), BreakOnException);
-                    SetValue(Section, nameof(ShowOpenInVsAlways), ShowOpenInVsAlways);
                     SetValue(Section, nameof(ReloadActiveScriptOnRun), ReloadActiveScriptOnRun);
                     SetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                     SetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
@@ -147,7 +138,6 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(UseTogglingPanelVisibility), UseTogglingPanelVisibility);
                     SetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                     SetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
-                    SetValue(Section, nameof(VbCodeProvider), VbCodeProvider, true);
                     SetValue(Section, nameof(ScriptsDir), ScriptsDir);
                     SetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                     SetValue(Section, nameof(ImproveWin10ListVeiwRendering), ImproveWin10ListVeiwRendering);
@@ -163,7 +153,6 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(LastExternalProcessArgs), LastExternalProcessArgs);
                     SetValue(Section, nameof(LastExternalProcessCpu), LastExternalProcessCpu);
                     SetValue(Section, nameof(NativeAutoCompletionChecked), NativeAutoCompletionChecked);
-                    SetValue(Section, nameof(TargetVersion), TargetVersion);
                     SetValue(Section, nameof(CsSConsoleEncoding), CsSConsoleEncoding);
                     SetValue(Section, nameof(ClasslessScriptByDefault), ClasslessScriptByDefault);
                     SetValue(Section, nameof(DistributeScriptAsScriptByDefault), DistributeScriptAsScriptByDefault);
@@ -199,9 +188,6 @@ namespace CSScriptNpp
                 BlockLocalDebugOutputContaining = GetValue(Section, nameof(BlockLocalDebugOutputContaining), BlockLocalDebugOutputContaining);
                 SyncSecondaryPanelsWithProjectPanel = GetValue(Section, nameof(SyncSecondaryPanelsWithProjectPanel), SyncSecondaryPanelsWithProjectPanel);
                 ShowDebugPanel = GetValue(Section, nameof(ShowDebugPanel), ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
-                //ShowDebugPanel = GetValue(Section, nameof(ShowDebugPanel), ShowDebugPanel); //ignore; do not show Debug panel as it is heavy. It will be displayed at the first debug step anyway.
-                DebugStepPointColor = GetValue(Section, nameof(DebugStepPointColor), DebugStepPointColor, 1024 * 4);
-                DebugStepPointForeColor = GetValue(Section, nameof(DebugStepPointForeColor), DebugStepPointForeColor, 1024 * 4);
                 ScriptHistory = GetValue(Section, nameof(ScriptHistory), ScriptHistory, 1024 * 40);
                 SciptHistoryMaxCount = GetValue(Section, nameof(SciptHistoryMaxCount), SciptHistoryMaxCount);
                 CollectionItemsInTooltipsMaxCount = GetValue(Section, nameof(CollectionItemsInTooltipsMaxCount), CollectionItemsInTooltipsMaxCount);
@@ -216,7 +202,6 @@ namespace CSScriptNpp
                 CustomEngineAsm = GetValue(Section, nameof(CustomEngineAsm), CustomEngineAsm);
                 //QuickViewAutoRefreshAvailable = GetValue(Section, nameof(QuickViewAutoRefreshAvailable), QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
                 LocalDebug = GetValue(Section, nameof(LocalDebug), LocalDebug);
-                TargetVersion = GetValue(Section, nameof(TargetVersion), TargetVersion);
                 CsSConsoleEncoding = GetValue(Section, nameof(CsSConsoleEncoding), CsSConsoleEncoding);
                 LastExternalProcess = GetValue(Section, nameof(LastExternalProcess), LastExternalProcess);
                 LastExternalProcessArgs = GetValue(Section, nameof(LastExternalProcessArgs), LastExternalProcessArgs);
@@ -224,7 +209,6 @@ namespace CSScriptNpp
                 NativeAutoCompletionChecked = GetValue(Section, nameof(NativeAutoCompletionChecked), NativeAutoCompletionChecked);
                 ReleaseNotesViewedFor = GetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
                 BreakOnException = GetValue(Section, nameof(BreakOnException), BreakOnException);
-                ShowOpenInVsAlways = GetValue(Section, nameof(ShowOpenInVsAlways), ShowOpenInVsAlways);
                 ReloadActiveScriptOnRun = GetValue(Section, nameof(ReloadActiveScriptOnRun), ReloadActiveScriptOnRun);
                 UpdateAfterExit = GetValue(Section, nameof(UpdateAfterExit), UpdateAfterExit);
                 LastUpdatesCheckDate = GetValue(Section, nameof(LastUpdatesCheckDate), LastUpdatesCheckDate);
@@ -233,7 +217,6 @@ namespace CSScriptNpp
                 CheckPrereleaseUpdates = GetValue(Section, nameof(CheckPrereleaseUpdates), CheckPrereleaseUpdates);
                 SkipUpdateVersion = GetValue(Section, nameof(SkipUpdateVersion), SkipUpdateVersion);
                 ScriptsDir = GetValue(Section, nameof(ScriptsDir), ScriptsDir);
-                VbCodeProvider = GetValue(Section, nameof(VbCodeProvider), VbCodeProvider);
                 StartRoslynServerAtNppStartup = GetValue(Section, nameof(StartRoslynServerAtNppStartup), StartRoslynServerAtNppStartup);
                 RestorePanelsAtStartup = GetValue(Section, nameof(RestorePanelsAtStartup), RestorePanelsAtStartup);
                 CustomSyntaxerAsm = GetValue(Section, nameof(CustomSyntaxerAsm), CustomSyntaxerAsm);

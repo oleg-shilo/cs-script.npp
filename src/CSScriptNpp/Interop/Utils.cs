@@ -1,4 +1,3 @@
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,12 +5,13 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
-using CSScriptIntellisense;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Net.Sockets;
+using Microsoft.Win32;
+using CSScriptIntellisense;
 using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
@@ -75,23 +75,18 @@ namespace CSScriptNpp
             return input;
         }
 
-        public static bool IsVS2010PlusAvailable
+        public static bool IsVS2017PlusAvailable
         {
             get
             {
-                using (var vs2010 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.10.0", false))
-                using (var vs2012 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.11.0", false))
-                using (var vs2013 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.12.0", false))
-                using (var vs2015 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.14.0", false))
+                if (Environment.GetEnvironmentVariable("CSSCRIPT_VSEXE") != null)
+                    return true;
+
                 using (var vs2017 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.15.0", false))
+                using (var vs2019 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.16.0", false))
+                using (var vs2022 = Registry.ClassesRoot.OpenSubKey("VisualStudio.DTE.17.0", false))
                 {
-                    return (
-                        Config.Instance.ShowOpenInVsAlways ||
-                        vs2010 != null || 
-                        vs2012 != null || 
-                        vs2013 != null || 
-                        vs2015 != null || 
-                        vs2017 != null);
+                    return (vs2022 != null || vs2019 != null || vs2017 != null);
                 }
             }
         }

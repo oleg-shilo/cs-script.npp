@@ -230,7 +230,17 @@ namespace CSScriptNpp
                 string scriptCode = (Config.Instance.ClasslessScriptByDefault ? defaultClasslessScriptCode : defaultScriptCode);
                 if (!File.Exists(newScript))
                 {
-                    File.WriteAllText(newScript, scriptCode);
+                    var p = new Process();
+                    p.StartInfo.FileName = "dotnet";
+                    p.StartInfo.Arguments = Config.Instance.ClasslessScriptByDefault ?
+                                                $"\"{Runtime.cscs_asm}\" -new:toplevel \"{newScript}\"" :
+                                                $"\"{Runtime.cscs_asm}\" -new:console \"{newScript}\"";
+
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.CreateNoWindow = true;
+                    p.Start();
+                    p.WaitForExit();
+
                     try
                     {
                         PluginBase.Editor.Open(newScript);
@@ -495,23 +505,20 @@ void main(string[] args)
         public void OpenInVS()
         {
             Cursor = Cursors.WaitCursor;
-            if (currentScript == null)
-            {
-                MessageBox.Show("Please load some script file first.", "CS-Script");
-            }
-            else
-            {
-                PluginBase.Editor.SaveCurrentFile();
 
-                try
-                {
-                    CSScriptHelper.OpenAsVSProjectFor(currentScript);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message);
-                }
+            PluginBase.Editor.SaveCurrentFile();
+
+            try
+            {
+                var currFile = Npp.Editor.GetCurrentFilePath();
+
+                CSScriptHelper.OpenAsVSProjectFor(currentScript ?? currFile);
             }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
             Cursor = Cursors.Default;
         }
 
@@ -673,13 +680,12 @@ void main(string[] args)
         {
             this.InUiThread(() =>
             {
-                openInVsBtn.Visible = Utils.IsVS2010PlusAvailable;
+                openInVsBtn.Visible = Utils.IsVS2017PlusAvailable;
 
                 newBtn.Enabled = true;
 
                 validateBtn.Enabled =
                 reloadBtn.Enabled =
-                openInVsBtn.Enabled =
                 synchBtn.Enabled =
                 runBtn.Enabled = (treeView1.Nodes.Count > 0);
 
@@ -1060,6 +1066,8 @@ void main(string[] args)
 
         void deployBtn_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             try
             {
                 if (currentScript == null)
@@ -1074,14 +1082,17 @@ void main(string[] args)
 
                             npp.SaveDocuments(GetProjectDocuments());
 
-                            string selectedTargetVersion = dialog.SelectedVersion.Version;
-                            CSScriptHelper.Isolate(currentScript, dialog.AsScript, selectedTargetVersion, dialog.AsWindowApp, dialog.AsDll);
+                            var result = CSScriptHelper.Isolate(currentScript, dialog.AsScript, dialog.AsWindowApp, dialog.AsDll);
+                            if (result != null)
+                                Process.Start("explorer.exe", $"\"{result}\"");
                         }
             }
             catch (Exception ex)
             {
+                Cursor.Current = Cursors.Default;
                 MessageBox.Show(ex.ToString(), "CS-Script");
             }
+            Cursor.Current = Cursors.Default;
         }
 
         void shortcutsBtn_Click(object sender, EventArgs e)

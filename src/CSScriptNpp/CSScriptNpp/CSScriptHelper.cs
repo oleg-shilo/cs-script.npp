@@ -1020,7 +1020,7 @@ namespace CSScriptNpp
             File.WriteAllText(Path.Combine(destDir, "warning.txt"), warning.ToString());
         }
 
-        static public string Isolate(string scriptFile, bool asScript, string targerRuntimeVersion, bool windowApp, bool asDll)
+        static public string Isolate(string scriptFile, bool asScript, bool windowApp, bool asDll)
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -1057,9 +1057,16 @@ namespace CSScriptNpp
                     var files = proj.SourceFiles.Concat(assemblies);
 
                     files.ForEach(file => copy(file, dir));
+                    copy(engineFile, dir);
 
-                    CreateProviderWarningFileIfNeeded(dir, scriptFile);
-                    File.WriteAllText(batchFile, $"echo off\r\ncss \"{Path.GetFileName(scriptFile)}\"\r\npause");
+                    foreach (var file in Directory.GetFiles(engineFile.GetDirName(), "Microsoft.CodeAnalysis.*.dll"))
+                        copy(file, dir);
+
+                    foreach (var file in Directory.GetFiles(engineFile.GetDirName(), "cscs.*.json"))
+                        copy(file, dir);
+
+                    // CreateProviderWarningFileIfNeeded(dir, scriptFile);
+                    File.WriteAllText(batchFile, $"echo off\r\ndotnet .\\cscs.dll \"{Path.GetFileName(scriptFile)}\"\r\npause");
 
                     return dir;
                 }
@@ -1068,14 +1075,11 @@ namespace CSScriptNpp
                     string srcBinary = Path.ChangeExtension(scriptFile, asDll ? ".dll" : ".exe");
                     string destBinary = Path.Combine(dir, Path.GetFileName(srcBinary));
 
-                    string script = "\"" + scriptFile + "\"";
-
                     string build_arg = asDll ? "-cd" : "-e" + (windowApp ? "w" : "");
-                    string cscs = engineFile;
-                    string args = string.Format("{2} {0} {1}", GenerateDefaultArgs(scriptFile), script, build_arg);
+                    string args = $"\"{(windowApp ? engineFile : engineFile.Replace("cscs.dll", "csws.dll"))}\" {GenerateDefaultArgs(scriptFile)} {build_arg} \"{scriptFile}\"";
 
                     var p = new Process();
-                    p.StartInfo.FileName = cscs;
+                    p.StartInfo.FileName = "dotnet";
                     p.StartInfo.Arguments = args;
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.CreateNoWindow = true;
@@ -1089,15 +1093,16 @@ namespace CSScriptNpp
                                   .Where(x => x != scriptFile)
                                   .ForEach(file => copy(file, dir));
 
+                        copy(engineFile, dir);
+
                         File.Delete(srcBinary);
                         return dir;
                     }
                     else
                     {
                         //just show why building has failed
-                        cscs = "\"" + cscs + "\"";
-                        args = string.Format("{0} {3} {1} {2}", cscs, GenerateDefaultArgs(scriptFile), script, build_arg);
-                        Process.Start(ConsoleHostPath, args);
+                        args = $"\"{engineFile}\" {GenerateDefaultArgs(scriptFile)} {build_arg} -wait \"{scriptFile}\"";
+                        Process.Start("dotnet", args);
                         return null;
                     }
                 }
@@ -1111,73 +1116,29 @@ namespace CSScriptNpp
 
         static public void OpenAsVSProjectFor(string script)
         {
-            // zos
-            // var globalConfig = CSScriptIntellisense.CSScriptHelper.GetGlobalConfigItems();
-            // string[] defaultSearchDirs = globalConfig.Item1;
-            // string[] defaultRefAsms = globalConfig.Item2;
-            // string[] defaultNamespaces = globalConfig.Item3;
+            if (Environment.GetEnvironmentVariable("CSSCRIPT_VSEXE") == null)
+            {
+                var vsDirs = Directory.GetDirectories(Environment.SpecialFolder.ProgramFiles.GetPath(), "Microsoft Visual Studio*").Concat(
+                             Directory.GetDirectories(Environment.SpecialFolder.ProgramFilesX86.GetPath(), "Microsoft Visual Studio*"));
 
-            // var searchDirs = new List<string>();
-            // searchDirs.Add(Path.GetDirectoryName(script));
+                var ide = vsDirs.SelectMany(d => Directory.GetFiles(d, "devenv.exe", SearchOption.AllDirectories))
+                                .OrderByDescending(x => x)
+                                .FirstOrDefault();
+                if (ide == null)
+                {
+                    MessageBox.Show("Could not detect any installation of Visual Studio.", "CS-Script");
+                    return;
+                }
 
-            // searchDirs.AddRange(defaultSearchDirs);
+                Environment.SetEnvironmentVariable("CSSCRIPT_VSEXE", ide);
+            }
 
-            // var parser = new ScriptParser(script, searchDirs.ToArray(), false);
-            // searchDirs.AddRange(parser.SearchDirs);        //search dirs could be also defined in the script
-
-            // if (NppScripts_ScriptsDir != null)
-            //     searchDirs.Add(NppScripts_ScriptsDir);
-
-            // IList<string> sourceFiles = parser.SaveImportedScripts().ToList(); //this will also generate auto-scripts and save them
-            // sourceFiles.Add(script);
-            // sourceFiles = sourceFiles.Distinct().ToArray();
-
-            // //some assemblies are referenced from code and some will need to be resolved from the namespaces
-            // bool disableNamespaceResolving = (parser.IgnoreNamespaces.Count() == 1 && parser.IgnoreNamespaces[0] == "*");
-
-            // var refAsms = parser.ReferencedNamespaces
-            //                     .Union(defaultNamespaces)
-            //                     .Where(name => !disableNamespaceResolving && !parser.IgnoreNamespaces.Contains(name))
-            //                     .SelectMany(name => AssemblyResolver.FindAssembly(name, searchDirs.ToArray()))
-            //                     .Union(parser.ResolvePackages(suppressDownloading: true)) //it is not the first time we are loading the script so we already tried to download the packages
-            //                     .Union(parser.ReferencedAssemblies
-            //                                  .SelectMany(asm => AssemblyResolver.FindAssembly(asm.Replace("\"", ""), searchDirs.ToArray())))
-            //                     .Union(defaultRefAsms)
-            //                     .Distinct()
-            //                     .ToArray();
-
-            // string dir = Path.Combine(VsDir, Process.GetCurrentProcess().Id.ToString()) + "-" + script.GetHashCode();
-            // if (!Directory.Exists(dir))
-            //     Directory.CreateDirectory(dir);
-
-            // string projectName = Path.GetFileNameWithoutExtension(script);
-            // string projectFile = Path.Combine(dir, projectName + ".csproj");
-            // string solutionFile = Path.Combine(dir, projectName + ".sln");
-            // string scriptDir = Path.GetDirectoryName(script);
-
-            // string sourceFilesXml = string.Join(Environment.NewLine,
-            //                                     sourceFiles.Select(file => "<Compile Include=\"" + file + "\" />").ToArray());
-
-            // string refAsmsXml = string.Join(Environment.NewLine,
-            //                                 refAsms.Select(file => "<Reference Include=\"" + Path.GetFileNameWithoutExtension(file) + "\"><HintPath>" + file + "</HintPath></Reference>").ToArray());
-
-            // File.WriteAllText(projectFile,
-            //                   File.ReadAllText(GetProjectTemplate())
-            //                       .Replace("<UseVSHostingProcess>false", "<UseVSHostingProcess>true") // to ensure *.vshost.exe is created
-            //                       .Replace("<OutputType>Library", "<OutputType>Exe")
-            //                       .Replace("{$SOURCES}", sourceFilesXml)
-            //                       .Replace("{$REFERENCES}", refAsmsXml));
-
-            // File.WriteAllText(projectFile + ".user",
-            //                   Resources.Resources.VS2012UserTemplate
-            //                                      .Replace("<StartWorkingDirectory>",
-            //                                               "<StartWorkingDirectory>" + scriptDir));
-
-            // File.WriteAllText(solutionFile,
-            //                   Encoding.UTF8.GetString(Resources.Resources.VS2012SolutionTemplate)
-            //                                .Replace("{$PROJECTNAME}", projectName));
-
-            // Process.Start(solutionFile);
+            var p = new Process();
+            p.StartInfo.FileName = "dotnet";
+            p.StartInfo.Arguments = $"\"{Runtime.cscs_asm}\" -vs \"{script}\"";
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+            p.Start();
         }
 
         internal static string GetProjectTemplate()

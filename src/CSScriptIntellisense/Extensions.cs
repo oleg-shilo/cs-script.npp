@@ -33,6 +33,8 @@ namespace CSScriptIntellisense
         {
             return System.IO.Path.Combine(new[] { path }.Concat(items).ToArray());
         }
+        public static string GetPath(this Environment.SpecialFolder folder)
+          => Environment.GetFolderPath(folder);
 
         /// <summary>
         /// Determines whether the file has the specified extension (e.g. ".cs").
