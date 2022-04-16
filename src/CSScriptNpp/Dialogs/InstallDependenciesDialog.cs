@@ -52,7 +52,7 @@ namespace CSScriptNpp.Dialogs
                 p.StartInfo.Verb = "runas";
                 p.Start();
             }
-            catch (Exception e)
+            catch
             {
             }
         }

@@ -213,13 +213,6 @@
     <None Include="CSharpIntellisense\ICSharpCode.NRefactory.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CSharpIntellisense\Mono.Cecil.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="..\CSScriptNpp\CSScriptNpp\CSScriptLibrary.dll">
-      <Link>CSharpIntellisense\CSScriptLibrary.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="CSharpIntellisense\Intellisense.Common.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -30,11 +30,8 @@ namespace CSScriptIntellisense
         }
 
         static internal string currentFile = null;
-        static int currentFileCssHash = -1;
-        static DateTime currentFileTimestamp;
         static List<string> parsedFiles = new List<string>();
 
-        static bool SingleFileMode = false;
         static internal bool Enabled = false;
         static public Func<bool> SuppressCodeTolltips = () => false;
 

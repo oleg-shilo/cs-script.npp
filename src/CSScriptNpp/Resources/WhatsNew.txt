@@ -1,11 +1,22 @@
-Release v1.7.29.0
+Release v2.0.0.0
 ----
-v1.7.29
-- Added transparent switching to the new NPP API depending on the version: v8.2.1<->v8.3.0 (triggered by #64 and #65)
+This is the first release of the plugin purely targeting .NET 6 and higher.
 
-v1.7.28
-- Patched NppPluginNet: `CharacterRange.cpMin` and `CharacterRange.cpMax` changed from `int` to `IntPtr`
-  This addresses the problems triggered by this the third-party component (NppPluginNet):
-  - Issue #64: Creating a new script crashes latest 64-bit Notepad++ release
-  - Issue #65: Intermittent crashes (and the culprit is CS-Script)
-- Added logging syntaxer internal errors to the plugin log dir.
+New features and changes:
+
+- The plugin requires .NET 6 or higher to be installed on the target system for scripts to be run.
+- It is possible now to integrate the plugin to use custom version of CS-Script and syntax services (e.g. installed from Chocolaty).
+  You can do it from the settings dialog. 
+
+New limitations:
+- If you need your scripts to target .NET Framework then you will need to install the older version.
+  v1.7.29.0: https://github.com/oleg-shilo/cs-script.npp/releases/tag/v1.7.29.0
+  If you only need to use .NET Framework assemblies from your script you can rely .NET bridge mode available with .NET Core runtime (e.g. WPF under .NET Core). 
+
+Some plugin legacy features are no longer available:
+- All Debugger features are removed.
+  This is because the .NET debugger available in previous releases does not support .NET Core runtime.
+  Use external debuggers instead ("Debug" button on CS-Script toolbar)
+- The interception of the Debug output of the script is removed.
+  This is because the .NET Core runtime does no longer support this technique.
+

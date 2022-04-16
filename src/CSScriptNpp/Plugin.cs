@@ -499,7 +499,7 @@ namespace CSScriptNpp
 
                 Plugin.RunningScript = null;
             }
-            catch (Exception ex)
+            catch
             {
             }
         }
