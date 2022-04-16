@@ -158,7 +158,11 @@ namespace CSScriptIntellisense
             var effectiveCode = includeSpec + editorText;
             var effectiveOffset = offset + includeSpec.Length;
 
-            return Syntaxer.GetMemberInfo(effectiveCode, fileName, effectiveOffset, collapseOverloads, out methodStartPos);
+            var result = Syntaxer.GetMemberInfo(effectiveCode, fileName, effectiveOffset, collapseOverloads, out methodStartPos);
+
+            methodStartPos -= includeSpec.Length;
+
+            return result;
         }
 
         //----------------------------------
