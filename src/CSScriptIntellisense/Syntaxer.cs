@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Intellisense.Common;
-using UltraSharp.Cecil;
 
 namespace CSScriptIntellisense
 {
@@ -37,15 +36,6 @@ namespace CSScriptIntellisense
         static int timeout = 60000;
         static int procId = Process.GetCurrentProcess().Id;
 
-        public static void RestartServer()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                Exit();
-                StartServer(onlyIfNotRunning: false);
-            });
-        }
-
         public static void StartServer(bool onlyIfNotRunning)
         {
             Task.Factory.StartNew(() =>
@@ -58,7 +48,6 @@ namespace CSScriptIntellisense
                     // Debug.Assert(false);
 
                     bool hidden = true;
-                    // hidden = false;
                     if (hidden)
                     {
                         var p = new Process();
@@ -84,7 +73,6 @@ namespace CSScriptIntellisense
 
                 for (int i = 0; i < 10; i++)
                 {
-                    // var response = Send($"-client:{procId}");
                     var response = Send($"-op:ping");
                     if (response != null)
                         break;

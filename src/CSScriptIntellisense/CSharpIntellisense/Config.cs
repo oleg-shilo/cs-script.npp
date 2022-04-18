@@ -45,28 +45,15 @@ namespace CSScriptIntellisense
         public bool GoToDefinitionOnCtrlClick = true;
         public bool UseCmdContextMenu = true;
         public string ContextMenuCommands = "Go To Definition;Find All References;Auto-add missing 'usings';Rename... (Ctrl+R,R);Format Document";
-        public bool RoslynIntellisense = true;
 
-        public bool UsingRoslyn
-        {
-            get
-            {
-                if (RoslynIntellisensePerSession == null)
-                    return RoslynIntellisense;
-                else
-                    return RoslynIntellisense && RoslynIntellisensePerSession == true;
-            }
-        }
+        public bool UsingRoslyn => true;
 
-        public bool? RoslynIntellisensePerSession = null;
-        public bool RoslynFormatting = true;
         public bool DisableMethodInfo = false;
         public bool DisableMethodInfoAutoPopup = false;
         public bool AutoSuggestOnOpenEndLine = false;
         public bool FormatOnSave = false;
         public bool AutoInsertSingeSuggestion = false;
         public bool AutoSelectFirstSuggestion = false;
-        public bool FallbackFormatting = false;
         public bool VbSupportEnabled = true;
         public bool FormatAsYouType = true;
         public string DefaultRefAsms = "System.Linq|System.Xml|System.Xml.Linq|System.Windows.Forms|System.Drawing|System.Core|Microsoft.CSharp";
@@ -99,9 +86,6 @@ namespace CSScriptIntellisense
                 SetValue(Section, "AutoSuggestOnOpenEndLine", AutoSuggestOnOpenEndLine);
                 SetValue(Section, "FormatOnSave.v2", FormatOnSave);
                 SetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
-                SetValue(Section, "FallbackFormatting", FallbackFormatting);
-                SetValue(Section, "RoslynFormatting", RoslynFormatting);
-                SetValue(Section, "RoslynIntellisense_v2", RoslynIntellisense);
                 SetValue(Section, "UseCmdContextMenu", UseCmdContextMenu);
                 SetValue(Section, "GoToDefinitionOnCtrlClick", GoToDefinitionOnCtrlClick);
                 SetValue(Section, "ContextMenuCommands", ContextMenuCommands);
@@ -164,9 +148,6 @@ namespace CSScriptIntellisense
                 FormatOnSave = GetValue(Section, "FormatOnSave.v2", FormatOnSave);
                 AutoSuggestOnOpenEndLine = GetValue(Section, "AutoSuggestOnOpenEndLine", AutoSuggestOnOpenEndLine);
                 AutoInsertSingeSuggestion = GetValue(Section, "AutoInsertSingeSuggestion", AutoInsertSingeSuggestion);
-                FallbackFormatting = GetValue(Section, "FallbackFormatting", FallbackFormatting);
-                RoslynFormatting = GetValue(Section, "RoslynFormatting", RoslynFormatting);
-                RoslynIntellisense = GetValue(Section, "RoslynIntellisense_v2", RoslynIntellisense);
                 GoToDefinitionOnCtrlClick = GetValue(Section, "GoToDefinitionOnCtrlClick", GoToDefinitionOnCtrlClick);
                 ContextMenuCommands = GetValue(Section, "ContextMenuCommands", ContextMenuCommands);
                 UseCmdContextMenu = GetValue(Section, "UseCmdContextMenu", ref contextMenuCommandsJustConfigured, UseCmdContextMenu);

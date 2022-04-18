@@ -695,8 +695,6 @@ namespace CSScriptIntellisense
 
                     string text = document.GetTextBetween(0, npp.DocEnd);
 
-                    CSScriptHelper.DecorateIfRequired(ref text, ref pos);
-
                     int methodStartPosTemp;
 
                     string[] data = SimpleCodeCompletion.GetMemberInfo(text, pos, file, simple, out methodStartPosTemp);
@@ -714,7 +712,7 @@ namespace CSScriptIntellisense
 
         static void AddAllMissingUsings()
         {
-            if (UltraSharp.Cecil.Reflector.GetCodeCompileOutput != null)
+            if (Reflector.GetCodeCompileOutput != null)
                 HandleErrors(() =>
                 {
                     if (Npp.Editor.IsCurrentDocScriptFile())
@@ -784,7 +782,7 @@ namespace CSScriptIntellisense
                 if (Npp.Editor.IsCurrentDocScriptFile())
                 {
                     var document = Npp.GetCurrentDocument();
-                    string[] presentUsings = UltraSharp.Cecil.Reflector.GetCodeUsings(document.GetTextBetween(0, -1));
+                    string[] presentUsings = Reflector.GetCodeUsings(document.GetTextBetween(0, -1));
 
                     IEnumerable<Intellisense.Common.TypeInfo> items = ResolveNamespacesAtCaret().Where(x => !presentUsings.Contains(x.Namespace)).ToArray();
 
@@ -949,11 +947,6 @@ namespace CSScriptIntellisense
                     if (memberInfoWasShowing)
                         NppUI.Marshal(() => Dispatcher.Schedule(100, ShowMethodInfo));
                 };
-                //form.KeyPress += (sender, e) =>
-                //{
-                //    if (e.KeyChar >= ' ' || e.KeyChar == 8) //8 is backspace
-                //        OnAutocompleteKeyPress(e.KeyChar);
-                //};
                 autocompleteForm.Show();
 
                 OnAutocompleteKeyPress(allowNoText: true); //to grab current word at the caret an process it as a hint
@@ -1334,8 +1327,6 @@ namespace CSScriptIntellisense
             probingOffsets = probingOffsets.OrderBy(x => x - currentPosOffset).ToArray();
             var words = probingOffsets.Select(x => line.Substring(x)).ToArray();
 
-            CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
-
             var actualStart = currentPos - currentPosOffset; //after the decoration currentPos is changed so the line start
 
             var allUsings = new List<Intellisense.Common.TypeInfo>();
@@ -1358,8 +1349,6 @@ namespace CSScriptIntellisense
             string file = Npp.Editor.GetCurrentFilePath();
             string text = Npp.GetCurrentDocument().GetTextBetween(0, npp.DocEnd);
 
-            CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
-
             return SimpleCodeCompletion.GetMissingUsings(text, currentPos, file);
         }
 
@@ -1379,12 +1368,7 @@ namespace CSScriptIntellisense
             }
             catch { }
 
-            var decorated = CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
-
             DomRegion result = SimpleCodeCompletion.ResolveMember(text, currentPos, file);
-
-            if (decorated && result.FileName == file)
-                CSScriptHelper.Undecorate(text, ref result);
 
             return result;
         }

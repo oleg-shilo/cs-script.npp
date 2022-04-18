@@ -54,9 +54,8 @@ namespace CSScriptIntellisense
                 items.AddRange(rawItems);
             else
                 items.AddRange(rawItems.Where(s => s.ArgumentCount.HasValue && s.ArgumentCount.Value >= hintCount));
-                //items.AddRange(rawItems.Where(s => !s.ArgumentCount.HasValue || s.ArgumentCount.Value == 0 || s.ArgumentCount.Value >= hintCount));
-            
-            if(!items.Any())
+
+            if (!items.Any())
                 items.AddRange(rawItems);
 
             index = 0;
@@ -219,7 +218,7 @@ namespace CSScriptIntellisense
 
         SizeF MeasureDisplayArea()
         {
-            string info = items[index].Text; 
+            string info = items[index].Text;
 
             if (!Simple)
                 info = RemoveTypeCategory(info);
@@ -295,8 +294,6 @@ namespace CSScriptIntellisense
 
                 infoText = RemoveTypeCategory(items[index].Text);
             }
-
-            //e.Graphics.DrawString(RemoveTypeCategory(items[index].Text), this.Font, Brushes.Black, xOffset, yOffset);
 
             string[] parts = infoText.Split(new[] { Environment.NewLine + Environment.NewLine }, 2, StringSplitOptions.None);
 

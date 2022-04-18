@@ -184,8 +184,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Editor.Tests\CodeMap.cs" />
-    <Compile Include="Editor.Tests\Formatting.cs" />
+    <None Include="Editor.Tests\CodeMap.cs" />
     <Compile Include="Intellisense.Tests\Misc.cs" />
     <Compile Include="Intellisense.Tests\MethodInfo.cs" />
     <Compile Include="Intellisense.Tests\Snippets.cs" />

@@ -12,39 +12,6 @@ namespace CSScriptIntellisense
 {
     public static class NppExtensions
     {
-        // [DllImport("user32")]
-        // public static extern IntPtr SendMessage(IntPtr hWnd, NppMsg Msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lParam);
-
-        // [DllImport("user32")]
-        // public static extern IntPtr SendMessage(IntPtr hWnd, NppMsg Msg, int wParam, int lParam);
-
-        // static int execute(NppMsg msg, int wParam, int lParam = 0)
-        // {
-        //     return (int)NppExtensions.SendMessage(Npp.Editor.Handle, msg, wParam, lParam);
-        // }
-
-        // static public string GetTabFile(int index)
-        // {
-        //     var path = new StringBuilder(Win32.MAX_PATH);
-        //     SendMessage(Npp.Editor.Handle, NppMsg.NPPM_GETFULLPATHFROMBUFFERID, index, path);
-        //     return path.ToString();
-        // }
-
-        // public static string[] get_open_files1(this NotepadPPGateway editor)
-        // {
-        //     int count = execute(NppMsg.NPPM_GETNBOPENFILES, 0, 0);
-        //     var files = new List<string>();
-        //     for (int i = 0; i < count; i++)
-        //     {
-        //         int id = execute(NppMsg.NPPM_GETBUFFERIDFROMPOS, i, 0);
-        //         var file = GetTabFile(id);
-
-        //         if (file != null)
-        //             files.Add(file);
-        //     }
-        //     return files.ToArray();
-        // }
-
         static public void DisplayInNewDocument(this NotepadPPGateway editor, string text)
         {
             editor.FileNew();
@@ -222,7 +189,6 @@ namespace CSScriptIntellisense
             // !!!
             // The implementation is identical to "ClearIndicator". Looks like intentional.
             document.SetIndicatorCurrent(indicator);
-            // document.IndicatorClearRange(startPos, endPos - startPos);
             document.IndicatorFillRange(startPos, endPos - startPos);
         }
 
@@ -523,7 +489,6 @@ namespace CSScriptIntellisense
         static public Kbg.NppPluginNET.PluginInfrastructure.Colour ToColour(this Color color)
         {
             return new Colour(color.R, color.G, color.B);
-            // return new Colour(ColorTranslator.ToWin32(color));
         }
 
         static public void SetMarkerStyle(this ScintillaGateway document, int marker, SciMsg style, Color foreColor, Color backColor)

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Kbg.NppPluginNET.PluginInfrastructure;
-using Mono.CSharp;
 
 namespace CSScriptIntellisense
 {
@@ -96,20 +95,10 @@ namespace CSScriptIntellisense
         public static string GetSuggestionHint()
         {
             var document = Npp.GetCurrentDocument();
-            int currentPos = document.GetCurrentPos();
 
             string word = document.GetWordAtCursor();
             if (word != "")
                 return word;
-
-            // string text = document.GetTextBetween(Math.Max(0, currentPos - 30), currentPos); //check up to 30 chars from left
-            // int pos = text.LastIndexOfAny(SimpleCodeCompletion.Delimiters);
-            // if (pos != -1)
-            // {
-            //     string token = text.Substring(pos + 1);// +justTypedText;
-            //     return token.Trim();
-            // }
-
             return null;
         }
 

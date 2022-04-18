@@ -13,21 +13,6 @@ namespace CSScriptIntellisense
     {
         public AboutBox()
         {
-            // InitializeComponent();
-            // this.Text = "About C# Intellisense";
-            // this.label3.Text = "Version: " + AssemblyVersion;
-            // this.label5.Text = AssemblyCopyright;
-            // this.textBoxDescription.Text = AssemblyDescription;
-
-            // if (Plugin.Enabled)
-            // {
-            //     this.currentParsedFile.Text = "Parsed file: " + TruncatePath(Plugin.currentFile);
-            // }
-            // else
-            // {
-            //     this.currentParsedFile.ForeColor = Color.Red;
-            //     this.currentParsedFile.Text = "Disabled because the complete 'CSScriptNpp' is installed";
-            // }
         }
 
         string TruncatePath(string path)
@@ -138,10 +123,6 @@ namespace CSScriptIntellisense
                 Process.Start("https://github.com/oleg-shilo/cs-script.npp");
             }
             catch { }
-        }
-
-        void button1_Click(object sender, EventArgs e)
-        {
         }
     }
 }

@@ -154,7 +154,7 @@ namespace CSScriptIntellisense
             InvokeHandler();
         }
 
-        //Very important to keep it. It prevents the form from stealing the focus
+        // Very important to keep it. It prevents the form from stealing the focus
         protected override bool ShowWithoutActivation
         {
             get { return true; }

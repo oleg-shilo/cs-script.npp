@@ -144,11 +144,6 @@ namespace CSScriptIntellisense
             return Encoding.Default.GetByteCount(text);
         }
 
-        public static int GetUtf8ByteCount(this string text)
-        {
-            return Encoding.UTF8.GetByteCount(text);
-        }
-
         public static bool IsControlStatement(this string text)
         {
             text = text.TrimEnd();
@@ -242,21 +237,6 @@ namespace CSScriptIntellisense
             else
                 return false;
         }
-
-        //public static bool EndsWith(this StringBuilder builder, params char[] patterns)
-        //{
-        //    if (builder.Length > 0)
-        //    {
-        //        char endChar = builder[builder.Length - 1];
-
-        //        foreach(char c in patterns)
-        //            if (c == endChar)
-        //                return false;
-        //        return true;
-        //    }
-        //    else
-        //        return false;
-        //}
 
         public static bool ContainsAt(this StringBuilder builder, string pattern, int pos)
         {
@@ -572,8 +552,6 @@ namespace CSScriptIntellisense
 
         internal static int SyntaxLengthToPos(this string text, int syntaxLength)
         {
-            var textBuf = new StringBuilder();
-
             int absolutePos = -1;
             int currentSyntaxLength = 0;
 

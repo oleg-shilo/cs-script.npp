@@ -72,7 +72,6 @@
     <Compile Include="CSharpIntellisense\RoslynCompletionEngine.cs" />
     <Compile Include="CSharpIntellisense\Shortcuts.cs" />
     <Compile Include="Formatter\NppCodeFormatter.cs" />
-    <Compile Include="Formatter\SourceCodeFormatterOld.cs" />
     <Compile Include="Formatter\SourceCodeFormatter.cs" />
     <Compile Include="Formatter\StringExtesnions.cs" />
     <Compile Include="Interop\Logger.cs" />

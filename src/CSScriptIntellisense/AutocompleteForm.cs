@@ -43,7 +43,7 @@ namespace CSScriptIntellisense
 
             listBox1.Items.Clear();
 
-            Debug.WriteLine("hint: " + partialName);
+            // Debug.WriteLine("hint: " + partialName);
 
             IEnumerable<ICompletionData> items = ProcessSuggestionHint(partialName, rawItems);
 

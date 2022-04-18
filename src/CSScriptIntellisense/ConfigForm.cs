@@ -28,8 +28,6 @@ namespace CSScriptIntellisense
             formatAsYouType.Checked = data.FormatAsYouType;
             formatOnSave.Checked = data.FormatOnSave;
             autoInsertSingle.Checked = data.AutoInsertSingeSuggestion;
-            roslynFormatter.Checked = data.RoslynFormatting;
-            roslynIntellisense.Checked = data.RoslynIntellisense;
             useContextMenu.Checked = data.UseCmdContextMenu;
             F12OnCtrlClick.Checked = data.GoToDefinitionOnCtrlClick;
             vbSupport.Checked = data.VbSupportEnabled;
@@ -49,8 +47,6 @@ namespace CSScriptIntellisense
             data.UseMethodBrackets = useMethodBrackets.Checked;
             data.FormatOnSave = formatOnSave.Checked;
             data.AutoInsertSingeSuggestion = autoInsertSingle.Checked;
-            data.RoslynFormatting = //roslynFormatter.Checked;
-            data.RoslynIntellisense = roslynIntellisense.Checked;
             data.UseCmdContextMenu = useContextMenu.Checked;
             data.GoToDefinitionOnCtrlClick = F12OnCtrlClick.Checked;
             data.VbSupportEnabled = vbSupport.Checked;
@@ -59,13 +55,13 @@ namespace CSScriptIntellisense
         void ConfigForm_Load(object sender, EventArgs e)
         {
             string tooltip =
-                         "Checking this option remap C# Intellisense to Ctrl+Space.\n" +
-                         "This will also force C# Intellisense to invoke\n" +
-                         "native Notepad++ Auto-Completion for non .cs files." +
-                         "\n" +
-                         "Note that it will also remap \"Add missing 'using'\" to Ctrl+.\n" +
-                         "to make it more consistent with the default Visual Studio\n" +
-                         "shortcut mapping";
+                       "Checking this option remap C# Intellisense to Ctrl+Space.\n" +
+                           "This will also force C# Intellisense to invoke\n" +
+                           "native Notepad++ Auto-Completion for non .cs files." +
+                           "\n" +
+                           "Note that it will also remap \"Add missing 'using'\" to Ctrl+.\n" +
+                           "to make it more consistent with the default Visual Studio\n" +
+                           "shortcut mapping";
             this.toolTip1.SetToolTip(this.intercept, tooltip);
         }
 
