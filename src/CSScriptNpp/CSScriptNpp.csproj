@@ -400,7 +400,6 @@
   <ItemGroup />
   <PropertyGroup>
     <PostBuildEvent>md "$(SolutionDir)output\plugins\$(TargetName)"
-md "$(SolutionDir)output\plugins\$(TargetName)\Mdbg"
 
 copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x64.dll" "$(SolutionDir)output\plugins\$(TargetName).x64.dll"
 copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x86.dll" "$(SolutionDir)output\plugins\$(TargetName).x86.dll"
@@ -408,17 +407,16 @@ copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x86.dll" "$(SolutionDir)ou
 copy "$(TargetPath)" "$(SolutionDir)output\plugins\$(TargetName)\$(TargetName).asm.dll"
 copy "$(TargetDir)\CSScriptIntellisense.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptIntellisense.dll"
 
-copy "$(ProjectDir)$(ProjectName)\CompatibilityTest.exe" "$(SolutionDir)output\plugins\$(TargetName)\CompatibilityTest.exe"
 copy "$(ProjectDir)$(ProjectName)\launcher.exe" "$(SolutionDir)output\plugins\$(TargetName)\launcher.exe"
 copy "$(ProjectDir)$(ProjectName)\Updater.exe" "$(SolutionDir)output\plugins\$(TargetName)\Updater.exe"
-copy "$(ProjectDir)$(ProjectName)\CSScriptLibrary.dll" "$(SolutionDir)output\plugins\$(TargetName)\CSScriptLibrary.dll"
+copy "$(TargetDir)\ICSharpCode.NRefactory.CSharp.dll" "$(SolutionDir)output\plugins\$(TargetName)\ICSharpCode.NRefactory.CSharp.dll"
+copy "$(TargetDir)\ICSharpCode.NRefactory.dll" "$(SolutionDir)output\plugins\$(TargetName)\ICSharpCode.NRefactory.dll"
 
 copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Intellisense.Common.dll" "$(SolutionDir)output\plugins\$(TargetName)\Intellisense.Common.dll"
 
-rem IF EXIST "C:\Program Files\Notepad++\plugins\CSScriptNpp\NUL" (
-copy "$(TargetPath)" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptNpp.dll"
-copy "$(TargetDir)\CSScriptIntellisense.dll" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptIntellisense.dll"
-rem )</PostBuildEvent>
+if $(ConfigurationName) == Debug copy "$(TargetPath)" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptNpp.dll"
+if $(ConfigurationName) == Debug copy "$(TargetDir)\CSScriptIntellisense.dll" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptIntellisense.dll"
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

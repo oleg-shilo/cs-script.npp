@@ -24,6 +24,9 @@ md .\plugins            >nul 2>&1
 echo(
 echo Agregating plugin files...
 xcopy "..\src\output\plugins" ".\plugins" /s /Y
+xcopy "..\src\CSScriptNpp\CSScriptNpp\cs-script" ".\plugins\CSScriptNpp\cs-script\" /s /Y
+xcopy "..\src\CSScriptNpp\CSScriptNpp\cs-syntaxer" ".\plugins\CSScriptNpp\cs-syntaxer\" /s /Y
+
 del ".\plugins\original_*"
 del ".\plugins\*.zip"
 
