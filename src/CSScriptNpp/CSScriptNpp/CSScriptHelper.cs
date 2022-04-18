@@ -470,6 +470,15 @@ namespace CSScriptNpp
 
                 p.Start();
 
+                var cancel = new CancellationTokenSource();
+
+                p.Exited += (s, e) =>
+                {
+                    // process can exit but WaitForExit may not return until blocking IO reads are in progress so need
+                    // to cancel Tasks via the cancellation token
+                    cancel.Cancel();
+                };
+
                 if (onStart != null)
                     onStart(p);
 
@@ -488,17 +497,22 @@ namespace CSScriptNpp
                     }
                     else
                     {
-                        string line;
-                        while (null != (line = p.StandardOutput.ReadLine()))
+                        Task.Run(() =>
                         {
-                            output.AppendLine(line);
-                            onStdOut(line);
-                        }
+                            string line;
+                            while (null != (line = p.StandardOutput.ReadLine()))
+                            {
+                                System.Diagnostics.Debug.WriteLine("Listening OUT!!!");
+                                output.AppendLine(line);
+                                onStdOut(line);
+                            }
+                        }, cancel.Token);
 
                         Task.Run(() =>
                         {
                             try
                             {
+                                System.Diagnostics.Debug.WriteLine("Listening Err!!!");
                                 string errorLine;
                                 while (null != (errorLine = p.StandardError.ReadLine()))
                                 {
@@ -506,21 +520,11 @@ namespace CSScriptNpp
                                     onStdOut(errorLine);
                                 }
                             }
-                            catch (Exception)
-                            {
-                            }
-                        });
+                            catch { }
+                        }, cancel.Token);
                     }
                 }
                 p.WaitForExit();
-
-                if (onStdOut != null && !useFileRedirection)
-                {
-                    var errorLine = p.StandardError.ReadToEnd(); // may still be in the buffer
-
-                    output.AppendLine(errorLine);
-                    onStdOut(errorLine);
-                }
 
                 if (onStdOut != null && useFileRedirection)
                 {
