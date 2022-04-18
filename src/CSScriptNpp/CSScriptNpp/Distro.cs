@@ -1,14 +1,5 @@
 using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml;
 
 namespace CSScriptNpp
 {
@@ -18,18 +9,36 @@ namespace CSScriptNpp
         public string URL_root;
         public string fullUrl;
         public string ReleaseNotesText;
+        public string ReleaseNotesUrl;
 
         public static Distro FromFixedLocation(string path)
         {
-            return new Distro
+            // URL:  https://github.com/oleg-shilo/cs-script.npp/releases/download/v2.0.0.0/CSScriptNpp.2.0.0.0.x64.zip
+            // URL:  https://github.com/oleg-shilo/cs-script.npp/releases/download/v2.0.0.0/CSScriptNpp.2.0.0.0.ReleaseInfo.txt
+
+            var baseUrl = "https://github.com/oleg-shilo/cs-script.npp/releases/download/";
+
+            if (path.StartsWith(baseUrl))
             {
-                fullUrl = path,
-            };
+                var tokens = path.Substring(baseUrl.Length).Split('/');
+
+                return new Distro
+                {
+                    Version = tokens.FirstOrDefault()?.Replace("v", ""), // v1.1.1 vs 1.1.1
+                    URL_root = baseUrl + tokens.FirstOrDefault(),
+                    ReleaseNotesUrl = path.Replace(".x64.zip", ".ReleaseInfo.txt").Replace(".x86.zip", ".ReleaseInfo.txt")
+                };
+            }
+            else
+                return new Distro
+                {
+                    fullUrl = path,
+                };
         }
+
         public static Distro FromVersionInfo(string info)
         {
             var lines = info.Trim().Replace("\r\n", "\n").Split(new[] { '\n' }, 3);
-
             return new Distro
             {
                 Version = lines[0].Replace("v", ""), // v1.1.1 vs 1.1.1
@@ -48,8 +57,8 @@ namespace CSScriptNpp
             get
             {
                 return URL_root != null ?
-                   URL_root + "/" + FileNameWithoutExtension + ".zip" :
-                   fullUrl.ToUri();
+                    URL_root + "/" + FileNameWithoutExtension + ".zip" :
+                    fullUrl.ToUri();
             }
         }
 

@@ -38,11 +38,9 @@ namespace CSScriptNpp
                 syntaxer_asm = dependenciesDirRoot.PathJoin("cs-syntaxer", "syntaxer.dll");
                 syntaxer_port = 18001;
 
-#if !DEBUG
                 if (!Directory.Exists(syntaxer_asm.GetDirName()))
-#endif
-                DeployDir(Bootstrapper.pluginDir.PathJoin("cs-syntaxer"),
-                    syntaxer_asm.GetDirName());
+                    DeployDir(Bootstrapper.pluginDir.PathJoin("cs-syntaxer"),
+                        syntaxer_asm.GetDirName());
             }
 
             if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomEngineAsm.HasText())
@@ -52,11 +50,10 @@ namespace CSScriptNpp
             else
             {
                 cscs_asm = dependenciesDirRoot.PathJoin("cs-script", "cscs.dll");
-#if !DEBUG
+
                 if (!Directory.Exists(cscs_asm.GetDirName()))
-#endif
-                DeployDir(Bootstrapper.pluginDir.PathJoin("cs-script"),
-                          cscs_asm.GetDirName());
+                    DeployDir(Bootstrapper.pluginDir.PathJoin("cs-script"),
+                              cscs_asm.GetDirName());
 
                 var oldServicesVersions = Directory.GetDirectories(Path.GetDirectoryName(dependenciesDirRoot))
                                                    .Where(x => x != dependenciesDirRoot);
@@ -908,7 +905,7 @@ namespace CSScriptNpp
                 throw new Exception($"Resource {url} cannot be downloaded.");
         }
 
-        static string DownloadText(string url, string proxyUser = null, string proxyPw = null)
+        public static string DownloadText(this string url, string proxyUser = null, string proxyPw = null)
         {
             var sb = new StringBuilder();
             byte[] buf = new byte[1024 * 4];

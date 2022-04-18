@@ -5,18 +5,17 @@ This is the first release of the plugin purely targeting .NET 6 and higher.
 New features and changes:
 
 - The plugin requires .NET 6 or higher to be installed on the target system for scripts to be run.
-- It is possible now to integrate the plugin to use custom version of CS-Script and syntax services (e.g. installed from Chocolaty).
+- It is possible now to integrate the plugin to use a custom version of CS-Script and syntax services (e.g. installed from Chocolaty).
   You can do it from the settings dialog. 
 
 New limitations:
 - If you need your scripts to target .NET Framework then you will need to install the older version.
   v1.7.29.0: https://github.com/oleg-shilo/cs-script.npp/releases/tag/v1.7.29.0
-  If you only need to use .NET Framework assemblies from your script you can rely .NET bridge mode available with .NET Core runtime (e.g. WPF under .NET Core). 
+  If you only need to use .NET Framework assemblies from your script you can rely on .NET bridge mode available with .NET Core runtime (e.g. WPF under .NET Core). 
 
 Some plugin legacy features are no longer available:
 - All Debugger features are removed.
   This is because the .NET debugger available in previous releases does not support .NET Core runtime.
   Use external debuggers instead ("Debug" button on CS-Script toolbar)
 - The interception of the Debug output of the script is removed.
-  This is because the .NET Core runtime does no longer support this technique.
-
+  This is because the .NET Core runtime no longer supports this technique.

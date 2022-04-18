@@ -25,7 +25,34 @@ namespace CSScriptNpp.Dialogs
             msiDeployment.Checked = (Config.Instance.UpdateMode == (string)msiDeployment.Tag);
             manualDeployment.Checked = (Config.Instance.UpdateMode == (string)manualDeployment.Tag);
 
-            releaseInfo.Text = this.distro.ReleaseNotesText.NormalizeNewLines();
+            if (this.distro.ReleaseNotesText.HasText())
+            {
+                releaseInfo.Text = this.distro.ReleaseNotesText.NormalizeNewLines();
+            }
+            else if (this.distro.ReleaseNotesUrl.HasText())
+            {
+                this.Load += (s, e) =>
+                {
+                    Task.Run(() =>
+                    {
+                        try
+                        {
+                            this.Invoke((Action)
+                                delegate ()
+                                {
+                                    releaseInfo.Text = this.distro.ReleaseNotesUrl.DownloadText();
+                                }
+                                       );
+                        }
+                        catch { }
+                    });
+                };
+            }
+        }
+
+        private void UpdateOptionsPanel_Load1(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         void UpdateProgress(long currentStep, long totalSteps)

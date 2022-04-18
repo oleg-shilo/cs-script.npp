@@ -18,7 +18,10 @@ namespace CSScriptNpp
         {
             dialog.Load += (s, e) => modalDialogs++;
             dialog.FormClosed += (s, e) => modalDialogs--;
-            return dialog.ShowDialog();
+
+            IWin32Window npp = Control.FromHandle(Npp.Editor.Handle);
+            return dialog.ShowDialog(npp);
+            // return dialog.ShowDialog();
         }
 
         /***********************************/

@@ -122,13 +122,17 @@ namespace CSScriptNpp
 
         void update_Click(object sender, EventArgs e)
         {
-            Dispatcher.Schedule(300, () =>
-            {
-                using (var dialog = new UpdateOptionsPanel(Distro.FromFixedLocation(customUpdateUrl.Text)))
-                    dialog.ShowModal();
-            });
-
             Close();
+            Task.Run(() =>
+            {
+                Thread.Sleep(300);
+
+                var distro = Distro.FromFixedLocation(customUpdateUrl.Text);
+                using (var dialog = new UpdateOptionsPanel(distro))
+                {
+                    dialog.ShowModal();
+                }
+            });
         }
 
         void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

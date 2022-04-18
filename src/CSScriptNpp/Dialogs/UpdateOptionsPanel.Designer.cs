@@ -53,29 +53,28 @@
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.SuspendLayout();
-            //
+            // 
             // msiDeployment
-            //
+            // 
             this.msiDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.msiDeployment.Location = new System.Drawing.Point(8, 124);
-            this.msiDeployment.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.msiDeployment.Location = new System.Drawing.Point(6, 101);
             this.msiDeployment.Name = "msiDeployment";
-            this.msiDeployment.Size = new System.Drawing.Size(596, 54);
+            this.msiDeployment.Size = new System.Drawing.Size(447, 44);
             this.msiDeployment.TabIndex = 0;
             this.msiDeployment.Tag = "msi";
             this.msiDeployment.Text = "Download &MSI.\r\nNot suitable for Notepad++ portable installation. This option may" +
     " require system reboot.";
             this.msiDeployment.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.msiDeployment.UseVisualStyleBackColor = true;
-            //
+            this.msiDeployment.Visible = false;
+            // 
             // customDeployment
-            //
+            // 
             this.customDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.customDeployment.Checked = true;
-            this.customDeployment.Location = new System.Drawing.Point(8, 20);
-            this.customDeployment.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.customDeployment.Location = new System.Drawing.Point(6, 16);
             this.customDeployment.Name = "customDeployment";
-            this.customDeployment.Size = new System.Drawing.Size(596, 50);
+            this.customDeployment.Size = new System.Drawing.Size(447, 41);
             this.customDeployment.TabIndex = 1;
             this.customDeployment.TabStop = true;
             this.customDeployment.Tag = "custom";
@@ -84,130 +83,118 @@
             this.customDeployment.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.customDeployment.UseVisualStyleBackColor = true;
             this.customDeployment.CheckedChanged += new System.EventHandler(this.customDeployment_CheckedChanged);
-            //
+            // 
             // optionsGroup
-            //
+            // 
             this.optionsGroup.Controls.Add(this.customDeployment);
             this.optionsGroup.Controls.Add(this.manualDeployment);
             this.optionsGroup.Controls.Add(this.msiDeployment);
-            this.optionsGroup.Location = new System.Drawing.Point(8, 7);
-            this.optionsGroup.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.optionsGroup.Location = new System.Drawing.Point(6, 6);
             this.optionsGroup.Name = "optionsGroup";
-            this.optionsGroup.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.optionsGroup.Size = new System.Drawing.Size(619, 183);
+            this.optionsGroup.Size = new System.Drawing.Size(464, 149);
             this.optionsGroup.TabIndex = 2;
             this.optionsGroup.TabStop = false;
-            //
+            // 
             // manualDeployment
-            //
+            // 
             this.manualDeployment.AutoSize = true;
             this.manualDeployment.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.manualDeployment.Location = new System.Drawing.Point(8, 74);
-            this.manualDeployment.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.manualDeployment.Location = new System.Drawing.Point(6, 60);
             this.manualDeployment.Name = "manualDeployment";
-            this.manualDeployment.Size = new System.Drawing.Size(386, 38);
+            this.manualDeployment.Size = new System.Drawing.Size(287, 30);
             this.manualDeployment.TabIndex = 0;
             this.manualDeployment.Tag = "download";
             this.manualDeployment.Text = "&Download binaries.\r\nThis option requires you to deploy the binaries manually.";
             this.manualDeployment.UseVisualStyleBackColor = true;
-            //
+            // 
             // okBtn
-            //
-            this.okBtn.Location = new System.Drawing.Point(505, 7);
-            this.okBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            // 
+            this.okBtn.Location = new System.Drawing.Point(379, 6);
             this.okBtn.Name = "okBtn";
-            this.okBtn.Size = new System.Drawing.Size(135, 28);
+            this.okBtn.Size = new System.Drawing.Size(101, 23);
             this.okBtn.TabIndex = 3;
             this.okBtn.Text = "&Proceed";
             this.okBtn.UseVisualStyleBackColor = true;
             this.okBtn.Click += new System.EventHandler(this.okBtn_Click);
-            //
+            // 
             // skipBtn
-            //
+            // 
             this.skipBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.skipBtn.Location = new System.Drawing.Point(505, 43);
-            this.skipBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.skipBtn.Location = new System.Drawing.Point(379, 35);
             this.skipBtn.Name = "skipBtn";
-            this.skipBtn.Size = new System.Drawing.Size(135, 28);
+            this.skipBtn.Size = new System.Drawing.Size(101, 23);
             this.skipBtn.TabIndex = 3;
             this.skipBtn.Text = "Skip This Version";
             this.skipBtn.UseVisualStyleBackColor = true;
             this.skipBtn.Click += new System.EventHandler(this.skipBtn_Click);
-            //
+            // 
             // label1
-            //
+            // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 7);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(7, 6);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(123, 17);
+            this.label1.Size = new System.Drawing.Size(93, 13);
             this.label1.TabIndex = 4;
             this.label1.Text = "Available version: ";
-            //
+            // 
             // versionLbl
-            //
+            // 
             this.versionLbl.AutoSize = true;
-            this.versionLbl.Location = new System.Drawing.Point(129, 7);
-            this.versionLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.versionLbl.Location = new System.Drawing.Point(97, 6);
             this.versionLbl.Name = "versionLbl";
-            this.versionLbl.Size = new System.Drawing.Size(70, 17);
+            this.versionLbl.Size = new System.Drawing.Size(53, 13);
             this.versionLbl.TabIndex = 4;
             this.versionLbl.Text = "<version>";
-            //
+            // 
             // progressBar
-            //
-            this.progressBar.Location = new System.Drawing.Point(11, 31);
-            this.progressBar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            // 
+            this.progressBar.Location = new System.Drawing.Point(8, 25);
             this.progressBar.MarqueeAnimationSpeed = 50;
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(470, 12);
+            this.progressBar.Size = new System.Drawing.Size(352, 10);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 5;
-            //
+            // 
             // progressLbl
-            //
+            // 
             this.progressLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.progressLbl.Location = new System.Drawing.Point(353, 7);
-            this.progressLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.progressLbl.Location = new System.Drawing.Point(265, 6);
             this.progressLbl.Name = "progressLbl";
-            this.progressLbl.Size = new System.Drawing.Size(129, 18);
+            this.progressLbl.Size = new System.Drawing.Size(97, 15);
             this.progressLbl.TabIndex = 4;
             this.progressLbl.Text = "Downloading";
             this.progressLbl.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.progressLbl.UseMnemonic = false;
             this.progressLbl.Visible = false;
-            //
+            // 
             // releaseNotes
-            //
-            this.releaseNotes.Location = new System.Drawing.Point(462, 85);
-            this.releaseNotes.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            // 
+            this.releaseNotes.Location = new System.Drawing.Point(346, 69);
             this.releaseNotes.Name = "releaseNotes";
-            this.releaseNotes.Size = new System.Drawing.Size(181, 22);
+            this.releaseNotes.Size = new System.Drawing.Size(136, 18);
             this.releaseNotes.TabIndex = 6;
             this.releaseNotes.TabStop = true;
             this.releaseNotes.Text = "View Release Notes";
             this.releaseNotes.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.releaseNotes.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.releaseNotes_LinkClicked);
-            //
+            // 
             // showOptions
-            //
+            // 
             this.showOptions.AutoSize = true;
-            this.showOptions.Location = new System.Drawing.Point(243, 54);
-            this.showOptions.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.showOptions.Location = new System.Drawing.Point(182, 44);
             this.showOptions.Name = "showOptions";
-            this.showOptions.Size = new System.Drawing.Size(178, 21);
+            this.showOptions.Size = new System.Drawing.Size(138, 17);
             this.showOptions.TabIndex = 7;
             this.showOptions.Text = "Show Updating Options";
             this.showOptions.UseVisualStyleBackColor = true;
             this.showOptions.Visible = false;
-            //
+            // 
             // updateAfterExit
-            //
+            // 
             this.updateAfterExit.AutoSize = true;
-            this.updateAfterExit.Location = new System.Drawing.Point(11, 54);
-            this.updateAfterExit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.updateAfterExit.Location = new System.Drawing.Point(8, 44);
             this.updateAfterExit.Name = "updateAfterExit";
-            this.updateAfterExit.Size = new System.Drawing.Size(219, 21);
+            this.updateAfterExit.Size = new System.Drawing.Size(168, 17);
             this.updateAfterExit.TabIndex = 9;
             this.updateAfterExit.Tag = "";
             this.updateAfterExit.Text = "Update after Notepad++ exits.";
@@ -215,74 +202,69 @@
         "ion is inly available for the \"Download and replace binaries\" deployment mode.");
             this.updateAfterExit.UseVisualStyleBackColor = true;
             this.updateAfterExit.CheckedChanged += new System.EventHandler(this.updateAfterExit_CheckedChanged);
-            //
+            // 
             // button1
-            //
+            // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(443, 79);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button1.Location = new System.Drawing.Point(332, 64);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(135, 28);
+            this.button1.Size = new System.Drawing.Size(101, 23);
             this.button1.TabIndex = 3;
             this.button1.Text = "&Cancel";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Visible = false;
-            //
+            // 
             // tabControl1
-            //
+            // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(6, 87);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControl1.Location = new System.Drawing.Point(4, 71);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(643, 230);
+            this.tabControl1.Size = new System.Drawing.Size(482, 187);
             this.tabControl1.TabIndex = 10;
-            //
+            // 
             // tabPage1
-            //
+            // 
             this.tabPage1.Controls.Add(this.releaseInfo);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPage1.Size = new System.Drawing.Size(628, 201);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage1.Size = new System.Drawing.Size(474, 161);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Release Info";
             this.tabPage1.UseVisualStyleBackColor = true;
-            //
+            // 
             // releaseInfo
-            //
+            // 
             this.releaseInfo.BackColor = System.Drawing.Color.White;
             this.releaseInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.releaseInfo.Location = new System.Drawing.Point(4, 4);
-            this.releaseInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.releaseInfo.Location = new System.Drawing.Point(3, 3);
             this.releaseInfo.Multiline = true;
             this.releaseInfo.Name = "releaseInfo";
             this.releaseInfo.ReadOnly = true;
             this.releaseInfo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.releaseInfo.Size = new System.Drawing.Size(620, 193);
+            this.releaseInfo.Size = new System.Drawing.Size(468, 155);
             this.releaseInfo.TabIndex = 0;
-            //
+            // 
             // tabPage2
-            //
+            // 
             this.tabPage2.Controls.Add(this.optionsGroup);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPage2.Size = new System.Drawing.Size(635, 201);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage2.Size = new System.Drawing.Size(474, 161);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Update Options";
             this.tabPage2.UseVisualStyleBackColor = true;
-            //
+            // 
             // UpdateOptionsPanel
-            //
+            // 
             this.AcceptButton = this.okBtn;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.skipBtn;
-            this.ClientSize = new System.Drawing.Size(653, 322);
+            this.ClientSize = new System.Drawing.Size(490, 262);
             this.Controls.Add(this.releaseNotes);
             this.Controls.Add(this.updateAfterExit);
             this.Controls.Add(this.showOptions);
@@ -295,7 +277,6 @@
             this.Controls.Add(this.okBtn);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "UpdateOptionsPanel";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "CS-Script Update";
