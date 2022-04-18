@@ -14,7 +14,7 @@ namespace CSScriptNpp
 {
     public partial class ConfigForm : Form
     {
-        private const string defaultLauncher = "<script engine>";
+        const string defaultLauncher = "<script engine>";
         Config data;
 
         CSScriptIntellisense.ConfigForm panel;
@@ -42,8 +42,6 @@ namespace CSScriptNpp
 
             restorePanels.Checked = data.RestorePanelsAtStartup;
 
-            RefreshUseCustomLauncherCmd(data.UseCustomLauncher);
-
             customEngineLocation.Text = data.CustomEngineAsm;
             customSyntaxerExe.Text = data.CustomSyntaxerAsm;
             syntaxerPort.Text = data.CustomSyntaxerPort.ToString();
@@ -62,7 +60,7 @@ namespace CSScriptNpp
 
         bool skipSavingConfig = false;
 
-        private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
+        void ConfigForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             panel.OnClosing();
 
@@ -70,8 +68,6 @@ namespace CSScriptNpp
             data.UseEmbeddedEngine = embeddedEngine.Checked;
             data.RestorePanelsAtStartup = restorePanels.Checked;
             data.ScriptsDir = scriptsDir.Text;
-            //data.UseRoslynProvider = useCS6.Checked;
-            //all Roslyn individual config values are merged into RoslynIntellisense;
             data.VbSupportEnabled = CSScriptIntellisense.Config.Instance.VbSupportEnabled;
 
             data.CustomEngineAsm = customEngineLocation.Text;
@@ -93,13 +89,13 @@ namespace CSScriptNpp
                 Config.Instance.Save();
         }
 
-        private void ConfigForm_KeyDown(object sender, KeyEventArgs e)
+        void ConfigForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
                 Close();
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string file = Config.Instance.GetFileName();
             Config.Instance.Save();
@@ -124,34 +120,7 @@ namespace CSScriptNpp
             Close();
         }
 
-        void useCustomLauncher_CheckedChanged(object sender, EventArgs e)
-        {
-            RefreshUseCustomLauncherCmd();
-        }
-
-        static string useCustomLauncherCmdCache = null;
-
-        void RefreshUseCustomLauncherCmd(string launcherPath = null)
-        {
-            if (!launcherPath.IsEmpty())
-                useCustomLauncherCmd.Text =
-                useCustomLauncherCmdCache = launcherPath;
-
-            this.useCustomLauncherCmd.Enabled = this.useCustomLauncher.Checked;
-
-            if (this.useCustomLauncher.Checked)
-            {
-                useCustomLauncherCmd.Text = launcherPath ?? useCustomLauncherCmdCache;
-            }
-            else
-            {
-                if (!useCustomLauncherCmd.Text.IsEmpty())
-                    useCustomLauncherCmdCache = useCustomLauncherCmd.Text;
-                useCustomLauncherCmd.Text = defaultLauncher;
-            }
-        }
-
-        private void update_Click(object sender, EventArgs e)
+        void update_Click(object sender, EventArgs e)
         {
             Dispatcher.Schedule(300, () =>
             {
@@ -162,7 +131,7 @@ namespace CSScriptNpp
             Close();
         }
 
-        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
@@ -171,7 +140,7 @@ namespace CSScriptNpp
             catch { }
         }
 
-        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
@@ -203,9 +172,9 @@ namespace CSScriptNpp
 
         public void deployCSScript_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: true);
 
-        private void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: false);
+        void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: false);
 
-        private void autodetect_Click(object sender, EventArgs e)
+        void autodetect_Click(object sender, EventArgs e)
         {
             if (CSScriptHelper.IsCSScriptInstalled && CSScriptHelper.IsCSSyntaxerInstalled)
             {
@@ -225,11 +194,7 @@ namespace CSScriptNpp
             }
         }
 
-        private void tabPage2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void customLocationBtn_CheckedChanged(object sender, EventArgs e)
+        void customLocationBtn_CheckedChanged(object sender, EventArgs e)
         {
             if (embeddedEngine.Checked == customLocationBtn.Checked)
                 embeddedEngine.Checked = !customLocationBtn.Checked;
@@ -240,7 +205,7 @@ namespace CSScriptNpp
             customEngineLocation.Enabled = customLocationBtn.Checked;
         }
 
-        private void Explore_Click(object sender, EventArgs e)
+        void Explore_Click(object sender, EventArgs e)
         {
             try
             {
@@ -249,7 +214,7 @@ namespace CSScriptNpp
             catch { }
         }
 
-        private void embeddedEngine_CheckedChanged(object sender, EventArgs e)
+        void embeddedEngine_CheckedChanged(object sender, EventArgs e)
         {
             if (customLocationBtn.Checked == embeddedEngine.Checked)
                 customLocationBtn.Checked = !embeddedEngine.Checked;

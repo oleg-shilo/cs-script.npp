@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace CSScriptNpp
 {
-    //based on work of Ray Koopa: http://www.codeproject.com/Articles/878605/Getting-all-Special-Folders-in-NET
+    // based on work of Ray Koopa: http://www.codeproject.com/Articles/878605/Getting-all-Special-Folders-in-NET
     public class KnownFolders
     {
         [Flags]
@@ -26,7 +26,7 @@ namespace CSScriptNpp
         }
 
         [DllImport("Shell32.dll")]
-        private static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)]Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr ppszPath);
+        private static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr ppszPath);
 
         static string GetPath(Guid knownFolder, uint flags, bool defaultUser)
         {

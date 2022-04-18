@@ -1,10 +1,10 @@
-﻿using CSScriptNpp.Dialogs;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptNpp.Dialogs;
 
 namespace CSScriptNpp
 {
@@ -15,7 +15,7 @@ namespace CSScriptNpp
             InitializeComponent();
         }
 
-        private void PluginShortcuts_Load(object sender, EventArgs e)
+        void PluginShortcuts_Load(object sender, EventArgs e)
         {
             foreach (var item in Config.Shortcuts.GetConfigInfo().OrderBy(x => x.DisplayName))
             {
@@ -38,13 +38,13 @@ namespace CSScriptNpp
             }
         }
 
-        private void PluginShortcuts_KeyDown(object sender, KeyEventArgs e)
+        void PluginShortcuts_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
                 Close();
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string file = Config.Shortcuts.GetFileName();
             Task.Factory.StartNew(() =>
@@ -84,12 +84,12 @@ namespace CSScriptNpp
             }
         }
 
-        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             Modify();
         }
 
-        private void modifyBtn_Click(object sender, EventArgs e)
+        void modifyBtn_Click(object sender, EventArgs e)
         {
             Modify();
         }

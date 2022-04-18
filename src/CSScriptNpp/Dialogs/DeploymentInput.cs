@@ -48,7 +48,7 @@ namespace CSScriptNpp
             Config.Instance.Save();
         }
 
-        private void asExe_CheckedChanged(object sender, EventArgs e)
+        void asExe_CheckedChanged(object sender, EventArgs e)
         {
             windowApp.Enabled = false;
             // windowApp.Enabled = asExe.Checked;

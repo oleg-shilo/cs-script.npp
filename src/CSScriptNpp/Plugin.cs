@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -12,44 +11,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using CSScriptIntellisense;
-using CSScriptIntellisense.Interop;
 using CSScriptNpp.Dialogs;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
-    /*TODO:
-     * - Outstanding features
-     *  - Debugger
-     *      - Debugger does not treat DateTime members as primitives
-     *      - Some objects cannot be inspected:
-     *          - new FileInfo(this.GetType().Assembly.Location);
-     *          - Process.GetCurrentProcess();
-     *      - in CS-S.Npp allow calling object inspector and redirecting the output to the debug window.
-     *  - Integrate surrogate hosting //css_host /version:v4.0 /platform:x86;
-     *      - Debugging
-     *
-     * -------------------------------------------------------------------
-     *
-     *  - Desirable but not essential features:
-     *
-     *     - Debugger attach to process
-     *          - check presence of dbg info and open source file if possible
-     *          - integrate with OS (http://www.codeproject.com/Articles/132742/Writing-Windows-Debugger-Part)
-     *
-     *     - Rendering current step indicator sometimes (very rare occasions) is not reliable (e.g. at first breakpoint hit)
-     *       Very hard to reproduce. Pressing "Break" fixes it anyway
-     *
-     *     - Debug panel
-     *          - Locals panel cached update (not recommended as it requires asynch funcevals)
-     *              - clear the tree on frame change (embedded in 'locals update' message)
-     *              - reconstruct the tree branch by branch
-     *          - QuickWatch panel
-     *             - Handle method expressions like Console.WriteLine("test"). Currently only System.Console.WriteLine("test") works
-     *     - Debugger: make handling Debug.Assert user friendlier
-     */
-
     public partial class Plugin
     {
         public const string PluginName = "CS-Script";
@@ -208,48 +175,6 @@ namespace CSScriptNpp
                                  "Run",
                                  Run, uniqueKeys);
 
-            // AddInternalShortcuts("_Debug:Alt+F5",
-            //                      "Debug", () =>
-            //                      {
-            //                          if (!Debugger.IsRunning && Npp.Editor.IsCurrentDocScriptFile())
-            //                              DebugScript();
-            //                      }, uniqueKeys);
-
-            // AddInternalShortcuts("ToggleBreakpoint:F9",
-            //                      "Toggle Breakpoint",
-            //                      () => Debugger.ToggleBreakpoint(), uniqueKeys);
-
-            // AddInternalShortcuts("QuickWatch:Shift+F9",
-            //                      "Show QuickWatch...",
-            //                      QuickWatchPanel.PopupDialog, uniqueKeys);
-
-            // AddInternalShortcuts("StepInto:F11",
-            //                      "Step Into",
-            //                      Debugger.StepIn, uniqueKeys);
-
-            // AddInternalShortcuts("StepOut:Shift+F11",
-            //                      "Step Out",
-            //                      Debugger.StepOut, uniqueKeys);
-
-            // AddInternalShortcuts("StepOver:F10",
-            //                      "Step Over",
-            //                      StepOver, uniqueKeys);
-
-            // AddInternalShortcuts("SetNextIP:Ctrl+Shift+F10",
-            //                      "Set Next Statement",
-            //                      Debugger.SetInstructionPointer, uniqueKeys);
-
-            // AddInternalShortcuts("RunToCursor:Ctrl+F10",
-            //                      "Run To Cursor",
-            //                      Debugger.RunToCursor, uniqueKeys);
-
-            // AddInternalShortcuts("RunAsExternal:Ctrl+F5",
-            //                      "Run As External Process", () =>
-            //                      {
-            //                          if (Npp.Editor.IsCurrentDocScriptFile())
-            //                              RunAsExternal();
-            //                      }, uniqueKeys);
-
             AddInternalShortcuts("ShowNextFileLocationFromOutput:F4",
                                  "Next File Location in Output", () =>
                                  {
@@ -346,16 +271,6 @@ namespace CSScriptNpp
             get { return ProjectPanel?.mapPanel; }
         }
 
-        // static DebugPanel debugPanel;
-
-        // static public bool DebugPanelVisible
-        // {
-        //     get
-        //     {
-        //         return debugPanel != null && debugPanel.Visible;
-        //     }
-        // }
-
         static public bool OutputPanelVisible
         {
             get
@@ -381,21 +296,12 @@ namespace CSScriptNpp
 
         static public void Repaint()
         {
-            if (CSScriptNpp.Plugin.ProjectPanel != null)
-                CSScriptNpp.Plugin.ProjectPanel.Refresh();
-            if (CSScriptNpp.Plugin.CodeMapPanel != null)
-                CSScriptNpp.Plugin.CodeMapPanel.Refresh();
-            // if (CSScriptNpp.Plugin.debugPanel != null)
-            //     CSScriptNpp.Plugin.debugPanel.Refresh();
-            if (CSScriptNpp.Plugin.outputPanel != null)
-                CSScriptNpp.Plugin.outputPanel.Refresh();
-        }
-
-        static public ProjectPanel GetProjectPanel()
-        {
-            if (Plugin.ProjectPanel == null)
-                Plugin.InitProjectPanel();
-            return Plugin.ProjectPanel;
+            if (ProjectPanel != null)
+                ProjectPanel.Refresh();
+            if (CodeMapPanel != null)
+                CodeMapPanel.Refresh();
+            if (outputPanel != null)
+                outputPanel.Refresh();
         }
 
         static public void ShowSecondaryPanels()

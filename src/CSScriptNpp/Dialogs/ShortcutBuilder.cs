@@ -1,12 +1,7 @@
-﻿using Kbg.NppPluginNET.PluginInfrastructure;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp.Dialogs
 {
@@ -42,7 +37,7 @@ namespace CSScriptNpp.Dialogs
             }
         }
 
-        private void ok_Click(object sender, EventArgs e)
+        void ok_Click(object sender, EventArgs e)
         {
             Close();
             DialogResult = DialogResult.OK;

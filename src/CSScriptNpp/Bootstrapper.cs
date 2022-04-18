@@ -51,11 +51,6 @@ namespace CSScriptNpp
             File.WriteAllText(customLog, e.ToString());
         }
 
-        static bool ExistAndNotOlderThan(string file, string fileToCompareTo)
-        {
-            return File.Exists(file) && new Version(FileVersionInfo.GetVersionInfo(file).ProductVersion) >= new Version(FileVersionInfo.GetVersionInfo(fileToCompareTo).ProductVersion);
-        }
-
         static void ConnectPlugins()
         {
             try
@@ -73,10 +68,8 @@ namespace CSScriptNpp
             CSScriptIntellisense.Logger.Debug = PluginLogger.Debug;
             Task.Factory.StartNew(() =>
             {
-                //Logger.LogAsDebugAsync("Plugin has been loaded", 1000);
+                // Logger.LogAsDebugAsync("Plugin has been loaded", 1000);
             });
-
-            // MessageBox.Show("rrr");
         }
     }
 }

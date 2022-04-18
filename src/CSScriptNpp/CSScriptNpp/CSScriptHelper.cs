@@ -13,7 +13,6 @@ using System.Threading;
 // using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 using CSScriptIntellisense;
 
 namespace CSScriptNpp
@@ -69,7 +68,7 @@ namespace CSScriptNpp
             Syntaxer.syntaxer_asm = () => Runtime.syntaxer_asm;
             Syntaxer.syntaxer_port = () => Runtime.syntaxer_port;
 
-            CSScriptIntellisense.Syntaxer.StartServer(onlyIfNotRunning: true);
+            Syntaxer.StartServer(onlyIfNotRunning: true);
         }
 
         static void DeleteDir(string dir)
@@ -107,9 +106,7 @@ namespace CSScriptNpp
 
     public static class CSScriptHelper
     {
-        static string consoleHostPath;
         static string vsDir;
-        //static string scriptsDirectory;
 
         public static string ScriptsDir
         {
@@ -220,45 +217,6 @@ namespace CSScriptNpp
             }
         }
 
-        static string ConsoleHostPath
-        {
-            get
-            {
-                //if (consoleHostPath == null || !File.Exists(consoleHostPath) || !Utils.IsSameTimestamp(Assembly.GetExecutingAssembly().Location, consoleHostPath))
-                if (consoleHostPath == null || !File.Exists(consoleHostPath))
-                {
-                    consoleHostPath = Path.Combine(GetScriptTempDir(), "CSScriptNpp\\ConsoleHost.exe");
-                    try
-                    {
-                        var dir = Path.GetDirectoryName(consoleHostPath);
-
-                        if (!Directory.Exists(dir))
-                            Directory.CreateDirectory(dir);
-
-                        File.WriteAllBytes(consoleHostPath, Resources.Resources.ConsoleHost); //always try to override existing to ensure the latest version
-                        //Utils.SetSameTimestamp(Assembly.GetExecutingAssembly().Location, consoleHostPath);
-                    }
-                    catch { } //it can be already locked (running)
-                }
-                return consoleHostPath;
-            }
-        }
-
-        static string nppScriptsDir;
-
-        static string NppScriptsDir
-        {
-            get
-            {
-                if (nppScriptsDir == null)
-                    nppScriptsDir = AppDomain.CurrentDomain.GetAssemblies()
-                                                           .Where(x => x.FullName.StartsWith("NppScripts,"))
-                                                           .Select(x => Path.GetDirectoryName(x.Location))
-                                                           .FirstOrDefault();
-                return nppScriptsDir;
-            }
-        }
-
         static public string Build(string scriptFile, Action<string> onCompilerOutput)
         {
             string compilerOutput;
@@ -278,21 +236,6 @@ namespace CSScriptNpp
             else
                 return new string[0];
         }
-
-        // internal static void SynchAutoclssDecorationSettings(bool supportCS6Syntax)
-        // {
-        //     try
-        //     {
-        //         //AutoClass_DecorateAsCS6: False
-        //         var output = Run(Runtime.cscs_asm, $"\"{Runtime.cscs_asm\" "-config:get:AutoClass_DecorateAsCS6");
-        //         bool injectingCS6_enabled = bool.Parse(output.Split(':').Last());
-        //         if (supportCS6Syntax != injectingCS6_enabled)
-        //         {
-        //             Call("dotnet", $"\"{Runtime.cscs_asm\" -config:set:AutoClass_DecorateAsCS6:" + supportCS6Syntax, asAdmin: true);
-        //         }
-        //     }
-        //     catch { } //failure is not critical as future script compile errors will be informative anyway
-        // }
 
         static string Run(string file, string args)
         {
@@ -327,109 +270,6 @@ namespace CSScriptNpp
 
             p.WaitForExit();
             return output.ToString();
-        }
-
-        static void Call(string file, string args, bool asAdmin = false)
-        {
-            var p = new Process();
-            p.StartInfo.FileName = file;
-            p.StartInfo.Arguments = args;
-            if (asAdmin)
-            {
-                p.StartInfo.Verb = "runas";
-                p.StartInfo.UseShellExecute = true;
-            }
-            else
-            {
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.CreateNoWindow = true;
-            }
-            p.Start();
-            p.WaitForExit();
-        }
-
-        static string ScriptEngineLocation
-        {
-            get
-            {
-                try
-                {
-                    if (!Config.Instance.UseEmbeddedEngine)
-                    {
-                        var dir = Config.Instance.CustomEngineAsm;
-                        if (dir.IsEmpty())
-                            dir = "%CSSCRIPT_DIR%";
-
-                        dir = Environment.ExpandEnvironmentVariables(dir);
-
-                        if (Directory.Exists(dir))
-                        {
-                            return dir;
-                        }
-                        else
-                        {
-                            Config.Instance.UseEmbeddedEngine = true;
-                            Config.Instance.Save();
-                        }
-                    }
-                }
-                catch { }
-                return "";
-            }
-        }
-
-        internal static string cscs_dll_
-        {
-            get
-            {
-                if (ScriptEngineLocation.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && File.Exists(ScriptEngineLocation))
-                    return ScriptEngineLocation;
-
-                string name = "cscs.dll";
-                var file = Path.Combine(ScriptEngineLocation, name);
-                if (File.Exists(file))
-                    return file;
-                else
-                    return PluginEnv.PluginDir.PathJoin("cs-script", name);
-            }
-        }
-
-        internal static string css_exe
-        {
-            get
-            {
-                string name = "css.exe";
-                var file = Path.Combine(ScriptEngineLocation, name);
-                if (File.Exists(file))
-                    return file;
-                else
-                    return Path.Combine(PluginEnv.PluginDir, name);
-            }
-        }
-
-        internal static string csws_exe
-        {
-            get
-            {
-                string name = "csws.exe";
-                var file = Path.Combine(ScriptEngineLocation, name);
-                if (File.Exists(file))
-                    return file;
-                else
-                    return Path.Combine(PluginEnv.PluginDir, name);
-            }
-        }
-
-        internal static string cscs_v35_exe
-        {
-            get
-            {
-                var file = Path.Combine(ScriptEngineLocation, @"lib\Bin\NET 3.5\cscs.exe");
-                if (File.Exists(file))
-                    return file;
-                else
-                    return Path.Combine(PluginEnv.PluginDir, "cscs.v3.5.exe");
-            }
         }
 
         static bool Build(string scriptFile, out string compilerOutput, Action<string> onCompilerOutput)
@@ -792,84 +632,6 @@ namespace CSScriptNpp
             }
         }
 
-        static public string GetDbgInfoFile(string script, bool create = false)
-        {
-            string uniqueScriptHash = Path.GetFullPath(script).ToLower() //Win is not case-sensitive
-                                                              .GetHashCode()
-                                                              .ToString();
-
-            var file = Path.Combine(GetScriptTempDir(), "CSScriptNpp\\" + uniqueScriptHash + "\\" + Path.GetFileName(script) + ".dbg");
-
-            if (create)
-            {
-                var dir = Path.GetDirectoryName(file);
-
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-
-                if (!File.Exists(file))
-                    File.WriteAllText(file, "");
-            }
-
-            return file;
-        }
-
-        public static DecorationInfo GetDecorationInfo(string file)
-        {
-            DecorationInfo retval = null;
-
-            try
-            {
-                if (file != null)
-                {
-                    if (IsAutoGenFile(file))
-                    {
-                        string originalScript = CSScriptHelper.GetOriginalFileName(file);
-                        if (File.Exists(originalScript))
-                            retval = new DecorationInfo
-                            {
-                                ScriptFile = originalScript,
-                                AutoGenFile = file
-                            };
-                    }
-                    else
-                    {
-                        string entryFile = CSScriptHelper.GetEntryFileName(file);
-                        if (IsAutoGenFile(entryFile))
-                            retval = new DecorationInfo
-                            {
-                                ScriptFile = file,
-                                AutoGenFile = entryFile
-                            };
-                    }
-
-                    if (retval != null)
-                    {
-                        string code = File.ReadAllText(retval.AutoGenFile);
-                        Tuple<int, int> info = CSScriptIntellisense.CSScriptHelper.GetDecorationInfo(code);
-                        retval.IngecionStart = info.Item1;
-                        retval.IngecionLength = info.Item2;
-                        retval.InjectedLineNumber = code.Substring(0, retval.IngecionStart).Split('\n').Count(); ;
-                    }
-                }
-            }
-            catch { retval = null; }
-
-            return retval;
-        }
-
-        static public string GetEntryFileName(string scriptFile)
-        {
-            // zos
-            // if (IsAutoClassScriptFile(scriptFile))
-            // {
-            //     string cacheDir = Path.GetDirectoryName(CSScript.GetCachedScriptPath(scriptFile));
-            //     return Path.Combine(cacheDir, Path.GetFileNameWithoutExtension(scriptFile) + ".g" + Path.GetExtension(scriptFile));
-            // }
-
-            return scriptFile;
-        }
-
         static public string DownloadDistro(string distroUrl, Action<long, long> onProgress)
         {
             try
@@ -960,29 +722,6 @@ namespace CSScriptNpp
             return HasDirective(file, IsAsAdminScriptDirective);
         }
 
-        static public bool IsAutoClassScriptFile(string file)
-        {
-            return HasDirective(file, IsAutoclassScriptDirective);
-        }
-
-        static public bool IsSurrogateHosted(string file, ref bool isX86)
-        {
-            bool isPlatform86 = false;
-
-            bool result = HasDirective(file, line =>
-                {
-                    if (line.Trim().StartsWith("//css_host "))
-                    {
-                        isPlatform86 = line.Contains("/platform:x86");
-                        return true;
-                    }
-                    else
-                        return false;
-                });
-            isX86 = isPlatform86;
-            return result;
-        }
-
         static public bool HasDirective(string scriptFile, Predicate<string> lineChecker)
         {
             using (var file = new StreamReader(scriptFile))
@@ -998,26 +737,10 @@ namespace CSScriptNpp
 
         static char[] lineWordDelimiters = new[] { ' ', '\t' }; //for singleLine
 
-        static bool IsAutoclassScriptDirective(string text)
-        {
-            string[] words = text.Split(lineWordDelimiters, StringSplitOptions.RemoveEmptyEntries);
-            return words.Any() && words.First() == "//css_args" && (words.Contains("/ac") || words.Contains("/ac,") || words.Contains("/ac;") ||
-                                                                    words.Contains("-ac") || words.Contains("-ac,") || words.Contains("-ac;"));
-        }
-
         static bool IsAsAdminScriptDirective(string text)
         {
             string[] words = text.Split(lineWordDelimiters, StringSplitOptions.RemoveEmptyEntries);
             return words.Any() && words.First() == "//css_npp" && (words.Contains("asadmin") || words.Contains("asadmin,") || words.Contains("asadmin;"));
-        }
-
-        static public void CreateProviderWarningFileIfNeeded(string destDir, string scriptFile)
-        {
-            var warning = new StringBuilder();
-            warning.AppendLine("Notepad++ CS-Script plugin is configured to use stand alone CS-Script.");
-            warning.AppendLine("This means that you will need to install the script engine on the target system.");
-
-            File.WriteAllText(Path.Combine(destDir, "warning.txt"), warning.ToString());
         }
 
         static public string Isolate(string scriptFile, bool asScript, bool windowApp, bool asDll)
@@ -1031,7 +754,7 @@ namespace CSScriptNpp
                 while (!done)
                 {
                     NotifyClient("Building deployment package" + new string('.', tick++));
-                    System.Threading.Thread.Sleep(200);
+                    Thread.Sleep(200);
                     if (tick > 5)
                         tick = 1;
                 }
@@ -1065,7 +788,6 @@ namespace CSScriptNpp
                     foreach (var file in Directory.GetFiles(engineFile.GetDirName(), "cscs.*.json"))
                         copy(file, dir);
 
-                    // CreateProviderWarningFileIfNeeded(dir, scriptFile);
                     File.WriteAllText(batchFile, $"echo off\r\ndotnet .\\cscs.dll \"{Path.GetFileName(scriptFile)}\"\r\npause");
 
                     return dir;
@@ -1141,43 +863,9 @@ namespace CSScriptNpp
             p.Start();
         }
 
-        internal static string GetProjectTemplate()
-        {
-            string projTemplateFile = Config.Instance.VSProjectTemplatePath;
-
-            if (projTemplateFile.IsEmpty() || !File.Exists(projTemplateFile))
-
-            {
-                Config.Instance.VSProjectTemplatePath =
-                projTemplateFile = Path.Combine(VsDir, "VisualStudio.csproj.template.txt");
-
-                if (!File.Exists(projTemplateFile))
-                    File.WriteAllText(projTemplateFile, Resources.Resources.VS2012ProjectTemplate);
-
-                Config.Instance.Save();
-            }
-
-            return projTemplateFile;
-        }
-
         static public string ScriptEngineVersion()
         {
             return FileVersionInfo.GetVersionInfo(Runtime.cscs_asm).FileVersion.ToString();
-        }
-
-        static public bool Verify(string scriptFile)
-        {
-            var output = new StringBuilder();
-            "dotnet".run(
-                $"\"{Runtime.cscs_asm}\" -l -d -ca " + GenerateDefaultArgs(scriptFile) + " \"" + scriptFile + "\"",
-                line => output.AppendLine(line));
-
-            string stdOutput = output.ToString().RemoveNonUserCompilingInfo();
-
-            if (stdOutput.Contains("Error: Specified file could not be compiled."))
-                return false;
-            else
-                return true;
         }
 
         static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
@@ -1192,7 +880,6 @@ namespace CSScriptNpp
 
             var request = WebRequest.Create(url);
             var response = (WebResponse)request.GetResponse();
-            // var response = (HttpWebResponse)request.GetResponse();
 
             if (File.Exists(destinationPath))
                 File.Delete(destinationPath);
@@ -1296,40 +983,6 @@ namespace CSScriptNpp
             return probingDirArg;
         }
 
-        static string[] GetGlobalSearchDirs_tobe_removed()
-        {
-            var csscriptDir = Environment.GetEnvironmentVariable("CSSCRIPT_DIR");
-            if (csscriptDir != null)
-            {
-                var dirs = new List<string>();
-                dirs.Add(Environment.ExpandEnvironmentVariables("%CSSCRIPT_DIR%\\Lib"));
-
-                try
-                {
-                    var configFile = Path.Combine(csscriptDir, "css_config.xml");
-
-                    if (File.Exists(configFile))
-                    {
-                        var doc = new XmlDocument();
-                        doc.Load(configFile);
-                        dirs.AddRange(doc.FirstChild
-                                         .SelectSingleNode("searchDirs")
-                                         .InnerText.Split(';')
-                                         .Select(x => Environment.ExpandEnvironmentVariables(x)));
-                    }
-                }
-                catch { }
-                return dirs.ToArray();
-            }
-            return new string[0];
-        }
-
-        static bool IsAutoGenFile(string file)
-        {
-            //auto-generated file in cache directory
-            return file.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase) && file.IndexOf(@"\CSSCRIPT\Cache\") != -1;
-        }
-
         static Process ProcessStart(string app, string args, bool elevated = false)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -1340,15 +993,6 @@ namespace CSScriptNpp
                 startInfo.Verb = "runas";
 
             return Process.Start(startInfo);
-        }
-
-        public class DecorationInfo
-        {
-            public string AutoGenFile;
-            public int IngecionLength;
-            public int IngecionStart;
-            public int InjectedLineNumber;
-            public string ScriptFile;
         }
     }
 

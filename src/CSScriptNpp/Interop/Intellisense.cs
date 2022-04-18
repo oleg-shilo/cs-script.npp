@@ -5,11 +5,6 @@ namespace CSScriptNpp
 {
     public class Intellisense
     {
-        public static object GetMapOf(string code)
-        {
-            return UltraSharp.Cecil.Reflector.GetMapOf(code);
-        }
-
         public static void EnsureIntellisenseIntegration()
         {
             //Debug.Assert(false);

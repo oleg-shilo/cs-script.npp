@@ -48,16 +48,6 @@ namespace CSScriptNpp
 
             toolStripPersistance = new ToolStripPersistance(toolStrip1, settingsFile);
             toolStripPersistance.Load();
-
-            //buttons = toolStrip1.Items.Cast<ToolStripItem>().ToArray();
-            //ButtonsDefaultLayout = buttons.Select(x => x.Name.StartsWith("toolStripSeparator") ? "---" : x.Name).ToArray();
-
-            //OrrangeToolstripButtons();
-
-            //watcher = new FileSystemWatcher(Plugin.ConfigDir, "toolbar_buttons.txt");
-            //watcher.NotifyFilter = NotifyFilters.LastWrite;
-            //watcher.Changed += watcher_Changed;
-            //watcher.EnableRaisingEvents = true;
         }
 
         protected override void WndProc(ref Message m)
@@ -95,27 +85,7 @@ namespace CSScriptNpp
 
         ToolStripPersistance toolStripPersistance;
 
-        //void watcher_Changed(object sender, FileSystemEventArgs e)
-        //{
-        //    Invoke((Action)delegate { OrrangeToolstripButtons(); });
-        //}
-
-        //FileSystemWatcher watcher = new FileSystemWatcher();
-
         string settingsFile = Path.Combine(PluginEnv.ConfigDir, "toolbar_buttons.txt");
-
-        //ToolStripItem[] buttons;
-
-        //string[] SerializeButtons(IEnumerable<ToolStripItem> items)
-        //{
-        //    return items.Select(x =>
-        //        {
-        //            string visibility = x.Visible ? "" : "-";
-        //            return x.Name.StartsWith("toolStripSeparator") ? "---" : visibility + x.Name;
-        //        }).ToArray();
-        //}
-
-        //string[] ButtonsDefaultLayout;
 
         void UpdateButtonsTooltips()
         {
@@ -227,47 +197,27 @@ namespace CSScriptNpp
                     while (File.Exists(newScript));
                 }
 
-                string scriptCode = (Config.Instance.ClasslessScriptByDefault ? defaultClasslessScriptCode : defaultScriptCode);
-                if (!File.Exists(newScript))
+                var p = new Process();
+                p.StartInfo.FileName = "dotnet";
+                p.StartInfo.Arguments = Config.Instance.ClasslessScriptByDefault ?
+                                            $"\"{Runtime.cscs_asm}\" -new:toplevel \"{newScript}\"" :
+                                            $"\"{Runtime.cscs_asm}\" -new:console \"{newScript}\"";
+
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+                p.Start();
+                p.WaitForExit();
+
+                try
                 {
-                    var p = new Process();
-                    p.StartInfo.FileName = "dotnet";
-                    p.StartInfo.Arguments = Config.Instance.ClasslessScriptByDefault ?
-                                                $"\"{Runtime.cscs_asm}\" -new:toplevel \"{newScript}\"" :
-                                                $"\"{Runtime.cscs_asm}\" -new:console \"{newScript}\"";
-
-                    p.StartInfo.UseShellExecute = false;
-                    p.StartInfo.CreateNoWindow = true;
-                    p.Start();
-                    p.WaitForExit();
-
-                    try
-                    {
-                        PluginBase.Editor.Open(newScript);
-                    }
-                    catch
-                    {
-                    }
-                    PluginBase.GetCurrentDocument().GrabFocus();
-
-                    loadBtn.PerformClick();
+                    PluginBase.Editor.Open(newScript);
                 }
-                else
+                catch
                 {
-                    PluginBase.Editor.FileNew();
-                    var document = PluginBase.GetCurrentDocument();
-                    document.GrabFocus();
-                    document.AddText(scriptCode);
-
-                    // Win32.SendMessage(Npp.NppHandle, (uint)NppMsg.NPPM_MENUCOMMAND, 0, NppMenuCmd.IDM_FILE_NEW);
-                    // Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_GRABFOCUS, 0, 0);
-                    // Win32.SendMessage(Npp.CurrentScintilla, SciMsg.SCI_ADDTEXT, scriptCode.GetByteCount(), scriptCode);
-
-                    //for some reason setting the lexer does not work
-                    int SCLEX_CPP = 3;
-                    Win32.SendMessage(Npp.GetCurrentDocument().Handle, SciMsg.SCI_SETLEXER, SCLEX_CPP, 0);
-                    Win32.SendMessage(Npp.GetCurrentDocument().Handle, SciMsg.SCI_SETLEXERLANGUAGE, 0, "cpp");
                 }
+                PluginBase.GetCurrentDocument().GrabFocus();
+
+                loadBtn.PerformClick();
             }
         }
 
@@ -321,32 +271,6 @@ namespace CSScriptNpp
 
             return files.ToArray();
         }
-
-        const string defaultScriptCode =
-@"using System;
-using System.Diagnostics;
-using System.Windows.Forms;
-
-class Script
-{
-    [STAThread]
-    static public void Main(string[] args)
-    {
-        Console.WriteLine(""Hello World!"");
-        Debug.WriteLine(""Hello World!"");
-    }
-}";
-
-        const string defaultClasslessScriptCode =
-@"//css_ac
-using System;
-using System.Diagnostics;
-
-void main(string[] args)
-{
-    Console.WriteLine(""Hello World!"");
-    Debug.WriteLine(""Hello World!"");
-}";
 
         void synchBtn_Click(object sender, EventArgs e)
         {
@@ -528,14 +452,6 @@ void main(string[] args)
             this.Invoke((Action)RefreshControls);
         }
 
-        void OnConsoleOut(string line)
-        {
-            if (Plugin.OutputPanel.ConsoleOutput.IsEmpty)
-                Plugin.OutputPanel.ShowConsoleOutput();
-
-            Plugin.OutputPanel.ConsoleOutput.WriteLine(line);
-        }
-
         void OnConsoleObjectOut(object obj)
         {
             if (Plugin.OutputPanel.ConsoleOutput.IsEmpty)
@@ -546,15 +462,6 @@ void main(string[] args)
             else
                 foreach (char c in (char[])obj)
                     Plugin.OutputPanel.ConsoleOutput.WriteConsoleChar(c);
-        }
-
-        void OnConsoleOutChar(char[] buf)
-        {
-            if (Plugin.OutputPanel.ConsoleOutput.IsEmpty)
-                Plugin.OutputPanel.ShowConsoleOutput();
-
-            foreach (char c in buf)
-                Plugin.OutputPanel.ConsoleOutput.WriteConsoleChar(c);
         }
 
         public void Build()
@@ -832,95 +739,6 @@ void main(string[] args)
                         treeView1.EndUpdate();
 
                         currentScript = scriptFile;
-                        // CSScriptIntellisense.Plugin.EnsureCurrentFileParsed();
-
-                        var history = Config.Instance.ScriptHistory.Split('|').ToList();
-                        history.Remove(scriptFile);
-                        history.Insert(0, scriptFile);
-
-                        Config.Instance.ScriptHistory = string.Join("|", history.Take(Config.Instance.SciptHistoryMaxCount).ToArray());
-                        Config.Instance.Save();
-                        ReloadScriptHistory();
-                    }
-                    catch (Exception e)
-                    {
-                        //it is not a major use-case so doesn't matter why we failed
-                        MessageBox.Show("Cannot load script.\nError: " + e.Message, "CS-Script");
-                        e.LogAsError();
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Script '" + scriptFile + "' does not exist.", "CS-Script");
-            }
-            RefreshControls();
-        }
-
-        public void LoadScript_Old(string scriptFile)
-        {
-            if (!string.IsNullOrWhiteSpace(scriptFile) && File.Exists(scriptFile))
-            {
-                if (!scriptFile.IsScriptFile())
-                {
-                    MessageBox.Show("The file type '" + Path.GetExtension(scriptFile) + "' is not supported.", "CS-Script");
-                }
-                else
-                {
-                    try
-                    {
-                        Npp.Editor.OpenFile(scriptFile, true);
-
-                        Project project = CSScriptHelper.GenerateProjectFor(scriptFile);
-
-                        /*
-                        root
-                        references
-                           assembly_1
-                           assembly_2
-                           assembly_n
-                        script_1
-                        script_2
-                        script_N
-                        */
-
-                        treeView1.BeginUpdate();
-                        treeView1.Nodes.Clear();
-
-                        TreeNode root = treeView1.Nodes.Add("Script '" + Path.GetFileNameWithoutExtension(scriptFile) + "'");
-                        TreeNode references = root.Nodes.Add("References");
-
-                        root.SelectedImageIndex =
-                        root.ImageIndex = scriptFile.IsVbFile() ? scriptVbImage : scriptImage;
-                        references.SelectedImageIndex =
-                        references.ImageIndex = assemblyImage;
-
-                        root.ContextMenuStrip = solutionContextMenu;
-                        root.ToolTipText = "Script: " + scriptFile;
-
-                        Action<TreeNode, string[]> populateNode =
-                            (node, files) =>
-                            {
-                                foreach (var file in files)
-                                {
-                                    int imageIndex = includeImage;
-                                    var info = new ProjectItem(file) { IsPrimary = (file == project.PrimaryScript) };
-                                    if (info.IsPrimary)
-                                        imageIndex = file.IsVbFile() ? scriptVbImage : scriptImage;
-                                    if (info.IsAssembly)
-                                        imageIndex = assemblyImage;
-                                    node.Nodes.Add(new TreeNode(info.Name) { ImageIndex = imageIndex, SelectedImageIndex = imageIndex, Tag = info, ToolTipText = file, ContextMenuStrip = itemContextMenu });
-                                };
-                            };
-
-                        populateNode(references, project.Assemblies);
-                        populateNode(root, project.SourceFiles);
-                        root.Expand();
-
-                        treeView1.EndUpdate();
-
-                        currentScript = scriptFile;
-                        // CSScriptIntellisense.Plugin.EnsureCurrentFileParsed();
 
                         var history = Config.Instance.ScriptHistory.Split('|').ToList();
                         history.Remove(scriptFile);

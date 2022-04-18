@@ -24,6 +24,7 @@ namespace CSScriptNpp
                 return classlessCheckbox.Checked;
             }
         }
+
         public string ScriptName
         {
             get
@@ -32,7 +33,7 @@ namespace CSScriptNpp
             }
         }
 
-        private void okBtn_Click(object sender, EventArgs e)
+        void okBtn_Click(object sender, EventArgs e)
         {
             Config.Instance.ClasslessScriptByDefault = ClasslessScript;
             Config.Instance.Save();

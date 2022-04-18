@@ -200,7 +200,6 @@
             this.showOptions.Text = "Show Updating Options";
             this.showOptions.UseVisualStyleBackColor = true;
             this.showOptions.Visible = false;
-            this.showOptions.CheckedChanged += new System.EventHandler(this.showOptions_CheckedChanged);
             //
             // updateAfterExit
             //

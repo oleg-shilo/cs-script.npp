@@ -1,10 +1,10 @@
-﻿using CSScriptNpp.Dialogs;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptNpp.Dialogs;
 
 namespace CSScriptNpp
 {
@@ -230,7 +230,7 @@ namespace CSScriptNpp
             catch { }
         }
 
-        private void includePrereleases_CheckedChanged(object sender, EventArgs e)
+        void includePrereleases_CheckedChanged(object sender, EventArgs e)
         {
             if (this.includePrereleases.Checked != Config.Instance.CheckPrereleaseUpdates)
             {
@@ -239,7 +239,7 @@ namespace CSScriptNpp
             }
         }
 
-        private void linkLabel5_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void linkLabel5_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             var plugin_dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var updater_exe = Path.Combine(plugin_dir, "CSScriptNpp", "Updater.exe");
@@ -251,7 +251,7 @@ namespace CSScriptNpp
             catch { }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        void button1_Click(object sender, EventArgs e)
         {
             CSScriptHelper.LoadRoslyn();
         }

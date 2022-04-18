@@ -46,9 +46,7 @@ namespace CSScriptNpp
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
 
-        //public bool BuildOnF7 = true;
         public bool BreakOnException = false;
-
         public bool ReloadActiveScriptOnRun = true;
 
         public bool UpdateAfterExit = false;
@@ -200,7 +198,6 @@ namespace CSScriptNpp
                 InterceptConsoleByCharacter = GetValue(Section, nameof(InterceptConsoleByCharacter), InterceptConsoleByCharacter);
                 UseEmbeddedEngine = GetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
                 CustomEngineAsm = GetValue(Section, nameof(CustomEngineAsm), CustomEngineAsm);
-                //QuickViewAutoRefreshAvailable = GetValue(Section, nameof(QuickViewAutoRefreshAvailable), QuickViewAutoRefreshAvailable); //disable until auto-refresh approach is finalized
                 LocalDebug = GetValue(Section, nameof(LocalDebug), LocalDebug);
                 CsSConsoleEncoding = GetValue(Section, nameof(CsSConsoleEncoding), CsSConsoleEncoding);
                 LastExternalProcess = GetValue(Section, nameof(LastExternalProcess), LastExternalProcess);

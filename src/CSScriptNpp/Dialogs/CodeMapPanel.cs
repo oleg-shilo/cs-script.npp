@@ -1,7 +1,4 @@
-﻿using CSScriptIntellisense;
-using Intellisense.Common;
-using Kbg.NppPluginNET.PluginInfrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -9,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using CSScriptIntellisense;
+using Intellisense.Common;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -43,7 +43,7 @@ namespace CSScriptNpp
             UpdateItemHeight();
         }
 
-        private void MembersList_OnZoom(Control sender, bool zoomIn)
+        void MembersList_OnZoom(Control sender, bool zoomIn)
         {
             var fontSizeDelta = zoomIn ? 2 : -2;
             sender.ChangeFontSize(fontSizeDelta);
@@ -76,13 +76,6 @@ namespace CSScriptNpp
 
                         document.GotoLine(info.Line - 1); // document counts line as 0-based
                         document.VerticalCentreCaret();
-
-                        //// GetLineVisible just does not work, it returns true always
-                        // var caretIsVisible = document.GetLineVisible(currentLineNum);
-                        // if (caretIsVisible)
-                        //     document.SetFirstVisibleLine(info.Line - topScrollOffset);
-                        // else
-                        //     document.EnsureVisible(info.Line - 1);
                     }
                 }
                 catch { } //it is expected to fail if the line does not contain the file content position spec. This is also the reason for not validating any "IndexOf" results.
@@ -90,7 +83,6 @@ namespace CSScriptNpp
         }
 
         string currentFile;
-        Dictionary<int, int> currentMapping = new Dictionary<int, int>();
 
         public void RefreshContent()
         {
@@ -311,7 +303,7 @@ namespace CSScriptNpp
             }
         }
 
-        private void CodeMapPanel_VisibleChanged(object sender, EventArgs e)
+        void CodeMapPanel_VisibleChanged(object sender, EventArgs e)
         {
             if (this.Visible)
                 RefreshContent();
@@ -323,7 +315,7 @@ namespace CSScriptNpp
             catch { }
         }
 
-        private void refreshLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void refreshLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Cursor = Cursors.WaitCursor;
             RefreshContent();

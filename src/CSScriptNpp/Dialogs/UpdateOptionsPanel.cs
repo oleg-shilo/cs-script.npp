@@ -1,11 +1,11 @@
-﻿using CSScriptIntellisense;
-using Kbg.NppPluginNET.PluginInfrastructure;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp.Dialogs
 {
@@ -16,8 +16,6 @@ namespace CSScriptNpp.Dialogs
         public UpdateOptionsPanel(Distro distro)
         {
             InitializeComponent();
-
-            DoLayout();
 
             this.distro = distro;
             versionLbl.Text = distro.Version ?? distro.ZipUrl.ShrinkUrl();
@@ -129,7 +127,7 @@ namespace CSScriptNpp.Dialogs
                                 else
                                 {
                                     if (DialogResult.Yes == MessageBox.Show(new Form { TopMost = true }, @"Some installation steps still need to be completed. Notepad++ needs to be restarted in older to complete these steeps. Would you like to restart now?",
-                                                                              "CS-Script", MessageBoxButtons.YesNo))
+                                                                                "CS-Script", MessageBoxButtons.YesNo))
                                     {
                                         Process updater_proc = Process.Start(updater, string.Format("\"{0}\" \"{1}\"", distroFile, targetDir));
 
@@ -186,20 +184,6 @@ namespace CSScriptNpp.Dialogs
                 Process.Start(distro.ReleasePageUrl);
             }
             catch { }
-        }
-
-        void showOptions_CheckedChanged(object sender, EventArgs e)
-        {
-            DoLayout();
-        }
-
-        void DoLayout()
-        {
-            //optionsGroup.Visible = showOptions.Checked;
-            //if (showOptions.Checked)
-            //    this.Height = 300;
-            //else
-            //    this.Height = 130;
         }
 
         void customDeployment_CheckedChanged(object sender, EventArgs e)

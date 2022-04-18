@@ -56,35 +56,16 @@ namespace CSScriptNpp
                         string document = Npp.Editor.GetCurrentFilePath();
                         string tooltip = null;
 
-                        //if (Debugger.IsInBreak) //The calltips are used to show the values of the variables only. For everything else (e.g. MemberInfo) modal borderless forms are used
-                        //{
                         if (!string.IsNullOrEmpty(underMouseExpression))
                         {
                             //also need to check expression start position (if not debugging) as the same expression can lead to different tooltip
                             //NOTE: if DBG frame is changed the LastExpression is cleared
                             if (underMouseExpression == Calltip.LastExpression && Calltip.LastDocument == document)
                             {
-                                // if (Debugger.IsInBreak)
-                                //     tooltip = Calltip.LastEval;
                             }
-
-                            //if (underMouseExpression != Calltip.LastExpression)
-                            //{
-                            //    System.Diagnostics.Debug.WriteLine("GetDebugTooltipValue -> expression is changed...");
-                            //    System.Diagnostics.Debug.WriteLine("old: " + Calltip.LastExpression);
-                            //    System.Diagnostics.Debug.WriteLine("new: " + underMouseExpression);
-                            //}
-
-                            //if (Calltip.LastDocument != document)
-                            //    System.Diagnostics.Debug.WriteLine("GetDebugTooltipValue -> document is changed...");
 
                             if (tooltip == null)
                             {
-                                // if (Debugger.IsInBreak)
-                                // {
-                                //     tooltip = Debugger.GetDebugTooltipValue(underMouseExpression);
-                                // }
-                                // else
                                 if (CSScriptIntellisense.Config.Instance.ShowQuickInfoAsNativeNppTooltip)
                                 {
                                     tooltip = CSScriptIntellisense.Plugin.GetMemberUnderCursorInfo().FirstOrDefault();
@@ -124,8 +105,6 @@ namespace CSScriptNpp
         static public void SetCalltipTime(int milliseconds)
         {
             var document = Npp.GetCurrentDocument();
-            IntPtr sci = PluginBase.GetCurrentScintilla();
-            var ttt = document.GetMouseDwellTime();
 
             //Color: 0xBBGGRR
 
@@ -160,7 +139,6 @@ namespace CSScriptNpp
                 reader.Read(buffer, 0, offset);
                 return Encoding.UTF8.GetByteCount(buffer);
             }
-            //return Encoding.UTF8.GetByteCount(File.ReadAllText(file).Remove(offset));
         }
 
         public static int PositionToCharOffset(this int position, string file)
@@ -171,24 +149,6 @@ namespace CSScriptNpp
                 reader.Read(buffer, 0, position);
                 return Encoding.UTF8.GetCharCount(buffer);
             }
-        }
-
-        static public void SaveAllButNew()
-        {
-            //Win32.SendMessage(Npp.NppHandle, NppMsg.NPPM_SAVEALLFILES, 0, 0);
-            var document = Npp.GetCurrentDocument();
-
-            var files = Npp.Editor.GetOpenFilesSafe();
-            var current = Npp.Editor.GetCurrentFilePath();
-            foreach (var item in files)
-            {
-                if (Path.IsPathRooted(item))  //the "new" file is not saved so it has no root
-                {
-                    Npp.Editor.Open(item)
-                              .SaveCurrentFile();
-                }
-            }
-            Npp.Editor.Open(current);
         }
 
         static public void SaveDocuments(string[] files)

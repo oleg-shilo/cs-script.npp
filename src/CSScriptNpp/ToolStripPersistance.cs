@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -22,16 +21,18 @@ namespace CSScriptNpp
             this.file = settingsFile;
             this.originalButtonsOrder = control.Items.Cast<ToolStripItem>().ToArray();
 
-            defaultLayout = new[]{"#Move lines up/down to change the button position in toolbar.",
-                                  "#Replace '+' prefix with '-' to hide button."}
-                                  .Concat(originalButtonsOrder.Select(x =>
-                                                                      {
-                                                                          if (x is ToolStripSeparator)
-                                                                              return "---";
-                                                                          else
-                                                                              return "+" + x.Name;
-                                                                      }))
-                                  .ToArray();
+            defaultLayout = new[]
+            {
+"#Move lines up/down to change the button position in toolbar.",
+                "#Replace '+' prefix with '-' to hide button."}
+                                              .Concat(originalButtonsOrder.Select(x =>
+                                                                           {
+                                                                               if (x is ToolStripSeparator)
+                                                                               return "---";
+                                                                           else
+                                                                               return "+" + x.Name;
+                                                                           }))
+                                              .ToArray();
         }
 
         public void Load()
@@ -138,16 +139,5 @@ namespace CSScriptNpp
                 }
             }
         }
-
-        //string[] Serialize(IEnumerable<ToolStripItem> items)
-        //{
-        //    string[] result = items.Select(x =>
-        //                                    {
-        //                                        string visibility = x.Visible ? "+" : "-";
-        //                                        return x.Name.StartsWith("toolStripSeparator") ? "---" : visibility + x.Name;
-        //                                    }).ToArray();
-
-        //    return result;
-        //}
     }
 }

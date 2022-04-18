@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSScriptIntellisense;
-using CSScriptNpp;
 using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
-using NppPlugin.DllExport;
 
 public class NppPluginBinder
 {
@@ -94,12 +88,6 @@ namespace CSScriptNpp
 
         static string lastActivatedBuffer = null;
 
-        void SaveBreakpoints(string contentFile)
-        {
-            // Debugger.RefreshBreakPointsFromContent();
-            // Debugger.SaveBreakPointsFor(contentFile);
-        }
-
         public void beNotified(IntPtr notifyCode)
         {
             lock (typeof(UnmanagedExports))
@@ -143,15 +131,6 @@ namespace CSScriptNpp
                     {
                         CSScriptIntellisense.Plugin.OnCharTyped(nc.Character);
                     }
-                    else if (nc.Header.Code == (uint)SciMsg.SCN_MARGINCLICK)
-                    {
-                        if (nc.Margin == _SC_MARGE_SYBOLE && nc.Mmodifiers == SCI_CTRL)
-                        {
-                            var document = Npp.GetCurrentDocument();
-                            int lineClick = document.LineFromPosition(nc.Position.Value);
-                            // Debugger.ToggleBreakpoint(lineClick);
-                        }
-                    }
                     else if (nc.Header.Code == (uint)SciMsg.SCN_DWELLSTART) //tooltip
                     {
                         //Npp.ShowCalltip(nc.position, "\u0001  1 of 3 \u0002  test tooltip " + Environment.TickCount);
@@ -185,40 +164,31 @@ namespace CSScriptNpp
                         {
                             CSScriptIntellisense.Plugin.OnCurrentFileChanegd();
                             CSScriptNpp.Plugin.OnCurrentFileChanged();
-                            // Debugger.OnCurrentFileChanged();
                         }
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEOPENED)
                     {
                         string file = Npp.Editor.GetTabFile(nc.Header.IdFrom);
-                        // Debugger.LoadBreakPointsFor(file);
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
                     {
                         Plugin.OnDocumentSaved();
-                        // Debugger.RefreshBreakPointsInContent();
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
                     {
-                        if (contentFile.IsScriptFile())
-                            SaveBreakpoints(contentFile);
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
                     {
                         CSScriptIntellisense.Plugin.OnBeforeDocumentSaved();
-                        // Formatting may have shifted all breakpoints
-                        // Debugger.ResetBreaksPointsFromContent();
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
                     {
                         Marshal.FreeHGlobal(_ptrPluginName);
-
                         Plugin.CleanUp();
                     }
 
                     if (nc.Header.Code == (uint)SciMsg.SCI_ENDUNDOACTION)
                     {
-                        //CSScriptIntellisense.Plugin.OnSavedOrUndo();
                     }
 
                     Plugin.OnNotification(nc);

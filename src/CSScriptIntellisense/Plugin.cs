@@ -79,9 +79,7 @@ namespace CSScriptIntellisense
                 setCommand(cmdIndex++, "Settings", ShowConfig, null);
                 setCommand(cmdIndex++, "Manage Code Snippets", Snippets.EditSnippetsConfig, null);
                 setCommand(cmdIndex++, "---", null, null);
-#if DEBUG
-                //setCommand(cmdIndex++, "Test", Test, true, false, true, Keys.L);
-#endif
+
                 if (standaloneSetup)
                     setCommand(cmdIndex++, "About", ShowAboutBox, null);
 
@@ -125,8 +123,6 @@ namespace CSScriptIntellisense
 
             if (Snippets.Contains(token))
             {
-                // NppUI.Marshal(1000, () =>
-                // InsertCodeSnippet(token, point));
                 InsertCodeSnippet(token, point);
 
                 return true;
@@ -162,7 +158,6 @@ namespace CSScriptIntellisense
                             handled = true;
                     }
 
-                    //return;
                     if (Config.Instance.CodeSnippetsEnabled && !IsShowingInteractivePopup)
                     {
                         if ((key == Keys.Tab || key == Keys.Escape || key == Keys.Return) && isScriptDoc)
@@ -273,13 +268,6 @@ namespace CSScriptIntellisense
         }
 
         static int lastKeyEvent = 0;
-
-        public static void OnSavedOrUndo()
-        {
-            if (Config.Instance.PostFormattingUndoCaretReset && SourceCodeFormatter.CaretBeforeLastFormatting != -1)
-            {
-            }
-        }
 
         static void AddInternalShortcuts(string shortcutSpec, string displayName, Action handler, Dictionary<Keys, int> uniqueKeys)
         {
@@ -408,7 +396,6 @@ namespace CSScriptIntellisense
                         //Somehow timing matters. Most likely it's be fixed in the Roslyn production release.
                         Thread.Sleep(100);
                         Npp.Editor.SaveCurrentFile();
-                        // EnsureCurrentFileParsed();
                         references = FindAllReferencesAtCaret();
                     }
 
@@ -570,9 +557,6 @@ namespace CSScriptIntellisense
                 FormatDocument();
         }
 
-        private const int MARK_BREAKPOINT = 7;
-        private const int MARK_BREAKPOINT_MASK = 1 << 7;
-
         static bool formattingInProgress = false;
 
         static void FormatDocument()
@@ -586,11 +570,9 @@ namespace CSScriptIntellisense
             {
                 if (Npp.Editor.IsCurrentDocScriptFile())
                 {
-                    // note berakpoints and their lines
                     var doc = Npp.GetCurrentDocument();
 
                     var text_before = doc.AllText();
-                    var break_points = doc.LinesWithMarker(MARK_BREAKPOINT);
 
                     var p = doc.PositionFromLine(3).Value;
                     var l = doc.LineFromPosition(new Position(p));
@@ -598,14 +580,6 @@ namespace CSScriptIntellisense
                     SourceCodeFormatter.FormatDocument();
 
                     var text_after = doc.AllText();
-
-                    // restore breakpoints after formatting
-                    doc.DeleteAllMarkers(MARK_BREAKPOINT);
-                    foreach (var line_before_format in break_points)
-                    {
-                        var line_after_format = text_after.MapLine(line_before_format, text_before);
-                        doc.PlaceMarker(MARK_BREAKPOINT, line_after_format);
-                    }
                 }
             },
             () => formattingInProgress = false);
@@ -723,8 +697,6 @@ namespace CSScriptIntellisense
 
                     CSScriptHelper.DecorateIfRequired(ref text, ref pos);
 
-                    // EnsureCurrentFileParsed();
-
                     int methodStartPosTemp;
 
                     string[] data = SimpleCodeCompletion.GetMemberInfo(text, pos, file, simple, out methodStartPosTemp);
@@ -763,8 +735,6 @@ namespace CSScriptIntellisense
                                 count++;
 
                                 List<string> presentUsings = Reflector.GetCodeUsings(document.GetTextBetween(0, -1)).ToList();
-
-                                //c:\Users\user\Documents\C# Scripts\TooltipTest1.cs(27,9): error CS0103: The name 'Debug' does not exist in the current context
 
                                 string currentDocument = Npp.Editor.GetCurrentFilePath();
 
@@ -1290,91 +1260,10 @@ namespace CSScriptIntellisense
             }
         }
 
-        // static public void EnsureCurrentFileParsedAsynch()
-        // {
-        //     if (Plugin.Enabled)
-        //         Task.Factory.StartNew(EnsureCurrentFileParsed);
-        // }
-
         static public Func<string> ResolveCurrentFile = Npp.Editor.GetCurrentFilePath; //the implementation can be injected by the host or other plugins. To be used in the future.
         static public Action<string> DisplayInOutputPanel = Npp.Editor.DisplayInNewDocument; //the implementation can be injected by the host or other plugins. To be used in the future.
 
         static Dictionary<string, DateTime> currentSourcesStates = new Dictionary<string, DateTime>();
-
-        static bool CurrentSourcesChanged()
-        {
-            //checking the hash for all source files can be very expensive so checking timestamps only
-            foreach (string file in currentSourcesStates.Keys)
-                if (!File.Exists(file) || currentSourcesStates[file] != File.GetLastWriteTimeUtc(file))
-                    return true;
-            return false;
-        }
-
-        static void NoteCurrentSourcesStates(string[] sourceFiles)
-        {
-            currentSourcesStates.Clear();
-            foreach (string file in sourceFiles)
-                currentSourcesStates.Add(file, File.GetLastWriteTimeUtc(file));
-        }
-
-        // static public void EnsureCurrentFileParsed()
-        // {
-        //     if (Plugin.Enabled)
-        //         lock (typeof(Plugin))
-        //         {
-        //             try
-        //             {
-        //                 string file = ResolveCurrentFile();
-
-        //                 if (string.IsNullOrWhiteSpace(file) || !file.IsScriptFile())
-        //                     return;
-
-        //                 int newCssHash = -1;
-        //                 //when to regenerate the project:
-        //                 // - not initialized yet
-        //                 // - new file which is not a part of the 'current' project
-        //                 // - the current file changed and saved with the new set of CS-Script instructions (for multi-file mode only)
-        //                 if (currentFile == null ||
-        //                     (currentFile != file && !parsedFiles.Contains(file)) ||
-        //                     (!SingleFileMode && CurrentSourcesChanged()) ||
-        //                     (!SingleFileMode && currentFileTimestamp != File.GetLastWriteTime(file) && currentFileCssHash != (newCssHash = NppEditor.GetCssHash(file))))
-        //                 {
-        //                     currentFile = file;
-        //                     currentFileCssHash = (newCssHash != -1) ? newCssHash : NppEditor.GetCssHash(file);
-        //                     currentFileTimestamp = File.GetLastWriteTime(file);
-
-        //                     Tuple<string[], string[]> project = CSScriptHelper.GetProjectFiles(file);
-
-        //                     string[] sourceFiles = project.Item1;
-        //                     string[] assemblyFiles = project.Item2;
-
-        //                     NoteCurrentSourcesStates(sourceFiles);
-
-        //                     var sourcesInfos = new List<Tuple<string, string>>();
-
-        //                     if (SingleFileMode)
-        //                     {
-        //                         string code = Npp.GetCurrentDocument().GetTextBetween(0, npp.DocEnd);
-        //                         CSScriptHelper.DecorateIfRequired(ref code);
-        //                         sourcesInfos.Add(new Tuple<string, string>(code, file));
-        //                     }
-        //                     else
-        //                     {
-        //                         foreach (string srcFile in sourceFiles)
-        //                         {
-        //                             string code = File.ReadAllText(srcFile);
-        //                             if (srcFile == currentFile)
-        //                                 CSScriptHelper.DecorateIfRequired(ref code);
-        //                             sourcesInfos.Add(new Tuple<string, string>(code, srcFile));
-        //                         }
-        //                     }
-
-        //                     SimpleCodeCompletion.ResetProject(sourcesInfos.ToArray(), assemblyFiles);
-        //                 }
-        //             }
-        //             catch { }
-        //         }
-        // }
 
         static void WithTextAtCaret(Action<string, int, string> action)
         {
@@ -1445,17 +1334,7 @@ namespace CSScriptIntellisense
             probingOffsets = probingOffsets.OrderBy(x => x - currentPosOffset).ToArray();
             var words = probingOffsets.Select(x => line.Substring(x)).ToArray();
 
-            //start from currentPosOffset and go left, then go to the right
-            //probingOffsets = probingOffsets.Where(x => x <= currentPosOffset)
-            //                               .Reverse()
-            //                               .Concat(probingOffsets.Where(x => x > currentPosOffset))
-            //                               .ToArray();
-
-            words = probingOffsets.Select(x => line.Substring(x)).ToArray();
-
             CSScriptHelper.DecorateIfRequired(ref text, ref currentPos);
-
-            // EnsureCurrentFileParsed();
 
             var actualStart = currentPos - currentPosOffset; //after the decoration currentPos is changed so the line start
 

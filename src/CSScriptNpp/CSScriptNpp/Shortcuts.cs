@@ -68,13 +68,6 @@ namespace CSScriptNpp
             return null;
         }
 
-        //public string GetShortcutName(string displayName)
-        //{
-        //    if (displayNames.ContainsKey(displayName))
-        //        return displayNames[displayName];
-        //    return null;
-        //}
-
         public string GetValue(string name, string defaultValue)
         {
             var value = GetValue(Section, name, defaultValue);
