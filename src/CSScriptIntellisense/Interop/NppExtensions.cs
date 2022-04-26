@@ -420,20 +420,49 @@ namespace CSScriptIntellisense
                 return null;
         }
 
-        static string get_text_range(this IScintillaGateway document, int startPos, int endPos, int bufCapacity)
+        static bool IsNewNppApiVersion()
         {
-            var version = PluginBase.GetNppVersion();
+            int[] version = PluginBase.GetNppVersion();
 
             // starting from v8.30 N++ uses Scintilla interface with TextRange min and max members as `IntPtr`
             // while previously they were `int`. If a wrong type passed N++ just crashes.
 
             bool newNppVersion;
+
             if (version[0] > 8) // major version
+            {
                 newNppVersion = true;
+            }
             else if (version[0] == 8)
-                newNppVersion = version[1] >= 30; // minor version
+            {
+                // newNppVersion = version[1] >= 30; // minor version
+                // Code above is disabled as it is too simplistic. If the approach is used it would lead to
+                // comparing v8.4.0 > v8.3.1 would lead to the invalid comparison 4 < 31 since
+                // GetNppVersion would return [8, 4] vs [8, 31]
+                //
+                // so implementing a more convoluted algorithm :(
+
+                // Thank you Robert https://github.com/oleg-shilo/cs-script.npp/issues/64#issuecomment-1108448994
+                // the list of versions is in the message (url above)
+                // collect the "minor" versions of 8.1.9.1, etc.
+                var patchReleases = new int[] { 191, 192, 193 };
+
+                newNppVersion =
+                    // 1. allow "short" versions from 8.3 to 8.10 (only 8.1 and 8.2 are excluded);
+                    //    since version 8.11 would match 8.1.1, we just hope that 9.0 comes before then
+                    ((version[1] >= 3 && version[1] <= 10) ||
+                        // 2. now we can be more inclusive, with the exception of the "long" versions
+                        (version[1] >= 31 && !patchReleases.Any(v => v == version[1])));
+            }
             else
                 newNppVersion = false;
+
+            return newNppVersion;
+        }
+
+        static string get_text_range(this IScintillaGateway document, int startPos, int endPos, int bufCapacity)
+        {
+            int[] version = IsNewNppApiVersion();
 
             if (Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API") != null)
                 newNppVersion = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API").ToLower() == "true";
