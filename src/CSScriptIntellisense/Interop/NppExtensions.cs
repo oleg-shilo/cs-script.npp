@@ -462,7 +462,7 @@ namespace CSScriptIntellisense
 
         static string get_text_range(this IScintillaGateway document, int startPos, int endPos, int bufCapacity)
         {
-            int[] version = IsNewNppApiVersion();
+            bool newNppVersion = IsNewNppApiVersion();
 
             if (Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API") != null)
                 newNppVersion = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API").ToLower() == "true";

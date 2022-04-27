@@ -1,5 +1,10 @@
-Release v2.0.0.0
+Release v2.0.1.0
 ----
+v2.0.1.0
+- Improved Npp compatibility checking (Issue #64)
+  Described: https://github.com/oleg-shilo/cs-script.npp/issues/64#issuecomment-1108448994
+
+v2.0.0.0
 This is the first release of the plugin purely targeting .NET 6 and higher.
 
 New features and changes:
