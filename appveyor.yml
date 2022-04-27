@@ -1,11 +1,10 @@
-version: 1.7.6.{build}
-image: Visual Studio 2017
+version: 2.0.1.{build}
+image: Visual Studio 2022
 
 
 environment:
   matrix:
-    # - PlatformToolset: VS15
-    - PlatformToolset: VS17
+    - PlatformToolset: VS22
 
 platform:
     - Any CPU
@@ -20,8 +19,7 @@ install:
     - if "%platform%"=="Any CPU" set archi=x86
     - if "%platform%"=="Any CPU" set platform_input=Any CPU
 
-    # - if "%PlatformToolset%"=="VS15" call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %archi%
-    - if "%PlatformToolset%"=="VS17" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
+    - if "%PlatformToolset%"=="VS22" call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
     - nuget restore "%APPVEYOR_BUILD_FOLDER%"\src\CSScriptNpp.Test\packages.config -PackagesDirectory "%APPVEYOR_BUILD_FOLDER%"\src\packages
     - nuget restore "%APPVEYOR_BUILD_FOLDER%"\src\Roslyn.Intellisesne\Roslyn.Intellisense\packages.config -PackagesDirectory "%APPVEYOR_BUILD_FOLDER%"\src\packages
 
