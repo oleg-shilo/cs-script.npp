@@ -19,7 +19,7 @@ namespace CSScriptNpp.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -107,16 +107,6 @@ namespace CSScriptNpp.Resources {
             get {
                 object obj = ResourceManager.GetObject("close", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] ConsoleHost {
-            get {
-                object obj = ResourceManager.GetObject("ConsoleHost", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         
@@ -347,16 +337,6 @@ namespace CSScriptNpp.Resources {
             get {
                 object obj = ResourceManager.GetObject("dbg_visualise", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] DbMon {
-            get {
-                object obj = ResourceManager.GetObject("DbMon", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         
@@ -642,13 +622,19 @@ namespace CSScriptNpp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Release v1.7.26.0
+        ///   Looks up a localized string similar to Release v2.0.1.0
         ///----
-        ///v1.7.25-26
-        ///- Fixed problem (inflicted by Scintilla update) with suggestion list not being updated on character removing
-        ///- Added integration with .NET 5 edition of CS-Script.
-        ///The script engine needs to be enabled from settings dialog (see &quot;Enable .NET 5/Core integration&quot;) 
-        ///- The process&apos;s TLS protocol is set to v1.2 to address &quot;Check for updates&quot; failures.
+        ///v2.0.1.0
+        ///- Improved Npp compatibility checking (Issue #64)
+        ///  Described: https://github.com/oleg-shilo/cs-script.npp/issues/64#issuecomment-1108448994
+        ///
+        ///v2.0.0.0
+        ///This is the first release of the plugin purely targeting .NET 6 and higher.
+        ///
+        ///New features and changes:
+        ///
+        ///- The plugin requires .NET 6 or higher to be installed on the target system for scripts to be run.
+        ///- It is possible now to integrate the plugin to use a custom version of CS-Script and syntax services (e.g. install [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WhatsNew {
             get {
