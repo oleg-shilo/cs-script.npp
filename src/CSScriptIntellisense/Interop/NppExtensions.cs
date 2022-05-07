@@ -420,12 +420,56 @@ namespace CSScriptIntellisense
                 return null;
         }
 
-        static bool IsNewNppApiVersion()
+        static public int[] GetNppVersion(out bool newVersioning)
         {
-            int[] version = PluginBase.GetNppVersion();
+            // Starting from 8.4.1  new API is available for getting the version with LOWORD always returning 3 digits
+            // if new messages is not supported go use the old one
+
+            const uint NPPM_GETNPPVERSION_NEW = (uint)(NppMsg.NPPMSG + 109);
+
+            IntPtr version = Win32.SendMessage(Npp.Editor.Handle, NPPM_GETNPPVERSION_NEW, 0, 0);
+
+            if (version != IntPtr.Zero)
+            {
+                newVersioning = true;
+                int major = unchecked((short)((long)version >> 16));
+                int minor = unchecked((short)(long)version);
+                return new[] { major, minor };
+            }
+            else
+            {
+                newVersioning = false;
+                return PluginBase.GetNppVersion(); // API that is based on old message NPPM_GETNPPVERSION
+            }
+        }
+
+        static bool? isNewNppApiVersion;
+
+        static bool IsNewNppApiVersion
+        {
+            get
+            {
+                if (!isNewNppApiVersion.HasValue)
+                    isNewNppApiVersion = GetIsNewNppApiVersion();
+                return isNewNppApiVersion.Value;
+            }
+        }
+
+        static bool GetIsNewNppApiVersion()
+        {
+            bool newVersioning;
+            int[] version = GetNppVersion(out newVersioning);
 
             // starting from v8.30 N++ uses Scintilla interface with TextRange min and max members as `IntPtr`
             // while previously they were `int`. If a wrong type passed N++ just crashes.
+
+            if (newVersioning)
+            {
+                // version[1] will always have three digits.
+                // Technically speaking if we are here then version[1] >= 410 is guaranteed. It is the first version where
+                // newVersioning is implemented
+                return version[0] > 8 || (version[0] == 8 && version[1] > 300);
+            }
 
             bool newNppVersion;
 
@@ -462,7 +506,7 @@ namespace CSScriptIntellisense
 
         static string get_text_range(this IScintillaGateway document, int startPos, int endPos, int bufCapacity)
         {
-            bool newNppVersion = IsNewNppApiVersion();
+            bool newNppVersion = IsNewNppApiVersion;
 
             if (Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API") != null)
                 newNppVersion = Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API").ToLower() == "true";
