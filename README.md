@@ -1,3 +1,5 @@
+[![stand with Ukraine](https://img.shields.io/badge/stand_with-ukraine-ffd700.svg?labelColor=0057b7)](https://stand-with-ukraine.pp.ua)
+
 # CS-Script Plugin (CSScript.Npp)   
 <img align="right" src="wiki/css_npp_logo_clear.png" alt="" style="float:right">
 
