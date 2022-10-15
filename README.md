@@ -18,10 +18,7 @@
 _The current release of CS-Script targets .NET Core family runtime (.NET 6).<br> 
 CS-Script started targeting .NET 5+ about a year ago as .NET Framework further development has been effectively cancelled by the .NET team._ 
 
-_Though Notepad++ CS-Script plugin is still shipped with the engine targeting by default .NET Framework. This is done as a reflection of the fact that many users of this plugin are still relying on .NET Framework.<br>_
-_However the plugin can be configured to use the .NET Core version of the script engine (you can install it from [here](https://github.com/oleg-shilo/cs-script/releases)). <br>_
-_The next version of the pluging will still maintain .NET Framework engine but by default will try to auto integrate with .NET Core.
-And the next release after that will have the .NET Framework option only available as a manual configuration/deployment step._
+_Since the plugin is shipped with the engine targeting by default .NET Core, some users who are still relying on .NET Framework will need to use older versions of the plugin. Unfortunatelly Notepad++ has introduced recently some breaking changes so you will need to downgrade both Notepadd++ and the plugin (see this [Issue](https://github.com/oleg-shilo/cs-script.npp/issues/71#event-7594997459) to find out the compatible combination)._
 
 ----
 
