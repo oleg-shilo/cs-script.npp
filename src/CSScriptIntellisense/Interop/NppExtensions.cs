@@ -423,7 +423,11 @@ namespace CSScriptIntellisense
         static public int[] GetNppVersion(out bool newVersioning)
         {
             // Starting from 8.4.1  new API is available for getting the version with LOWORD always returning 3 digits
-            // if new messages is not supported go use the old one
+            // if new messages is not supported so use the old one
+
+            // !!! This mechanism is not reliable. NPPM_GETNPPVERSION_NEW may return different
+            // result (0x0000000000000000 vs 0x000000000000000a) depending if it was started normally or restarted due
+            // to the "need to be admin to save"
 
             const uint NPPM_GETNPPVERSION_NEW = (uint)(NppMsg.NPPMSG + 109);
 
@@ -457,6 +461,8 @@ namespace CSScriptIntellisense
 
         static bool GetIsNewNppApiVersion()
         {
+            return true; // there is no reliable way to get the version of NPP. See GetNppVersion inline-comments
+
             bool newVersioning;
             int[] version = GetNppVersion(out newVersioning);
 
@@ -506,6 +512,7 @@ namespace CSScriptIntellisense
 
         static string get_text_range(this IScintillaGateway document, int startPos, int endPos, int bufCapacity)
         {
+            // bool newNppVersion = true;
             bool newNppVersion = IsNewNppApiVersion;
 
             if (Environment.GetEnvironmentVariable("CSSCRIPT_NPP_NEW_NPP_API") != null)

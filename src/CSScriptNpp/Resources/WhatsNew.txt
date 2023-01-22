@@ -1,30 +1,6 @@
-Release v2.0.0.0-2.0.2.0
+Release v2.0.3.0
 ----
-v2.0.2.0
-- Improved Npp compatibility checking (Issue #64)
-  Described: https://github.com/oleg-shilo/cs-script.npp/issues/64#issuecomment-1120081360
-
-v2.0.1.0
-- Improved Npp compatibility checking (Issue #64)
-  Described: https://github.com/oleg-shilo/cs-script.npp/issues/64#issuecomment-1108448994
-
-v2.0.0.0
-This is the first release of the plugin purely targeting .NET 6 and higher.
-
-New features and changes:
-
-- The plugin requires .NET 6 or higher to be installed on the target system for scripts to be run.
-- It is possible now to integrate the plugin to use a custom version of CS-Script and syntax services (e.g. installed from Chocolaty).
-  You can do it from the settings dialog. 
-
-New limitations:
-- If you need your scripts to target .NET Framework then you will need to install the older version.
-  v1.7.29.0: https://github.com/oleg-shilo/cs-script.npp/releases/tag/v1.7.29.0
-  If you only need to use .NET Framework assemblies from your script you can rely on .NET bridge mode available with .NET Core runtime (e.g. WPF under .NET Core). 
-
-Some plugin legacy features are no longer available:
-- All Debugger features are removed.
-  This is because the .NET debugger available in previous releases does not support .NET Core runtime.
-  Use external debuggers instead ("Debug" button on CS-Script toolbar)
-- The interception of the Debug output of the script is removed.
-  This is because the .NET Core runtime no longer supports this technique.
+- Npp compatibility checking (Issue #64) is disabled in favor of hard-codded compatibility for new Scintille.TextRange API.
+  The checking algorithm became fragile in the latest releases of NPP when the editor restarts itself in Admin mode.
+- Updated CS-Script embedded engine to v4.6.4
+- Updated CS-Script.Syntaxer embedded executable to v3.1.2
