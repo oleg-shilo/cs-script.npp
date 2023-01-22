@@ -425,11 +425,18 @@ namespace CSScriptIntellisense
             // Starting from 8.4.1  new API is available for getting the version with LOWORD always returning 3 digits
             // if new messages is not supported so use the old one
 
-            // !!! This mechanism is not reliable. NPPM_GETNPPVERSION_NEW may return different
-            // result (0x0000000000000000 vs 0x000000000000000a) depending if it was started normally or restarted due
-            // to the "need to be admin to save"
+            // ironically NPP vendor defended the decision to introduce NPPM_GETNPPVERSION_NEW=NPPMSG+109
+            // here: https://github.com/notepad-plus-plus/notepad-plus-plus/issues/11535#issuecomment-1120080549
+            // This was the base for implementing this method.
+            // And yet eventually Don Ho has changed his opinion and now (as of 22/01/2023) it is back to old
+            // value NPPM_GETNPPVERSION_NEW=NPPMSG+50 (equivalent of the old NPPM_GETNPPVERSION)
+            // This in turn yields to failure to detect the compatible NPP version and Triggering the use of invalid
+            // send-message params when getting the text range from scintilla.
+            // NPP in turn dose not handle the errors and crashes. Brilliant!!! Everyone blames the plugin, even though
+            // it is a clear mismanagement of the host API.
 
-            const uint NPPM_GETNPPVERSION_NEW = (uint)(NppMsg.NPPMSG + 109);
+            // const uint NPPM_GETNPPVERSION_NEW = (uint)(NppMsg.NPPMSG + 109);
+            const uint NPPM_GETNPPVERSION_NEW = (uint)(NppMsg.NPPMSG + 50);
 
             IntPtr version = Win32.SendMessage(Npp.Editor.Handle, NPPM_GETNPPVERSION_NEW, 0, 0);
 
