@@ -178,14 +178,15 @@ namespace CSScriptNpp
 
         void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: false);
 
-        void autodetect_Click(object sender, EventArgs e)
+        void autodetectCSS_Click(object sender, EventArgs e)
         {
-            if (CSScriptHelper.IsCSScriptInstalled && CSScriptHelper.IsCSSyntaxerInstalled)
-            {
+            if (CSScriptHelper.IsCSScriptInstalled)
                 customEngineLocation.Text = CSScriptHelper.SystemCSScriptDir.PathJoin("cscs.dll");
+
+            if (CSScriptHelper.IsCSSyntaxerInstalled)
                 customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.dll");
-            }
-            else
+
+            if (!CSScriptHelper.IsCSScriptInstalled || !CSScriptHelper.IsCSSyntaxerInstalled)
             {
                 string error = "The following dependencies could not be found:\n\n";
                 if (!CSScriptHelper.IsCSScriptInstalled)
@@ -222,6 +223,14 @@ namespace CSScriptNpp
         {
             if (customLocationBtn.Checked == embeddedEngine.Checked)
                 customLocationBtn.Checked = !embeddedEngine.Checked;
+        }
+
+        void autodetectSyntaxer_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void customEngineLocation_TextChanged(object sender, EventArgs e)
+        {
         }
     }
 }

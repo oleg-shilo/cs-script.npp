@@ -111,7 +111,7 @@
             // 
             this.customSyntaxerExe.Location = new System.Drawing.Point(6, 111);
             this.customSyntaxerExe.Name = "customSyntaxerExe";
-            this.customSyntaxerExe.Size = new System.Drawing.Size(345, 20);
+            this.customSyntaxerExe.Size = new System.Drawing.Size(340, 20);
             this.customSyntaxerExe.TabIndex = 4;
             this.toolTip1.SetToolTip(this.customSyntaxerExe, "Path to the custom syntaxer\r\n");
             // 
@@ -253,8 +253,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.customEngineLocation.Location = new System.Drawing.Point(6, 58);
             this.customEngineLocation.Name = "customEngineLocation";
-            this.customEngineLocation.Size = new System.Drawing.Size(345, 20);
+            this.customEngineLocation.Size = new System.Drawing.Size(426, 20);
             this.customEngineLocation.TabIndex = 1;
+            this.customEngineLocation.TextChanged += new System.EventHandler(this.customEngineLocation_TextChanged);
             // 
             // label7
             // 
@@ -285,13 +286,13 @@
             // 
             // autoDetectBtn
             // 
-            this.autoDetectBtn.Location = new System.Drawing.Point(357, 56);
+            this.autoDetectBtn.Location = new System.Drawing.Point(357, 19);
             this.autoDetectBtn.Name = "autoDetectBtn";
             this.autoDetectBtn.Size = new System.Drawing.Size(75, 23);
             this.autoDetectBtn.TabIndex = 8;
             this.autoDetectBtn.Text = "Auto Detect";
             this.autoDetectBtn.UseVisualStyleBackColor = true;
-            this.autoDetectBtn.Click += new System.EventHandler(this.autodetect_Click);
+            this.autoDetectBtn.Click += new System.EventHandler(this.autodetectCSS_Click);
             // 
             // syntaxerPort
             // 
