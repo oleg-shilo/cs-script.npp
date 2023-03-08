@@ -33,11 +33,13 @@ You can also run scripts targeting [.NET 5/Core runtime](https://github.com/oleg
 ____
 This plugin allows convenient editing and execution of the C# code (scripts).  It also allows the usual C# intellisense and project management tasks to be performed in a way very similar to the MS Visual Studio.
 
-In addition to this, it provides generic debugging functionality (with the integrated Managed Debugger) as well as the ability to prepare C# scripts for the deployment packages (script+engine or self-contained executable).
+Older versions of plugin that targer .NET Framework provide generic debugging functionality (with the integrated Managed Debugger) as well as the ability to prepare C# scripts for the deployment packages (script+engine or self-contained executable). Debugging is not supported on the .NET Core editions.
 
 Typically user opens the C# file with Notepad++ and after presses 'Load' button on the CS-Script toolbar the all features can be accessed through two Notepad++ dockable panels Project and Output panel. 
 
 ![](wiki/css_npp.gif)
+
+_Debugger is only available for older versions of plugin that targer .NET Framework but not .NET Core. For .NET Core use Visual studio to debug your scripts._
 
 ![](wiki/debugger.png)
 
@@ -64,7 +66,7 @@ Note: the default compiler engine of the plugin is Roslyn. The engine fully supp
 * Debug output interception
 * Console output interception
 * Conventional build/execution error reporting
-* Debugging
+* Debugging (.NET Framework only)
   - Step Over
   - Step In
   - Step Out
