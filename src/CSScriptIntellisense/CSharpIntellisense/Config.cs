@@ -53,7 +53,7 @@ namespace CSScriptIntellisense
         public bool AutoSuggestOnOpenEndLine = false;
         public bool FormatOnSave = false;
         public bool AutoInsertSingeSuggestion = false;
-        public bool AutoSelectFirstSuggestion = false;
+        public bool AutoSelectFirstSuggestion = true;
         public bool VbSupportEnabled = true;
         public bool FormatAsYouType = true;
         public string DefaultRefAsms = "System.Linq|System.Xml|System.Xml.Linq|System.Windows.Forms|System.Drawing|System.Core|Microsoft.CSharp";

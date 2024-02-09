@@ -1,8 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using System.Xml.Linq;
 using CSScriptIntellisense;
 using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
@@ -129,7 +132,25 @@ namespace CSScriptNpp
                     }
                     else if (nc.Header.Code == (uint)SciMsg.SCN_CHARADDED)
                     {
-                        CSScriptIntellisense.Plugin.OnCharTyped(nc.Character);
+                        if (nc.character == 0)
+                        {
+                            // There is a defect either in Scintilla or in Npp that prevents correct SciMsg.SCN_CHARADDED
+                            // notification, which leads to `nc.character` being set to zero. Detected in v8.6.2 Npp.
+                            // So extract the character from side of the caret.
+                            // This is only a work around as any direct solution is problematic since it is a Scintilla
+                            // change in behavior.
+
+                            var document = Npp.GetCurrentDocument();
+                            var caret = document.GetCurrentPos();
+
+                            if (caret > 0)
+                            {
+                                string textOnLeft = document.GetTextBetween(caret - 1, caret);
+                                CSScriptIntellisense.Plugin.OnCharTyped(textOnLeft.LastOrDefault());
+                            }
+                        }
+                        else
+                            CSScriptIntellisense.Plugin.OnCharTyped(nc.Character);
                     }
                     else if (nc.Header.Code == (uint)SciMsg.SCN_DWELLSTART) //tooltip
                     {
