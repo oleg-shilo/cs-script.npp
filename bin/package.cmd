@@ -4,7 +4,7 @@ echo(
 echo Patching host assemblies with the version info...
 
 rem  properly rename x86 and x64 host DLLs
-cscs -l -dbg ..\src\tools\set_host_version.cs 
+css -l -dbg ..\src\tools\set_host_version.cs 
 
 echo(
 echo Clearing old files...
