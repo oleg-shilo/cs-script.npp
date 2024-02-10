@@ -46,12 +46,12 @@ copy CSScriptNpp.x64.dll CSScriptNpp.dll
 
 cd ..
 
-cscs sha256 CSScriptNpp.x64.zip > CSScriptNpp.x64.sha256.txt
-cscs sha256 CSScriptNpp.x86.zip > CSScriptNpp.x86.sha256.txt
+css sha256 CSScriptNpp.x64.zip > CSScriptNpp.x64.sha256.txt
+css sha256 CSScriptNpp.x86.zip > CSScriptNpp.x86.sha256.txt
 rem cscs /l md5 > CSScriptNpp.x64.M5.txt
 
 rem rem cscs /l setup.CPU.cs
-cscs /l package
+css /l package
 
 echo Cleanup...
 echo(

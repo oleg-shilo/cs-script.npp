@@ -17,14 +17,14 @@ https://tooomm.github.io/github-release-stats/?username=oleg-shilo&repository=cs
 ---------------------------------
 6. Update N++ Plugin Manager
     ---------------------
-	 certUtil -hashfile .\CSScriptNpp\CSScriptNpp.dll MD5
-	 ---------------------
+     certUtil -hashfile .\CSScriptNpp\CSScriptNpp.dll MD5
+     ---------------------
 
-   - TortoiceGI steps (alternative):
-	 Pull into <>\nppPluginList\src from https://github.com/notepad-plus-plus/nppPluginList
-		 git.exe pull --progress -v --no-rebase "https://github.com/notepad-plus-plus/nppPluginList" master
+   - TortoiceGIT steps (alternative):
+     Pull into <>\nppPluginList\src from https://github.com/notepad-plus-plus/nppPluginList
+         git.exe pull --progress -v --no-rebase "https://github.com/notepad-plus-plus/nppPluginList" master
 
-		 !!!!! iserting 'pull -Xtheirs` ensures that local changes are not merged but overwritten by the remote master
+         !!!!! iserting 'pull -Xtheirs` ensures that local changes are not merged but overwritten by the remote master
 
    - Update nppPluginList\src\pl.x64.json
    - Update nppPluginList\src\pl.x86.json

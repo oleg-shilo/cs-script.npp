@@ -134,8 +134,10 @@ namespace CSScriptNpp
                     {
                         if (nc.character == 0)
                         {
-                            // There is a defect either in Scintilla or in Npp that prevents correct SciMsg.SCN_CHARADDED
-                            // notification, which leads to `nc.character` being set to zero. Detected in v8.6.2 Npp.
+                            // There is a defect either in Scintilla, Npp ot Npp interop, which prevents correct
+                            // SciMsg.SCN_CHARADDED notification. This leads to `nc.character` being set to zero.
+                            // Detected in v8.6.2 Npp.
+                            //
                             // So extract the character from side of the caret.
                             // This is only a work around as any direct solution is problematic since it is a Scintilla
                             // change in behavior.
