@@ -49,6 +49,7 @@ namespace CSScriptNpp
             try
             {
                 // Debug.Assert(false);
+
                 Intellisense.EnsureIntellisenseIntegration();
 
                 CSScriptNpp.Plugin.CommandMenuInit(); //this will also call CSScriptIntellisense.Plugin.CommandMenuInit

@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSScriptIntellisense;
+using UltraSharp.Cecil;
 
 namespace CSScriptNpp
 {
@@ -142,13 +143,127 @@ namespace CSScriptNpp
             }
         }
 
-        public static string SystemCSScriptDir => Environment.GetEnvironmentVariable("CSSCRIPT_ROOT");
-        public static string SystemCSSyntaxerDir => Environment.GetEnvironmentVariable("CSSYNTAXER_ROOT");
-        public static bool IsCSSyntaxerInstalled => !SystemCSSyntaxerDir.IsEmpty();
-        public static bool IsCSScriptInstalled => !SystemCSScriptDir.IsEmpty();
+        internal static string LocateChocolateySyntaxerAppDir()
+        {
+            // C:\ProgramData\chocolatey\lib\cs-syntaxer\tools\syntaxer.dll
+            return LocateChocolateyAppDir("cs-syntaxer", "syntaxer.dll");
+        }
+        internal static string LocateChocolateyCSScriptsAppDir()
+        {
+            // C:\ProgramData\chocolatey\lib\cs-script\tools\cscs.dll
+            return LocateChocolateyAppDir("cs-script", "cscs.dll");
+        }
 
-        public static string InstallCssCmd = $"choco {(CSScriptHelper.IsCSScriptInstalled ? "upgrade" : "install")} cs-script --y";
-        public static string InstallCsSyntaxerCmd = $"choco {(CSScriptHelper.IsCSSyntaxerInstalled ? "upgrade" : "install")} cs-syntaxer --y";
+        internal static string LocateChocolateyAppDir(string app, string fileName)
+        {
+            // C:\ProgramData\chocolatey\lib\<app>\tools\<file>
+            try
+            {
+                var packageDir = Environment.SpecialFolder.CommonApplicationData.GetPath()
+                    .PathJoin($@"chocolatey\lib\{app}\tools");
+
+                if (Directory.Exists(packageDir))
+                {
+                    if (File.Exists(packageDir.PathJoin(fileName)))
+                        return packageDir;
+                }
+            }
+            catch { }
+            return null;
+        }
+
+        internal static string LocateDotNetCSScriptsToolDir()
+        {
+            // C:\Users\user\.dotnet\tools
+            // C:\Users\user\.dotnet\tools\.store\cs-script.cli\4.8.16\cs-script.cli\4.8.16\tools\net8.0\any\cscs.dll
+            // dotnet tool install --global cs-script.cli
+            try
+            {
+                var packageDir = Environment.SpecialFolder.UserProfile.GetPath()
+                    .PathJoin(@".dotnet\tools\.store\cs-script.cli");
+
+                if (Directory.Exists(packageDir))
+                {
+                    var installedVersionDir = Directory.GetDirectories(packageDir)
+                        .OrderByDescending(x => x)
+                        .FirstOrDefault();
+
+                    if (installedVersionDir != null)
+                    {
+                        var appDir = Directory.GetDirectories(
+                            installedVersionDir.PathJoin("cs-script.cli", Path.GetFileName(installedVersionDir), "tools"))
+                            .OrderByDescending(x => x)
+                            .FirstOrDefault()?
+                            .PathJoin("any");
+
+                        if (File.Exists(appDir.PathJoin("cscs.dll")))
+                            return appDir;
+                    }
+                }
+            }
+            catch { }
+            return null;
+        }
+
+        internal static string LocateWingetCSScriptAppDir()
+        {
+            // C:\Users\user\AppData\Local\Microsoft\WinGet\Packages
+            // C:\Users\user\AppData\Local\Microsoft\WinGet\Packages\oleg-shilo.cs-script_Microsoft.Winget.Source_8wekyb3d8bbwe
+
+            try
+            {
+                var uesrProfile = Environment.SpecialFolder.LocalApplicationData.GetPath();
+
+                var appDir = Directory.GetDirectories(Path.Combine(uesrProfile, @"Microsoft\WinGet\Packages"), "oleg-shilo.cs-script*")
+                .FirstOrDefault();
+
+                if (File.Exists(appDir.PathJoin("cscs.dll")))
+                    return appDir;
+            }
+            catch { }
+
+            return null;
+        }
+
+        public static string SystemCSScriptDir =>
+                Environment.GetEnvironmentVariable("CSSCRIPT_ROOT") ??
+                LocateChocolateyCSScriptsAppDir() ??
+                LocateWingetCSScriptAppDir() ??
+                LocateDotNetCSScriptsToolDir();
+        public static string SystemCSSyntaxerDir =>
+            Environment.GetEnvironmentVariable("CSSYNTAXER_ROOT") ??
+            LocateChocolateySyntaxerAppDir();
+        public static bool IsCSSyntaxerInstalled => SystemCSSyntaxerDir.IsNotEmpty();
+        public static bool IsCSScriptInstalled => SystemCSScriptDir.IsNotEmpty();
+        public static bool IsCSScriptChocoInstalled => IsCSScriptInstalled && LocateChocolateyCSScriptsAppDir().IsNotEmpty();
+        public static bool IsCSScriptWingetInstalled => IsCSScriptInstalled && LocateWingetCSScriptAppDir().IsNotEmpty();
+        public static bool IsCSScriptDotnetInstalled => IsCSScriptInstalled && LocateDotNetCSScriptsToolDir().IsNotEmpty();
+
+        public static string InstallCssCmd
+        {
+            get
+            {
+                if (IsCSScriptInstalled)
+                {
+                    if (IsCSScriptChocoInstalled)
+                        return InstallCssChocoCmd;
+                    else if (IsCSScriptWingetInstalled)
+                        return InstallCssWingetCmd;
+                    else if (IsCSScriptDotnetInstalled)
+                        return InstallCssDotnetCmd;
+                    return
+                        null;
+                }
+                else
+                    return InstallCssChocoCmd;
+            }
+        }
+        public static string InstallCssChocoCmd => $"choco {(IsCSScriptInstalled ? "upgrade" : "install")} cs-script --y";
+        public static string InstallCssWingetCmd => $"winget {(IsCSScriptInstalled ? "upgrade" : "install")} cs-script";
+        public static string InstallCssDotnetCmd => $"dotnet tool {(IsCSScriptInstalled ? "update" : "install")} --global cs-script.cli";
+
+
+        public static string InstallCsSyntaxerCmd = $"choco {(IsCSSyntaxerInstalled ? "upgrade" : "install")} cs-syntaxer --y";
 
         public static bool IsChocoInstalled
         {

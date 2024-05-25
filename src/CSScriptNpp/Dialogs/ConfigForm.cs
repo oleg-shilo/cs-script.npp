@@ -53,7 +53,9 @@ namespace CSScriptNpp
                 customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.dll");
 
             cssInstallCmd.Text = CSScriptHelper.InstallCssCmd;
+            deployCSScript.Text = CSScriptHelper.IsCSScriptInstalled ? "Update" : "Install";
             cssyntaxerInstallCmd.Text = CSScriptHelper.InstallCsSyntaxerCmd;
+            deploySyntaxer.Text = CSScriptHelper.IsCSSyntaxerInstalled ? "Update" : "Install";
 
             customLocationBtn_CheckedChanged(null, null);
         }
