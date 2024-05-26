@@ -1,6 +1,7 @@
-v1.7.25.0
+v2.0.5.0
 https://github.com/oleg-shilo/cs-script.npp/releases/download/v1.7.25
 Release v1.7.25.0
 
-- Added integration with .NET 5 edition of CS-Script.
-The script engine needs to be enabled from settings dialog (see "Enable .NET 5/Core integration")
+- Embedded CS-Script engine is updated to v4.8.16.0
+- Configuration Dialog: Added support for installing external CS-Script engine from WinGet and NuGet.
+- Updated plugin hosting solution to address the Scintilla .NET Interface issue (#74).
