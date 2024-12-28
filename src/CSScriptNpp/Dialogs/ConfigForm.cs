@@ -37,8 +37,8 @@ namespace CSScriptNpp
 
             scriptsDir.Text = data.ScriptsDir;
 
-            embeddedEngine.Checked = data.UseEmbeddedEngine;
-            customLocationBtn.Checked = !embeddedEngine.Checked;
+            // embeddedEngine.Checked = data.UseEmbeddedEngine;
+            // customLocationBtn.Checked = !embeddedEngine.Checked;
 
             restorePanels.Checked = data.RestorePanelsAtStartup;
 
@@ -46,18 +46,25 @@ namespace CSScriptNpp
             customSyntaxerExe.Text = data.CustomSyntaxerAsm;
             syntaxerPort.Text = data.CustomSyntaxerPort.ToString();
 
-            if (customEngineLocation.Text.IsEmpty() && CSScriptHelper.IsCSScriptInstalled)
-                customEngineLocation.Text = CSScriptHelper.SystemCSScriptDir.PathJoin("cscs.dll");
+            // if (customEngineLocation.Text.IsEmpty() && CSScriptHelper.IsCSScriptInstalled)
+            //     customEngineLocation.Text = CSScriptHelper.SystemCSScriptDir.PathJoin("cscs.dll");
 
-            if (customSyntaxerExe.Text.IsEmpty() && CSScriptHelper.IsCSSyntaxerInstalled)
-                customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.dll");
+            // if (customSyntaxerExe.Text.IsEmpty() && CSScriptHelper.IsCSSyntaxerInstalled)
+            //     customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.dll");
 
-            cssInstallCmd.Text = CSScriptHelper.InstallCssCmd;
+            cssInstallCmd.Text = CSScriptHelper.InstallCssDotnetCmd;
             deployCSScript.Text = CSScriptHelper.IsCSScriptInstalled ? "Update" : "Install";
-            cssyntaxerInstallCmd.Text = CSScriptHelper.InstallCsSyntaxerCmd;
+            cssyntaxerInstallCmd.Text = CSScriptHelper.InstallCsSyntaxerDotnetCmd;
             deploySyntaxer.Text = CSScriptHelper.IsCSSyntaxerInstalled ? "Update" : "Install";
 
-            customLocationBtn_CheckedChanged(null, null);
+            UpdateStatus();
+
+            // customLocationBtn_CheckedChanged(null, null);
+        }
+
+        void UpdateStatus()
+        {
+            statusLbl.Text = CSScriptHelper.Integration.IsCssIntegrated() ? "Status: integrated" : "Status: not integrated";
         }
 
         bool skipSavingConfig = false;
@@ -155,20 +162,17 @@ namespace CSScriptNpp
             catch { }
         }
 
-        static void InstallDependencies(bool engineOnly = false)
+        static void InstallDependencies(string command)
         {
             var batchFileContent = new List<string>();
-            if (!CSScriptHelper.IsChocoInstalled)
-            {
-                batchFileContent.Add("powershell Set-ExecutionPolicy Bypass -Scope Process -Force;");
-                batchFileContent.Add("powershell iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))");
-            }
 
-            if (engineOnly)
-                batchFileContent.Add($"powershell {CSScriptHelper.InstallCssCmd}");
-            else
-                // installing syntaxer will auto-install cs-script as a dependency
-                batchFileContent.Add($"powershell {CSScriptHelper.InstallCsSyntaxerCmd}");
+            // if (!CSScriptHelper.IsChocoInstalled)
+            // {
+            //     batchFileContent.Add("powershell Set-ExecutionPolicy Bypass -Scope Process -Force;");
+            //     batchFileContent.Add("powershell iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))");
+            // }
+
+            batchFileContent.Add($"powershell {command}");
 
             if (batchFileContent.Count == 1)
                 InstallDependenciesDialog.Execute(batchFileContent.First());
@@ -176,28 +180,36 @@ namespace CSScriptNpp
                 InstallDependenciesDialog.ShowDialog(string.Join(Environment.NewLine, batchFileContent));
         }
 
-        public void deployCSScript_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: true);
+        public void deployCSScript_Click(object sender, EventArgs e) => InstallDependencies(CSScriptHelper.InstallCssDotnetCmd);
 
-        void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(engineOnly: false);
+        void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(CSScriptHelper.InstallCsSyntaxerDotnetCmd);
 
         void autodetectCSS_Click(object sender, EventArgs e)
         {
-            if (CSScriptHelper.IsCSScriptInstalled)
-                customEngineLocation.Text = CSScriptHelper.SystemCSScriptDir.PathJoin("cscs.dll");
+            Cursor.Current = Cursors.WaitCursor;
+            CSScriptHelper.Integration.IntegrateCSScript();
+            Cursor.Current = Cursors.Default;
+            // if (CSScriptHelper.IsCSScriptInstalled)
+            //     customEngineLocation.Text = CSScriptHelper.SystemCSScriptDir.PathJoin("cscs.dll");
 
-            if (CSScriptHelper.IsCSSyntaxerInstalled)
-                customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.dll");
+            // if (CSScriptHelper.IsCSSyntaxerInstalled)
+            //     customSyntaxerExe.Text = CSScriptHelper.SystemCSSyntaxerDir.PathJoin("syntaxer.dll");
 
-            if (!CSScriptHelper.IsCSScriptInstalled || !CSScriptHelper.IsCSSyntaxerInstalled)
+            if (CSScriptHelper.Integration.IsCssIntegrated())
             {
-                string error = "The following dependencies could not be found:\n\n";
-                if (!CSScriptHelper.IsCSScriptInstalled)
-                    error += "CS-Script\n";
-                if (!CSScriptHelper.IsCSSyntaxerInstalled)
-                    error += "Syntaxer\n";
-
+                customSyntaxerExe.Text = Runtime.syntaxer_asm;
+                customEngineLocation.Text = Runtime.cscs_asm;
+                UpdateStatus();
+                CSScriptHelper.Integration.ShowIntegrationInfo();
+                Close();
+            }
+            else
+            {
+                string error = "Could not find some CS-Script tools (script engine or syntaxer).\n";
                 error += "\nYou can try to install them from the `Update` tab of this dialog";
                 MessageBox.Show(error, "CS-Script");
+                CSScriptHelper.Integration.ShowIntegrationWarning();
+                Close();
             }
         }
 
@@ -232,6 +244,10 @@ namespace CSScriptNpp
         }
 
         private void customEngineLocation_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void label8_Click(object sender, EventArgs e)
         {
         }
     }

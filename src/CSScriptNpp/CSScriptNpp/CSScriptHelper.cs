@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
+using static System.Environment;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSScriptIntellisense;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using UltraSharp.Cecil;
 
 namespace CSScriptNpp
@@ -25,42 +28,48 @@ namespace CSScriptNpp
         public static int syntaxer_port { get; set; }
 
         public static string dependenciesDirRoot => Environment.SpecialFolder.CommonApplicationData
-                                                    .PathJoin("CSScriptNpp", Assembly.GetExecutingAssembly().GetName().Version);
+                                                    .PathJoin("CSScriptNpp", Assembly.GetExecutingAssembly().GetName().Version).EnsureDir();
 
         public static void Init()
         {
-            if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomSyntaxerAsm.HasText())
-            {
-                syntaxer_asm = Config.Instance.CustomSyntaxerAsm;
-                syntaxer_port = Config.Instance.CustomSyntaxerPort;
-            }
-            else
-            {
-                syntaxer_asm = dependenciesDirRoot.PathJoin("cs-syntaxer", "syntaxer.dll");
-                syntaxer_port = 18001;
+            CSScriptHelper.Integration.DisableLegacyIntegration();
 
-                if (!Directory.Exists(syntaxer_asm.GetDirName()))
-                    DeployDir(Bootstrapper.pluginDir.PathJoin("cs-syntaxer"),
-                        syntaxer_asm.GetDirName());
-            }
+            cscs_asm = Config.Instance.CustomEngineAsm;
+            syntaxer_asm = Config.Instance.CustomSyntaxerAsm;
+            syntaxer_port = Config.Instance.CustomSyntaxerPort;
 
-            if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomEngineAsm.HasText())
-            {
-                cscs_asm = Config.Instance.CustomEngineAsm;
-            }
-            else
-            {
-                cscs_asm = dependenciesDirRoot.PathJoin("cs-script", "cscs.dll");
+            // if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomSyntaxerAsm.HasText())
+            // {
+            //     syntaxer_asm = Config.Instance.CustomSyntaxerAsm;
+            //     syntaxer_port = Config.Instance.CustomSyntaxerPort;
+            // }
+            // else
+            // {
+            //     syntaxer_asm = dependenciesDirRoot.PathJoin("cs-syntaxer", "syntaxer.dll");
+            //     syntaxer_port = 18001;
 
-                if (!Directory.Exists(cscs_asm.GetDirName()))
-                    DeployDir(Bootstrapper.pluginDir.PathJoin("cs-script"),
-                              cscs_asm.GetDirName());
+            //     if (!Directory.Exists(syntaxer_asm.GetDirName()))
+            //         DeployDir(Bootstrapper.pluginDir.PathJoin("cs-syntaxer"),
+            //             syntaxer_asm.GetDirName());
+            // }
 
-                var oldServicesVersions = Directory.GetDirectories(Path.GetDirectoryName(dependenciesDirRoot))
-                                                   .Where(x => x != dependenciesDirRoot);
-                foreach (var dir in oldServicesVersions)
-                    DeleteDir(dir);
-            }
+            // if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomEngineAsm.HasText())
+            // {
+            //     cscs_asm = Config.Instance.CustomEngineAsm;
+            // }
+            // else
+            // {
+            //     cscs_asm = dependenciesDirRoot.PathJoin("cs-script", "cscs.dll");
+
+            //     if (!Directory.Exists(cscs_asm.GetDirName()))
+            //         DeployDir(Bootstrapper.pluginDir.PathJoin("cs-script"),
+            //                   cscs_asm.GetDirName());
+
+            //     var oldServicesVersions = Directory.GetDirectories(Path.GetDirectoryName(dependenciesDirRoot))
+            //                                        .Where(x => x != dependenciesDirRoot);
+            //     foreach (var dir in oldServicesVersions)
+            //         DeleteDir(dir);
+            // }
 
             Syntaxer.cscs_asm = () => Runtime.cscs_asm;
             Syntaxer.syntaxer_asm = () => Runtime.syntaxer_asm;
@@ -148,6 +157,7 @@ namespace CSScriptNpp
             // C:\ProgramData\chocolatey\lib\cs-syntaxer\tools\syntaxer.dll
             return LocateChocolateyAppDir("cs-syntaxer", "syntaxer.dll");
         }
+
         internal static string LocateChocolateyCSScriptsAppDir()
         {
             // C:\ProgramData\chocolatey\lib\cs-script\tools\cscs.dll
@@ -225,45 +235,164 @@ namespace CSScriptNpp
             return null;
         }
 
+        public class Integration
+        {
+            public static void DisableLegacyIntegration()
+            {
+                if (Runtime.cscs_asm.HasText())
+                {
+                    if (Runtime.cscs_asm.Contains(Runtime.dependenciesDirRoot)) // embedded engine
+                    {
+                        Runtime.cscs_asm = null;
+                        Runtime.syntaxer_asm = null;
+                    }
+                }
+            }
+
+            public static bool IsCssIntegrated()
+            {
+                // it is integrated if the dependencies are not from the embedded binaries dir
+                return
+                    Runtime.cscs_asm.HasText() &&
+                    Runtime.syntaxer_asm.HasText() &&
+                    File.Exists(Runtime.cscs_asm) &&
+                    File.Exists(Runtime.syntaxer_asm);
+            }
+
+            public static void IntegrateCSScript()
+            {
+                // var dotnetVersion = Run("dotnet", "--version");
+                // var sotnetSDKs = Run("dotnet", "dotnet --list-sdks");
+
+                var syntaxerDetect = Run("syntaxer", "-detect");
+                if (syntaxerDetect.exitCode == 0)
+                {
+                    syntaxerDetect.output.Split('\n').ForEach(line =>
+                    {
+                        if (line.StartsWith("css:"))
+                        {
+                            var cscs = line.Substring("css:".Length).Trim();
+                            if (File.Exists(cscs))
+                            {
+                                Runtime.cscs_asm = cscs;
+                                Config.Instance.CustomEngineAsm = cscs;
+                            }
+                        }
+                        else if (line.StartsWith("syntaxer:"))
+                        {
+                            var syntaxer = line.Substring("syntaxer:".Length).Trim();
+                            if (File.Exists(syntaxer))
+                            {
+                                Runtime.syntaxer_asm = syntaxer;
+                                Config.Instance.CustomSyntaxerAsm = syntaxer;
+                            }
+                        }
+                    });
+                }
+            }
+
+            public static void ShowIntegrationInfo()
+            {
+                var content = new StringBuilder()
+                        .AppendLine("# CS-Script plugin integration")
+                        .AppendLine()
+                        .AppendLine("Detected CS-Script tools:")
+                        .AppendLine("")
+                        .AppendLine($"- Script engine: `{Runtime.cscs_asm}`")
+                        .AppendLine($"- Syntaxer: `{Runtime.syntaxer_asm}`")
+                        .AppendLine()
+                        .AppendLine("The extension settings have been updated.")
+                        .AppendLine("You may need to restart Notepad++ for the changes to take effect")
+                        .AppendLine()
+                        .AppendLine("---------------")
+                        .AppendLine()
+                        .AppendLine("You can always update (or install) CS-Script tools:")
+                        .AppendLine()
+                        .AppendLine("- Script engine: `dotnet tool update --global cs-script.cli`")
+                        .AppendLine("- Syntaxer: `dotnet tool update --global cs-syntaxer`")
+                        .AppendLine("")
+                        .AppendLine("Configure tools by executing the extension command `CS-Script: Integrate with CS-Script tools`")
+                        .AppendLine()
+                        .AppendLine("---------------")
+                        .AppendLine()
+                        .AppendLine("You can always check the version of the CS-Script tools from the terminal by executing the command:")
+                        .AppendLine("Script engine: `css`")
+                        .AppendLine("Syntaxer: `syntaxer`");
+
+                var file = Runtime.dependenciesDirRoot.PathJoin("cs-script.integration-info.md");
+                File.WriteAllText(file, content.ToString());
+                Npp.Editor.OpenFile(file, true);
+            }
+
+            public static void ShowIntegrationWarning()
+            {
+                var content = new StringBuilder()
+                    .AppendLine("# CS-Script VSCode extension integration")
+                    .AppendLine()
+                    .AppendLine("The extension requires CS-Script tools to function properly.")
+                    .AppendLine("This is the most reliable way of managing their updates independently from the extension releases (e.g. update with new .NET version).")
+                    .AppendLine()
+                    .AppendLine("## Installation")
+                    .AppendLine()
+                    .AppendLine("1. Install/Update tools")
+                    .AppendLine("    - Script engine: `dotnet tool install --global cs-script.cli`")
+                    .AppendLine("    - Syntaxer: `dotnet tool install --global cs-syntaxer`")
+                    .AppendLine()
+                    .AppendLine("2. Configure tools")
+                    .AppendLine("   Execute integration command by pressing 'Detect and Integrate' button in the CS-Script plugin's Config dialog.")
+                    .AppendLine()
+                    .AppendLine("Note: you need to have .NET SDK installed for using CS-Script (see https://dotnet.microsoft.com/en-us/download)");
+
+                var file = Runtime.dependenciesDirRoot.PathJoin("cs-script.integration-error.md");
+                File.WriteAllText(file, content.ToString());
+                Npp.Editor.OpenFile(file, true);
+            }
+        }
+
         public static string SystemCSScriptDir =>
-                Environment.GetEnvironmentVariable("CSSCRIPT_ROOT") ??
-                LocateChocolateyCSScriptsAppDir() ??
-                LocateWingetCSScriptAppDir() ??
-                LocateDotNetCSScriptsToolDir();
+               Environment.GetEnvironmentVariable("CSSCRIPT_ROOT") ??
+               LocateChocolateyCSScriptsAppDir() ??
+               LocateWingetCSScriptAppDir() ??
+               LocateDotNetCSScriptsToolDir();
+
         public static string SystemCSSyntaxerDir =>
             Environment.GetEnvironmentVariable("CSSYNTAXER_ROOT") ??
             LocateChocolateySyntaxerAppDir();
-        public static bool IsCSSyntaxerInstalled => SystemCSSyntaxerDir.IsNotEmpty();
-        public static bool IsCSScriptInstalled => SystemCSScriptDir.IsNotEmpty();
-        public static bool IsCSScriptChocoInstalled => IsCSScriptInstalled && LocateChocolateyCSScriptsAppDir().IsNotEmpty();
-        public static bool IsCSScriptWingetInstalled => IsCSScriptInstalled && LocateWingetCSScriptAppDir().IsNotEmpty();
-        public static bool IsCSScriptDotnetInstalled => IsCSScriptInstalled && LocateDotNetCSScriptsToolDir().IsNotEmpty();
 
-        public static string InstallCssCmd
-        {
-            get
-            {
-                if (IsCSScriptInstalled)
-                {
-                    if (IsCSScriptChocoInstalled)
-                        return InstallCssChocoCmd;
-                    else if (IsCSScriptWingetInstalled)
-                        return InstallCssWingetCmd;
-                    else if (IsCSScriptDotnetInstalled)
-                        return InstallCssDotnetCmd;
-                    return
-                        null;
-                }
-                else
-                    return InstallCssChocoCmd;
-            }
-        }
-        public static string InstallCssChocoCmd => $"choco {(IsCSScriptInstalled ? "upgrade" : "install")} cs-script --y";
-        public static string InstallCssWingetCmd => $"winget {(IsCSScriptInstalled ? "upgrade" : "install")} cs-script";
+        public static bool IsCSSyntaxerInstalled => CanRun("syntaxer");
+
+        public static bool IsCSScriptInstalled => CanRun("css", "-version");
+
+        // public static bool IsCSScriptChocoInstalled => IsCSScriptInstalled && LocateChocolateyCSScriptsAppDir().IsNotEmpty();
+        // public static bool IsCSScriptWingetInstalled => IsCSScriptInstalled && LocateWingetCSScriptAppDir().IsNotEmpty();
+        // public static bool IsCSScriptDotnetInstalled => IsCSScriptInstalled && LocateDotNetCSScriptsToolDir().IsNotEmpty();
+
+        // public static string InstallCssCmd
+        // {
+        //     get
+        //     {
+        //         return InstallCssDotnetCmd;
+        // if (IsCSScriptInstalled)
+        // {
+        //     if (IsCSScriptChocoInstalled)
+        //         return InstallCssChocoCmd;
+        //     else if (IsCSScriptWingetInstalled)
+        //         return InstallCssWingetCmd;
+        //     else if (IsCSScriptDotnetInstalled)
+        //         return InstallCssDotnetCmd;
+        //     return
+        //         null;
+        // }
+        // else
+        //     return InstallCssChocoCmd;
+        //     }
+        // }
+
+        // public static string InstallCssChocoCmd => $"choco {(IsCSScriptInstalled ? "upgrade" : "install")} cs-script --y";
+        // public static string InstallCssWingetCmd => $"winget {(IsCSScriptInstalled ? "upgrade" : "install")} cs-script";
         public static string InstallCssDotnetCmd => $"dotnet tool {(IsCSScriptInstalled ? "update" : "install")} --global cs-script.cli";
 
-
-        public static string InstallCsSyntaxerCmd = $"choco {(IsCSSyntaxerInstalled ? "upgrade" : "install")} cs-syntaxer --y";
+        public static string InstallCsSyntaxerDotnetCmd => $"dotnet tool {(IsCSSyntaxerInstalled ? "update" : "install")} --global cs-syntaxer";
 
         public static bool IsChocoInstalled
         {
@@ -349,39 +478,59 @@ namespace CSScriptNpp
                 return new string[0];
         }
 
-        static string Run(string file, string args)
+        public static bool CanRun(string file, string args = "")
         {
-            var p = new Process();
-            p.StartInfo.FileName = file;
-            p.StartInfo.Arguments = args;
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-            p.Start();
-
-            var output = new StringBuilder();
-
-            string line = null;
-            while (null != (line = p.StandardOutput.ReadLine()))
-                output.AppendLine(line);
-
-            Task.Run(() =>
+            try
             {
-                try
-                {
-                    string error = null;
-                    while (null != (error = p.StandardError.ReadLine()))
-                        output.AppendLine(error);
-                }
-                catch
-                {
-                }
-            });
+                Run(file, args);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
-            p.WaitForExit();
-            return output.ToString();
+        public static (int exitCode, string output) Run(string file, string args)
+        {
+            try
+            {
+                var p = new Process();
+                p.StartInfo.FileName = file;
+                p.StartInfo.Arguments = args;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.RedirectStandardError = true;
+                p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                p.Start();
+
+                var output = new StringBuilder();
+
+                string line = null;
+                while (null != (line = p.StandardOutput.ReadLine()))
+                    output.AppendLine(line);
+
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        string error = null;
+                        while (null != (error = p.StandardError.ReadLine()))
+                            output.AppendLine(error);
+                    }
+                    catch
+                    {
+                    }
+                });
+
+                p.WaitForExit();
+                return (p.ExitCode, output.ToString());
+            }
+            catch (Exception e)
+            {
+                return (-1, e.ToString());
+            }
         }
 
         static bool Build(string scriptFile, out string compilerOutput, Action<string> onCompilerOutput)
@@ -796,7 +945,7 @@ namespace CSScriptNpp
                 {
                     try
                     {
-                        if (Version.Parse(prereleaseVersion.Version) > Version.Parse(stableVersion.Version))
+                        if (System.Version.Parse(prereleaseVersion.Version) > System.Version.Parse(stableVersion.Version))
                             return prereleaseVersion;
                         else
                             return stableVersion;

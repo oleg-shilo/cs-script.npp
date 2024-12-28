@@ -120,6 +120,13 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="textBox1.Text" xml:space="preserve">
+    <value>The plugin requires CS-Script tools at runtime. 
+You can detect and intehgrate them by pressing the 'Detect and Integrate' button.
+
+The tools are managed by the .NET Tools package manager (part of .NET SDK). 
+You can installed or updated the tools from the 'Update' tab.</value>
+  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>57</value>
   </metadata>

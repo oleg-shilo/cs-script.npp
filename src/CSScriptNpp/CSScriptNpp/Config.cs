@@ -41,7 +41,7 @@ namespace CSScriptNpp
         public bool DistributeScriptAsDll = false;
         public bool InterceptConsole = true;
         public bool InterceptConsoleByCharacter = false;
-        public bool UseEmbeddedEngine = true;
+        public bool UseEmbeddedEngine = false;
         public string CustomEngineAsm = "";
         public bool QuickViewAutoRefreshAvailable = false;
         public bool NavigateToRawCodeOnDblClickInOutput = false;
@@ -119,7 +119,8 @@ namespace CSScriptNpp
                     SetValue(Section, nameof(QuickViewAutoRefreshAvailable), QuickViewAutoRefreshAvailable);
                     SetValue(Section, nameof(InterceptConsole), InterceptConsole);
                     SetValue(Section, nameof(InterceptConsoleByCharacter), InterceptConsoleByCharacter);
-                    SetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
+                    // is hard-codded and not to be controlled by the file any mor
+                    // SetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
                     SetValue(Section, nameof(CustomEngineAsm), CustomEngineAsm);
                     SetValue(Section, nameof(ReleaseNotesViewedFor), ReleaseNotesViewedFor);
                     SetValue(Section, nameof(ScriptHistory), ScriptHistory);
@@ -196,7 +197,8 @@ namespace CSScriptNpp
                 NavigateToRawCodeOnDblClickInOutput = GetValue(Section, nameof(NavigateToRawCodeOnDblClickInOutput), NavigateToRawCodeOnDblClickInOutput);
                 InterceptConsole = GetValue(Section, nameof(InterceptConsole), InterceptConsole);
                 InterceptConsoleByCharacter = GetValue(Section, nameof(InterceptConsoleByCharacter), InterceptConsoleByCharacter);
-                UseEmbeddedEngine = GetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
+                // is hard-codded and not to be controlled by the file any mor
+                // UseEmbeddedEngine = GetValue(Section, nameof(UseEmbeddedEngine), UseEmbeddedEngine);
                 CustomEngineAsm = GetValue(Section, nameof(CustomEngineAsm), CustomEngineAsm);
                 LocalDebug = GetValue(Section, nameof(LocalDebug), LocalDebug);
                 CsSConsoleEncoding = GetValue(Section, nameof(CsSConsoleEncoding), CsSConsoleEncoding);

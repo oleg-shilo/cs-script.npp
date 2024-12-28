@@ -103,6 +103,23 @@ namespace CSScriptNpp
             {
                 whatsNewTxt.Text = CSScriptNpp.Resources.Resources.WhatsNew;
                 whatsNewPanel.Visible = true;
+
+                if (!CSScriptHelper.Integration.IsCssIntegrated())
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            CSScriptHelper.Integration.IntegrateCSScript();
+                            if (CSScriptHelper.Integration.IsCssIntegrated())
+                                CSScriptHelper.Integration.ShowIntegrationInfo();
+                            else
+                                CSScriptHelper.Integration.ShowIntegrationWarning();
+                        }
+                        catch { }
+                    });
+                }
+
                 Config.Instance.ReleaseNotesViewedFor = pluginVersion;
                 Config.Instance.Save();
             }
