@@ -32,44 +32,11 @@ namespace CSScriptNpp
 
         public static void Init()
         {
-            CSScriptHelper.Integration.DisableLegacyIntegration();
-
             cscs_asm = Config.Instance.CustomEngineAsm;
             syntaxer_asm = Config.Instance.CustomSyntaxerAsm;
             syntaxer_port = Config.Instance.CustomSyntaxerPort;
 
-            // if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomSyntaxerAsm.HasText())
-            // {
-            //     syntaxer_asm = Config.Instance.CustomSyntaxerAsm;
-            //     syntaxer_port = Config.Instance.CustomSyntaxerPort;
-            // }
-            // else
-            // {
-            //     syntaxer_asm = dependenciesDirRoot.PathJoin("cs-syntaxer", "syntaxer.dll");
-            //     syntaxer_port = 18001;
-
-            //     if (!Directory.Exists(syntaxer_asm.GetDirName()))
-            //         DeployDir(Bootstrapper.pluginDir.PathJoin("cs-syntaxer"),
-            //             syntaxer_asm.GetDirName());
-            // }
-
-            // if (!Config.Instance.UseEmbeddedEngine && Config.Instance.CustomEngineAsm.HasText())
-            // {
-            //     cscs_asm = Config.Instance.CustomEngineAsm;
-            // }
-            // else
-            // {
-            //     cscs_asm = dependenciesDirRoot.PathJoin("cs-script", "cscs.dll");
-
-            //     if (!Directory.Exists(cscs_asm.GetDirName()))
-            //         DeployDir(Bootstrapper.pluginDir.PathJoin("cs-script"),
-            //                   cscs_asm.GetDirName());
-
-            //     var oldServicesVersions = Directory.GetDirectories(Path.GetDirectoryName(dependenciesDirRoot))
-            //                                        .Where(x => x != dependenciesDirRoot);
-            //     foreach (var dir in oldServicesVersions)
-            //         DeleteDir(dir);
-            // }
+            CSScriptHelper.Integration.DisableLegacyIntegration();
 
             Syntaxer.cscs_asm = () => Runtime.cscs_asm;
             Syntaxer.syntaxer_asm = () => Runtime.syntaxer_asm;

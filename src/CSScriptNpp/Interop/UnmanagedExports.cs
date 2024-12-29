@@ -113,7 +113,9 @@ namespace CSScriptNpp
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
                     {
-                        CSScriptNpp.Plugin.StopVBCSCompilers();
+                        Marshal.FreeHGlobal(_ptrPluginName);
+                        Plugin.StopVBCSCompilers();
+                        Plugin.CleanUp();
                     }
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_TBMODIFICATION)
                     {
@@ -204,11 +206,6 @@ namespace CSScriptNpp
                     else if (nc.Header.Code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
                     {
                         CSScriptIntellisense.Plugin.OnBeforeDocumentSaved();
-                    }
-                    else if (nc.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
-                    {
-                        Marshal.FreeHGlobal(_ptrPluginName);
-                        Plugin.CleanUp();
                     }
 
                     if (nc.Header.Code == (uint)SciMsg.SCI_ENDUNDOACTION)
