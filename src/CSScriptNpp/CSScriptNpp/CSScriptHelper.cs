@@ -1097,7 +1097,14 @@ namespace CSScriptNpp
 
         static public string ScriptEngineVersion()
         {
-            return FileVersionInfo.GetVersionInfo(Runtime.cscs_asm).FileVersion.ToString();
+            try
+            {
+                return FileVersionInfo.GetVersionInfo(Runtime.cscs_asm).FileVersion.ToString();
+            }
+            catch
+            {
+                return "N/A";
+            }
         }
 
         static void DownloadBinary(string url, string destinationPath, Action<long, long> onProgress = null, string proxyUser = null, string proxyPw = null)
