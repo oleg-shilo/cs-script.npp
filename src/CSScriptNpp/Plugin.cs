@@ -129,6 +129,22 @@ namespace CSScriptNpp
         static void LoadIntellisenseCommands(ref int cmdIndex)
         {
             Task.Factory.StartNew(CheckNativeAutocompletionConflict);
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(3000);
+                if (!CSScriptHelper.Integration.IsCssIntegrated())
+                {
+                    try
+                    {
+                        CSScriptHelper.Integration.IntegrateCSScript();
+                        if (CSScriptHelper.Integration.IsCssIntegrated())
+                            CSScriptHelper.Integration.ShowIntegrationInfo();
+                        else
+                            CSScriptHelper.Integration.ShowIntegrationWarning();
+                    }
+                    catch { }
+                }
+            });
 
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
                 (index, name, handler, shortcut) =>
