@@ -275,6 +275,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         public IntPtr NativePointer { get { _initNativeStruct(); return _ptrSciTextRange; } }
 
+        // note: PtrToStringAnsi breaks unicode content but PtrToStringUni returns a complete rubbish.
+        // meaning Scintilla actually returns ANSI :(
         public string lpstrText { get { _readNativeStruct(); return Marshal.PtrToStringAnsi(_sciTextRange.lpstrText); } }
 
         public CharacterRangeLegacy chrg { get { _readNativeStruct(); return _sciTextRange.chrg; } set { _sciTextRange.chrg = value; _initNativeStruct(); } }
@@ -336,6 +338,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         public IntPtr NativePointer { get { _initNativeStruct(); return _ptrSciTextRange; } }
 
+        // note: PtrToStringAnsi breaks unicode content but PtrToStringUni returns a complete rubbish.
+        // meaning Scintilla actually returns ANSI :(
         public string lpstrText { get { _readNativeStruct(); return Marshal.PtrToStringAnsi(_sciTextRange.lpstrText); } }
 
         public CharacterRange chrg { get { _readNativeStruct(); return _sciTextRange.chrg; } set { _sciTextRange.chrg = value; _initNativeStruct(); } }

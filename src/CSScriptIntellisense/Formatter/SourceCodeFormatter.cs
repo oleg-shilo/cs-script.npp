@@ -24,7 +24,9 @@ namespace CSScriptIntellisense
 
                 int currentPos = document.GetCurrentPos();
                 CaretBeforeLastFormatting = currentPos;
-                string code = document.GetTextBetween(0, npp.DocEnd);
+
+                // string code = document.GetTextBetween(0, npp.DocEnd);
+                string code = document.AllText(); // GetTextBetween does not respect unicode characters
 
                 if (code.Any() && currentPos != -1 && currentPos < code.Length)
                 {
