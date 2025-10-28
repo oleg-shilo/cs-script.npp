@@ -1,3 +1,4 @@
-Release v2.0.9.0
+Release v2.0.10.0
 ----
-- #81: Characters are not displaying correctly
+- #83: cs-script.integration-info.md pops up every reboot
+  Checking of the CSS integration at startup is now a condition of if `Config.Instance.CheckUpdatesOnStartup`
