@@ -42,13 +42,13 @@
             this.button1 = new System.Windows.Forms.Button();
             this.scriptsDir = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.customLocationBtn = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.statusLbl = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.embeddedEngine = new System.Windows.Forms.RadioButton();
             this.autoDetectBtn = new System.Windows.Forms.Button();
             this.customLocationsGroup = new System.Windows.Forms.GroupBox();
-            this.customLocationBtn = new System.Windows.Forms.RadioButton();
             this.customEngineLocation = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -87,10 +87,9 @@
             // 
             this.useCustomLauncherCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.useCustomLauncherCmd.Location = new System.Drawing.Point(221, 239);
-            this.useCustomLauncherCmd.Margin = new System.Windows.Forms.Padding(4);
+            this.useCustomLauncherCmd.Location = new System.Drawing.Point(166, 194);
             this.useCustomLauncherCmd.Name = "useCustomLauncherCmd";
-            this.useCustomLauncherCmd.Size = new System.Drawing.Size(381, 22);
+            this.useCustomLauncherCmd.Size = new System.Drawing.Size(287, 20);
             this.useCustomLauncherCmd.TabIndex = 9;
             this.toolTip1.SetToolTip(this.useCustomLauncherCmd, "Custom launcher path with the arguments.\r\n(e.g. \r\n    \'\"my launcher.exe\" -run \"%1" +
         "\" -debug\'\r\n    \'my_launcher.exe -run\'\r\n    \'%CSSCRIPT_DIR%/cscs.exe\'\r\n)");
@@ -100,10 +99,9 @@
             // 
             this.useCustomLauncher.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.useCustomLauncher.AutoSize = true;
-            this.useCustomLauncher.Location = new System.Drawing.Point(17, 243);
-            this.useCustomLauncher.Margin = new System.Windows.Forms.Padding(4);
+            this.useCustomLauncher.Location = new System.Drawing.Point(13, 197);
             this.useCustomLauncher.Name = "useCustomLauncher";
-            this.useCustomLauncher.Size = new System.Drawing.Size(154, 20);
+            this.useCustomLauncher.Size = new System.Drawing.Size(126, 17);
             this.useCustomLauncher.TabIndex = 10;
             this.useCustomLauncher.Text = "Custom (F5) launcher";
             this.toolTip1.SetToolTip(this.useCustomLauncher, "Custom launcher path with the arguments.\r\n(e.g. \r\n    \"my launcher.exe\" -run \"%1\"" +
@@ -114,19 +112,17 @@
             // 
             // customSyntaxerExe
             // 
-            this.customSyntaxerExe.Location = new System.Drawing.Point(8, 98);
-            this.customSyntaxerExe.Margin = new System.Windows.Forms.Padding(4);
+            this.customSyntaxerExe.Location = new System.Drawing.Point(6, 80);
             this.customSyntaxerExe.Name = "customSyntaxerExe";
-            this.customSyntaxerExe.Size = new System.Drawing.Size(452, 22);
+            this.customSyntaxerExe.Size = new System.Drawing.Size(340, 20);
             this.customSyntaxerExe.TabIndex = 4;
             this.toolTip1.SetToolTip(this.customSyntaxerExe, "Path to the custom syntaxer\r\n");
             // 
             // customUpdateUrl
             // 
-            this.customUpdateUrl.Location = new System.Drawing.Point(20, 54);
-            this.customUpdateUrl.Margin = new System.Windows.Forms.Padding(4);
+            this.customUpdateUrl.Location = new System.Drawing.Point(15, 44);
             this.customUpdateUrl.Name = "customUpdateUrl";
-            this.customUpdateUrl.Size = new System.Drawing.Size(464, 22);
+            this.customUpdateUrl.Size = new System.Drawing.Size(349, 20);
             this.customUpdateUrl.TabIndex = 4;
             this.toolTip1.SetToolTip(this.customUpdateUrl, "Path/URL to the plugin package.");
             // 
@@ -134,12 +130,11 @@
             // 
             this.checkUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkUpdates.AutoSize = true;
-            this.checkUpdates.Location = new System.Drawing.Point(17, 187);
-            this.checkUpdates.Margin = new System.Windows.Forms.Padding(4);
+            this.checkUpdates.Location = new System.Drawing.Point(13, 151);
             this.checkUpdates.Name = "checkUpdates";
-            this.checkUpdates.Size = new System.Drawing.Size(194, 20);
+            this.checkUpdates.Size = new System.Drawing.Size(218, 17);
             this.checkUpdates.TabIndex = 7;
-            this.checkUpdates.Text = "Check for updates at startup";
+            this.checkUpdates.Text = "Check integration and updates at startup";
             this.checkUpdates.UseVisualStyleBackColor = true;
             // 
             // contentControl
@@ -149,10 +144,9 @@
             this.contentControl.Controls.Add(this.generalPage);
             this.contentControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.contentControl.Location = new System.Drawing.Point(0, 0);
-            this.contentControl.Margin = new System.Windows.Forms.Padding(4);
             this.contentControl.Name = "contentControl";
             this.contentControl.SelectedIndex = 0;
-            this.contentControl.Size = new System.Drawing.Size(633, 368);
+            this.contentControl.Size = new System.Drawing.Size(475, 299);
             this.contentControl.TabIndex = 8;
             // 
             // tabPage2
@@ -161,11 +155,10 @@
             this.tabPage2.Controls.Add(this.button1);
             this.tabPage2.Controls.Add(this.scriptsDir);
             this.tabPage2.Controls.Add(this.groupBox1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(625, 339);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage2.Size = new System.Drawing.Size(467, 273);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "CS-Script";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -173,19 +166,17 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 11);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(5, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 16);
+            this.label1.Size = new System.Drawing.Size(87, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Scripts Directory:";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(580, 121);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Location = new System.Drawing.Point(435, 98);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 28);
+            this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
             this.button1.Text = "Explore";
             this.button1.UseVisualStyleBackColor = true;
@@ -194,10 +185,9 @@
             // 
             // scriptsDir
             // 
-            this.scriptsDir.Location = new System.Drawing.Point(139, 11);
-            this.scriptsDir.Margin = new System.Windows.Forms.Padding(4);
+            this.scriptsDir.Location = new System.Drawing.Point(104, 9);
             this.scriptsDir.Name = "scriptsDir";
-            this.scriptsDir.Size = new System.Drawing.Size(464, 22);
+            this.scriptsDir.Size = new System.Drawing.Size(349, 20);
             this.scriptsDir.TabIndex = 1;
             // 
             // groupBox1
@@ -208,14 +198,24 @@
             this.groupBox1.Controls.Add(this.customLocationBtn);
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.customLocationsGroup);
-            this.groupBox1.Location = new System.Drawing.Point(12, 31);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox1.Location = new System.Drawing.Point(9, 25);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(600, 305);
+            this.groupBox1.Size = new System.Drawing.Size(450, 248);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Services Location";
+            // 
+            // customLocationBtn
+            // 
+            this.customLocationBtn.AutoSize = true;
+            this.customLocationBtn.Location = new System.Drawing.Point(390, 192);
+            this.customLocationBtn.Name = "customLocationBtn";
+            this.customLocationBtn.Size = new System.Drawing.Size(104, 17);
+            this.customLocationBtn.TabIndex = 11;
+            this.customLocationBtn.Text = "Custom Location";
+            this.customLocationBtn.UseVisualStyleBackColor = true;
+            this.customLocationBtn.Visible = false;
+            this.customLocationBtn.CheckedChanged += new System.EventHandler(this.customLocationBtn_CheckedChanged);
             // 
             // groupBox3
             // 
@@ -223,20 +223,19 @@
             this.groupBox3.Controls.Add(this.textBox1);
             this.groupBox3.Controls.Add(this.embeddedEngine);
             this.groupBox3.Controls.Add(this.autoDetectBtn);
-            this.groupBox3.Location = new System.Drawing.Point(8, 16);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox3.Location = new System.Drawing.Point(6, 13);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox3.Size = new System.Drawing.Size(584, 150);
+            this.groupBox3.Size = new System.Drawing.Size(438, 122);
             this.groupBox3.TabIndex = 11;
             this.groupBox3.TabStop = false;
             // 
             // statusLbl
             // 
             this.statusLbl.AutoSize = true;
-            this.statusLbl.Location = new System.Drawing.Point(7, 19);
+            this.statusLbl.Location = new System.Drawing.Point(5, 15);
+            this.statusLbl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.statusLbl.Name = "statusLbl";
-            this.statusLbl.Size = new System.Drawing.Size(110, 16);
+            this.statusLbl.Size = new System.Drawing.Size(91, 13);
             this.statusLbl.TabIndex = 10;
             this.statusLbl.Text = "Status: Integrated";
             this.statusLbl.Click += new System.EventHandler(this.label8_Click);
@@ -245,22 +244,22 @@
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox1.Location = new System.Drawing.Point(7, 48);
+            this.textBox1.Location = new System.Drawing.Point(5, 39);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(568, 94);
+            this.textBox1.Size = new System.Drawing.Size(427, 77);
             this.textBox1.TabIndex = 9;
             this.textBox1.Text = resources.GetString("textBox1.Text");
             // 
             // embeddedEngine
             // 
             this.embeddedEngine.AutoSize = true;
-            this.embeddedEngine.Location = new System.Drawing.Point(563, 87);
-            this.embeddedEngine.Margin = new System.Windows.Forms.Padding(4);
+            this.embeddedEngine.Location = new System.Drawing.Point(422, 71);
             this.embeddedEngine.Name = "embeddedEngine";
-            this.embeddedEngine.Size = new System.Drawing.Size(96, 20);
+            this.embeddedEngine.Size = new System.Drawing.Size(76, 17);
             this.embeddedEngine.TabIndex = 0;
             this.embeddedEngine.Text = "Embedded";
             this.embeddedEngine.UseVisualStyleBackColor = true;
@@ -270,10 +269,9 @@
             // autoDetectBtn
             // 
             this.autoDetectBtn.AutoSize = true;
-            this.autoDetectBtn.Location = new System.Drawing.Point(419, 13);
-            this.autoDetectBtn.Margin = new System.Windows.Forms.Padding(4);
+            this.autoDetectBtn.Location = new System.Drawing.Point(314, 11);
             this.autoDetectBtn.Name = "autoDetectBtn";
-            this.autoDetectBtn.Size = new System.Drawing.Size(157, 28);
+            this.autoDetectBtn.Size = new System.Drawing.Size(118, 23);
             this.autoDetectBtn.TabIndex = 8;
             this.autoDetectBtn.Text = "Detect and Integrate";
             this.autoDetectBtn.UseVisualStyleBackColor = true;
@@ -287,74 +285,54 @@
             this.customLocationsGroup.Controls.Add(this.label3);
             this.customLocationsGroup.Controls.Add(this.syntaxerPort);
             this.customLocationsGroup.Controls.Add(this.customSyntaxerExe);
-            this.customLocationsGroup.Location = new System.Drawing.Point(8, 168);
-            this.customLocationsGroup.Margin = new System.Windows.Forms.Padding(4);
+            this.customLocationsGroup.Location = new System.Drawing.Point(6, 136);
             this.customLocationsGroup.Name = "customLocationsGroup";
-            this.customLocationsGroup.Padding = new System.Windows.Forms.Padding(4);
-            this.customLocationsGroup.Size = new System.Drawing.Size(584, 130);
+            this.customLocationsGroup.Size = new System.Drawing.Size(438, 106);
             this.customLocationsGroup.TabIndex = 10;
             this.customLocationsGroup.TabStop = false;
-            // 
-            // customLocationBtn
-            // 
-            this.customLocationBtn.AutoSize = true;
-            this.customLocationBtn.Location = new System.Drawing.Point(520, 236);
-            this.customLocationBtn.Margin = new System.Windows.Forms.Padding(4);
-            this.customLocationBtn.Name = "customLocationBtn";
-            this.customLocationBtn.Size = new System.Drawing.Size(127, 20);
-            this.customLocationBtn.TabIndex = 11;
-            this.customLocationBtn.Text = "Custom Location";
-            this.customLocationBtn.UseVisualStyleBackColor = true;
-            this.customLocationBtn.Visible = false;
-            this.customLocationBtn.CheckedChanged += new System.EventHandler(this.customLocationBtn_CheckedChanged);
             // 
             // customEngineLocation
             // 
             this.customEngineLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.customEngineLocation.Location = new System.Drawing.Point(8, 39);
-            this.customEngineLocation.Margin = new System.Windows.Forms.Padding(4);
+            this.customEngineLocation.Location = new System.Drawing.Point(6, 32);
             this.customEngineLocation.Name = "customEngineLocation";
-            this.customEngineLocation.Size = new System.Drawing.Size(567, 22);
+            this.customEngineLocation.Size = new System.Drawing.Size(426, 20);
             this.customEngineLocation.TabIndex = 1;
             this.customEngineLocation.TextChanged += new System.EventHandler(this.customEngineLocation_TextChanged);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(4, 73);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(3, 59);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(62, 16);
+            this.label7.Size = new System.Drawing.Size(51, 13);
             this.label7.TabIndex = 9;
             this.label7.Text = "Syntaxer:";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(4, 16);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Location = new System.Drawing.Point(3, 13);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(85, 16);
+            this.label6.Size = new System.Drawing.Size(70, 13);
             this.label6.TabIndex = 7;
             this.label6.Text = "Scipt Engine:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(469, 101);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(352, 82);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(34, 16);
+            this.label3.Size = new System.Drawing.Size(29, 13);
             this.label3.TabIndex = 7;
             this.label3.Text = "Port:";
             // 
             // syntaxerPort
             // 
-            this.syntaxerPort.Location = new System.Drawing.Point(512, 98);
-            this.syntaxerPort.Margin = new System.Windows.Forms.Padding(4);
+            this.syntaxerPort.Location = new System.Drawing.Point(384, 80);
             this.syntaxerPort.Name = "syntaxerPort";
-            this.syntaxerPort.Size = new System.Drawing.Size(63, 22);
+            this.syntaxerPort.Size = new System.Drawing.Size(48, 20);
             this.syntaxerPort.TabIndex = 6;
             this.syntaxerPort.Text = "18001";
             // 
@@ -362,11 +340,10 @@
             // 
             this.tabPage1.Controls.Add(this.groupBox4);
             this.tabPage1.Controls.Add(this.groupBox2);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(625, 339);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage1.Size = new System.Drawing.Size(467, 273);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Update";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -381,41 +358,38 @@
             this.groupBox4.Controls.Add(this.label5);
             this.groupBox4.Controls.Add(this.deployCSScript);
             this.groupBox4.Controls.Add(this.label4);
-            this.groupBox4.Location = new System.Drawing.Point(11, 156);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox4.Location = new System.Drawing.Point(8, 127);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox4.Size = new System.Drawing.Size(593, 174);
+            this.groupBox4.Size = new System.Drawing.Size(445, 141);
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Services Update";
             // 
             // cssyntaxerInstallCmd
             // 
-            this.cssyntaxerInstallCmd.Location = new System.Drawing.Point(20, 137);
-            this.cssyntaxerInstallCmd.Margin = new System.Windows.Forms.Padding(4);
+            this.cssyntaxerInstallCmd.Location = new System.Drawing.Point(15, 111);
             this.cssyntaxerInstallCmd.Name = "cssyntaxerInstallCmd";
             this.cssyntaxerInstallCmd.ReadOnly = true;
-            this.cssyntaxerInstallCmd.Size = new System.Drawing.Size(401, 22);
+            this.cssyntaxerInstallCmd.Size = new System.Drawing.Size(302, 20);
             this.cssyntaxerInstallCmd.TabIndex = 8;
             this.cssyntaxerInstallCmd.Text = "choco install cs-syntaxer --y";
             // 
             // cssInstallCmd
             // 
-            this.cssInstallCmd.Location = new System.Drawing.Point(20, 60);
-            this.cssInstallCmd.Margin = new System.Windows.Forms.Padding(4);
+            this.cssInstallCmd.Location = new System.Drawing.Point(15, 49);
             this.cssInstallCmd.Name = "cssInstallCmd";
             this.cssInstallCmd.ReadOnly = true;
-            this.cssInstallCmd.Size = new System.Drawing.Size(401, 22);
+            this.cssInstallCmd.Size = new System.Drawing.Size(302, 20);
             this.cssInstallCmd.TabIndex = 7;
             this.cssInstallCmd.Text = "choco install cs-script --y";
             // 
             // linkLabel4
             // 
             this.linkLabel4.AutoSize = true;
-            this.linkLabel4.Location = new System.Drawing.Point(439, 112);
+            this.linkLabel4.Location = new System.Drawing.Point(329, 91);
+            this.linkLabel4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.linkLabel4.Name = "linkLabel4";
-            this.linkLabel4.Size = new System.Drawing.Size(75, 16);
+            this.linkLabel4.Size = new System.Drawing.Size(59, 13);
             this.linkLabel4.TabIndex = 6;
             this.linkLabel4.TabStop = true;
             this.linkLabel4.Text = "Read more";
@@ -424,9 +398,10 @@
             // linkLabel3
             // 
             this.linkLabel3.AutoSize = true;
-            this.linkLabel3.Location = new System.Drawing.Point(439, 32);
+            this.linkLabel3.Location = new System.Drawing.Point(329, 26);
+            this.linkLabel3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.linkLabel3.Name = "linkLabel3";
-            this.linkLabel3.Size = new System.Drawing.Size(75, 16);
+            this.linkLabel3.Size = new System.Drawing.Size(59, 13);
             this.linkLabel3.TabIndex = 6;
             this.linkLabel3.TabStop = true;
             this.linkLabel3.Text = "Read more";
@@ -434,10 +409,9 @@
             // 
             // deploySyntaxer
             // 
-            this.deploySyntaxer.Location = new System.Drawing.Point(441, 134);
-            this.deploySyntaxer.Margin = new System.Windows.Forms.Padding(4);
+            this.deploySyntaxer.Location = new System.Drawing.Point(331, 109);
             this.deploySyntaxer.Name = "deploySyntaxer";
-            this.deploySyntaxer.Size = new System.Drawing.Size(131, 28);
+            this.deploySyntaxer.Size = new System.Drawing.Size(98, 23);
             this.deploySyntaxer.TabIndex = 5;
             this.deploySyntaxer.Text = "Deploy/Update";
             this.deploySyntaxer.UseVisualStyleBackColor = true;
@@ -446,19 +420,17 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 112);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(12, 91);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(179, 16);
+            this.label5.Size = new System.Drawing.Size(144, 13);
             this.label5.TabIndex = 4;
             this.label5.Text = "Latest Syntaxer (Intellisense):";
             // 
             // deployCSScript
             // 
-            this.deployCSScript.Location = new System.Drawing.Point(441, 58);
-            this.deployCSScript.Margin = new System.Windows.Forms.Padding(4);
+            this.deployCSScript.Location = new System.Drawing.Point(331, 47);
             this.deployCSScript.Name = "deployCSScript";
-            this.deployCSScript.Size = new System.Drawing.Size(131, 28);
+            this.deployCSScript.Size = new System.Drawing.Size(98, 23);
             this.deployCSScript.TabIndex = 3;
             this.deployCSScript.Text = "Deploy/Update";
             this.deployCSScript.UseVisualStyleBackColor = true;
@@ -467,10 +439,9 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 32);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(12, 26);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(192, 16);
+            this.label4.Size = new System.Drawing.Size(155, 13);
             this.label4.TabIndex = 0;
             this.label4.Text = "Latest CS-Script (script engine):";
             // 
@@ -479,21 +450,18 @@
             this.groupBox2.Controls.Add(this.customUpdateUrl);
             this.groupBox2.Controls.Add(this.update);
             this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Location = new System.Drawing.Point(11, 26);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox2.Location = new System.Drawing.Point(8, 21);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox2.Size = new System.Drawing.Size(601, 98);
+            this.groupBox2.Size = new System.Drawing.Size(451, 80);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Plugin Update";
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(493, 52);
-            this.update.Margin = new System.Windows.Forms.Padding(4);
+            this.update.Location = new System.Drawing.Point(370, 42);
             this.update.Name = "update";
-            this.update.Size = new System.Drawing.Size(100, 28);
+            this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 3;
             this.update.Text = "Update";
             this.update.UseVisualStyleBackColor = true;
@@ -502,10 +470,9 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 32);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(12, 26);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(144, 16);
+            this.label2.Size = new System.Drawing.Size(116, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Custom update source:";
             // 
@@ -518,11 +485,10 @@
             this.generalPage.Controls.Add(this.linkLabel2);
             this.generalPage.Controls.Add(this.enableNetCore);
             this.generalPage.Controls.Add(this.linkLabel1);
-            this.generalPage.Location = new System.Drawing.Point(4, 25);
-            this.generalPage.Margin = new System.Windows.Forms.Padding(4);
+            this.generalPage.Location = new System.Drawing.Point(4, 22);
             this.generalPage.Name = "generalPage";
-            this.generalPage.Padding = new System.Windows.Forms.Padding(4);
-            this.generalPage.Size = new System.Drawing.Size(625, 339);
+            this.generalPage.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.generalPage.Size = new System.Drawing.Size(467, 273);
             this.generalPage.TabIndex = 0;
             this.generalPage.Text = "General";
             this.generalPage.UseVisualStyleBackColor = true;
@@ -531,10 +497,9 @@
             // 
             this.restorePanels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.restorePanels.AutoSize = true;
-            this.restorePanels.Location = new System.Drawing.Point(17, 214);
-            this.restorePanels.Margin = new System.Windows.Forms.Padding(4);
+            this.restorePanels.Location = new System.Drawing.Point(13, 173);
             this.restorePanels.Name = "restorePanels";
-            this.restorePanels.Size = new System.Drawing.Size(182, 20);
+            this.restorePanels.Size = new System.Drawing.Size(147, 17);
             this.restorePanels.TabIndex = 8;
             this.restorePanels.Text = "Restore panels on startup";
             this.restorePanels.UseVisualStyleBackColor = true;
@@ -543,10 +508,9 @@
             // 
             this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Location = new System.Drawing.Point(265, 284);
-            this.linkLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.linkLabel2.Location = new System.Drawing.Point(199, 231);
             this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(210, 16);
+            this.linkLabel2.Size = new System.Drawing.Size(167, 13);
             this.linkLabel2.TabIndex = 5;
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "Edit Visual Studio project template";
@@ -556,10 +520,9 @@
             // 
             this.enableNetCore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.enableNetCore.AutoSize = true;
-            this.enableNetCore.Location = new System.Drawing.Point(280, 314);
-            this.enableNetCore.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.enableNetCore.Location = new System.Drawing.Point(210, 255);
             this.enableNetCore.Name = "enableNetCore";
-            this.enableNetCore.Size = new System.Drawing.Size(192, 16);
+            this.enableNetCore.Size = new System.Drawing.Size(156, 13);
             this.enableNetCore.TabIndex = 5;
             this.enableNetCore.TabStop = true;
             this.enableNetCore.Text = "Enable .NET 5/Core integration";
@@ -569,10 +532,9 @@
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(13, 266);
-            this.linkLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.linkLabel1.Location = new System.Drawing.Point(10, 216);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(149, 16);
+            this.linkLabel1.Size = new System.Drawing.Size(120, 13);
             this.linkLabel1.TabIndex = 5;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Edit settings file  instead";
@@ -580,13 +542,12 @@
             // 
             // ConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(633, 368);
+            this.ClientSize = new System.Drawing.Size(475, 299);
             this.Controls.Add(this.contentControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "ConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "CS-Script Settings";

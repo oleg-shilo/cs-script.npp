@@ -17,9 +17,8 @@ namespace CSScriptIntellisense
     // 18000 - Sublime Text 3
     // 18001 - Notepad++
     // 18002 - VSCode CodeMap
-    class ttt
-    {
-    }
+    // 18003 - VSCode CS-Script
+    // 18004 - WDBG Intellisense
 
     public class Syntaxer
     {
@@ -204,7 +203,8 @@ namespace CSScriptIntellisense
                     clientSocket.Connect(IPAddress.Loopback, SyntaxerPort);
                     clientSocket.WriteAllText(command);
                     return clientSocket.ReadAllText();
-                };
+                }
+                ;
             }
             catch { }
             return null;

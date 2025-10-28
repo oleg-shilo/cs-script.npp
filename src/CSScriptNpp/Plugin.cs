@@ -129,22 +129,23 @@ namespace CSScriptNpp
         static void LoadIntellisenseCommands(ref int cmdIndex)
         {
             Task.Factory.StartNew(CheckNativeAutocompletionConflict);
-            Task.Factory.StartNew(() =>
-            {
-                Thread.Sleep(3000);
-                if (!CSScriptHelper.Integration.IsCssIntegrated())
+            if (Config.Instance.CheckUpdatesOnStartup)
+                Task.Factory.StartNew(() =>
                 {
-                    try
+                    Thread.Sleep(3000);
+                    if (!CSScriptHelper.Integration.IsCssIntegrated())
                     {
-                        CSScriptHelper.Integration.IntegrateCSScript();
-                        if (CSScriptHelper.Integration.IsCssIntegrated())
-                            CSScriptHelper.Integration.ShowIntegrationInfo();
-                        else
-                            CSScriptHelper.Integration.ShowIntegrationWarning();
+                        try
+                        {
+                            CSScriptHelper.Integration.IntegrateCSScript();
+                            if (CSScriptHelper.Integration.IsCssIntegrated())
+                                CSScriptHelper.Integration.ShowIntegrationInfo();
+                            else
+                                CSScriptHelper.Integration.ShowIntegrationWarning();
+                        }
+                        catch { }
                     }
-                    catch { }
-                }
-            });
+                });
 
             CSScriptIntellisense.Plugin.CommandMenuInit(ref cmdIndex,
                 (index, name, handler, shortcut) =>
@@ -604,7 +605,8 @@ namespace CSScriptNpp
                             MessageBox.Show(message);
                         }
                     }
-                    catch { };
+                    catch { }
+                    ;
                 });
         }
 
