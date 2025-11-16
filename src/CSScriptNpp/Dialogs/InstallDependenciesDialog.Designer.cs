@@ -34,26 +34,27 @@ namespace CSScriptNpp.Dialogs
             this.helpButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cmdTextBox
             // 
-            this.cmdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.cmdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdTextBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmdTextBox.Location = new System.Drawing.Point(13, 42);
             this.cmdTextBox.Multiline = true;
             this.cmdTextBox.Name = "cmdTextBox";
             this.cmdTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.cmdTextBox.Size = new System.Drawing.Size(664, 163);
+            this.cmdTextBox.Size = new System.Drawing.Size(509, 150);
             this.cmdTextBox.TabIndex = 3;
             // 
             // installButton
             // 
             this.installButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.installButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.installButton.Location = new System.Drawing.Point(683, 42);
+            this.installButton.Location = new System.Drawing.Point(528, 42);
             this.installButton.Name = "installButton";
             this.installButton.Size = new System.Drawing.Size(75, 23);
             this.installButton.TabIndex = 0;
@@ -64,7 +65,7 @@ namespace CSScriptNpp.Dialogs
             // helpButton
             // 
             this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpButton.Location = new System.Drawing.Point(683, 116);
+            this.helpButton.Location = new System.Drawing.Point(528, 116);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(75, 23);
             this.helpButton.TabIndex = 2;
@@ -76,7 +77,7 @@ namespace CSScriptNpp.Dialogs
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(683, 71);
+            this.cancelButton.Location = new System.Drawing.Point(528, 71);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 1;
@@ -93,11 +94,25 @@ namespace CSScriptNpp.Dialogs
             this.label1.Text = "The following script will be executed in order to install CS-Script dependencies:" +
     "";
             // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.Red;
+            this.label2.Location = new System.Drawing.Point(10, 195);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(517, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "You are about to install CS-Script component(s). The change will take full effect" +
+    " after Notepad++ is restarted.";
+            // 
             // InstallDependenciesDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(766, 217);
+            this.ClientSize = new System.Drawing.Size(611, 217);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.helpButton);
@@ -118,5 +133,6 @@ namespace CSScriptNpp.Dialogs
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }

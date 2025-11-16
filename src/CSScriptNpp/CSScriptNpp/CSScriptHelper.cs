@@ -360,6 +360,21 @@ namespace CSScriptNpp
         public static string InstallCssDotnetCmd => $"dotnet tool {(IsCSScriptInstalled ? "update" : "install")} --global cs-script.cli";
 
         public static string InstallCsSyntaxerDotnetCmd => $"dotnet tool {(IsCSSyntaxerInstalled ? "update" : "install")} --global cs-syntaxer";
+        public static string InstallCsSyntaxerDotnetCmdFull => $@"echo off
+
+echo Stopping any running syntaxer instance...
+syntaxer -list kill *
+
+echo Installing/updating...
+{InstallCsSyntaxerDotnetCmd}";
+
+        public static string InstallCssDotnetCmdFull => $@"echo off
+
+echo Stopping any running CS-Script instance...
+css -list kill *
+
+echo Installing/updating...
+{InstallCssDotnetCmd}";
 
         public static bool IsChocoInstalled
         {
