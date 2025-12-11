@@ -22,6 +22,13 @@ public partial class PluginEnv
         get { return Path.Combine(Environment.SpecialFolder.ApplicationData.Path(), @"Notepad++\plugins\logs\CSScriptNpp").EnsureDir(); }
     }
 
+    public static void CustomLog(string message)
+    {
+        var logFile = Path.Combine(LogDir, "CSScriptNpp.log");
+        File.AppendAllText(logFile, $"{DateTime.Now}: {message}{Environment.NewLine}");
+    }
+
+
     public static string PluginDir
     {
         get { return Assembly.GetExecutingAssembly().Location.GetDirName(); }

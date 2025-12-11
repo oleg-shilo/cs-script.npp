@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -125,6 +126,12 @@ namespace CSScriptNpp
             }
         }
 
+        static string integrationChecks =>
+            $"Runtime.cscs_asm: {Runtime.cscs_asm.HasText()}; " +
+            $"Runtime.syntaxer_asm: {Runtime.syntaxer_asm.HasText()}; " +
+            $"Runtime.cscs_asm: {File.Exists(Runtime.cscs_asm)}; " +
+            $"Runtime.syntaxer_asm: {File.Exists(Runtime.syntaxer_asm)}";
+
         //must be in a separate method to allow proper assembly probing
         static void LoadIntellisenseCommands(ref int cmdIndex)
         {
@@ -133,15 +140,23 @@ namespace CSScriptNpp
                 Task.Factory.StartNew(() =>
                 {
                     Thread.Sleep(3000);
+
+                    var intcheck = integrationChecks;
                     if (!CSScriptHelper.Integration.IsCssIntegrated())
                     {
+                        PluginEnv.CustomLog("Checking CS-Script integration: not integrated...");
+                        PluginEnv.CustomLog("    Checks: " + intcheck);
+
                         try
                         {
                             CSScriptHelper.Integration.IntegrateCSScript();
-                            if (CSScriptHelper.Integration.IsCssIntegrated())
+                            var integrated = CSScriptHelper.Integration.IsCssIntegrated();
+                            if (integrated)
                                 CSScriptHelper.Integration.ShowIntegrationInfo();
                             else
                                 CSScriptHelper.Integration.ShowIntegrationWarning();
+
+                            PluginEnv.CustomLog($"CS-Script integration completed: {integrated}");
                         }
                         catch { }
                     }

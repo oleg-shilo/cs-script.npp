@@ -250,5 +250,17 @@ namespace CSScriptNpp
         private void label8_Click(object sender, EventArgs e)
         {
         }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                Thread.Sleep(500);
+                Process.Start("explorer", $"\"{PluginEnv.LogDir}\"");
+            }
+            catch
+            {
+            }
+        }
     }
 }
