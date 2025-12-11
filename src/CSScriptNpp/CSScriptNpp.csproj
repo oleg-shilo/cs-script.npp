@@ -399,7 +399,9 @@
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
-    <PostBuildEvent>md "$(SolutionDir)output\plugins\$(TargetName)"
+    <PostBuildEvent>IF NOT EXIST "$(SolutionDir)output\plugins\$(TargetName)" (
+  md "$(SolutionDir)output\plugins\$(TargetName)"
+)
 
 copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x64.dll" "$(SolutionDir)output\plugins\$(TargetName).x64.dll"
 copy "$(ProjectDir)..\NppPlugin.Host\output\NppPlugin.x86.dll" "$(SolutionDir)output\plugins\$(TargetName).x86.dll"

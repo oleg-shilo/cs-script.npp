@@ -37,12 +37,9 @@ namespace CSScriptNpp.Dialogs
             {
                 File.WriteAllText(batchFile, command + Environment.NewLine + "pause");
 
-                MessageBox.Show("You are about to install CS-Script component(s).\n" +
-                                "The change will take full effect after Notepad++ is restarted", "CS-Script");
-
                 var p = new Process();
                 p.StartInfo.FileName = batchFile;
-                p.StartInfo.Verb = "runas";
+                p.StartInfo.Verb = command.Contains("choco ") ? "runas" : "";
                 p.Start();
             }
             catch

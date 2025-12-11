@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CSScriptIntellisense;
 using CSScriptIntellisense.Interop;
 using CSScriptNpp.Dialogs;
 
@@ -172,17 +173,17 @@ namespace CSScriptNpp
             //     batchFileContent.Add("powershell iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))");
             // }
 
-            batchFileContent.Add($"powershell {command}");
+            batchFileContent.AddRange(command.GetLines());
 
             if (batchFileContent.Count == 1)
                 InstallDependenciesDialog.Execute(batchFileContent.First());
             else
-                InstallDependenciesDialog.ShowDialog(string.Join(Environment.NewLine, batchFileContent));
+                InstallDependenciesDialog.ShowDialog(command);
         }
 
-        public void deployCSScript_Click(object sender, EventArgs e) => InstallDependencies(CSScriptHelper.InstallCssDotnetCmd);
+        public void deployCSScript_Click(object sender, EventArgs e) => InstallDependencies(CSScriptHelper.InstallCssDotnetCmdFull);
 
-        void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(CSScriptHelper.InstallCsSyntaxerDotnetCmd);
+        void deploySyntaxer_Click(object sender, EventArgs e) => InstallDependencies(CSScriptHelper.InstallCsSyntaxerDotnetCmdFull);
 
         void autodetectCSS_Click(object sender, EventArgs e)
         {
