@@ -18,6 +18,8 @@ https://tooomm.github.io/github-release-stats/?username=oleg-shilo&repository=cs
 6. Update N++ Plugin Manager
     ---------------------
      certUtil -hashfile .\CSScriptNpp\CSScriptNpp.dll MD5
+     OR
+     https://emn178.github.io/online-tools/sha256_checksum.html
      ---------------------
 
    - TortoiceGIT steps (alternative):
