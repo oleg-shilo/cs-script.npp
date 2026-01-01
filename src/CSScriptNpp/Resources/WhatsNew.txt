@@ -1,5 +1,3 @@
-Release v2.0.11.0
+Release v2.0.12.0
 ----
-- Added killing stopping dependency processes when updating/installing dependencies.
-- Added disabling CSS integration check at startup via `Config.Instance.CheckUpdatesOnStartup` setting. (triggered by #83)
-  
+- #83: cs-script.integration-info.md pops up every reboot  
