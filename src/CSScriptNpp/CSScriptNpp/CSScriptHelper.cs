@@ -30,6 +30,8 @@ namespace CSScriptNpp
         public static string dependenciesDirRoot => Environment.SpecialFolder.CommonApplicationData
                                                     .PathJoin("CSScriptNpp", Assembly.GetExecutingAssembly().GetName().Version).EnsureDir();
 
+        public static bool Initialized { get; private set; } = false;
+
         public static void Init()
         {
             cscs_asm = Config.Instance.CustomEngineAsm;
@@ -43,6 +45,7 @@ namespace CSScriptNpp
             Syntaxer.syntaxer_port = () => Runtime.syntaxer_port;
 
             Syntaxer.StartServer(onlyIfNotRunning: true);
+            Initialized = true;
         }
 
         static void DeleteDir(string dir)

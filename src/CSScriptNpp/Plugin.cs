@@ -139,7 +139,8 @@ namespace CSScriptNpp
             if (Config.Instance.CheckUpdatesOnStartup)
                 Task.Factory.StartNew(() =>
                 {
-                    Thread.Sleep(3000);
+                    while (!Runtime.Initialized)
+                        Thread.Sleep(2000);
 
                     var intcheck = integrationChecks;
                     if (!CSScriptHelper.Integration.IsCssIntegrated())
