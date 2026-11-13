@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Npp Funcs
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -49,6 +51,8 @@ namespace CSScriptNpp
             try
             {
                 // Debug.Assert(false);
+
+                // Utils.InitCultureInfo("fa-IR"); for testing #86
 
                 Intellisense.EnsureIntellisenseIntegration();
 

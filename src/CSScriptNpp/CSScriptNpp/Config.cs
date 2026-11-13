@@ -1,7 +1,8 @@
+using CSScriptIntellisense;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using CSScriptIntellisense;
 
 namespace CSScriptNpp
 {
@@ -78,7 +79,7 @@ namespace CSScriptNpp
         public int LastExternalProcessCpu = 0;
         public bool NativeAutoCompletionChecked = false;
         public string ReleaseNotesViewedFor = "";
-        public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd");
+        public string LastUpdatesCheckDate = DateTime.MinValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         public string LastUpdateInfoShown = "";
         public string ScriptHistory = "";
         public int SciptHistoryMaxCount = 10;

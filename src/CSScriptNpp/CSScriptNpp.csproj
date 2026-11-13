@@ -160,7 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NppPlugin.host">
-      <HintPath>..\NppPlugin.Host\output\NppPlugin.host.dll</HintPath>
+      <HintPath>..\NppPlugin.Host\output\asm-ref\NppPlugin.host.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -413,8 +413,12 @@ copy "$(TargetDir)\ICSharpCode.NRefactory.dll" "$(SolutionDir)output\plugins\$(T
 
 copy "$(SolutionDir)CSScriptIntellisense\CSharpIntellisense\Intellisense.Common.dll" "$(SolutionDir)output\plugins\$(TargetName)\Intellisense.Common.dll"
 
-if $(ConfigurationName) == Debug copy "$(TargetPath)" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptNpp.dll"
-if $(ConfigurationName) == Debug copy "$(TargetDir)\CSScriptIntellisense.dll" "C:\Program Files\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptIntellisense.dll"
+IF NOT EXIST "%25programfiles%25\Notepad++\plugins\CSScriptNpp\CSScriptNpp" (
+  rem md "%25programfiles%25\Notepad++\plugins\CSScriptNpp\CSScriptNpp"
+  echo "ERROR: install CS-Script plugin in Notepadd++ first."
+)
+if $(ConfigurationName) == Debug copy "$(TargetPath)" "%25programfiles%25\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptNpp.dll"
+rem if $(ConfigurationName) == Debug copy "$(TargetDir)\CSScriptIntellisense.dll" "%25programfiles%25\Notepad++\plugins\CSScriptNpp\CSScriptNpp\CSScriptIntellisense.dll"
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

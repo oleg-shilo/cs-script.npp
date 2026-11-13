@@ -1,20 +1,33 @@
+using CSScriptIntellisense;
+using Kbg.NppPluginNET.PluginInfrastructure;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using CSScriptIntellisense;
-using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSScriptNpp
 {
     public static class Utils
     {
+        public static void InitCultureInfo(string name)
+        {
+#if DEBUG
+            // only needed for testing nice cases like  for #86 ("fa-IR")
+            var ci = new CultureInfo(name);
+            ci.DateTimeFormat.Calendar = new PersianCalendar();
+
+            CultureInfo.CurrentCulture = ci;     // formatting: dates, numbers, currency
+            CultureInfo.CurrentUICulture = ci;   // resource lookup (localized strings)
+#endif
+        }
+
         public static bool IsVS2017PlusAvailable
         {
             get

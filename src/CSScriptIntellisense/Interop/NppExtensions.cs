@@ -470,7 +470,9 @@ namespace CSScriptIntellisense
         {
             return true; // there is no reliable way to get the version of NPP. See GetNppVersion inline-comments
 
+#pragma warning disable CS0162 // Unreachable code detected
             bool newVersioning;
+#pragma warning restore CS0162 // Unreachable code detected
             int[] version = GetNppVersion(out newVersioning);
 
             // starting from v8.30 N++ uses Scintilla interface with TextRange min and max members as `IntPtr`

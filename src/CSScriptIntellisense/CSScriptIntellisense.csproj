@@ -157,7 +157,7 @@
       <HintPath>..\LineMan\LineMan\CSharpIntellisence\ICSharpCode.NRefactory.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="NppPlugin.host">
-      <HintPath>..\NppPlugin.Host\output\NppPlugin.host.dll</HintPath>
+      <HintPath>..\NppPlugin.Host\output\asm-ref\NppPlugin.host.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
