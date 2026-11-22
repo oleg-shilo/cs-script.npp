@@ -10,3 +10,4 @@ Productls used at runtime
 
 Productls used during development
 * Resource Hacker™ - http://www.angusj.com/resourcehacker/
+* Resource Cracker (https://www.pelock.com/products/resource-cracker)
