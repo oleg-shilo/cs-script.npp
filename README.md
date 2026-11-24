@@ -88,3 +88,17 @@ Then Click 'New Script' button. The script is ready. Just press F5 and see the s
 ![](wiki/new_script.png)
 
 ![](wiki/CSScript.png)
+
+## Building from the command line
+
+The solution targets .NET Framework 4.8. Use the MSBuild that comes with Visual Studio or Visual Studio Build Tools, with the .NET Framework 4.8 targeting pack installed. For example, from a Developer Command Prompt for Visual Studio:
+
+```cmd
+cd src
+where msbuild
+msbuild CSScriptNpp.sln /p:Configuration=Release
+```
+
+Check that `where msbuild` lists the Visual Studio MSBuild first. The MSBuild executable under `C:\Program Files\dotnet\sdk` (and `dotnet msbuild`) runs on .NET and can fail with MSB3822 and MSB3823 on the plugin's non-string resources. The Visual Studio MSBuild runs on .NET Framework and handles these resources without adding a runtime dependency.
+
+The Release build can print `ERROR: install CS-Script plugin in Notepadd++ first.` if the plugin is not installed; this message alone does not mean the build failed. Debug builds also try to copy the plugin into the Notepad++ installation.
